@@ -1,11 +1,12 @@
 import * as Sequelize from 'sequelize';
 import { DataTypes, Model, Optional } from 'sequelize';
-import { Integrante, IntegranteCreationAttributes, IntegranteId, IntegrantePk } from './Integrante';
+import { Integrante, IntegranteAttributes, IntegranteCreationAttributes, IntegranteId, IntegrantePk } from './Integrante';
 import { LOG_TRANSACTION } from '../types/base';
-import { PropuestaInstitucion, PropuestaInstitucionCreationAttributes, PropuestaInstitucionPk } from './PropuestaInstitucion';
+import { PropuestaInstitucion, PropuestaInstitucionAttributes, PropuestaInstitucionCreationAttributes, PropuestaInstitucionId, PropuestaInstitucionPk } from './PropuestaInstitucion';
 import fetch from 'node-fetch';
 import { RolPk } from './Rol';
-import { ObjetivoEspecificoCreationAttributes } from './ObjetivoEspecifico';
+import { ObjetivoEspecifico, ObjetivoEspecificoAttributes, ObjetivoEspecificoCreationAttributes } from './ObjetivoEspecifico';
+import { ActividadObjetivoEspecificoAttributes, ActividadObjetivoEspecificoCreationAttributes } from './ActividadObjetivoEspecifico';
 
 
 export interface PropuestaAttributes {
@@ -99,7 +100,7 @@ export class Propuesta extends Model<PropuestaAttributes, PropuestaCreationAttri
 
   // integrantes
 
-  public async altaIntegrante ( data : IntegranteCreationAttributes, sequelize : Sequelize.Sequelize, transaction : Sequelize.Transaction  ) 
+  public async altaIntegrante ( data : IntegranteCreationAttributes, sequelize : Sequelize.Sequelize, transaction ?: Sequelize.Transaction  ) 
   : Promise<IntegranteCreationAttributes> {
 
     let salida : IntegranteCreationAttributes = { nroDoc : '', codigoPropuesta : '' }
@@ -125,7 +126,7 @@ export class Propuesta extends Model<PropuestaAttributes, PropuestaCreationAttri
 
   }
 
-  public async bajaIntegrante ( data : IntegrantePk , sequelize : Sequelize.Sequelize, transaction : Sequelize.Transaction ) 
+  public async bajaIntegrante ( data : IntegranteId , sequelize : Sequelize.Sequelize, transaction ?: Sequelize.Transaction ) 
   : Promise<boolean> {
     let salida : boolean = false;
 
@@ -140,9 +141,9 @@ export class Propuesta extends Model<PropuestaAttributes, PropuestaCreationAttri
     return salida;
   }
 
-  public async editarIntegrante ( data : IntegranteCreationAttributes, sequelize : Sequelize.Sequelize, transaction : Sequelize.Transaction ) 
-  : Promise<IntegranteCreationAttributes> {
-    let salida : IntegranteCreationAttributes = { nroDoc : '', codigoPropuesta : '' }
+  public async editarIntegrante ( data : IntegranteCreationAttributes, sequelize : Sequelize.Sequelize, transaction ?: Sequelize.Transaction ) 
+  : Promise<IntegranteAttributes> {
+    let salida : IntegranteAttributes = { nroDoc : '', codigoPropuesta : '' , createdAt : new Date(), updatedAt : new Date() }
     
 
     const iIntegrante = await Integrante.initModel(sequelize).findOne( { 
@@ -162,10 +163,10 @@ export class Propuesta extends Model<PropuestaAttributes, PropuestaCreationAttri
     return salida;
   }
 
-  public async verIntegrantes ( sequelize : Sequelize.Sequelize ) 
-  : Promise<IntegranteCreationAttributes[]> {
+  public async verIntegrantes (sequelize : Sequelize.Sequelize, transaction ?: Sequelize.Transaction) 
+  : Promise<IntegranteAttributes[]> {
     
-    let salida : IntegranteCreationAttributes[] = [];
+    let salida : IntegranteAttributes[] = [];
 
     salida = await Integrante.initModel(sequelize).findAll({where : {
       codigoPropuesta : this.codigoPropuesta
@@ -176,7 +177,19 @@ export class Propuesta extends Model<PropuestaAttributes, PropuestaCreationAttri
 
   }
 
-  public async asignarRol ( data : { nroDoc : IntegrantePk , rol : RolPk }, sequelize : Sequelize.Sequelize, transaction : Sequelize.Transaction )
+  public async verIntegrante ( data : IntegranteId , sequelize : Sequelize.Sequelize, transaction ?: Sequelize.Transaction ) 
+  : Promise<IntegranteAttributes> {
+    let salida : IntegranteAttributes = { nroDoc : '', codigoPropuesta : '' , createdAt : new Date(), updatedAt : new Date() }
+
+    const iIntegrante = await Integrante.initModel(sequelize).findOne({ where : {nroDoc : data, codigoPropuesta : this.codigoPropuesta},transaction })
+
+    if(iIntegrante) {
+      salida = iIntegrante.dataValues;
+    }
+    return salida ;
+  }
+
+  public async asignarRol ( data : { nroDoc : IntegrantePk , rol : RolPk }, sequelize : Sequelize.Sequelize, transaction ?: Sequelize.Transaction )
   : Promise<boolean> {
     let salida = false;
 
@@ -196,7 +209,7 @@ export class Propuesta extends Model<PropuestaAttributes, PropuestaCreationAttri
   }
   // instituciones
 
-  public async altaInstitucion ( data : PropuestaInstitucionCreationAttributes , sequelize : Sequelize.Sequelize ) 
+  public async altaInstitucion ( data : PropuestaInstitucionCreationAttributes , sequelize : Sequelize.Sequelize, transaction ?: Sequelize.Transaction) 
   : Promise<PropuestaInstitucionCreationAttributes> {
 
     let salida : PropuestaInstitucionCreationAttributes = { idInstitucion : 0, codigoPropuesta : '' }
@@ -210,7 +223,7 @@ export class Propuesta extends Model<PropuestaAttributes, PropuestaCreationAttri
 
   }
 
-  public async bajaInstitucion ( data : PropuestaInstitucionPk, sequelize : Sequelize.Sequelize ) 
+  public async bajaInstitucion ( data : PropuestaInstitucionId, sequelize : Sequelize.Sequelize, transaction ?: Sequelize.Transaction) 
   : Promise<boolean> {
 
     let salida = false;
@@ -228,11 +241,60 @@ export class Propuesta extends Model<PropuestaAttributes, PropuestaCreationAttri
 
   }
 
+  public async verInstitucion ( data : PropuestaInstitucionId, sequelize : Sequelize.Sequelize, transaction ?: Sequelize.Transaction)
+  : Promise<PropuestaInstitucionAttributes>{
+    
+    let salida : PropuestaInstitucionAttributes = { idInstitucion : 0, codigoPropuesta : '', createdAt : new Date(), updatedAt : new Date() }
+
+    const iInstitucion = await PropuestaInstitucion.findOne({
+      where : {
+        idInstitucion : data,
+        codigoPropuesta : this.codigoPropuesta
+      },
+      transaction
+    });
+
+    if(iInstitucion) {
+      salida = iInstitucion.dataValues;
+    }
+
+    return salida;
+  }
   // planificacion
 
+  public async altaObjetivoEspecifico ( data : ObjetivoEspecificoCreationAttributes , sequelize : Sequelize.Sequelize, transaction ?: Sequelize.Transaction )
+  :Promise<ObjetivoEspecificoAttributes> {
 
+    let salida : ObjetivoEspecificoAttributes = { 
+      idObjetivoEspecifico : 0, 
+      codigoPropuesta : '' , 
+      createdAt : new Date(), 
+      updatedAt : new Date()
+    };
+
+    const iObjetivo = await ObjetivoEspecifico.initModel(sequelize).create(data,{transaction});
+
+    salida = iObjetivo.dataValues;
+
+    return salida;
+  }
+
+  public async altaActividadObjetivoEspecifico ( data : ActividadObjetivoEspecificoCreationAttributes , sequelize : Sequelize.Sequelize , transaction ?: Sequelize.Transaction)
+  : Promise<ActividadObjetivoEspecificoAttributes> {
+
+    let salida : ActividadObjetivoEspecificoAttributes = { idObjetivoEspecifico : 0, idActividadObjetivoEspecifico : 0, createdAt : new Date(), updatedAt : new Date() }
+
+    const iObjetivo = await ObjetivoEspecifico.findByPk(data.idObjetivoEspecifico);
+
+    if(iObjetivo){
+      salida = await iObjetivo.altaActividad( data,sequelize,transaction );
+    }
+
+    return salida;
+  }
   // select multiples
 
+  
 
   //--------------------------------------------------------------------
 
