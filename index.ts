@@ -5,6 +5,8 @@ import morgan from 'morgan';
 import fs from 'fs';
 import RouterPropuesta from './routes/propuesta';
 import RouterPropuestas from './routes/propuestas';
+import RouterEvaluacion from './routes/evaluacion';
+import RouterEvaluaciones from './routes/evaluaciones';
 
 
 
@@ -19,6 +21,8 @@ app.use(express.static(path.join(__dirname,'public')));
 
 app.use('/propuesta',RouterPropuesta);
 app.use('/propuestas',RouterPropuestas);
+app.use('/evaluacion',RouterEvaluacion);
+app.use('/evaluaciones',RouterEvaluaciones);
 
 app.listen( process.env.PORT , async()=>{
     console.log(' propuestas ON..');

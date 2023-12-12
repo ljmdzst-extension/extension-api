@@ -1,7 +1,8 @@
 import * as Sequelize from 'sequelize';
 import { DataTypes, Model, Optional } from 'sequelize';
 import type { Propuesta, PropuestaId } from './Propuesta';
-import type { RolIntegrante, RolIntegranteId } from './RolIntegrante';
+import { RolIntegrante, RolIntegranteId } from './RolIntegrante';
+import { Rol, RolPk } from './Rol';
 
 export interface IntegranteAttributes {
   nroDoc: string;
@@ -40,6 +41,26 @@ export class Integrante extends Model<IntegranteAttributes, IntegranteCreationAt
   createdAt!: Date;
   updatedAt!: Date;
   deletedAt?: Date;
+
+  public async asignarRol( rol : RolPk, sequelize : Sequelize.Sequelize, transaction : Sequelize.Transaction )
+  :Promise<boolean> {
+
+    let salida = false;
+
+    const iRol = await Rol.initModel(sequelize).findByPk(rol);
+
+    if(iRol){
+      await RolIntegrante.initModel(sequelize).findOrCreate({
+        defaults : {
+          idRolIntegrante : rol,
+          nroDoc : this.nroDoc
+        }
+      })
+    }
+
+    return salida;
+
+  } 
 
   static initModel(sequelize: Sequelize.Sequelize): typeof Integrante {
     return Integrante.init({

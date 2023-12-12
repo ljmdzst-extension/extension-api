@@ -1,16 +1,12 @@
 import * as Sequelize from 'sequelize';
 import { DataTypes, Model, Optional } from 'sequelize';
-import type { Evaluacion, EvaluacionId } from './Evaluacion';
-import type { Geolocalizacion, GeolocalizacionId } from './Geolocalizacion';
-import type { Integrante, IntegranteId } from './Integrante';
-import type { PropuestaCapacitacion, PropuestaCapacitacionId } from './PropuestaCapacitacion';
-import type { PropuestaInstitucion, PropuestaInstitucionId } from './PropuestaInstitucion';
-import type { PropuestaLineaTematica, PropuestaLineaTematicaId } from './PropuestaLineaTematica';
-import type { PropuestaPalabraClave, PropuestaPalabraClaveId } from './PropuestaPalabraClave';
-import type { PropuestaPrevia, PropuestaPreviaId } from './PropuestaPrevia';
-import type { PropuestaProgramaExtension, PropuestaProgramaExtensionId } from './PropuestaProgramaExtension';
-import type { PropuestaRelacionada, PropuestaRelacionadaId } from './PropuestaRelacionada';
-import type { TipoEvaluacion, TipoEvaluacionId } from './TipoEvaluacion';
+import { Integrante, IntegranteCreationAttributes, IntegranteId, IntegrantePk } from './Integrante';
+import { LOG_TRANSACTION } from '../types/base';
+import { PropuestaInstitucion, PropuestaInstitucionCreationAttributes, PropuestaInstitucionPk } from './PropuestaInstitucion';
+import fetch from 'node-fetch';
+import { RolPk } from './Rol';
+import { ObjetivoEspecificoCreationAttributes } from './ObjetivoEspecifico';
+
 
 export interface PropuestaAttributes {
   codigoPropuesta: string;
@@ -93,6 +89,152 @@ export class Propuesta extends Model<PropuestaAttributes, PropuestaCreationAttri
   createdAt!: Date;
   updatedAt!: Date;
   deletedAt?: Date;
+
+
+  // propuestas relacionadas
+
+  
+  // propuestas previas
+
+
+  // integrantes
+
+  public async altaIntegrante ( data : IntegranteCreationAttributes, sequelize : Sequelize.Sequelize, transaction : Sequelize.Transaction  ) 
+  : Promise<IntegranteCreationAttributes> {
+
+    let salida : IntegranteCreationAttributes = { nroDoc : '', codigoPropuesta : '' }
+
+    const [iIntegrante, creado ] = await Integrante.initModel(sequelize).findOrCreate({
+      defaults : data , 
+      where : {
+        nroDoc : data.nroDoc , 
+        codigoPropuesta : this.codigoPropuesta
+      },
+      paranoid: false,
+      transaction
+    });
+
+    if(!creado) {
+      await iIntegrante.restore({transaction});
+      await iIntegrante.update({...data},{transaction});
+    }
+
+    salida = iIntegrante.dataValues;
+
+    return salida;
+
+  }
+
+  public async bajaIntegrante ( data : IntegrantePk , sequelize : Sequelize.Sequelize, transaction : Sequelize.Transaction ) 
+  : Promise<boolean> {
+    let salida : boolean = false;
+
+    const cantRegistros = await Integrante.initModel(sequelize).destroy({where : {nroDoc : data },transaction});
+
+    if(cantRegistros) {
+
+      salida = true;
+
+    }
+
+    return salida;
+  }
+
+  public async editarIntegrante ( data : IntegranteCreationAttributes, sequelize : Sequelize.Sequelize, transaction : Sequelize.Transaction ) 
+  : Promise<IntegranteCreationAttributes> {
+    let salida : IntegranteCreationAttributes = { nroDoc : '', codigoPropuesta : '' }
+    
+
+    const iIntegrante = await Integrante.initModel(sequelize).findOne( { 
+      where : {
+        nroDoc : data.nroDoc,
+        codigoPropuesta : this.codigoPropuesta
+      },
+      transaction  
+    } );
+
+    if(!iIntegrante ) throw { status : 400 , message : 'No existe un usuario con ese documento.' }
+
+    await iIntegrante.update(data,{transaction});
+    
+    salida = iIntegrante.dataValues;
+    
+    return salida;
+  }
+
+  public async verIntegrantes ( sequelize : Sequelize.Sequelize ) 
+  : Promise<IntegranteCreationAttributes[]> {
+    
+    let salida : IntegranteCreationAttributes[] = [];
+
+    salida = await Integrante.initModel(sequelize).findAll({where : {
+      codigoPropuesta : this.codigoPropuesta
+    }})
+    
+    
+    return salida;
+
+  }
+
+  public async asignarRol ( data : { nroDoc : IntegrantePk , rol : RolPk }, sequelize : Sequelize.Sequelize, transaction : Sequelize.Transaction )
+  : Promise<boolean> {
+    let salida = false;
+
+    const iIntegrante = await Integrante.initModel(sequelize).findOne({ 
+      where : {
+        nroDoc : data.nroDoc,
+        codigoPropuesta : this.codigoPropuesta
+      },
+      transaction 
+    });
+
+    if(iIntegrante){
+      // salida = await iIntegrante.asignarRol( data.rol, sequelize, transaction )
+    }
+
+    return salida;
+  }
+  // instituciones
+
+  public async altaInstitucion ( data : PropuestaInstitucionCreationAttributes , sequelize : Sequelize.Sequelize ) 
+  : Promise<PropuestaInstitucionCreationAttributes> {
+
+    let salida : PropuestaInstitucionCreationAttributes = { idInstitucion : 0, codigoPropuesta : '' }
+
+    const iInstitucion = await PropuestaInstitucion.initModel(sequelize).create(data);
+
+    salida = iInstitucion.dataValues;
+    
+
+    return salida;
+
+  }
+
+  public async bajaInstitucion ( data : PropuestaInstitucionPk, sequelize : Sequelize.Sequelize ) 
+  : Promise<boolean> {
+
+    let salida = false;
+
+    const cantEliminados = await PropuestaInstitucion.initModel(sequelize).destroy({where : { 
+      idInstitucion : data , 
+      codigoPropuesta : this.codigoPropuesta
+    }});
+
+    if(cantEliminados > 0 ) {
+      salida = true;
+    }
+
+    return salida;
+
+  }
+
+  // planificacion
+
+
+  // select multiples
+
+
+  //--------------------------------------------------------------------
 
   static initModel(sequelize: Sequelize.Sequelize): typeof Propuesta {
     return Propuesta.init({
