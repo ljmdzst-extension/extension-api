@@ -10,7 +10,7 @@ import RouterPropuesta from './routes/propuesta';
 import RouterPropuestas from './routes/propuestas';
 import RouterEvaluacion from './routes/evaluacion';
 import RouterEvaluaciones from './routes/evaluaciones';
-import { accesLogStream } from './config/logsConfig';
+import { accesLogStream, combinedLogStream } from './config/logsConfig';
 import sequelizePropuestas from './config/dbConfig';
 
 
@@ -18,7 +18,9 @@ import sequelizePropuestas from './config/dbConfig';
 const app = express();
 
 app.use(cors());
+
 app.use(morgan('dev',{stream : accesLogStream}));
+app.use(morgan('combined',{stream : combinedLogStream}));
 app.use(express.json());
 app.use(express.static(path.join(__dirname,'public')));
 

@@ -1,5 +1,5 @@
 import sequelize from 'sequelize';
-import { logger } from './logsConfig';
+import  logger  from './logsConfig';
 
 const sequelizePropuestas = new sequelize.Sequelize({
     host : process.env.DB_HOST,
