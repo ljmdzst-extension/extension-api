@@ -72,6 +72,7 @@ export class Propuesta extends Model<PropuestaAttributes, PropuestaCreationAttri
   idUsuario!: string;
   titulo!: string;
   modalidad!: string;
+  
   duracion?: string;
   categoriaEquipo?: string;
   integralidad?: string;
@@ -101,12 +102,14 @@ export class Propuesta extends Model<PropuestaAttributes, PropuestaCreationAttri
   ipProblematica?: string;
   planificacionFinalidad?: string;
   planificacionObjetivoGeneral?: string;
+  
   createdAt!: Date;
   updatedAt!: Date;
   deletedAt?: Date;
 
 
   // propuestas relacionadas
+
   public async altaPropuestaRelacionada (  data : PropuestaRelacionadaCreationAttributes, sequelize : Sequelize.Sequelize, transaction ?: Sequelize.Transaction )
   : Promise<PropuestaRelacionadaAttributes> {
 
@@ -124,6 +127,7 @@ export class Propuesta extends Model<PropuestaAttributes, PropuestaCreationAttri
   }
   
   // propuestas previas
+
   public async altaPropuestaPrevia (  data : PropuestaPreviaCreationAttributes, sequelize : Sequelize.Sequelize, transaction ?: Sequelize.Transaction )
   : Promise<PropuestaPreviaAttributes> {
 
@@ -142,6 +146,7 @@ export class Propuesta extends Model<PropuestaAttributes, PropuestaCreationAttri
   }
 
   // integrantes
+
   public async altaIntegrante ( data : IntegranteCreationAttributes, sequelize : Sequelize.Sequelize, transaction ?: Sequelize.Transaction  ) 
   : Promise<IntegranteCreationAttributes> {
 
@@ -306,6 +311,7 @@ export class Propuesta extends Model<PropuestaAttributes, PropuestaCreationAttri
     }
     return salida;
   }
+
   // planificacion
 
   public async altaObjetivoEspecifico ( data : ObjetivoEspecificoCreationAttributes , sequelize : Sequelize.Sequelize, transaction ?: Sequelize.Transaction )
@@ -387,6 +393,7 @@ export class Propuesta extends Model<PropuestaAttributes, PropuestaCreationAttri
   }
 
   // mensajes puente
+
   public async altaActividadObjetivoEspecifico ( data : ActividadObjetivoEspecificoCreationAttributes , sequelize : Sequelize.Sequelize , transaction ?: Sequelize.Transaction)
   : Promise<ActividadObjetivoEspecificoAttributes> {
 
