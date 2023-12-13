@@ -66,6 +66,20 @@ export class ObjetivoEspecifico extends Model<ObjetivoEspecificoAttributes, Obje
     return salida;
   }
 
+  public async verActividades(sequelize : Sequelize.Sequelize, transaction ?: Sequelize.Transaction)
+  : Promise<ActividadObjetivoEspecificoAttributes[]> {
+    let salida : ActividadObjetivoEspecificoAttributes[] = [];
+
+    salida = await ActividadObjetivoEspecifico.initModel(sequelize).findAll({
+      where : {
+        idObjetivoEspecifico : this.idObjetivoEspecifico
+      },
+      transaction
+    })
+
+    return salida;
+  }
+
   static initModel(sequelize: Sequelize.Sequelize): typeof ObjetivoEspecifico {
     return ObjetivoEspecifico.init({
     idObjetivoEspecifico: {
