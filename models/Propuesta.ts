@@ -1,21 +1,21 @@
 import * as Sequelize from 'sequelize';
 import { DataTypes, Model, Optional } from 'sequelize';
-import { Integrante, IntegranteAttributes, IntegranteCreationAttributes, IntegranteId, IntegrantePk } from './Integrante';
-import { LOG_TRANSACTION } from '../types/base';
+import { Integrante, IntegranteAttributes, IntegranteCreationAttributes, IntegranteId } from './Integrante';
 import { 
   PropuestaInstitucion, 
   PropuestaInstitucionAttributes, 
   PropuestaInstitucionCreationAttributes, 
-  PropuestaInstitucionId, 
-  PropuestaInstitucionPk 
-} from './PropuestaInstitucion';
-import fetch from 'node-fetch';
-import { RolId, RolPk } from './Rol';
+  PropuestaInstitucionId} from './PropuestaInstitucion';
+import { RolId } from './Rol';
 import { ObjetivoEspecifico, ObjetivoEspecificoAttributes, ObjetivoEspecificoCreationAttributes } from './ObjetivoEspecifico';
 import { ActividadObjetivoEspecificoAttributes, ActividadObjetivoEspecificoCreationAttributes } from './ActividadObjetivoEspecifico';
 import { PropuestaRelacionada, PropuestaRelacionadaAttributes, PropuestaRelacionadaCreationAttributes } from './PropuestaRelacionada';
 import { PropuestaPrevia, PropuestaPreviaAttributes, PropuestaPreviaCreationAttributes } from './PropuestaPrevia';
-import { PropuestaProgramaExtension, PropuestaProgramaExtensionAttributes, PropuestaProgramaExtensionId } from './PropuestaProgramaExtension';
+import { PropuestaProgramaExtension, PropuestaProgramaExtensionAttributes } from './PropuestaProgramaExtension';
+import { PropuestaLineaTematica, PropuestaLineaTematicaAttributes } from './PropuestaLineaTematica';
+import { PropuestaCapacitacion, PropuestaCapacitacionAttributes } from './PropuestaCapacitacion';
+import { PropuestaPalabraClave, PropuestaPalabraClaveAttributes } from './PropuestaPalabraClave';
+import { Geolocalizacion, GeolocalizacionAttributes } from './Geolocalizacion';
 
 
 export interface PropuestaAttributes {
@@ -58,7 +58,7 @@ export interface PropuestaAttributes {
 }
 
 export type PlanificacionAttributes = {
-  lObjetivosEspecificos : (ObjetivoEspecificoAttributes & {lActividadesObjetivo : ActividadObjetivoEspecificoAttributes[] })[]
+  lObjetivosEspecificos : (ObjetivoEspecificoAttributes & {lActividades : ActividadObjetivoEspecificoAttributes[] })[]
 }
 
 export type PropuestaPk = "codigoPropuesta";
@@ -113,7 +113,7 @@ export class Propuesta extends Model<PropuestaAttributes, PropuestaCreationAttri
   public async altaPropuestaRelacionada (  data : PropuestaRelacionadaCreationAttributes, sequelize : Sequelize.Sequelize, transaction ?: Sequelize.Transaction )
   : Promise<PropuestaRelacionadaAttributes> {
 
-    const [iPropRelacionada , creada] = await PropuestaRelacionada.findOrCreate({
+    const [iPropRelacionada , creada] = await PropuestaRelacionada.initModel(sequelize).findOrCreate({
         defaults : data,
         where : data,
         paranoid : false,
@@ -125,13 +125,16 @@ export class Propuesta extends Model<PropuestaAttributes, PropuestaCreationAttri
 
     return iPropRelacionada.dataValues;
   }
-  
+  public async verPropuestasRelacionadas (sequelize : Sequelize.Sequelize, transaction ?: Sequelize.Transaction )
+  : Promise<PropuestaRelacionadaAttributes[]>{
+    return await PropuestaRelacionada.initModel(sequelize).findAll({ where : { codigoPropuesta : this.codigoPropuesta}, transaction })
+  }
   // propuestas previas
 
   public async altaPropuestaPrevia (  data : PropuestaPreviaCreationAttributes, sequelize : Sequelize.Sequelize, transaction ?: Sequelize.Transaction )
   : Promise<PropuestaPreviaAttributes> {
 
-    const [iPropPrevia, creada] = await PropuestaPrevia.findOrCreate({
+    const [iPropPrevia, creada] = await PropuestaPrevia.initModel(sequelize).findOrCreate({
         defaults : data,
         where : data,
         paranoid : false,
@@ -144,7 +147,10 @@ export class Propuesta extends Model<PropuestaAttributes, PropuestaCreationAttri
 
     return iPropPrevia.dataValues;
   }
-
+  public async verPropuestasPrevias (sequelize : Sequelize.Sequelize, transaction ?: Sequelize.Transaction )
+  : Promise<PropuestaPreviaAttributes[]>{
+    return await PropuestaPrevia.initModel(sequelize).findAll({ where : { codigoPropuesta : this.codigoPropuesta}, transaction })
+  }
   // integrantes
 
   public async altaIntegrante ( data : IntegranteCreationAttributes, sequelize : Sequelize.Sequelize, transaction ?: Sequelize.Transaction  ) 
@@ -214,9 +220,9 @@ export class Propuesta extends Model<PropuestaAttributes, PropuestaCreationAttri
   : Promise<IntegranteAttributes[]> {
     
     let salida : IntegranteAttributes[] = [];
-    const { createdAt,updatedAt,deletedAt,...atributosLista } = Integrante.prototype.dataValues;
+    // const { createdAt,updatedAt,deletedAt,...atributosLista } = Integrante.prototype.dataValues;
     salida = await Integrante.initModel(sequelize).findAll({
-      attributes : Object.keys(atributosLista),
+      // attributes : Object.keys(atributosLista),
       where : {
         codigoPropuesta : this.codigoPropuesta
       },
@@ -261,10 +267,13 @@ export class Propuesta extends Model<PropuestaAttributes, PropuestaCreationAttri
 
     let salida = false;
 
-    const cantEliminados = await PropuestaInstitucion.initModel(sequelize).destroy({where : { 
-      idInstitucion : data , 
-      codigoPropuesta : this.codigoPropuesta
-    }});
+    const cantEliminados = await PropuestaInstitucion.initModel(sequelize).destroy({
+      where : { 
+        idInstitucion : data , 
+        codigoPropuesta : this.codigoPropuesta
+      },
+      transaction
+    });
 
     if(cantEliminados > 0 ) {
       salida = true;
@@ -298,9 +307,9 @@ export class Propuesta extends Model<PropuestaAttributes, PropuestaCreationAttri
   : Promise<PropuestaInstitucionAttributes[]> {
     let salida : PropuestaInstitucionAttributes[] = [];
 
-    const { createdAt,updatedAt,deletedAt,...atributosLista } = PropuestaInstitucion.prototype.dataValues;
+    // const { createdAt,updatedAt,deletedAt,...atributosLista } = PropuestaInstitucion.prototype.dataValues;
     const listaInstituciones = await PropuestaInstitucion.initModel(sequelize).findAll({
-      attributes : Object.keys(atributosLista),
+      // attributes : Object.keys(atributosLista),
       where : {
         codigoPropuesta : this.codigoPropuesta
       },
@@ -338,20 +347,24 @@ export class Propuesta extends Model<PropuestaAttributes, PropuestaCreationAttri
       lObjetivosEspecificos : []
     }
   
-    const lObjetivos = await ObjetivoEspecifico.findAll({
+    const lObjetivos = await ObjetivoEspecifico.initModel(sequelize).findAll({
       where : { 
         codigoPropuesta : this.codigoPropuesta 
       }, 
       transaction
     });
     
-    salida.lObjetivosEspecificos = await Promise.all(
-      lObjetivos.map( async iObjetivo =>({
-        ...iObjetivo.dataValues,
-        lActividadesObjetivo : await iObjetivo.verActividades(sequelize,transaction)
-      }))
-  
-    )
+    if(lObjetivos.length) {
+      salida.lObjetivosEspecificos = await Promise.all(
+        lObjetivos.map( async iObjetivo =>({
+          ...iObjetivo.dataValues,
+          lActividades : await iObjetivo.verActividades(sequelize,transaction)
+        }))
+    
+      )
+    }
+
+   
 
     return salida;
 
@@ -364,16 +377,17 @@ export class Propuesta extends Model<PropuestaAttributes, PropuestaCreationAttri
 
     let salida : PropuestaProgramaExtensionAttributes[] = [];
 
-    await PropuestaProgramaExtension.destroy({
+    await PropuestaProgramaExtension.initModel(sequelize).destroy({
       where : {
         codigoPropuesta : this.codigoPropuesta,
         idProgramaExtension : {
           [Sequelize.Op.not] : data
         }
-      }
+      },
+      transaction
     });
 
-    await PropuestaProgramaExtension.bulkCreate(
+    await PropuestaProgramaExtension.initModel(sequelize).bulkCreate(
       data.map( idProgExt => ({
         idProgramaExtension : idProgExt, 
         codigoPropuesta : this.codigoPropuesta, 
@@ -382,7 +396,8 @@ export class Propuesta extends Model<PropuestaAttributes, PropuestaCreationAttri
         deletedAt : undefined
       }) ),
       {
-        updateOnDuplicate : ['updatedAt','deletedAt']
+        updateOnDuplicate : ['updatedAt','deletedAt'],
+        transaction
       }
     )
 
@@ -391,6 +406,28 @@ export class Propuesta extends Model<PropuestaAttributes, PropuestaCreationAttri
     return salida;
 
   }
+
+  public async verProgramasExtension ( sequelize : Sequelize.Sequelize, transaction ?: Sequelize.Transaction )
+  :Promise< PropuestaProgramaExtensionAttributes[]> {
+    return await PropuestaProgramaExtension.initModel(sequelize).findAll({ where : { codigoPropuesta : this.codigoPropuesta }, transaction});
+  }
+  public async verLineasTematicas ( sequelize : Sequelize.Sequelize, transaction ?: Sequelize.Transaction )
+  :Promise< PropuestaLineaTematicaAttributes[]> {
+    return await PropuestaLineaTematica.initModel(sequelize).findAll({ where : { codigoPropuesta : this.codigoPropuesta }, transaction});
+  }
+  public async verCapacitaciones ( sequelize : Sequelize.Sequelize, transaction ?: Sequelize.Transaction )
+  :Promise< PropuestaCapacitacionAttributes[]> {
+    return await PropuestaCapacitacion.initModel(sequelize).findAll({ where : { codigoPropuesta : this.codigoPropuesta }, transaction});
+  }
+  public async verPalabrasClave ( sequelize : Sequelize.Sequelize, transaction ?: Sequelize.Transaction )
+  :Promise< PropuestaPalabraClaveAttributes[]> {
+    return await PropuestaPalabraClave.initModel(sequelize).findAll({ where : { codigoPropuesta : this.codigoPropuesta }, transaction});
+  }
+  public async verGeolocalizaciones ( sequelize : Sequelize.Sequelize, transaction ?: Sequelize.Transaction )
+  :Promise< GeolocalizacionAttributes[]> {
+    return await Geolocalizacion.initModel(sequelize).findAll({ where : { codigoPropuesta : this.codigoPropuesta }, transaction});
+  }
+  
 
   // mensajes puente
 
@@ -427,6 +464,7 @@ export class Propuesta extends Model<PropuestaAttributes, PropuestaCreationAttri
     return salida;
   }
   
+
   //--------------------------------------------------------------------
 
   static initModel(sequelize: Sequelize.Sequelize): typeof Propuesta {

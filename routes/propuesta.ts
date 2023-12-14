@@ -1,11 +1,11 @@
 import express from 'express';
-import { usrAuth } from '../middlewares/auth';
+import { verPropuesta } from '../controllers/propuesta';
 
 const RouterPropuesta = express.Router();
 
-RouterPropuesta.get('/:idPropuesta',/**usrAuth ,controllers/propuesta.verPropuesta */);
+RouterPropuesta.get('/:codigoPropuesta',verPropuesta);
 RouterPropuesta.post('/',/**usrAuth ,controllers/propuesta.crearPropuesta */);
-RouterPropuesta.put('/:idPropuesta',/**usrAuth ,controllers/propuesta.editarPropuesta */);
-RouterPropuesta.delete('/:idPropuesta',/**usrAuth ,controllers/propuesta.bajaPropuesta */);
+RouterPropuesta.put('/:codigoPropuesta',/**usrAuth ,controllers/propuesta.editarPropuesta */);
+RouterPropuesta.delete('/:codigoPropuesta',/**usrAuth ,controllers/propuesta.bajaPropuesta */);
 
 export default RouterPropuesta;
