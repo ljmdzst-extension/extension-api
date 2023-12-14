@@ -1,10 +1,10 @@
 import * as Sequelize from 'sequelize';
 import { DataTypes, Model, Optional } from 'sequelize';
-import type { ActividadObjetivoEspecifico, ActividadObjetivoEspecificoId } from './ActividadObjetivoEspecifico';
+import { ActividadObjetivoEspecifico, ActividadObjetivoEspecificoAttributes, ActividadObjetivoEspecificoCreationAttributes, ActividadObjetivoEspecificoId } from './ActividadObjetivoEspecifico';
 
 export interface ObjetivoEspecificoAttributes {
   idObjetivoEspecifico: number;
-  idPropuesta: number;
+  codigoPropuesta: string;
   desc?: string;
   resEsp?: string;
   createdAt: Date;
@@ -19,25 +19,66 @@ export type ObjetivoEspecificoCreationAttributes = Optional<ObjetivoEspecificoAt
 
 export class ObjetivoEspecifico extends Model<ObjetivoEspecificoAttributes, ObjetivoEspecificoCreationAttributes> implements ObjetivoEspecificoAttributes {
   idObjetivoEspecifico!: number;
-  idPropuesta!: number;
+  codigoPropuesta!: string;
   desc?: string;
   resEsp?: string;
   createdAt!: Date;
   updatedAt!: Date;
   deletedAt?: Date;
 
-  // ObjetivoEspecifico hasMany ActividadObjetivoEspecifico via idObjetivoEspecifico
-  actividadObjetivoEspecificos!: ActividadObjetivoEspecifico[];
-  getActividadObjetivoEspecificos!: Sequelize.HasManyGetAssociationsMixin<ActividadObjetivoEspecifico>;
-  setActividadObjetivoEspecificos!: Sequelize.HasManySetAssociationsMixin<ActividadObjetivoEspecifico, ActividadObjetivoEspecificoId>;
-  addActividadObjetivoEspecifico!: Sequelize.HasManyAddAssociationMixin<ActividadObjetivoEspecifico, ActividadObjetivoEspecificoId>;
-  addActividadObjetivoEspecificos!: Sequelize.HasManyAddAssociationsMixin<ActividadObjetivoEspecifico, ActividadObjetivoEspecificoId>;
-  createActividadObjetivoEspecifico!: Sequelize.HasManyCreateAssociationMixin<ActividadObjetivoEspecifico>;
-  removeActividadObjetivoEspecifico!: Sequelize.HasManyRemoveAssociationMixin<ActividadObjetivoEspecifico, ActividadObjetivoEspecificoId>;
-  removeActividadObjetivoEspecificos!: Sequelize.HasManyRemoveAssociationsMixin<ActividadObjetivoEspecifico, ActividadObjetivoEspecificoId>;
-  hasActividadObjetivoEspecifico!: Sequelize.HasManyHasAssociationMixin<ActividadObjetivoEspecifico, ActividadObjetivoEspecificoId>;
-  hasActividadObjetivoEspecificos!: Sequelize.HasManyHasAssociationsMixin<ActividadObjetivoEspecifico, ActividadObjetivoEspecificoId>;
-  countActividadObjetivoEspecificos!: Sequelize.HasManyCountAssociationsMixin;
+
+  public async altaActividad ( data : ActividadObjetivoEspecificoCreationAttributes, sequelize : Sequelize.Sequelize, transaction ?: Sequelize.Transaction )
+  : Promise<ActividadObjetivoEspecificoAttributes> {
+    return (await ActividadObjetivoEspecifico.initModel(sequelize).create( data , {transaction})).dataValues;
+  }
+
+  public async bajaActividad ( data : ActividadObjetivoEspecificoId, sequelize : Sequelize.Sequelize, transaction ?: Sequelize.Transaction)
+  : Promise<boolean>{
+    let salida = false;
+    const cantEliminados = await ActividadObjetivoEspecifico.initModel(sequelize).destroy( {
+      where : { 
+        idActividadObjetivoEspecifico: data,
+        idObjetivoEspecifico : this.idObjetivoEspecifico
+      },
+      transaction
+    } );
+    salida = cantEliminados > 0;
+    return salida;
+  }
+
+  public async editarActividad ( data : ActividadObjetivoEspecificoCreationAttributes ,  sequelize : Sequelize.Sequelize, transaction ?: Sequelize.Transaction)
+  : Promise<ActividadObjetivoEspecificoAttributes> {
+    let salida : ActividadObjetivoEspecificoAttributes = {idActividadObjetivoEspecifico : 0, idObjetivoEspecifico : 0, createdAt : new Date(), updatedAt : new Date()}
+    const iActividad = await ActividadObjetivoEspecifico.initModel(sequelize).findOne({
+      where : {
+        idActividadObjetivoEspecifico : data.idActividadObjetivoEspecifico,
+        idObjetivoEspecifico : this.idObjetivoEspecifico
+      },
+      transaction
+    })
+
+    if(!iActividad) console.log(`actividad ${data.idActividadObjetivoEspecifico} no encontrada , salteando ..`);
+
+    if(iActividad){
+      await iActividad.update(data,{transaction});
+      salida = iActividad.dataValues;
+    }
+    return salida;
+  }
+
+  public async verActividades(sequelize : Sequelize.Sequelize, transaction ?: Sequelize.Transaction)
+  : Promise<ActividadObjetivoEspecificoAttributes[]> {
+    let salida : ActividadObjetivoEspecificoAttributes[] = [];
+
+    salida = await ActividadObjetivoEspecifico.initModel(sequelize).findAll({
+      where : {
+        idObjetivoEspecifico : this.idObjetivoEspecifico
+      },
+      transaction
+    })
+
+    return salida;
+  }
 
   static initModel(sequelize: Sequelize.Sequelize): typeof ObjetivoEspecifico {
     return ObjetivoEspecifico.init({
@@ -46,8 +87,8 @@ export class ObjetivoEspecifico extends Model<ObjetivoEspecificoAttributes, Obje
       allowNull: false,
       primaryKey: true
     },
-    idPropuesta: {
-      type: DataTypes.INTEGER,
+    codigoPropuesta: {
+      type: DataTypes.STRING(255),
       allowNull: false
     },
     desc: {
