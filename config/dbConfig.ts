@@ -7,7 +7,7 @@ const sequelizePropuestas = new sequelize.Sequelize({
     password : process.env.DB_PASS,
     port : Number(process.env.DB_PORT) || 3306,
     database : process.env.DB_NAME,
-    dialect : 'mariadb',
+    dialect : 'mysql',
     logging : process.env.NODE_ENV === 'development' ? msg => logger.debug(msg) : undefined
 });
 

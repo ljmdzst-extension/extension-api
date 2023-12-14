@@ -4,7 +4,9 @@ import winston from 'winston';
 
 export const accesLogStream = fs.createWriteStream(path.join(__dirname,'../logs/access.log'),{flags : 'a'});
 export const combinedLogStream = fs.createWriteStream(path.join(__dirname,'../logs/combined.log'),{flags : 'a'});
-export default winston.createLogger({
+
+
+const logger = winston.createLogger({
     level: 'info',
     format: winston.format.json(),
     defaultMeta: { service: 'user-service' },
@@ -18,3 +20,14 @@ export default winston.createLogger({
       new winston.transports.File({filename : 'logs/acces.log', level : 'http'})
     ],
   });
+
+// If we're not in production then log to the `console` with the format:
+// `${info.level}: ${info.message} JSON.stringify({ ...rest }) `
+//
+if (process.env.NODE_ENV !== 'production') {
+  logger.add(new winston.transports.Console({
+    format: winston.format.simple(),
+  }));
+}
+
+export default logger;
