@@ -16,6 +16,8 @@ import { PropuestaLineaTematica, PropuestaLineaTematicaAttributes } from './Prop
 import { PropuestaCapacitacion, PropuestaCapacitacionAttributes } from './PropuestaCapacitacion';
 import { PropuestaPalabraClave, PropuestaPalabraClaveAttributes } from './PropuestaPalabraClave';
 import { Geolocalizacion, GeolocalizacionAttributes } from './Geolocalizacion';
+import fetch from 'node-fetch';
+import { Persona, PersonaAttributes } from './db_personas/Persona';
 
 
 export interface PropuestaAttributes {
@@ -217,12 +219,11 @@ export class Propuesta extends Model<PropuestaAttributes, PropuestaCreationAttri
   }
 
   public async verIntegrantes (sequelize : Sequelize.Sequelize, transaction ?: Sequelize.Transaction) 
-  : Promise<IntegranteAttributes[]> {
+  : Promise<(IntegranteAttributes & PersonaAttributes)[]> {
     
     let salida : IntegranteAttributes[] = [];
-    // const { createdAt,updatedAt,deletedAt,...atributosLista } = Integrante.prototype.dataValues;
     salida = await Integrante.initModel(sequelize).findAll({
-      // attributes : Object.keys(atributosLista),
+      attributes : ['nroDoc','codigoPropuesta'],
       where : {
         codigoPropuesta : this.codigoPropuesta
       },
@@ -235,13 +236,23 @@ export class Propuesta extends Model<PropuestaAttributes, PropuestaCreationAttri
   }
 
   public async verIntegrante ( data : IntegranteId , sequelize : Sequelize.Sequelize, transaction ?: Sequelize.Transaction ) 
-  : Promise<IntegranteAttributes> {
-    let salida : IntegranteAttributes = { nroDoc : '', codigoPropuesta : '' , createdAt : new Date(), updatedAt : new Date() }
+  : Promise<IntegranteAttributes & PersonaAttributes> {
+    let salida : IntegranteAttributes & PersonaAttributes = { 
+      nroDoc : '', 
+      tipoDoc : '',
+      codigoPropuesta : '' ,
+      ape : '',
+      nom : '',
+
+      createdAt : new Date(), 
+      updatedAt : new Date() 
+    }
 
     const iIntegrante = await Integrante.initModel(sequelize).findOne({ where : {nroDoc : data, codigoPropuesta : this.codigoPropuesta},transaction })
 
     if(iIntegrante) {
-      salida = iIntegrante.dataValues;
+      salida = {...salida , ...iIntegrante.dataValues};
+      salida = {...salida, ...(await Persona.initModel(sequelize).findByPk(iIntegrante.nroDoc,{transaction}))}
     }
     return salida ;
   }

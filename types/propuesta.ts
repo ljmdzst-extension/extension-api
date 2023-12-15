@@ -10,10 +10,11 @@ import { PropuestaPalabraClaveAttributes } from "../models/PropuestaPalabraClave
 import { PropuestaPreviaAttributes } from "../models/PropuestaPrevia";
 import { PropuestaProgramaExtensionAttributes } from "../models/PropuestaProgramaExtension";
 import { PropuestaRelacionadaAttributes } from "../models/PropuestaRelacionada";
+import { PersonaAttributes } from "../models/db_personas/Persona";
 
 export type TPropuesta = PropuestaAttributes & {
     lInstituciones : PropuestaInstitucionAttributes[],
-    lIntegrantes : IntegranteAttributes[],
+    lIntegrantes : (IntegranteAttributes & PersonaAttributes)[],
     planificacion : {
         lObjetivosEspecificos : (ObjetivoEspecificoAttributes & {lActividades : ActividadObjetivoEspecificoAttributes[]})[]
     },

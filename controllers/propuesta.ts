@@ -42,6 +42,7 @@ export const verPropuesta = async(req : typeof request , res : typeof response)=
         salida.lInstituciones = await iPropuesta.verInstituciones(sequelizePropuestas,transaction);
 
         salida.lIntegrantes = await iPropuesta.verIntegrantes(sequelizePropuestas,transaction);
+        
         salida.planificacion = await iPropuesta.verPlanificacion(sequelizePropuestas,transaction);
         salida.lPropuestasPrevias = await iPropuesta.verPropuestasPrevias(sequelizePropuestas,transaction);
         salida.lPropuestasRelacionadas = await iPropuesta.verPropuestasRelacionadas(sequelizePropuestas,transaction);
@@ -74,6 +75,9 @@ export const verPropuesta = async(req : typeof request , res : typeof response)=
 export const crearPropuesta = async(req : typeof request , res : typeof response)=>{
     try {
         /**... */
+        const data = req.body;
+
+
 
     } catch (error) {
         throw error;
