@@ -1,6 +1,5 @@
 import * as Sequelize from 'sequelize';
 import { DataTypes, Model, Optional } from 'sequelize';
-import type { Propuesta, PropuestaId } from './Propuesta';
 
 export interface PropuestaPreviaAttributes {
   codigoPropuesta: string;
@@ -28,20 +27,12 @@ export class PropuestaPrevia extends Model<PropuestaPreviaAttributes, PropuestaP
     codigoPropuesta: {
       type: DataTypes.STRING(255),
       allowNull: false,
-      primaryKey: true,
-      references: {
-        model: 'Propuesta',
-        key: 'codigoPropuesta'
-      }
+      primaryKey: true
     },
     codigoPropuestaPrevia: {
       type: DataTypes.STRING(255),
       allowNull: false,
-      primaryKey: true,
-      references: {
-        model: 'Propuesta',
-        key: 'codigoPropuesta'
-      }
+      primaryKey: true
     },
     createdAt : {
       type : DataTypes.DATE,

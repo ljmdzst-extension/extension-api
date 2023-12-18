@@ -3,7 +3,7 @@ import { DataTypes, Model, Optional } from 'sequelize';
 
 export interface PersonaAttributes {
   nroDoc: string;
-  tipoDoc: string;
+  tipoDoc: number;
   ape: string;
   nom: string;
   tel?: string;
@@ -24,7 +24,7 @@ export type PersonaCreationAttributes = Optional<PersonaAttributes, PersonaOptio
 
 export class Persona extends Model<PersonaAttributes, PersonaCreationAttributes> implements PersonaAttributes {
   nroDoc!: string;
-  tipoDoc!: string;
+  tipoDoc!: number;
   ape!: string;
   nom!: string;
   tel?: string;
@@ -46,7 +46,7 @@ export class Persona extends Model<PersonaAttributes, PersonaCreationAttributes>
       primaryKey: true
     },
     tipoDoc: {
-      type: DataTypes.STRING(3),
+      type: DataTypes.INTEGER,
       allowNull: false
     },
     ape: {
@@ -82,18 +82,6 @@ export class Persona extends Model<PersonaAttributes, PersonaCreationAttributes>
       type: DataTypes.STRING(255),
       allowNull: true,
       defaultValue: "Argentina"
-    },
-    createdAt : {
-      type : DataTypes.DATE,
-      allowNull : false
-    },
-    updatedAt : {
-      type : DataTypes.DATE,
-      allowNull : false
-    },
-    deletedAt : {
-      type : DataTypes.DATE,
-      allowNull : true
     }
   }, {
     sequelize,

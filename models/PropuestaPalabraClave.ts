@@ -1,6 +1,5 @@
 import * as Sequelize from 'sequelize';
 import { DataTypes, Model, Optional } from 'sequelize';
-import type { Propuesta, PropuestaId } from './Propuesta';
 
 export interface PropuestaPalabraClaveAttributes {
   codigoPropuesta: string;
@@ -22,31 +21,18 @@ export class PropuestaPalabraClave extends Model<PropuestaPalabraClaveAttributes
   updatedAt!: Date;
   deletedAt?: Date;
 
-  // PropuestaPalabraClave belongsTo Propuesta via codigoPropuesta
-  codigoPropuestaPropuestum!: Propuesta;
-  getCodigoPropuestaPropuestum!: Sequelize.BelongsToGetAssociationMixin<Propuesta>;
-  setCodigoPropuestaPropuestum!: Sequelize.BelongsToSetAssociationMixin<Propuesta, PropuestaId>;
-  createCodigoPropuestaPropuestum!: Sequelize.BelongsToCreateAssociationMixin<Propuesta>;
 
   static initModel(sequelize: Sequelize.Sequelize): typeof PropuestaPalabraClave {
     return PropuestaPalabraClave.init({
     codigoPropuesta: {
       type: DataTypes.STRING(255),
       allowNull: false,
-      primaryKey: true,
-      references: {
-        model: 'Propuesta',
-        key: 'codigoPropuesta'
-      }
+      primaryKey: true
     },
     idPalabraClave: {
       type: DataTypes.INTEGER,
       allowNull: false,
-      primaryKey: true,
-      references: {
-        model: 'PalabraClave',
-        key: 'idPalabraClave'
-      }
+      primaryKey: true
     },
     createdAt : {
       type : DataTypes.DATE,
@@ -76,17 +62,17 @@ export class PropuestaPalabraClave extends Model<PropuestaPalabraClaveAttributes
         ]
       },
       {
-        name: "fk_PropuestaPalabraClave_PalabraClave1_idx",
-        using: "BTREE",
-        fields: [
-          { name: "idPalabraClave" },
-        ]
-      },
-      {
         name: "fkPropuestaPalabraClavePropuesta1_idx",
         using: "BTREE",
         fields: [
           { name: "codigoPropuesta" },
+        ]
+      },
+      {
+        name: "fkPropuestaPalabraClavePalabraClave1_idx",
+        using: "BTREE",
+        fields: [
+          { name: "idPalabraClave" },
         ]
       },
     ]

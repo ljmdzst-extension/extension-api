@@ -1,7 +1,5 @@
 import * as Sequelize from 'sequelize';
 import { DataTypes, Model, Optional } from 'sequelize';
-import type { Evaluacion, EvaluacionId } from './Evaluacion';
-import type { Propuesta, PropuestaId } from './Propuesta';
 
 export interface TipoEvaluacionAttributes {
   idTipoEvaluacion: number;

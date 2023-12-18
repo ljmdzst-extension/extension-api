@@ -1,12 +1,10 @@
 import * as Sequelize from 'sequelize';
 import { DataTypes, Model, Optional } from 'sequelize';
-import type { EvaluacionItem, EvaluacionItemId } from './EvaluacionItem';
-import type { Propuesta, PropuestaId } from './Propuesta';
-import type { TipoEvaluacion, TipoEvaluacionId } from './TipoEvaluacion';
 
 export interface EvaluacionAttributes {
-  codigoPropuesta: string;
   idTipoEvaluacion: number;
+  idEvaluacion: number;
+  codigoPropuesta: string;
   observFinal?: string;
   valoracionFinal?: number;
   puntaje?: number;
@@ -15,14 +13,15 @@ export interface EvaluacionAttributes {
   updatedAt: Date;
 }
 
-export type EvaluacionPk = "codigoPropuesta" | "idTipoEvaluacion";
+export type EvaluacionPk = "idEvaluacion";
 export type EvaluacionId = Evaluacion[EvaluacionPk];
 export type EvaluacionOptionalAttributes = "observFinal" | "valoracionFinal" | "puntaje" | "createdAt" | "deletedAt" | "updatedAt";
 export type EvaluacionCreationAttributes = Optional<EvaluacionAttributes, EvaluacionOptionalAttributes>;
 
 export class Evaluacion extends Model<EvaluacionAttributes, EvaluacionCreationAttributes> implements EvaluacionAttributes {
-  codigoPropuesta!: string;
   idTipoEvaluacion!: number;
+  idEvaluacion!: number;
+  codigoPropuesta!: string;
   observFinal?: string;
   valoracionFinal?: number;
   puntaje?: number;
@@ -33,23 +32,18 @@ export class Evaluacion extends Model<EvaluacionAttributes, EvaluacionCreationAt
 
   static initModel(sequelize: Sequelize.Sequelize): typeof Evaluacion {
     return Evaluacion.init({
-    codigoPropuesta: {
-      type: DataTypes.STRING(255),
-      allowNull: false,
-      primaryKey: true,
-      references: {
-        model: 'Propuesta',
-        key: 'codigoPropuesta'
-      }
-    },
     idTipoEvaluacion: {
       type: DataTypes.INTEGER,
+      allowNull: false
+    },
+    idEvaluacion: {
+      type: DataTypes.INTEGER,
       allowNull: false,
-      primaryKey: true,
-      references: {
-        model: 'TipoEvaluacion',
-        key: 'idTipoEvaluacion'
-      }
+      primaryKey: true
+    },
+    codigoPropuesta: {
+      type: DataTypes.STRING(255),
+      allowNull: false
     },
     observFinal: {
       type: DataTypes.TEXT,
@@ -86,15 +80,7 @@ export class Evaluacion extends Model<EvaluacionAttributes, EvaluacionCreationAt
         unique: true,
         using: "BTREE",
         fields: [
-          { name: "codigoPropuesta" },
-          { name: "idTipoEvaluacion" },
-        ]
-      },
-      {
-        name: "fk_Evaluacion_EvaluacionInstancia1_idx",
-        using: "BTREE",
-        fields: [
-          { name: "idTipoEvaluacion" },
+          { name: "idEvaluacion" },
         ]
       },
       {
@@ -102,6 +88,13 @@ export class Evaluacion extends Model<EvaluacionAttributes, EvaluacionCreationAt
         using: "BTREE",
         fields: [
           { name: "codigoPropuesta" },
+        ]
+      },
+      {
+        name: "fkEvaluacionTipoEvaluacion1_idx",
+        using: "BTREE",
+        fields: [
+          { name: "idTipoEvaluacion" },
         ]
       },
     ]

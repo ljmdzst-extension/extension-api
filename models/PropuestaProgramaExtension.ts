@@ -1,6 +1,5 @@
 import * as Sequelize from 'sequelize';
 import { DataTypes, Model, Optional } from 'sequelize';
-import type { Propuesta, PropuestaId } from './Propuesta';
 
 export interface PropuestaProgramaExtensionAttributes {
   idProgramaExtension: number;
@@ -28,20 +27,12 @@ export class PropuestaProgramaExtension extends Model<PropuestaProgramaExtension
     idProgramaExtension: {
       type: DataTypes.INTEGER,
       allowNull: false,
-      primaryKey: true,
-      references: {
-        model: 'ProgramaExtension',
-        key: 'idProgramaExtension'
-      }
+      primaryKey: true
     },
     codigoPropuesta: {
       type: DataTypes.STRING(255),
       allowNull: false,
-      primaryKey: true,
-      references: {
-        model: 'Propuesta',
-        key: 'codigoPropuesta'
-      }
+      primaryKey: true
     },
     createdAt : {
       type : DataTypes.DATE,
@@ -68,13 +59,6 @@ export class PropuestaProgramaExtension extends Model<PropuestaProgramaExtension
         fields: [
           { name: "idProgramaExtension" },
           { name: "codigoPropuesta" },
-        ]
-      },
-      {
-        name: "fk_PropuestaProgramaExtension_ProgramaExtension1_idx",
-        using: "BTREE",
-        fields: [
-          { name: "idProgramaExtension" },
         ]
       },
       {

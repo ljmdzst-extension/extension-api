@@ -1,6 +1,5 @@
 import * as Sequelize from 'sequelize';
 import { DataTypes, Model, Optional } from 'sequelize';
-import type { ParticipanteSocial, ParticipanteSocialId } from './ParticipanteSocial';
 
 export interface ActividadParticipanteSocialAttributes {
   idActividadPartSocial: number;
@@ -35,11 +34,7 @@ export class ActividadParticipanteSocial extends Model<ActividadParticipanteSoci
     },
     idParticipanteSocial: {
       type: DataTypes.INTEGER,
-      allowNull: false,
-      references: {
-        model: 'ParticipanteSocial',
-        key: 'idParticipanteSocial'
-      }
+      allowNull: false
     },
     desc: {
       type: DataTypes.TEXT,

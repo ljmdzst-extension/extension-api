@@ -1,5 +1,6 @@
 import * as Sequelize from 'sequelize';
 import { DataTypes, Model, Optional } from 'sequelize';
+import type { LineaTematica, LineaTematicaId } from './LineaTematica';
 import type { Propuesta, PropuestaId } from './Propuesta';
 
 export interface PropuestaLineaTematicaAttributes {
@@ -22,6 +23,16 @@ export class PropuestaLineaTematica extends Model<PropuestaLineaTematicaAttribut
   updatedAt!: Date;
   deletedAt?: Date;
 
+  // PropuestaLineaTematica belongsTo LineaTematica via idLineaTematica
+  idLineaTematica_LineaTematica!: LineaTematica;
+  getIdLineaTematica_LineaTematica!: Sequelize.BelongsToGetAssociationMixin<LineaTematica>;
+  setIdLineaTematica_LineaTematica!: Sequelize.BelongsToSetAssociationMixin<LineaTematica, LineaTematicaId>;
+  createIdLineaTematica_LineaTematica!: Sequelize.BelongsToCreateAssociationMixin<LineaTematica>;
+  // PropuestaLineaTematica belongsTo Propuesta via codigoPropuesta
+  codigoPropuesta_Propuestum!: Propuesta;
+  getCodigoPropuesta_Propuestum!: Sequelize.BelongsToGetAssociationMixin<Propuesta>;
+  setCodigoPropuesta_Propuestum!: Sequelize.BelongsToSetAssociationMixin<Propuesta, PropuestaId>;
+  createCodigoPropuesta_Propuestum!: Sequelize.BelongsToCreateAssociationMixin<Propuesta>;
 
   static initModel(sequelize: Sequelize.Sequelize): typeof PropuestaLineaTematica {
     return PropuestaLineaTematica.init({
@@ -68,13 +79,6 @@ export class PropuestaLineaTematica extends Model<PropuestaLineaTematicaAttribut
         fields: [
           { name: "idLineaTematica" },
           { name: "codigoPropuesta" },
-        ]
-      },
-      {
-        name: "fk_PropuestaLineaTematica_LineaTematica1_idx",
-        using: "BTREE",
-        fields: [
-          { name: "idLineaTematica" },
         ]
       },
       {

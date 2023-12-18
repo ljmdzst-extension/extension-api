@@ -1,6 +1,5 @@
 import * as Sequelize from 'sequelize';
 import { DataTypes, Model, Optional } from 'sequelize';
-import type { Propuesta, PropuestaId } from './Propuesta';
 
 export interface PropuestaInstitucionAttributes {
   idInstitucion: number;
@@ -26,25 +25,18 @@ export class PropuestaInstitucion extends Model<PropuestaInstitucionAttributes, 
   updatedAt!: Date;
   deletedAt?: Date;
 
+
   static initModel(sequelize: Sequelize.Sequelize): typeof PropuestaInstitucion {
     return PropuestaInstitucion.init({
     idInstitucion: {
       type: DataTypes.INTEGER,
       allowNull: false,
-      primaryKey: true,
-      references: {
-        model: 'Institucion',
-        key: 'idInstitucion'
-      }
+      primaryKey: true
     },
     codigoPropuesta: {
       type: DataTypes.STRING(255),
       allowNull: false,
-      primaryKey: true,
-      references: {
-        model: 'Propuesta',
-        key: 'codigoPropuesta'
-      }
+      primaryKey: true
     },
     antecedentes: {
       type: DataTypes.STRING(500),

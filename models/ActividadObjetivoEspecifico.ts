@@ -1,6 +1,5 @@
 import * as Sequelize from 'sequelize';
 import { DataTypes, Model, Optional } from 'sequelize';
-import type { ObjetivoEspecifico, ObjetivoEspecificoId } from './ObjetivoEspecifico';
 
 export interface ActividadObjetivoEspecificoAttributes {
   idActividadObjetivoEspecifico: number;
@@ -28,6 +27,7 @@ export class ActividadObjetivoEspecifico extends Model<ActividadObjetivoEspecifi
   updatedAt!: Date;
   deletedAt?: Date;
 
+
   static initModel(sequelize: Sequelize.Sequelize): typeof ActividadObjetivoEspecifico {
     return ActividadObjetivoEspecifico.init({
     idActividadObjetivoEspecifico: {
@@ -37,11 +37,7 @@ export class ActividadObjetivoEspecifico extends Model<ActividadObjetivoEspecifi
     },
     idObjetivoEspecifico: {
       type: DataTypes.INTEGER,
-      allowNull: false,
-      references: {
-        model: 'ObjetivoEspecifico',
-        key: 'idObjetivoEspecifico'
-      }
+      allowNull: false
     },
     desc: {
       type: DataTypes.STRING(500),
