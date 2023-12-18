@@ -4,6 +4,18 @@ import { PropuestaInstitucion, PropuestaInstitucionAttributes, PropuestaInstituc
 import { Institucion, InstitucionAttributes } from './Institucion';
 import { Integrante, IntegranteAttributes } from './Integrante';
 import { Persona, PersonaAttributes } from './Persona';
+import { ObjetivoEspecificoAttributes } from './ObjetivoEspecifico';
+import { ActividadObjetivoEspecificoAttributes } from './ActividadObjetivoEspecifico';
+import { PropuestaPrevia, PropuestaPreviaAttributes } from './PropuestaPrevia';
+import { PropuestaRelacionada, PropuestaRelacionadaAttributes } from './PropuestaRelacionada';
+import { UbicacionProblematica, UbicacionProblematicaAttributes } from './UbicacionProblematica';
+import { PropuestaProgramaExtension, PropuestaProgramaExtensionAttributes } from './PropuestaProgramaExtension';
+import { PropuestaCapacitacion, PropuestaCapacitacionAttributes } from './PropuestaCapacitacion';
+import { PropuestaLineaTematica, PropuestaLineaTematicaAttributes } from './PropuestaLineaTematica';
+import { PropuestaPalabraClave, PropuestaPalabraClaveAttributes } from './PropuestaPalabraClave';
+import { indexar } from '../helpers/general';
+import { PalabraClave, PalabraClaveAttributes } from './PalabraClave';
+
 
 export interface PropuestaAttributes {
   codigoPropuesta: string;
@@ -42,6 +54,12 @@ export interface PropuestaAttributes {
   createdAt: Date;
   updatedAt: Date;
   deletedAt?: Date;
+}
+
+export interface PlanificacionAttributes {
+  finalidad : string,
+  objetivoGeneral : string,
+  lObjetivosEspecificos : ( ObjetivoEspecificoAttributes & { lActividades : ActividadObjetivoEspecificoAttributes[]} )[]
 }
 
 export type PropuestaPk = "codigoPropuesta";
@@ -105,14 +123,10 @@ export class Propuesta extends Model<PropuestaAttributes, PropuestaCreationAttri
         status : 500, 
         message : 'Las instituciones encontradas no coinciden con la cantidad de instituciones relacionadas' 
       }
-      const lInstitucionesIndexado : any = lInstituciones.reduce ( 
-         (salida , inst ) => ({ 
-          ...salida, 
-          [inst.idInstitucion] : inst.dataValues 
-        }) , {});
+      const lInstitucionesIndexado : any = indexar(lInstituciones,'idInstitucion');
 
       salida = lInstitucionesRelacionadas.map( inst => ({ 
-        ...inst,
+        ...inst.dataValues,
         ...lInstitucionesIndexado[inst.idInstitucion]
       }) )
     }
@@ -135,65 +149,79 @@ export class Propuesta extends Model<PropuestaAttributes, PropuestaCreationAttri
         where : {nroDoc : lIntegrantes.map(integrante => integrante.nroDoc)}, 
         transaction
       });
-
-      if( lPersonas.length < lIntegrantes.length ) throw { 
-        status : 500, 
-        message : 'Las personas encontradas no coinciden con la cantidad de integrantes' 
-      }
       
-      const lPersonasIndexado : any = lPersonas.reduce ( 
-        (salida , persona ) => ({ 
-          ...salida, 
-          [persona.nroDoc] : persona.dataValues 
-        }) , {});
+      const lPersonasIndexado : any = indexar(lPersonas,'nroDoc');
 
-      salida = lIntegrantes.map( integrante => ({ 
-        ...integrante,
-        ...lPersonasIndexado[integrante.nroDoc]
-      }) )
+      salida = await Promise.all(
+        lIntegrantes.map( async integrante => ({ 
+          ...integrante.dataValues,
+          ...lPersonasIndexado[integrante.nroDoc],
+          lRoles : await integrante.verRoles(sequelize,transaction)
+        }) )
+      )
+
+     
     }
    
 
     return salida;
   }
   public async verPlanificacion( sequelize : Sequelize.Sequelize, transaction ?: Sequelize.Transaction) : 
-  Promise<any> {
-    let salida : any = null;
+  Promise<PlanificacionAttributes> {
+    let salida : PlanificacionAttributes  = {
+      finalidad : '',
+      objetivoGeneral : '',
+      lObjetivosEspecificos : []
+    };
     return salida;
   }
   public async verPropuestasPrevias( sequelize : Sequelize.Sequelize, transaction ?: Sequelize.Transaction) : 
-  Promise<any> {
-    let salida : any = null;
-    return salida;
+  Promise<PropuestaPreviaAttributes[]> {
+    return await PropuestaPrevia.initModel(sequelize).findAll({where : {codigoPropuesta : this.codigoPropuesta},transaction});
   }
   public async verPropuestasRelacionadas( sequelize : Sequelize.Sequelize, transaction ?: Sequelize.Transaction) : 
-  Promise<any> {
-    let salida : any = null;
-    return salida;
+  Promise<PropuestaRelacionadaAttributes[]> {
+    return await PropuestaRelacionada.initModel(sequelize).findAll({where : {codigoPropuesta : this.codigoPropuesta},transaction});
   }
   public async verGeolocalizaciones( sequelize : Sequelize.Sequelize, transaction ?: Sequelize.Transaction) : 
-  Promise<any> {
-    let salida : any = null;
-    return salida;
+  Promise<UbicacionProblematicaAttributes[]> {
+    return await UbicacionProblematica.initModel(sequelize).findAll({where : {codigoPropuesta : this.codigoPropuesta},transaction});
   }
   public async verProgramasExtension( sequelize : Sequelize.Sequelize, transaction ?: Sequelize.Transaction) : 
-  Promise<any> {
-    let salida : any = null;
-    return salida;
+  Promise<PropuestaProgramaExtensionAttributes[]> {
+    return await PropuestaProgramaExtension.initModel(sequelize).findAll({where : {codigoPropuesta : this.codigoPropuesta},transaction});
   }
   public async verCapacitaciones( sequelize : Sequelize.Sequelize, transaction ?: Sequelize.Transaction) : 
-  Promise<any> {
-    let salida : any = null;
-    return salida;
+  Promise<PropuestaCapacitacionAttributes[]> {
+    return await PropuestaCapacitacion.initModel(sequelize).findAll({where : {codigoPropuesta : this.codigoPropuesta},transaction});
   }
   public async verLineasTematicas( sequelize : Sequelize.Sequelize, transaction ?: Sequelize.Transaction) : 
-  Promise<any> {
-    let salida : any = null;
-    return salida;
+  Promise<PropuestaLineaTematicaAttributes[]> {
+    return await PropuestaLineaTematica.initModel(sequelize).findAll({where : {codigoPropuesta : this.codigoPropuesta},transaction});
   }
   public async verPalabrasClave( sequelize : Sequelize.Sequelize, transaction ?: Sequelize.Transaction) : 
-  Promise<any> {
-    let salida : any = null;
+  Promise<PalabraClaveAttributes[]> {
+    let salida : PalabraClaveAttributes[] = [];
+    const lPalabrasAsociadas = await PropuestaPalabraClave.initModel(sequelize).findAll({
+      attributes : {
+        exclude : ['createdAt','updatedAt','deletedAt']
+      },
+      where : {codigoPropuesta : this.codigoPropuesta},
+      transaction
+    });
+    
+    const lPalabrasClave = await PalabraClave.initModel(sequelize).findAll({
+      where : {idPalabraClave : lPalabrasAsociadas.map( item => item.idPalabraClave )},
+      transaction
+    });
+    salida = lPalabrasClave.map(palabra =>  palabra.dataValues);
+    return salida;
+  }
+
+  public async editarPalabrasClave(data : PalabraClaveAttributes[] ,sequelize : Sequelize.Sequelize, transaction ?: Sequelize.Transaction) :
+  Promise<PropuestaPalabraClaveAttributes[]> {
+    let salida : PropuestaPalabraClaveAttributes[] = []
+
     return salida;
   }
 

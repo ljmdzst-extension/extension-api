@@ -1,18 +1,19 @@
 import * as Sequelize from 'sequelize';
 import { DataTypes, Model, Optional } from 'sequelize';
-
+import { RolIntegranteAttributes } from './RolIntegrante';
+import { RolIntegrante } from './RolIntegrante';
 export interface IntegranteAttributes {
   nroDoc: string;
   codigoPropuesta: string;
-  carrera?: string;
+  tipoIntegrante: number;
   observ?: string;
   titulo?: string;
   tieneTarjeta?: number;
   dedicacionDocente?: string;
   categoriaDocente?: string;
-  idAreaUNL?: number;
+  idAreaUnl?: number;
+  idCarrera?: number;
   periodoLectivo?: string;
-  idUnidadAcademica?: number;
   createdAt: Date;
   updatedAt: Date;
   deletedAt?: Date;
@@ -20,24 +21,41 @@ export interface IntegranteAttributes {
 
 export type IntegrantePk = "nroDoc" | "codigoPropuesta";
 export type IntegranteId = Integrante[IntegrantePk];
-export type IntegranteOptionalAttributes = "carrera" | "observ" | "titulo" | "tieneTarjeta" | "dedicacionDocente" | "categoriaDocente" | "idAreaUNL" | "periodoLectivo" | "idUnidadAcademica" | "createdAt" | "updatedAt" | "deletedAt";
+export type IntegranteOptionalAttributes = "observ" | "titulo" | "tieneTarjeta" | "dedicacionDocente" | "categoriaDocente" | "idAreaUnl" | "idCarrera" | "periodoLectivo" | "createdAt" | "updatedAt" | "deletedAt";
 export type IntegranteCreationAttributes = Optional<IntegranteAttributes, IntegranteOptionalAttributes>;
 
 export class Integrante extends Model<IntegranteAttributes, IntegranteCreationAttributes> implements IntegranteAttributes {
   nroDoc!: string;
   codigoPropuesta!: string;
-  carrera?: string;
+  tipoIntegrante!: number;
   observ?: string;
   titulo?: string;
   tieneTarjeta?: number;
   dedicacionDocente?: string;
   categoriaDocente?: string;
-  idAreaUNL?: number;
+  idAreaUnl?: number;
+  idCarrera?: number;
   periodoLectivo?: string;
-  idUnidadAcademica?: number;
   createdAt!: Date;
   updatedAt!: Date;
   deletedAt?: Date;
+
+  public async verRoles( sequelize : Sequelize.Sequelize, transaction ?: Sequelize.Transaction) : 
+  Promise<RolIntegranteAttributes[]> {
+    let salida : RolIntegranteAttributes[] = [];
+    const lRoles = await RolIntegrante.initModel(sequelize).findAll({
+      where : {
+        nroDoc : this.nroDoc,
+        codigoPropuesta : this.codigoPropuesta
+      },
+      transaction
+    });
+    if(lRoles.length) {
+      salida = lRoles.map( rol => rol.dataValues);
+    }
+
+    return salida;
+  }
 
 
   static initModel(sequelize: Sequelize.Sequelize): typeof Integrante {
@@ -45,16 +63,24 @@ export class Integrante extends Model<IntegranteAttributes, IntegranteCreationAt
     nroDoc: {
       type: DataTypes.STRING(9),
       allowNull: false,
-      primaryKey: true
+      primaryKey: true,
+      references: {
+        model: 'persona',
+        key: 'nroDoc'
+      }
     },
     codigoPropuesta: {
       type: DataTypes.STRING(255),
       allowNull: false,
-      primaryKey: true
+      primaryKey: true,
+      references: {
+        model: 'Propuesta',
+        key: 'codigoPropuesta'
+      }
     },
-    carrera: {
-      type: DataTypes.STRING(255),
-      allowNull: true
+    tipoIntegrante: {
+      type: DataTypes.INTEGER,
+      allowNull: false
     },
     observ: {
       type: DataTypes.STRING(500),
@@ -76,16 +102,25 @@ export class Integrante extends Model<IntegranteAttributes, IntegranteCreationAt
       type: DataTypes.STRING(255),
       allowNull: true
     },
-    idAreaUNL: {
+    idAreaUnl: {
       type: DataTypes.INTEGER,
-      allowNull: true
+      allowNull: true,
+      references: {
+        model: 'Relacion',
+        key: 'idRelacion'
+      },
+      field: 'idAreaUNL'
+    },
+    idCarrera: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+      references: {
+        model: 'carrera',
+        key: 'idCarrera'
+      }
     },
     periodoLectivo: {
       type: DataTypes.STRING(255),
-      allowNull: true
-    },
-    idUnidadAcademica: {
-      type: DataTypes.INTEGER,
       allowNull: true
     },
     createdAt : {
@@ -130,10 +165,10 @@ export class Integrante extends Model<IntegranteAttributes, IntegranteCreationAt
         ]
       },
       {
-        name: "fkIntegranteRelacion2_idx",
+        name: "fkIntegranteCarrera1_idx",
         using: "BTREE",
         fields: [
-          { name: "idUnidadAcademica" },
+          { name: "idCarrera" },
         ]
       },
     ]

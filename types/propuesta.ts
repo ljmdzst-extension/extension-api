@@ -1,5 +1,4 @@
 import { ActividadObjetivoEspecificoAttributes } from "../models/ActividadObjetivoEspecifico";
-import { GeolocalizacionAttributes } from "../models/Geolocalizacion";
 import { IntegranteAttributes } from "../models/Integrante";
 import { ObjetivoEspecificoAttributes } from "../models/ObjetivoEspecifico";
 import { PropuestaAttributes } from "../models/Propuesta";
@@ -10,7 +9,8 @@ import { PropuestaPalabraClaveAttributes } from "../models/PropuestaPalabraClave
 import { PropuestaPreviaAttributes } from "../models/PropuestaPrevia";
 import { PropuestaProgramaExtensionAttributes } from "../models/PropuestaProgramaExtension";
 import { PropuestaRelacionadaAttributes } from "../models/PropuestaRelacionada";
-import { PersonaAttributes } from "../models/db_personas/Persona";
+import { PersonaAttributes } from "../models/Persona";
+import { UbicacionProblematicaAttributes } from "../models/UbicacionProblematica";
 
 export type TPropuesta = PropuestaAttributes & {
     lInstituciones : PropuestaInstitucionAttributes[],
@@ -20,7 +20,7 @@ export type TPropuesta = PropuestaAttributes & {
     },
     lPropuestasPrevias : PropuestaPreviaAttributes[],
     lPropuestasRelacionadas : PropuestaRelacionadaAttributes[],
-    lGeolocalizaciones : GeolocalizacionAttributes[],
+    lGeolocalizaciones : UbicacionProblematicaAttributes[],
     lProgramasExtension : PropuestaProgramaExtensionAttributes[],
     lCapacitaciones : PropuestaCapacitacionAttributes[],
     lLineasTematicas : PropuestaLineaTematicaAttributes[],

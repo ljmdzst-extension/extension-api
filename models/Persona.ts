@@ -82,6 +82,18 @@ export class Persona extends Model<PersonaAttributes, PersonaCreationAttributes>
       type: DataTypes.STRING(255),
       allowNull: true,
       defaultValue: "Argentina"
+    },
+    createdAt : {
+      type : DataTypes.DATE,
+      allowNull : false
+    },
+    updatedAt : {
+      type : DataTypes.DATE,
+      allowNull : false
+    },
+    deletedAt : {
+      type : DataTypes.DATE,
+      allowNull : true
     }
   }, {
     sequelize,
