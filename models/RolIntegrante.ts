@@ -23,6 +23,8 @@ export class RolIntegrante extends Model<RolIntegranteAttributes, RolIntegranteC
   updatedAt!: Date;
   deletedAt?: Date;
 
+  
+
 
   static initModel(sequelize: Sequelize.Sequelize): typeof RolIntegrante {
     return RolIntegrante.init({

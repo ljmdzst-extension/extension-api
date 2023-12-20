@@ -13,7 +13,7 @@ import { PropuestaProgramaExtension, PropuestaProgramaExtensionAttributes } from
 import { PropuestaCapacitacion, PropuestaCapacitacionAttributes } from './PropuestaCapacitacion';
 import { PropuestaLineaTematica, PropuestaLineaTematicaAttributes } from './PropuestaLineaTematica';
 import { PropuestaPalabraClave, PropuestaPalabraClaveAttributes } from './PropuestaPalabraClave';
-import { indexar } from '../helpers/general';
+import { indexar, indexarAsociacion } from '../helpers/general';
 import { PalabraClave, PalabraClaveAttributes } from './PalabraClave';
 
 
@@ -119,10 +119,7 @@ export class Propuesta extends Model<PropuestaAttributes, PropuestaCreationAttri
         where : {idInstitucion : lInstitucionesRelacionadas.map(inst => inst.idInstitucion)}, 
         transaction
       });
-      if( lInstituciones.length < lInstitucionesRelacionadas.length ) throw { 
-        status : 500, 
-        message : 'Las instituciones encontradas no coinciden con la cantidad de instituciones relacionadas' 
-      }
+      
       const lInstitucionesIndexado : any = indexar(lInstituciones,'idInstitucion');
 
       salida = lInstitucionesRelacionadas.map( inst => ({ 
@@ -144,21 +141,22 @@ export class Propuesta extends Model<PropuestaAttributes, PropuestaCreationAttri
     });
 
     if(lIntegrantes.length ){
-      const lPersonas = await Persona.initModel(sequelize).findAll({
-        attributes : ['ape','nom','nroDoc','tipoDoc'],
-        where : {nroDoc : lIntegrantes.map(integrante => integrante.nroDoc)}, 
-        transaction
-      });
-      
-      const lPersonasIndexado : any = indexar(lPersonas,'nroDoc');
 
-      salida = await Promise.all(
-        lIntegrantes.map( async integrante => ({ 
-          ...integrante.dataValues,
-          ...lPersonasIndexado[integrante.nroDoc],
-          lRoles : await integrante.verRoles(sequelize,transaction)
-        }) )
-      )
+      const selectPersonas = lIntegrantes.map(integrante => integrante.verPersona(sequelize,transaction));
+
+      const selectRoles = lIntegrantes.map( integrante => integrante.verRoles(sequelize,transaction) );
+
+      const lPersonas = await Promise.all( selectPersonas);
+      const lRoles = await Promise.all(selectRoles);
+
+      const lPersonasIndexado : any = indexar(lPersonas,'nroDoc');
+      const lRolesIndexado : any = indexarAsociacion(lRoles,'nroDoc');
+
+      salida =  lIntegrantes.map(  integrante => ({ 
+        ...integrante.dataValues,
+        ...lPersonasIndexado[integrante.nroDoc],
+        lRoles : lRolesIndexado[integrante.nroDoc]
+      }) )
 
      
     }
@@ -203,9 +201,6 @@ export class Propuesta extends Model<PropuestaAttributes, PropuestaCreationAttri
   Promise<PalabraClaveAttributes[]> {
     let salida : PalabraClaveAttributes[] = [];
     const lPalabrasAsociadas = await PropuestaPalabraClave.initModel(sequelize).findAll({
-      attributes : {
-        exclude : ['createdAt','updatedAt','deletedAt']
-      },
       where : {codigoPropuesta : this.codigoPropuesta},
       transaction
     });

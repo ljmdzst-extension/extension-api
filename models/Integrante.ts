@@ -1,7 +1,10 @@
 import * as Sequelize from 'sequelize';
 import { DataTypes, Model, Optional } from 'sequelize';
-import { RolIntegranteAttributes } from './RolIntegrante';
+import { RolIntegranteAttributes, RolIntegranteId } from './RolIntegrante';
 import { RolIntegrante } from './RolIntegrante';
+import { Persona, PersonaAttributes } from './Persona';
+
+
 export interface IntegranteAttributes {
   nroDoc: string;
   codigoPropuesta: string;
@@ -41,22 +44,22 @@ export class Integrante extends Model<IntegranteAttributes, IntegranteCreationAt
   deletedAt?: Date;
 
   public async verRoles( sequelize : Sequelize.Sequelize, transaction ?: Sequelize.Transaction) : 
-  Promise<RolIntegranteAttributes[]> {
-    let salida : RolIntegranteAttributes[] = [];
-    const lRoles = await RolIntegrante.initModel(sequelize).findAll({
+  Promise<RolIntegrante[]> {
+    return RolIntegrante.initModel(sequelize).findAll({
       where : {
         nroDoc : this.nroDoc,
         codigoPropuesta : this.codigoPropuesta
       },
       transaction
     });
-    if(lRoles.length) {
-      salida = lRoles.map( rol => rol.dataValues);
-    }
-
-    return salida;
   }
 
+  public async verPersona( sequelize : Sequelize.Sequelize, transaction ?: Sequelize.Transaction) :
+  Promise< PersonaAttributes | null > {
+     return Persona.initModel(sequelize).findByPk(this.nroDoc,{transaction});
+  }
+
+  
 
   static initModel(sequelize: Sequelize.Sequelize): typeof Integrante {
     return Integrante.init({
