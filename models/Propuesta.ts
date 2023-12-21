@@ -15,6 +15,7 @@ import { PropuestaLineaTematica, PropuestaLineaTematicaAttributes } from './Prop
 import { PropuestaPalabraClave, PropuestaPalabraClaveAttributes } from './PropuestaPalabraClave';
 import { indexar, indexarAsociacion } from '../helpers/general';
 import { PalabraClave, PalabraClaveAttributes } from './PalabraClave';
+import { UbicacionAttributes } from './Ubicacion';
 
 
 export interface PropuestaAttributes {
@@ -51,9 +52,6 @@ export interface PropuestaAttributes {
   ipProblematica?: string;
   planificacionFinalidad?: string;
   planificacionObjetivoGeneral?: string;
-  createdAt: Date;
-  updatedAt: Date;
-  deletedAt?: Date;
 }
 
 export interface PlanificacionAttributes {
@@ -64,7 +62,7 @@ export interface PlanificacionAttributes {
 
 export type PropuestaPk = "codigoPropuesta";
 export type PropuestaId = Propuesta[PropuestaPk];
-export type PropuestaOptionalAttributes = "duracion" | "categoriaEquipo" | "integralidad" | "problematicaDetalle" | "problematicaSintesis" | "proyectosCAID" | "propuestaMetodologica" | "accionesCoordinacion" | "politicasPublicas" | "accionesComunicacion" | "integralidadDescripcion" | "sustentabilidad" | "sintesis" | "tipoMateriales" | "capacitacionAgentesMultip" | "perfilAgentesMultip" | "solicitaBecarioJustif" | "solicitaVoluntarioJustif" | "instanciasCapacitacionDetalle" | "solicitaBecario" | "ipFinalidad" | "ipParticipantesSociales" | "ipObserv" | "ipPotencialesActividades" | "ipCampoTematico" | "ipPoliticasPublicas" | "ipProblematica" | "planificacionFinalidad" | "planificacionObjetivoGeneral" | "createdAt" | "updatedAt" | "deletedAt";
+export type PropuestaOptionalAttributes = "duracion" | "categoriaEquipo" | "integralidad" | "problematicaDetalle" | "problematicaSintesis" | "proyectosCAID" | "propuestaMetodologica" | "accionesCoordinacion" | "politicasPublicas" | "accionesComunicacion" | "integralidadDescripcion" | "sustentabilidad" | "sintesis" | "tipoMateriales" | "capacitacionAgentesMultip" | "perfilAgentesMultip" | "solicitaBecarioJustif" | "solicitaVoluntarioJustif" | "instanciasCapacitacionDetalle" | "solicitaBecario" | "ipFinalidad" | "ipParticipantesSociales" | "ipObserv" | "ipPotencialesActividades" | "ipCampoTematico" | "ipPoliticasPublicas" | "ipProblematica" | "planificacionFinalidad" | "planificacionObjetivoGeneral";
 export type PropuestaCreationAttributes = Optional<PropuestaAttributes, PropuestaOptionalAttributes>;
 
 export class Propuesta extends Model<PropuestaAttributes, PropuestaCreationAttributes> implements PropuestaAttributes {
@@ -101,9 +99,7 @@ export class Propuesta extends Model<PropuestaAttributes, PropuestaCreationAttri
   ipProblematica?: string;
   planificacionFinalidad?: string;
   planificacionObjetivoGeneral?: string;
-  createdAt!: Date;
-  updatedAt!: Date;
-  deletedAt?: Date;
+
 
   public async verInstituciones( sequelize : Sequelize.Sequelize, transaction ?: Sequelize.Transaction) : 
   Promise<(PropuestaInstitucionAttributes & InstitucionAttributes )[]> {
@@ -182,8 +178,14 @@ export class Propuesta extends Model<PropuestaAttributes, PropuestaCreationAttri
     return await PropuestaRelacionada.initModel(sequelize).findAll({where : {codigoPropuesta : this.codigoPropuesta},transaction});
   }
   public async verGeolocalizaciones( sequelize : Sequelize.Sequelize, transaction ?: Sequelize.Transaction) : 
-  Promise<UbicacionProblematicaAttributes[]> {
-    return await UbicacionProblematica.initModel(sequelize).findAll({where : {codigoPropuesta : this.codigoPropuesta},transaction});
+  Promise<UbicacionAttributes[]> {
+    let salida : UbicacionAttributes[] =[];
+    const geolocalizacionesAsociadas = await UbicacionProblematica.initModel(sequelize).findAll({where : {codigoPropuesta : this.codigoPropuesta},transaction});;
+    const lGeolocalizaciones = geolocalizacionesAsociadas.map(async item => await item.verDatos(sequelize,transaction));
+
+    (await Promise.all(lGeolocalizaciones)).forEach(item => item !== null ? salida.push(item) : null);
+    
+    return salida;
   }
   public async verProgramasExtension( sequelize : Sequelize.Sequelize, transaction ?: Sequelize.Transaction) : 
   Promise<PropuestaProgramaExtensionAttributes[]> {
@@ -358,18 +360,6 @@ export class Propuesta extends Model<PropuestaAttributes, PropuestaCreationAttri
     planificacionObjetivoGeneral: {
       type: DataTypes.STRING(500),
       allowNull: true
-    },
-    createdAt : {
-      type : DataTypes.DATE,
-      allowNull : false
-    },
-    updatedAt : {
-      type : DataTypes.DATE,
-      allowNull : false
-    },
-    deletedAt : {
-      type : DataTypes.DATE,
-      allowNull : true
     }
   }, {
     sequelize,

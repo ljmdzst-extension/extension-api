@@ -1,26 +1,24 @@
 import * as Sequelize from 'sequelize';
 import { DataTypes, Model, Optional } from 'sequelize';
+import { Ubicacion, UbicacionAttributes } from './Ubicacion';
 
 export interface UbicacionProblematicaAttributes {
   idUbicacion: number;
   codigoPropuesta: string;
-  createdAt: Date;
-  updatedAt: Date;
-  deletedAt?: Date;
 }
 
 export type UbicacionProblematicaPk = "idUbicacion";
 export type UbicacionProblematicaId = UbicacionProblematica[UbicacionProblematicaPk];
-export type UbicacionProblematicaOptionalAttributes = "createdAt" | "updatedAt" | "deletedAt";
-export type UbicacionProblematicaCreationAttributes = Optional<UbicacionProblematicaAttributes, UbicacionProblematicaOptionalAttributes>;
 
-export class UbicacionProblematica extends Model<UbicacionProblematicaAttributes, UbicacionProblematicaCreationAttributes> implements UbicacionProblematicaAttributes {
+export class UbicacionProblematica extends Model<UbicacionProblematicaAttributes> implements UbicacionProblematicaAttributes {
   idUbicacion!: number;
   codigoPropuesta!: string;
-  createdAt!: Date;
-  updatedAt!: Date;
-  deletedAt?: Date;
 
+
+  public async verDatos ( sequelize: Sequelize.Sequelize, transaction ?: Sequelize.Transaction ) :
+  Promise< UbicacionAttributes | null > {
+    return await Ubicacion.initModel(sequelize).findByPk(this.idUbicacion,{transaction});
+  }
 
   static initModel(sequelize: Sequelize.Sequelize): typeof UbicacionProblematica {
     return UbicacionProblematica.init({
@@ -32,18 +30,6 @@ export class UbicacionProblematica extends Model<UbicacionProblematicaAttributes
     codigoPropuesta: {
       type: DataTypes.STRING(255),
       allowNull: false
-    },
-    createdAt : {
-      type : DataTypes.DATE,
-      allowNull : false
-    },
-    updatedAt : {
-      type : DataTypes.DATE,
-      allowNull : false
-    },
-    deletedAt : {
-      type : DataTypes.DATE,
-      allowNull : true
     }
   }, {
     sequelize,

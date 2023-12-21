@@ -6,14 +6,11 @@ export interface EnlaceAttributes {
   desc: string;
   link: string;
   idActividad: number;
-  createdAt: Date;
-  updatedAt: Date;
-  deletedAt?: Date;
 }
 
 export type EnlacePk = "idEnlace";
 export type EnlaceId = Enlace[EnlacePk];
-export type EnlaceOptionalAttributes = "idEnlace" | "createdAt" | "updatedAt" | "deletedAt";
+export type EnlaceOptionalAttributes = "idEnlace" | "desc" | "link" | "idActividad";
 export type EnlaceCreationAttributes = Optional<EnlaceAttributes, EnlaceOptionalAttributes>;
 
 export class Enlace extends Model<EnlaceAttributes, EnlaceCreationAttributes> implements EnlaceAttributes {
@@ -21,10 +18,6 @@ export class Enlace extends Model<EnlaceAttributes, EnlaceCreationAttributes> im
   desc!: string;
   link!: string;
   idActividad!: number;
-  createdAt!: Date;
-  updatedAt!: Date;
-  deletedAt?: Date;
-
 
   static initModel(sequelize: Sequelize.Sequelize): typeof Enlace {
     return Enlace.init({
@@ -45,18 +38,6 @@ export class Enlace extends Model<EnlaceAttributes, EnlaceCreationAttributes> im
     idActividad: {
       type: DataTypes.INTEGER,
       allowNull: false
-    },
-    createdAt : {
-      type : DataTypes.DATE,
-      allowNull : false
-    },
-    updatedAt : {
-      type : DataTypes.DATE,
-      allowNull : false
-    },
-    deletedAt : {
-      type : DataTypes.DATE,
-      allowNull : true
     }
   }, {
     sequelize,

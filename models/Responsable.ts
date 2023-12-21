@@ -6,14 +6,11 @@ export interface ResponsableAttributes {
   nroDoc: string;
   desde: string;
   hasta?: string;
-  createdAt: Date;
-  updatedAt: Date;
-  deletedAt?: Date;
 }
 
 export type ResponsablePk = "idInstitucion" | "nroDoc";
 export type ResponsableId = Responsable[ResponsablePk];
-export type ResponsableOptionalAttributes = "hasta" | "createdAt" | "updatedAt" | "deletedAt";
+export type ResponsableOptionalAttributes = "hasta" ;
 export type ResponsableCreationAttributes = Optional<ResponsableAttributes, ResponsableOptionalAttributes>;
 
 export class Responsable extends Model<ResponsableAttributes, ResponsableCreationAttributes> implements ResponsableAttributes {
@@ -21,9 +18,6 @@ export class Responsable extends Model<ResponsableAttributes, ResponsableCreatio
   nroDoc!: string;
   desde!: string;
   hasta?: string;
-  createdAt!: Date;
-  updatedAt!: Date;
-  deletedAt?: Date;
 
 
   static initModel(sequelize: Sequelize.Sequelize): typeof Responsable {
@@ -45,18 +39,6 @@ export class Responsable extends Model<ResponsableAttributes, ResponsableCreatio
     hasta: {
       type: DataTypes.DATEONLY,
       allowNull: true
-    },
-    createdAt : {
-      type : DataTypes.DATE,
-      allowNull : false
-    },
-    updatedAt : {
-      type : DataTypes.DATE,
-      allowNull : false
-    },
-    deletedAt : {
-      type : DataTypes.DATE,
-      allowNull : true
     }
   }, {
     sequelize,

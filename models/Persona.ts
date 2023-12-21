@@ -12,14 +12,11 @@ export interface PersonaAttributes {
   ciudad?: string;
   provincia?: string;
   pais?: string;
-  createdAt: Date;
-  updatedAt: Date;
-  deletedAt?: Date;
 }
 
 export type PersonaPk = "nroDoc";
 export type PersonaId = Persona[PersonaPk];
-export type PersonaOptionalAttributes = "tel" | "dom" | "email" | "ciudad" | "provincia" | "pais" | "createdAt" | "updatedAt" | "deletedAt";
+export type PersonaOptionalAttributes = "tel" | "dom" | "email" | "ciudad" | "provincia" | "pais";
 export type PersonaCreationAttributes = Optional<PersonaAttributes, PersonaOptionalAttributes>;
 
 export class Persona extends Model<PersonaAttributes, PersonaCreationAttributes> implements PersonaAttributes {
@@ -33,9 +30,6 @@ export class Persona extends Model<PersonaAttributes, PersonaCreationAttributes>
   ciudad?: string;
   provincia?: string;
   pais?: string;
-  createdAt!: Date;
-  updatedAt!: Date;
-  deletedAt?: Date;
 
 
   static initModel(sequelize: Sequelize.Sequelize): typeof Persona {
@@ -82,18 +76,6 @@ export class Persona extends Model<PersonaAttributes, PersonaCreationAttributes>
       type: DataTypes.STRING(255),
       allowNull: true,
       defaultValue: "Argentina"
-    },
-    createdAt : {
-      type : DataTypes.DATE,
-      allowNull : false
-    },
-    updatedAt : {
-      type : DataTypes.DATE,
-      allowNull : false
-    },
-    deletedAt : {
-      type : DataTypes.DATE,
-      allowNull : true
     }
   }, {
     sequelize,

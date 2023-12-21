@@ -4,23 +4,16 @@ import { DataTypes, Model, Optional } from 'sequelize';
 export interface InstitucionActividadAttributes {
   idActividad: number;
   idInstitucion: number;
-  createdAt: Date;
-  updatedAt: Date;
-  deletedAt?: Date;
+  
 }
 
 export type InstitucionActividadPk = "idActividad" | "idInstitucion";
 export type InstitucionActividadId = InstitucionActividad[InstitucionActividadPk];
-export type InstitucionActividadOptionalAttributes = "createdAt" | "updatedAt" | "deletedAt";
-export type InstitucionActividadCreationAttributes = Optional<InstitucionActividadAttributes, InstitucionActividadOptionalAttributes>;
 
-export class InstitucionActividad extends Model<InstitucionActividadAttributes, InstitucionActividadCreationAttributes> implements InstitucionActividadAttributes {
+export class InstitucionActividad extends Model<InstitucionActividadAttributes> implements InstitucionActividadAttributes {
   idActividad!: number;
   idInstitucion!: number;
-  createdAt!: Date;
-  updatedAt!: Date;
-  deletedAt?: Date;
-
+ 
 
   static initModel(sequelize: Sequelize.Sequelize): typeof InstitucionActividad {
     return InstitucionActividad.init({
@@ -33,18 +26,6 @@ export class InstitucionActividad extends Model<InstitucionActividadAttributes, 
       type: DataTypes.INTEGER,
       allowNull: false,
       primaryKey: true
-    },
-    createdAt : {
-      type : DataTypes.DATE,
-      allowNull : false
-    },
-    updatedAt : {
-      type : DataTypes.DATE,
-      allowNull : false
-    },
-    deletedAt : {
-      type : DataTypes.DATE,
-      allowNull : true
     }
   }, {
     sequelize,

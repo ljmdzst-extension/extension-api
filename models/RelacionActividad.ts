@@ -4,22 +4,14 @@ import { DataTypes, Model, Optional } from 'sequelize';
 export interface RelacionActividadAttributes {
   idRelacion: number;
   idActividad: number;
-  createdAt: Date;
-  updatedAt: Date;
-  deletedAt?: Date;
 }
 
 export type RelacionActividadPk = "idRelacion" | "idActividad";
 export type RelacionActividadId = RelacionActividad[RelacionActividadPk];
-export type RelacionActividadOptionalAttributes = "createdAt" | "updatedAt" | "deletedAt";
-export type RelacionActividadCreationAttributes = Optional<RelacionActividadAttributes, RelacionActividadOptionalAttributes>;
 
-export class RelacionActividad extends Model<RelacionActividadAttributes, RelacionActividadCreationAttributes> implements RelacionActividadAttributes {
+export class RelacionActividad extends Model<RelacionActividadAttributes> implements RelacionActividadAttributes {
   idRelacion!: number;
   idActividad!: number;
-  createdAt!: Date;
-  updatedAt!: Date;
-  deletedAt?: Date;
 
 
   static initModel(sequelize: Sequelize.Sequelize): typeof RelacionActividad {
@@ -33,18 +25,6 @@ export class RelacionActividad extends Model<RelacionActividadAttributes, Relaci
       type: DataTypes.INTEGER,
       allowNull: false,
       primaryKey: true
-    },
-    createdAt : {
-      type : DataTypes.DATE,
-      allowNull : false
-    },
-    updatedAt : {
-      type : DataTypes.DATE,
-      allowNull : false
-    },
-    deletedAt : {
-      type : DataTypes.DATE,
-      allowNull : true
     }
   }, {
     sequelize,

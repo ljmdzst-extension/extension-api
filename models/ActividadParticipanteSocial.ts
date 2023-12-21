@@ -5,14 +5,11 @@ export interface ActividadParticipanteSocialAttributes {
   idActividadPartSocial: number;
   idParticipanteSocial: number;
   desc: string;
-  createdAt: Date;
-  updatedAt: Date;
-  deletedAt?: Date;
 }
 
 export type ActividadParticipanteSocialPk = "idActividadPartSocial";
 export type ActividadParticipanteSocialId = ActividadParticipanteSocial[ActividadParticipanteSocialPk];
-export type ActividadParticipanteSocialOptionalAttributes = "idActividadPartSocial" | "createdAt" | "updatedAt" | "deletedAt";
+export type ActividadParticipanteSocialOptionalAttributes = "idActividadPartSocial";
 export type ActividadParticipanteSocialCreationAttributes = Optional<ActividadParticipanteSocialAttributes, ActividadParticipanteSocialOptionalAttributes>;
 
 export class ActividadParticipanteSocial extends Model<ActividadParticipanteSocialAttributes, ActividadParticipanteSocialCreationAttributes> implements ActividadParticipanteSocialAttributes {
@@ -39,18 +36,6 @@ export class ActividadParticipanteSocial extends Model<ActividadParticipanteSoci
     desc: {
       type: DataTypes.TEXT,
       allowNull: false
-    },
-    createdAt : {
-      type : DataTypes.DATE,
-      allowNull : false
-    },
-    updatedAt : {
-      type : DataTypes.DATE,
-      allowNull : false
-    },
-    deletedAt : {
-      type : DataTypes.DATE,
-      allowNull : true
     }
   }, {
     sequelize,

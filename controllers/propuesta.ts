@@ -26,9 +26,7 @@ export const verPropuesta = async(req : typeof request , res : typeof response)=
             lProgramasExtension : [],
             lCapacitaciones : [],
             lLineasTematicas : [],
-            lPalabrasClave : [],
-            createdAt : new Date(),
-            updatedAt : new Date()
+            lPalabrasClave : []
         }
         
         const { codigoPropuesta } = req.params;
@@ -39,19 +37,25 @@ export const verPropuesta = async(req : typeof request , res : typeof response)=
 
         salida = {...salida , ...iPropuesta.dataValues}
 
-        salida.lInstituciones = await iPropuesta.verInstituciones(sequelizePropuestas,transaction);
+        const lPropuestasPrevias =  iPropuesta.verPropuestasPrevias(sequelizePropuestas,transaction);
+        const lPropuestasRelacionadas =  iPropuesta.verPropuestasRelacionadas(sequelizePropuestas,transaction);
+        const lGeolocalizaciones =  iPropuesta.verGeolocalizaciones(sequelizePropuestas,transaction);
+        const lProgramasExtension =  iPropuesta.verProgramasExtension(sequelizePropuestas,transaction);
+        const lCapacitaciones =  iPropuesta.verCapacitaciones(sequelizePropuestas,transaction);
+        const lLineasTematicas =  iPropuesta.verLineasTematicas(sequelizePropuestas,transaction);
+        const lPalabrasClave =  iPropuesta.verPalabrasClave(sequelizePropuestas,transaction);
 
-        salida.lIntegrantes = await iPropuesta.verIntegrantes(sequelizePropuestas,transaction);
+        salida = {
+            ...salida,
+            lPropuestasPrevias : await lPropuestasPrevias,
+            lPropuestasRelacionadas : await lPropuestasRelacionadas,
+            lProgramasExtension : (await lProgramasExtension).map( item => item.idProgramaExtension),
+            lCapacitaciones : (await lCapacitaciones).map(item => item.idCapacitacion),
+            lLineasTematicas : (await lLineasTematicas).map(item => item.idLineaTematica),
+            lGeolocalizaciones : await lGeolocalizaciones,
+            lPalabrasClave : await lPalabrasClave
+        }
         
-        salida.planificacion = await iPropuesta.verPlanificacion(sequelizePropuestas,transaction);
-        salida.lPropuestasPrevias = await iPropuesta.verPropuestasPrevias(sequelizePropuestas,transaction);
-        salida.lPropuestasRelacionadas = await iPropuesta.verPropuestasRelacionadas(sequelizePropuestas,transaction);
-        salida.lGeolocalizaciones = await iPropuesta.verGeolocalizaciones(sequelizePropuestas,transaction);
-        salida.lProgramasExtension = await iPropuesta.verProgramasExtension(sequelizePropuestas,transaction);
-        salida.lCapacitaciones = await iPropuesta.verCapacitaciones(sequelizePropuestas,transaction);
-        salida.lLineasTematicas = await iPropuesta.verLineasTematicas(sequelizePropuestas,transaction);
-        salida.lPalabrasClave = await iPropuesta.verPalabrasClave(sequelizePropuestas,transaction);
-
         transaction.afterCommit(()=>{
             res.status(200).json({
                 ok : true,

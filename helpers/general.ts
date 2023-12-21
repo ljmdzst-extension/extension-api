@@ -18,7 +18,7 @@ export const indexarAsociacion = ( registros : Array<any>, indice : string )=> r
     (salida , elemento : any )=>({
         ...salida,
         [elemento[indice]] : [
-            ...salida[elemento[indice]],
+            ...[salida[elemento[indice]]],
             elemento.dataValues
         ]
     })

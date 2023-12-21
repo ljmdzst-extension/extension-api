@@ -17,14 +17,11 @@ export interface IntegranteAttributes {
   idAreaUnl?: number;
   idCarrera?: number;
   periodoLectivo?: string;
-  createdAt: Date;
-  updatedAt: Date;
-  deletedAt?: Date;
 }
 
 export type IntegrantePk = "nroDoc" | "codigoPropuesta";
 export type IntegranteId = Integrante[IntegrantePk];
-export type IntegranteOptionalAttributes = "observ" | "titulo" | "tieneTarjeta" | "dedicacionDocente" | "categoriaDocente" | "idAreaUnl" | "idCarrera" | "periodoLectivo" | "createdAt" | "updatedAt" | "deletedAt";
+export type IntegranteOptionalAttributes = "observ" | "titulo" | "tieneTarjeta" | "dedicacionDocente" | "categoriaDocente" | "idAreaUnl" | "idCarrera" | "periodoLectivo" ;
 export type IntegranteCreationAttributes = Optional<IntegranteAttributes, IntegranteOptionalAttributes>;
 
 export class Integrante extends Model<IntegranteAttributes, IntegranteCreationAttributes> implements IntegranteAttributes {
@@ -39,9 +36,6 @@ export class Integrante extends Model<IntegranteAttributes, IntegranteCreationAt
   idAreaUnl?: number;
   idCarrera?: number;
   periodoLectivo?: string;
-  createdAt!: Date;
-  updatedAt!: Date;
-  deletedAt?: Date;
 
   public async verRoles( sequelize : Sequelize.Sequelize, transaction ?: Sequelize.Transaction) : 
   Promise<RolIntegrante[]> {
@@ -125,18 +119,6 @@ export class Integrante extends Model<IntegranteAttributes, IntegranteCreationAt
     periodoLectivo: {
       type: DataTypes.STRING(255),
       allowNull: true
-    },
-    createdAt : {
-      type : DataTypes.DATE,
-      allowNull : false
-    },
-    updatedAt : {
-      type : DataTypes.DATE,
-      allowNull : false
-    },
-    deletedAt : {
-      type : DataTypes.DATE,
-      allowNull : true
     }
   }, {
     sequelize,

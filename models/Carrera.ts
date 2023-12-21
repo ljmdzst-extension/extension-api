@@ -4,7 +4,7 @@ import { DataTypes, Model, Optional } from 'sequelize';
 export interface CarreraAttributes {
   idCarrera: number;
   nom: string;
-  idRelacion: number;
+  idUnidadAcademica: number;
 }
 
 export type CarreraPk = "idCarrera";
@@ -15,7 +15,7 @@ export type CarreraCreationAttributes = Optional<CarreraAttributes, CarreraOptio
 export class Carrera extends Model<CarreraAttributes, CarreraCreationAttributes> implements CarreraAttributes {
   idCarrera!: number;
   nom!: string;
-  idRelacion!: number;
+  idUnidadAcademica!: number;
 
 
   static initModel(sequelize: Sequelize.Sequelize): typeof Carrera {
@@ -30,7 +30,7 @@ export class Carrera extends Model<CarreraAttributes, CarreraCreationAttributes>
       type: DataTypes.STRING(255),
       allowNull: false
     },
-    idRelacion: {
+    idUnidadAcademica: {
       type: DataTypes.INTEGER,
       allowNull: false,
       references: {
@@ -55,7 +55,7 @@ export class Carrera extends Model<CarreraAttributes, CarreraCreationAttributes>
         name: "fkCarreraRelacion1_idx",
         using: "BTREE",
         fields: [
-          { name: "idRelacion" },
+          { name: "idUnidadaAcademica" },
         ]
       },
     ]

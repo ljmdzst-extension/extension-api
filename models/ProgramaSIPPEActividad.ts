@@ -4,22 +4,14 @@ import { DataTypes, Model, Optional } from 'sequelize';
 export interface ProgramaSIPPEActividadAttributes {
   idProgramaSIPPE: number;
   idActividad: number;
-  createdAt: Date;
-  updatedAt: Date;
-  deletedAt?: Date;
 }
 
 export type ProgramaSIPPEActividadPk = "idProgramaSIPPE" | "idActividad";
 export type ProgramaSIPPEActividadId = ProgramaSIPPEActividad[ProgramaSIPPEActividadPk];
-export type ProgramaSIPPEActividadOptionalAttributes = "createdAt" | "updatedAt" | "deletedAt";
-export type ProgramaSIPPEActividadCreationAttributes = Optional<ProgramaSIPPEActividadAttributes, ProgramaSIPPEActividadOptionalAttributes>;
 
-export class ProgramaSIPPEActividad extends Model<ProgramaSIPPEActividadAttributes, ProgramaSIPPEActividadCreationAttributes> implements ProgramaSIPPEActividadAttributes {
+export class ProgramaSIPPEActividad extends Model<ProgramaSIPPEActividadAttributes> implements ProgramaSIPPEActividadAttributes {
   idProgramaSIPPE!: number;
   idActividad!: number;
-  createdAt!: Date;
-  updatedAt!: Date;
-  deletedAt?: Date;
 
 
   static initModel(sequelize: Sequelize.Sequelize): typeof ProgramaSIPPEActividad {
@@ -33,18 +25,6 @@ export class ProgramaSIPPEActividad extends Model<ProgramaSIPPEActividadAttribut
       type: DataTypes.INTEGER,
       allowNull: false,
       primaryKey: true
-    },
-    createdAt : {
-      type : DataTypes.DATE,
-      allowNull : false
-    },
-    updatedAt : {
-      type : DataTypes.DATE,
-      allowNull : false
-    },
-    deletedAt : {
-      type : DataTypes.DATE,
-      allowNull : true
     }
   }, {
     sequelize,

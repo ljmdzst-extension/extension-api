@@ -7,14 +7,11 @@ export interface EvaluacionItemAttributes {
   indice: string;
   observ?: string;
   valoracion?: number;
-  createdAt: Date;
-  updatedAt: Date;
-  deletedAt?: Date;
 }
 
 export type EvaluacionItemPk = "idUsuario" | "idEvaluacion";
 export type EvaluacionItemId = EvaluacionItem[EvaluacionItemPk];
-export type EvaluacionItemOptionalAttributes = "observ" | "valoracion" | "createdAt" | "updatedAt" | "deletedAt";
+export type EvaluacionItemOptionalAttributes = "observ" | "valoracion" ;
 export type EvaluacionItemCreationAttributes = Optional<EvaluacionItemAttributes, EvaluacionItemOptionalAttributes>;
 
 export class EvaluacionItem extends Model<EvaluacionItemAttributes, EvaluacionItemCreationAttributes> implements EvaluacionItemAttributes {
@@ -23,9 +20,6 @@ export class EvaluacionItem extends Model<EvaluacionItemAttributes, EvaluacionIt
   indice!: string;
   observ?: string;
   valoracion?: number;
-  createdAt!: Date;
-  updatedAt!: Date;
-  deletedAt?: Date;
 
 
   static initModel(sequelize: Sequelize.Sequelize): typeof EvaluacionItem {
@@ -51,18 +45,6 @@ export class EvaluacionItem extends Model<EvaluacionItemAttributes, EvaluacionIt
     valoracion: {
       type: DataTypes.INTEGER,
       allowNull: true
-    },
-    createdAt : {
-      type : DataTypes.DATE,
-      allowNull : false
-    },
-    updatedAt : {
-      type : DataTypes.DATE,
-      allowNull : false
-    },
-    deletedAt : {
-      type : DataTypes.DATE,
-      allowNull : true
     }
   }, {
     sequelize,

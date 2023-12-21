@@ -7,14 +7,11 @@ export interface ActividadObjetivoEspecificoAttributes {
   desc?: string;
   motivoModificacion?: string;
   motivoSuspension?: string;
-  createdAt: Date;
-  updatedAt: Date;
-  deletedAt?: Date;
 }
 
 export type ActividadObjetivoEspecificoPk = "idActividadObjetivoEspecifico";
 export type ActividadObjetivoEspecificoId = ActividadObjetivoEspecifico[ActividadObjetivoEspecificoPk];
-export type ActividadObjetivoEspecificoOptionalAttributes = "desc" | "motivoModificacion" | "motivoSuspension" | "createdAt" | "updatedAt" | "deletedAt";
+export type ActividadObjetivoEspecificoOptionalAttributes = "desc" | "motivoModificacion" | "motivoSuspension";
 export type ActividadObjetivoEspecificoCreationAttributes = Optional<ActividadObjetivoEspecificoAttributes, ActividadObjetivoEspecificoOptionalAttributes>;
 
 export class ActividadObjetivoEspecifico extends Model<ActividadObjetivoEspecificoAttributes, ActividadObjetivoEspecificoCreationAttributes> implements ActividadObjetivoEspecificoAttributes {
@@ -23,9 +20,6 @@ export class ActividadObjetivoEspecifico extends Model<ActividadObjetivoEspecifi
   desc?: string;
   motivoModificacion?: string;
   motivoSuspension?: string;
-  createdAt!: Date;
-  updatedAt!: Date;
-  deletedAt?: Date;
 
 
   static initModel(sequelize: Sequelize.Sequelize): typeof ActividadObjetivoEspecifico {
@@ -50,18 +44,6 @@ export class ActividadObjetivoEspecifico extends Model<ActividadObjetivoEspecifi
     motivoSuspension: {
       type: DataTypes.STRING(500),
       allowNull: true
-    },
-    createdAt : {
-      type : DataTypes.DATE,
-      allowNull : false
-    },
-    updatedAt : {
-      type : DataTypes.DATE,
-      allowNull : false
-    },
-    deletedAt : {
-      type : DataTypes.DATE,
-      allowNull : true
     }
   }, {
     sequelize,

@@ -8,14 +8,11 @@ export interface ParticipanteSocialAttributes {
   valoracion?: number;
   esDirecto?: number;
   observ?: string;
-  createdAt: Date;
-  updatedAt: Date;
-  deletedAt?: Date;
 }
 
 export type ParticipanteSocialPk = "idParticipanteSocial";
 export type ParticipanteSocialId = ParticipanteSocial[ParticipanteSocialPk];
-export type ParticipanteSocialOptionalAttributes = "valoracion" | "esDirecto" | "observ" | "createdAt" | "updatedAt" | "deletedAt";
+export type ParticipanteSocialOptionalAttributes = "valoracion" | "esDirecto" | "observ";
 export type ParticipanteSocialCreationAttributes = Optional<ParticipanteSocialAttributes, ParticipanteSocialOptionalAttributes>;
 
 export class ParticipanteSocial extends Model<ParticipanteSocialAttributes, ParticipanteSocialCreationAttributes> implements ParticipanteSocialAttributes {
@@ -25,9 +22,6 @@ export class ParticipanteSocial extends Model<ParticipanteSocialAttributes, Part
   valoracion?: number;
   esDirecto?: number;
   observ?: string;
-  createdAt!: Date;
-  updatedAt!: Date;
-  deletedAt?: Date;
 
 
   static initModel(sequelize: Sequelize.Sequelize): typeof ParticipanteSocial {
@@ -56,18 +50,6 @@ export class ParticipanteSocial extends Model<ParticipanteSocialAttributes, Part
     observ: {
       type: DataTypes.STRING(2000),
       allowNull: true
-    },
-    createdAt : {
-      type : DataTypes.DATE,
-      allowNull : false
-    },
-    updatedAt : {
-      type : DataTypes.DATE,
-      allowNull : false
-    },
-    deletedAt : {
-      type : DataTypes.DATE,
-      allowNull : true
     }
   }, {
     sequelize,

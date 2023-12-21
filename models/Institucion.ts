@@ -8,14 +8,11 @@ export interface InstitucionAttributes {
   email?: string;
   tel?: string;
   ubicacion?: string;
-  createdAt: Date;
-  updatedAt: Date;
-  deletedAt?: Date;
 }
 
 export type InstitucionPk = "idInstitucion";
 export type InstitucionId = Institucion[InstitucionPk];
-export type InstitucionOptionalAttributes = "idInstitucion" | "dom" | "email" | "tel" | "ubicacion" | "createdAt" | "updatedAt" | "deletedAt";
+export type InstitucionOptionalAttributes = "idInstitucion" | "dom" | "email" | "tel" | "ubicacion";
 export type InstitucionCreationAttributes = Optional<InstitucionAttributes, InstitucionOptionalAttributes>;
 
 export class Institucion extends Model<InstitucionAttributes, InstitucionCreationAttributes> implements InstitucionAttributes {
@@ -25,10 +22,6 @@ export class Institucion extends Model<InstitucionAttributes, InstitucionCreatio
   email?: string;
   tel?: string;
   ubicacion?: string;
-  createdAt!: Date;
-  updatedAt!: Date;
-  deletedAt?: Date;
-
 
   static initModel(sequelize: Sequelize.Sequelize): typeof Institucion {
     return Institucion.init({
@@ -57,18 +50,6 @@ export class Institucion extends Model<InstitucionAttributes, InstitucionCreatio
     ubicacion: {
       type: DataTypes.STRING(2083),
       allowNull: true
-    },
-    createdAt : {
-      type : DataTypes.DATE,
-      allowNull : false
-    },
-    updatedAt : {
-      type : DataTypes.DATE,
-      allowNull : false
-    },
-    deletedAt : {
-      type : DataTypes.DATE,
-      allowNull : true
     }
   }, {
     sequelize,

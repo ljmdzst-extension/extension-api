@@ -10,14 +10,11 @@ export interface ActividadAttributes {
   motivoCancel?: string;
   fechaDesde?: string;
   fechaHasta?: string;
-  createdAt: Date;
-  updatedAt: Date;
-  deletedAt?: Date;
 }
 
 export type ActividadPk = "idActividad";
 export type ActividadId = Actividad[ActividadPk];
-export type ActividadOptionalAttributes = "idActividad" | "idUsuario" | "nro" | "motivoCancel" | "fechaDesde" | "fechaHasta" | "createdAt" | "updatedAt" | "deletedAt";
+export type ActividadOptionalAttributes = "idActividad" | "idUsuario" | "nro" | "motivoCancel" | "fechaDesde" | "fechaHasta";
 export type ActividadCreationAttributes = Optional<ActividadAttributes, ActividadOptionalAttributes>;
 
 export class Actividad extends Model<ActividadAttributes, ActividadCreationAttributes> implements ActividadAttributes {
@@ -29,9 +26,6 @@ export class Actividad extends Model<ActividadAttributes, ActividadCreationAttri
   motivoCancel?: string;
   fechaDesde?: string;
   fechaHasta?: string;
-  createdAt!: Date;
-  updatedAt!: Date;
-  deletedAt?: Date;
 
 
   static initModel(sequelize: Sequelize.Sequelize): typeof Actividad {
@@ -69,18 +63,6 @@ export class Actividad extends Model<ActividadAttributes, ActividadCreationAttri
     fechaHasta: {
       type: DataTypes.DATEONLY,
       allowNull: true
-    },
-    createdAt : {
-      type : DataTypes.DATE,
-      allowNull : false
-    },
-    updatedAt : {
-      type : DataTypes.DATE,
-      allowNull : false
-    },
-    deletedAt : {
-      type : DataTypes.DATE,
-      allowNull : true
     }
   }, {
     sequelize,

@@ -6,14 +6,11 @@ export interface ObjetivoEspecificoAttributes {
   codigoPropuesta: string;
   desc?: string;
   resEsp?: string;
-  createdAt: Date;
-  updatedAt: Date;
-  deletedAt?: Date;
 }
 
 export type ObjetivoEspecificoPk = "idObjetivoEspecifico";
 export type ObjetivoEspecificoId = ObjetivoEspecifico[ObjetivoEspecificoPk];
-export type ObjetivoEspecificoOptionalAttributes = "desc" | "resEsp" | "createdAt" | "updatedAt" | "deletedAt";
+export type ObjetivoEspecificoOptionalAttributes = "desc" | "resEsp" ;
 export type ObjetivoEspecificoCreationAttributes = Optional<ObjetivoEspecificoAttributes, ObjetivoEspecificoOptionalAttributes>;
 
 export class ObjetivoEspecifico extends Model<ObjetivoEspecificoAttributes, ObjetivoEspecificoCreationAttributes> implements ObjetivoEspecificoAttributes {
@@ -21,9 +18,6 @@ export class ObjetivoEspecifico extends Model<ObjetivoEspecificoAttributes, Obje
   codigoPropuesta!: string;
   desc?: string;
   resEsp?: string;
-  createdAt!: Date;
-  updatedAt!: Date;
-  deletedAt?: Date;
 
 
   static initModel(sequelize: Sequelize.Sequelize): typeof ObjetivoEspecifico {
@@ -44,18 +38,6 @@ export class ObjetivoEspecifico extends Model<ObjetivoEspecificoAttributes, Obje
     resEsp: {
       type: DataTypes.STRING(500),
       allowNull: true
-    },
-    createdAt : {
-      type : DataTypes.DATE,
-      allowNull : false
-    },
-    updatedAt : {
-      type : DataTypes.DATE,
-      allowNull : false
-    },
-    deletedAt : {
-      type : DataTypes.DATE,
-      allowNull : true
     }
   }, {
     sequelize,

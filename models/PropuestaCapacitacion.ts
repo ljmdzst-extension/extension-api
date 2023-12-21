@@ -6,17 +6,12 @@ import type { Propuesta, PropuestaId } from './Propuesta';
 export interface PropuestaCapacitacionAttributes {
   codigoPropuesta: string;
   idCapacitacion: number;
-  createdAt: Date;
-  updatedAt: Date;
-  deletedAt?: Date;
 }
 
 export type PropuestaCapacitacionPk = "codigoPropuesta" | "idCapacitacion";
 export type PropuestaCapacitacionId = PropuestaCapacitacion[PropuestaCapacitacionPk];
-export type PropuestaCapacitacionOptionalAttributes = "createdAt" | "updatedAt" | "deletedAt";
-export type PropuestaCapacitacionCreationAttributes = Optional<PropuestaCapacitacionAttributes, PropuestaCapacitacionOptionalAttributes>;
 
-export class PropuestaCapacitacion extends Model<PropuestaCapacitacionAttributes, PropuestaCapacitacionCreationAttributes> implements PropuestaCapacitacionAttributes {
+export class PropuestaCapacitacion extends Model<PropuestaCapacitacionAttributes> implements PropuestaCapacitacionAttributes {
   codigoPropuesta!: string;
   idCapacitacion!: number;
   createdAt!: Date;
@@ -53,18 +48,6 @@ export class PropuestaCapacitacion extends Model<PropuestaCapacitacionAttributes
         model: 'Capacitacion',
         key: 'idCapacitacion'
       }
-    },
-    createdAt : {
-      type : DataTypes.DATE,
-      allowNull : false
-    },
-    updatedAt : {
-      type : DataTypes.DATE,
-      allowNull : false
-    },
-    deletedAt : {
-      type : DataTypes.DATE,
-      allowNull : true
     }
   }, {
     sequelize,

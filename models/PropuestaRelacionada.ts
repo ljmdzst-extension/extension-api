@@ -4,22 +4,14 @@ import { DataTypes, Model, Optional } from 'sequelize';
 export interface PropuestaRelacionadaAttributes {
   codigoPropuesta: string;
   codigoPropuestaRelacionada: string;
-  createdAt: Date;
-  updatedAt: Date;
-  deletedAt?: Date;
 }
 
 export type PropuestaRelacionadaPk = "codigoPropuesta" | "codigoPropuestaRelacionada";
 export type PropuestaRelacionadaId = PropuestaRelacionada[PropuestaRelacionadaPk];
-export type PropuestaRelacionadaOptionalAttributes = "createdAt" | "updatedAt" | "deletedAt";
-export type PropuestaRelacionadaCreationAttributes = Optional<PropuestaRelacionadaAttributes, PropuestaRelacionadaOptionalAttributes>;
 
-export class PropuestaRelacionada extends Model<PropuestaRelacionadaAttributes, PropuestaRelacionadaCreationAttributes> implements PropuestaRelacionadaAttributes {
+export class PropuestaRelacionada extends Model<PropuestaRelacionadaAttributes> implements PropuestaRelacionadaAttributes {
   codigoPropuesta!: string;
   codigoPropuestaRelacionada!: string;
-  createdAt!: Date;
-  updatedAt!: Date;
-  deletedAt?: Date;
 
 
   static initModel(sequelize: Sequelize.Sequelize): typeof PropuestaRelacionada {
@@ -33,18 +25,6 @@ export class PropuestaRelacionada extends Model<PropuestaRelacionadaAttributes, 
       type: DataTypes.STRING(255),
       allowNull: false,
       primaryKey: true
-    },
-    createdAt : {
-      type : DataTypes.DATE,
-      allowNull : false
-    },
-    updatedAt : {
-      type : DataTypes.DATE,
-      allowNull : false
-    },
-    deletedAt : {
-      type : DataTypes.DATE,
-      allowNull : true
     }
   }, {
     sequelize,

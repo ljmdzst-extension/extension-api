@@ -8,14 +8,11 @@ export interface MetaAttributes {
   observaciones?: string;
   idValoracion?: number;
   idActividad: number;
-  createdAt: Date;
-  updatedAt: Date;
-  deletedAt?: Date;
 }
 
 export type MetaPk = "idMeta";
 export type MetaId = Meta[MetaPk];
-export type MetaOptionalAttributes = "idMeta" | "resultado" | "observaciones" | "idValoracion" | "createdAt" | "updatedAt" | "deletedAt";
+export type MetaOptionalAttributes = "idMeta" | "resultado" | "observaciones" | "idValoracion";
 export type MetaCreationAttributes = Optional<MetaAttributes, MetaOptionalAttributes>;
 
 export class Meta extends Model<MetaAttributes, MetaCreationAttributes> implements MetaAttributes {
@@ -25,9 +22,6 @@ export class Meta extends Model<MetaAttributes, MetaCreationAttributes> implemen
   observaciones?: string;
   idValoracion?: number;
   idActividad!: number;
-  createdAt!: Date;
-  updatedAt!: Date;
-  deletedAt?: Date;
 
 
   static initModel(sequelize: Sequelize.Sequelize): typeof Meta {
@@ -57,18 +51,6 @@ export class Meta extends Model<MetaAttributes, MetaCreationAttributes> implemen
     idActividad: {
       type: DataTypes.INTEGER,
       allowNull: false
-    },
-    createdAt : {
-      type : DataTypes.DATE,
-      allowNull : false
-    },
-    updatedAt : {
-      type : DataTypes.DATE,
-      allowNull : false
-    },
-    deletedAt : {
-      type : DataTypes.DATE,
-      allowNull : true
     }
   }, {
     sequelize,

@@ -6,22 +6,14 @@ import type { Propuesta, PropuestaId } from './Propuesta';
 export interface PropuestaLineaTematicaAttributes {
   idLineaTematica: number;
   codigoPropuesta: string;
-  createdAt: Date;
-  updatedAt: Date;
-  deletedAt?: Date;
 }
 
 export type PropuestaLineaTematicaPk = "idLineaTematica" | "codigoPropuesta";
 export type PropuestaLineaTematicaId = PropuestaLineaTematica[PropuestaLineaTematicaPk];
-export type PropuestaLineaTematicaOptionalAttributes = "createdAt" | "updatedAt" | "deletedAt";
-export type PropuestaLineaTematicaCreationAttributes = Optional<PropuestaLineaTematicaAttributes, PropuestaLineaTematicaOptionalAttributes>;
 
-export class PropuestaLineaTematica extends Model<PropuestaLineaTematicaAttributes, PropuestaLineaTematicaCreationAttributes> implements PropuestaLineaTematicaAttributes {
+export class PropuestaLineaTematica extends Model<PropuestaLineaTematicaAttributes> implements PropuestaLineaTematicaAttributes {
   idLineaTematica!: number;
   codigoPropuesta!: string;
-  createdAt!: Date;
-  updatedAt!: Date;
-  deletedAt?: Date;
 
   // PropuestaLineaTematica belongsTo LineaTematica via idLineaTematica
   idLineaTematica_LineaTematica!: LineaTematica;
@@ -53,18 +45,6 @@ export class PropuestaLineaTematica extends Model<PropuestaLineaTematicaAttribut
         model: 'Propuesta',
         key: 'codigoPropuesta'
       }
-    },
-    createdAt : {
-      type : DataTypes.DATE,
-      allowNull : false
-    },
-    updatedAt : {
-      type : DataTypes.DATE,
-      allowNull : false
-    },
-    deletedAt : {
-      type : DataTypes.DATE,
-      allowNull : true
     }
   }, {
     sequelize,

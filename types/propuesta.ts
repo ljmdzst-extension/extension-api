@@ -2,15 +2,14 @@ import { ActividadObjetivoEspecificoAttributes } from "../models/ActividadObjeti
 import { IntegranteAttributes } from "../models/Integrante";
 import { ObjetivoEspecificoAttributes } from "../models/ObjetivoEspecifico";
 import { PropuestaAttributes } from "../models/Propuesta";
-import { PropuestaCapacitacionAttributes } from "../models/PropuestaCapacitacion";
 import { PropuestaInstitucionAttributes } from "../models/PropuestaInstitucion";
-import { PropuestaLineaTematicaAttributes } from "../models/PropuestaLineaTematica";
-import { PropuestaPalabraClaveAttributes } from "../models/PropuestaPalabraClave";
 import { PropuestaPreviaAttributes } from "../models/PropuestaPrevia";
-import { PropuestaProgramaExtensionAttributes } from "../models/PropuestaProgramaExtension";
 import { PropuestaRelacionadaAttributes } from "../models/PropuestaRelacionada";
 import { PersonaAttributes } from "../models/Persona";
-import { UbicacionProblematicaAttributes } from "../models/UbicacionProblematica";
+import { PalabraClaveAttributes } from "../models/PalabraClave";
+import { ProgramaSIPPEId } from "../models/ProgramaSIPPE";
+import { UbicacionAttributes, UbicacionId } from "../models/Ubicacion";
+import { LineaTematicaId } from "../models/LineaTematica";
 
 export type TPropuesta = PropuestaAttributes & {
     lInstituciones : PropuestaInstitucionAttributes[],
@@ -20,9 +19,9 @@ export type TPropuesta = PropuestaAttributes & {
     },
     lPropuestasPrevias : PropuestaPreviaAttributes[],
     lPropuestasRelacionadas : PropuestaRelacionadaAttributes[],
-    lGeolocalizaciones : UbicacionProblematicaAttributes[],
-    lProgramasExtension : PropuestaProgramaExtensionAttributes[],
-    lCapacitaciones : PropuestaCapacitacionAttributes[],
-    lLineasTematicas : PropuestaLineaTematicaAttributes[],
-    lPalabrasClave  : PropuestaPalabraClaveAttributes[]
+    lGeolocalizaciones : UbicacionAttributes[],
+    lProgramasExtension : ProgramaSIPPEId[],
+    lCapacitaciones : UbicacionId[],
+    lLineasTematicas : LineaTematicaId[],
+    lPalabrasClave  : PalabraClaveAttributes[]
 }

@@ -4,17 +4,12 @@ import { DataTypes, Model, Optional } from 'sequelize';
 export interface PropuestaProgramaExtensionAttributes {
   idProgramaExtension: number;
   codigoPropuesta: string;
-  createdAt: Date;
-  deletedAt?: Date;
-  updatedAt: Date;
 }
 
 export type PropuestaProgramaExtensionPk = "idProgramaExtension" | "codigoPropuesta";
 export type PropuestaProgramaExtensionId = PropuestaProgramaExtension[PropuestaProgramaExtensionPk];
-export type PropuestaProgramaExtensionOptionalAttributes = "createdAt" | "deletedAt" | "updatedAt";
-export type PropuestaProgramaExtensionCreationAttributes = Optional<PropuestaProgramaExtensionAttributes, PropuestaProgramaExtensionOptionalAttributes>;
 
-export class PropuestaProgramaExtension extends Model<PropuestaProgramaExtensionAttributes, PropuestaProgramaExtensionCreationAttributes> implements PropuestaProgramaExtensionAttributes {
+export class PropuestaProgramaExtension extends Model<PropuestaProgramaExtensionAttributes> implements PropuestaProgramaExtensionAttributes {
   idProgramaExtension!: number;
   codigoPropuesta!: string;
   createdAt!: Date;
@@ -33,18 +28,6 @@ export class PropuestaProgramaExtension extends Model<PropuestaProgramaExtension
       type: DataTypes.STRING(255),
       allowNull: false,
       primaryKey: true
-    },
-    createdAt : {
-      type : DataTypes.DATE,
-      allowNull : false
-    },
-    updatedAt : {
-      type : DataTypes.DATE,
-      allowNull : false
-    },
-    deletedAt : {
-      type : DataTypes.DATE,
-      allowNull : true
     }
   }, {
     sequelize,

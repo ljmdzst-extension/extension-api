@@ -4,22 +4,13 @@ import { DataTypes, Model, Optional } from 'sequelize';
 export interface FechaPuntualActividadAttributes {
   idFecha: number;
   idActividad: number;
-  createdAt: Date;
-  updatedAt: Date;
-  deletedAt?: Date;
 }
-
 export type FechaPuntualActividadPk = "idFecha" | "idActividad";
 export type FechaPuntualActividadId = FechaPuntualActividad[FechaPuntualActividadPk];
-export type FechaPuntualActividadOptionalAttributes = "createdAt" | "updatedAt" | "deletedAt";
-export type FechaPuntualActividadCreationAttributes = Optional<FechaPuntualActividadAttributes, FechaPuntualActividadOptionalAttributes>;
 
-export class FechaPuntualActividad extends Model<FechaPuntualActividadAttributes, FechaPuntualActividadCreationAttributes> implements FechaPuntualActividadAttributes {
+export class FechaPuntualActividad extends Model<FechaPuntualActividadAttributes> implements FechaPuntualActividadAttributes {
   idFecha!: number;
   idActividad!: number;
-  createdAt!: Date;
-  updatedAt!: Date;
-  deletedAt?: Date;
 
 
   static initModel(sequelize: Sequelize.Sequelize): typeof FechaPuntualActividad {
@@ -33,18 +24,6 @@ export class FechaPuntualActividad extends Model<FechaPuntualActividadAttributes
       type: DataTypes.INTEGER,
       allowNull: false,
       primaryKey: true
-    },
-    createdAt : {
-      type : DataTypes.DATE,
-      allowNull : false
-    },
-    updatedAt : {
-      type : DataTypes.DATE,
-      allowNull : false
-    },
-    deletedAt : {
-      type : DataTypes.DATE,
-      allowNull : true
     }
   }, {
     sequelize,

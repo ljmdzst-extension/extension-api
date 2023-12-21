@@ -6,14 +6,11 @@ export interface PropuestaInstitucionAttributes {
   codigoPropuesta: string;
   antecedentes?: string;
   valoracion?: number;
-  createdAt: Date;
-  updatedAt: Date;
-  deletedAt?: Date;
 }
 
 export type PropuestaInstitucionPk = "idInstitucion" | "codigoPropuesta";
 export type PropuestaInstitucionId = PropuestaInstitucion[PropuestaInstitucionPk];
-export type PropuestaInstitucionOptionalAttributes = "antecedentes" | "valoracion" | "createdAt" | "updatedAt" | "deletedAt";
+export type PropuestaInstitucionOptionalAttributes = "antecedentes" | "valoracion" ;
 export type PropuestaInstitucionCreationAttributes = Optional<PropuestaInstitucionAttributes, PropuestaInstitucionOptionalAttributes>;
 
 export class PropuestaInstitucion extends Model<PropuestaInstitucionAttributes, PropuestaInstitucionCreationAttributes> implements PropuestaInstitucionAttributes {
@@ -21,9 +18,7 @@ export class PropuestaInstitucion extends Model<PropuestaInstitucionAttributes, 
   codigoPropuesta!: string;
   antecedentes?: string;
   valoracion?: number;
-  createdAt!: Date;
-  updatedAt!: Date;
-  deletedAt?: Date;
+
 
 
   static initModel(sequelize: Sequelize.Sequelize): typeof PropuestaInstitucion {
@@ -45,18 +40,6 @@ export class PropuestaInstitucion extends Model<PropuestaInstitucionAttributes, 
     valoracion: {
       type: DataTypes.INTEGER,
       allowNull: true
-    },
-    createdAt : {
-      type : DataTypes.DATE,
-      allowNull : false
-    },
-    updatedAt : {
-      type : DataTypes.DATE,
-      allowNull : false
-    },
-    deletedAt : {
-      type : DataTypes.DATE,
-      allowNull : true
     }
   }, {
     sequelize,

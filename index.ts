@@ -13,6 +13,7 @@ import RouterEvaluaciones from './routes/evaluaciones';
 import { accesLogStream, combinedLogStream } from './config/logsConfig';
 import sequelizePropuestas from './config/dbConfig';
 import RouterPersonas from './routes/personas';
+import RouterIntegrates from './routes/integrantes';
 
 
 
@@ -30,6 +31,7 @@ app.use('/api/v2/propuestas',RouterPropuestas);
 app.use('/api/v2/evaluacion',RouterEvaluacion);
 app.use('/api/v2/evaluaciones',RouterEvaluaciones);
 app.use('/api/v2/persona',RouterPersonas);
+app.use('/api/v2/integrantes',RouterIntegrates);
 
 
 app.listen( process.env.PORT , async()=>{
