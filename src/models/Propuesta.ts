@@ -13,8 +13,8 @@ import { PropuestaProgramaExtension, PropuestaProgramaExtensionAttributes } from
 import { PropuestaCapacitacion, PropuestaCapacitacionAttributes } from './PropuestaCapacitacion';
 import { PropuestaLineaTematica, PropuestaLineaTematicaAttributes } from './PropuestaLineaTematica';
 import { PropuestaPalabraClave, PropuestaPalabraClaveAttributes } from './PropuestaPalabraClave';
-import { indexar, indexarAsociacion } from '../helpers/general';
-import { PalabraClave, PalabraClaveAttributes } from './PalabraClave';
+import { indexar, indexarAsociacion, splitNuevosRegistros } from '../helpers/general';
+import { PalabraClave, PalabraClaveAttributes, PalabraClaveCreationAttributes, PalabraClaveId } from './PalabraClave';
 import { UbicacionAttributes } from './Ubicacion';
 
 
@@ -215,10 +215,34 @@ export class Propuesta extends Model<PropuestaAttributes, PropuestaCreationAttri
     return salida;
   }
 
-  public async editarPalabrasClave(data : PalabraClaveAttributes[] ,sequelize : Sequelize.Sequelize, transaction ?: Sequelize.Transaction) :
-  Promise<PropuestaPalabraClaveAttributes[]> {
-    let salida : PropuestaPalabraClaveAttributes[] = []
+  public async editarPalabrasClave(data : PalabraClaveCreationAttributes[] ,sequelize : Sequelize.Sequelize, transaction ?: Sequelize.Transaction) :
+  Promise<boolean> {
+    let salida : boolean = false;
+    
+    try {
+      const splitData = splitNuevosRegistros(data,'idPalabraClave');
+      let palabrasNuevas : PalabraClaveAttributes[] = [];
+      if(splitData['NUEVOS'].length){
+        const desde : PalabraClaveId = await PalabraClave.max('idPalabraClave',{transaction});
+        await PalabraClave.initModel(sequelize).bulkCreate(splitData['NUEVOS'],{transaction});
+        palabrasNuevas = await PalabraClave.findAll({where : { idPalabraClave : { [Sequelize.Op.gt ]: desde } }});
 
+      }
+
+      await PropuestaPalabraClave.bulkCreate(
+        [...palabrasNuevas,splitData['viejos']].map( 
+          palabra => ({
+            idPalabraClave : palabra.idPalabraClave, 
+            codigoPropuesta : this.codigoPropuesta
+          }) ),{
+            transaction,
+            ignoreDuplicates : true
+          });
+      salida = true;
+    } catch (error) {
+      console.log(error);
+    }
+    
     return salida;
   }
 

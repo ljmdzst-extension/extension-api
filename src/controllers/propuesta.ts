@@ -2,7 +2,7 @@ import { request, response } from "express";
 import { Propuesta } from "../models/Propuesta";
 import sequelizePropuestas from "../config/dbConfig";
 import logger from '../config/logsConfig';
-import { TPropuesta } from "../types/propuesta";
+import { TPropuesta, TPutPropuesta } from "../types/propuesta";
 
 export const verPropuesta = async(req : typeof request , res : typeof response)=>{
     
@@ -88,11 +88,53 @@ export const crearPropuesta = async(req : typeof request , res : typeof response
     }
 }
 export const editarPropuesta = async(req : typeof request , res : typeof response)=>{
+    const transaction = await sequelizePropuestas.transaction({logging : msg => console.log(msg)});
     try {
         /**... */
 
-    } catch (error) {
-        throw error;
+        const {codigoPropuesta } = req.params;
+        const {
+            idUsuario,
+            lCapacitaciones,
+            lGeolocalizaciones,
+            lInstituciones,
+            lIntegrantes,
+            lLineasTematicas,
+            lPalabrasClave,
+            lProgramasExtension,
+            lPropuestasPrevias,
+            lPropuestasRelacionadas,
+            planificacion,
+            ...datosActualizar
+        } : TPutPropuesta = req.body;
+
+        const iPropuesta = await Propuesta.initModel(sequelizePropuestas).findByPk(codigoPropuesta,{transaction});
+
+        if(!iPropuesta) throw { status : 500 , message : 'Propuesta no encontrada'}
+
+        await iPropuesta.update(datosActualizar,{transaction});
+
+        // if(!await iPropuesta.editarPalabrasClave(lPalabrasClave,sequelizePropuestas,transaction))
+        //     throw { status : 500 , message : 'Error al editar palabras clave'}
+
+        transaction.afterCommit(()=>{
+            res.status(200).json({
+                ok : true,
+                data : null,
+                error : null
+            })
+        })
+        await transaction.commit();
+
+
+    } catch (error : any) {
+        await transaction.rollback();
+        logger.log('error',error.status,' - ',error.message);
+        res.status(error.status || 500).json({
+            ok : false,
+            data : null,
+            error : error.message
+        })
     }
 }
 export const bajaPropuesta = async(req : typeof request , res : typeof response)=>{

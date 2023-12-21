@@ -1,3 +1,4 @@
+import { Model } from "sequelize";
 
 export const indexar = ( registros : Array<any>, indice : string )=> registros.reduce(
         (salida , elemento : any )=>({
@@ -23,3 +24,17 @@ export const indexarAsociacion = ( registros : Array<any>, indice : string )=> r
         ]
     })
 ,{});
+
+
+export const splitNuevosRegistros = ( registros : Array<any>, indice : string ) => registros.reduce(
+    (salida , registro) => (
+        registro[indice] === 0
+        ? {
+        ...salida,
+            NUEVOS : [...salida.NUEVOS , registro]
+        }
+        :{
+            ...salida,
+            VIEJOS : [...salida.VIEJOS , registro]
+        })
+    ,{NUEVOS : [], VIEJOS : []})
