@@ -3,6 +3,9 @@ import { Propuesta } from "../models/Propuesta";
 import sequelizePropuestas from "../config/dbConfig";
 import logger from '../config/logsConfig';
 import { TPropuesta, TPutPropuesta } from "../types/propuesta";
+import { Usuario } from "../models/Usuario";
+import { Relacion } from "../models/Relacion";
+import { armarCantPropuestasXModalidad } from "../helpers/general";
 
 export const verPropuesta = async(req : typeof request , res : typeof response)=>{
     
@@ -77,14 +80,59 @@ export const verPropuesta = async(req : typeof request , res : typeof response)=
     }
 }
 export const crearPropuesta = async(req : typeof request , res : typeof response)=>{
+    const transaction = await sequelizePropuestas.transaction();
     try {
         /**... */
-        const data = req.body;
+        const {idUsuario, titulo , modalidad, idUnidadAcademica} = req.body;
+
+        const getUsuario =  Usuario.initModel(sequelizePropuestas).findByPk(idUsuario,{transaction});
+        const getCantPropuestasPorModalidad =  Propuesta.initModel(sequelizePropuestas).count({where : {modalidad}, transaction});
+        const getUnidadAcademica =  Relacion.initModel(sequelizePropuestas).findByPk(idUnidadAcademica,{transaction});
 
 
+        const iUsuario = await getUsuario;
+        if(!iUsuario) throw { status : 500 , message : 'No se encontro el usuario'}
+        
+        const unidadAcademica = await getUnidadAcademica;
+        if(!unidadAcademica) throw { status : 500 , message : 'No se encontro la unidad academica'}
+        
+        const cantPropuestasPorModalidad = armarCantPropuestasXModalidad((await getCantPropuestasPorModalidad) + 1);
+        const datosPersonalesUsuario = await iUsuario.verDatos(sequelizePropuestas,transaction);
+        if(!datosPersonalesUsuario) throw { status : 500 , message : 'Error al cargar datos personales del usuario'}
+        
+        const {ape,nom} = datosPersonalesUsuario;
+        const {nom : UA} = unidadAcademica.dataValues;
+        const anioActual = new Date(Date.now()).getFullYear().toString();
+        
+        const codigoPropuesta = `${anioActual[2]}${anioActual[3]}-${cantPropuestasPorModalidad}-${modalidad}-${UA}-${ape[0]}${nom[0]}`
 
-    } catch (error) {
-        throw error;
+        const nuevaPropuesta = await Propuesta.initModel(sequelizePropuestas).create({
+                codigoPropuesta ,
+                titulo,
+                modalidad,
+                idUsuario
+            },
+            {transaction}
+        );
+        
+        transaction.afterCommit(()=>{
+            res.status(200).json({
+                ok : true,
+                data : nuevaPropuesta.dataValues,
+                error : null
+            })
+        })
+
+        await transaction.commit();
+
+    } catch (error : any) {
+        await transaction.rollback();
+        logger.log('error',error.status,' - ',error.message);
+        res.status(500).json({
+            ok : false,
+            data : null,
+            error : 'Error de servidor'
+        })
     }
 }
 export const editarPropuesta = async(req : typeof request , res : typeof response)=>{

@@ -38,3 +38,6 @@ export const splitNuevosRegistros = ( registros : Array<any>, indice : string ) 
             VIEJOS : [...salida.VIEJOS , registro]
         })
     ,{NUEVOS : [], VIEJOS : []})
+
+export const armarCantPropuestasXModalidad = ( cant : number )=>
+        cant < 10 ? `0${cant}` : `${cant}`;
