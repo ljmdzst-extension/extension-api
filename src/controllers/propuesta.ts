@@ -188,9 +188,25 @@ export const editarPropuesta = async(req : typeof request , res : typeof respons
 export const bajaPropuesta = async(req : typeof request , res : typeof response)=>{
     try {
         /**... */
+        const {codigoPropuesta,idUsuario}= req.params;
 
-    } catch (error) {
-        throw error;
+        const count = await Propuesta.initModel(sequelizePropuestas).destroy({ where : {codigoPropuesta,idUsuario}});
+
+        if(count === 0) throw { status : 500 , message : 'No se pudo eliminar la propuesta'}
+
+        res.status(200).json({
+            ok : true,
+            data : null,
+            error : null
+        })
+
+    } catch (error : any) {
+        logger.log('error',error.status,' - ',error.message);
+        res.status(error.status || 500).json({
+            ok : false,
+            data : null,
+            error : error.message
+        })
     }
 }
 

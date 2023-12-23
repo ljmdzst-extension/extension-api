@@ -14,6 +14,7 @@ import { accesLogStream, combinedLogStream } from './config/logsConfig';
 import sequelizePropuestas from './config/dbConfig';
 import RouterPersonas from './routes/personas';
 import RouterIntegrates from './routes/integrantes';
+import RouterBases from './routes/bases';
 
 
 
@@ -32,7 +33,7 @@ app.use('/api/v2/evaluacion',RouterEvaluacion);
 app.use('/api/v2/evaluaciones',RouterEvaluaciones);
 app.use('/api/v2/persona',RouterPersonas);
 app.use('/api/v2/integrantes',RouterIntegrates);
-
+app.use('/api/v2/bases',RouterBases);
 
 app.listen( process.env.PORT , async()=>{
     try {
