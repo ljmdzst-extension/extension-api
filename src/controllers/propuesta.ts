@@ -5,7 +5,11 @@ import logger from '../config/logsConfig';
 import { TPropuesta, TPutPropuesta } from "../types/propuesta";
 import { Usuario } from "../models/Usuario";
 import { Relacion } from "../models/Relacion";
-import { armarCantPropuestasXModalidad } from "../helpers/general";
+import { armarCantPropuestasXModalidad, splitNuevosRegistros } from "../helpers/general";
+import sequelizeExtension from "../config/dbConfig";
+import { Institucion } from "../models/Institucion";
+import { Integrante } from "../models/Integrante";
+import { Persona } from "../models/Persona";
 
 export const verPropuesta = async(req : typeof request , res : typeof response)=>{
     
@@ -160,7 +164,49 @@ export const editarPropuesta = async(req : typeof request , res : typeof respons
 
         if(!iPropuesta) throw { status : 500 , message : 'Propuesta no encontrada'}
 
+        const tareas = new Array<Promise<any>>();
+
+        if(lProgramasExtension.length) tareas.push( iPropuesta.editarProgramasExtension(lProgramasExtension,sequelizeExtension,transaction) );
+        if(lCapacitaciones.length) tareas.push(iPropuesta.editarCapacitaciones(lCapacitaciones,sequelizeExtension,transaction));
+        if(lLineasTematicas.length) tareas.push(iPropuesta.editarLineasTematicas(lLineasTematicas,sequelizeExtension,transaction));
+        if(lCapacitaciones.length) tareas.push(iPropuesta.editarCapacitaciones(lCapacitaciones,sequelizeExtension,transaction));
+        if(lPalabrasClave) tareas.push(iPropuesta.editarPalabrasClave(lPalabrasClave,sequelizeExtension,transaction))
+        if(lInstituciones.length) {
+            const guardarInstituciones = Institucion.initModel(sequelizeExtension).bulkCreate(
+                lInstituciones,
+                {
+                    updateOnDuplicate : ['dom','email','tel','ubicacion'],
+                    transaction
+                }
+            );
+
+            const editarInsttiucionesAsociadas  = iPropuesta.editarInstituciones(lInstituciones,sequelizeExtension,transaction);
+
+            tareas.push(guardarInstituciones);
+            tareas.push(editarInsttiucionesAsociadas);
+
+        }
+        if(lIntegrantes.length) {
+            const guardarPersonas = Persona.initModel(sequelizeExtension).bulkCreate(
+                lIntegrantes,
+                {
+                    updateOnDuplicate : ['ape','nom','dom','tel','email'],
+                    transaction
+                }
+            );
+
+            const editarIntegrantes  = iPropuesta.editarIntegrantes(lIntegrantes,sequelizeExtension,transaction);
+
+            tareas.push(guardarPersonas);
+            tareas.push(editarIntegrantes);
+        }
+        
+        
         await iPropuesta.update(datosActualizar,{transaction});
+
+        if(tareas.length){
+            await Promise.all(tareas);
+        }   
 
         // if(!await iPropuesta.editarPalabrasClave(lPalabrasClave,sequelizePropuestas,transaction))
         //     throw { status : 500 , message : 'Error al editar palabras clave'}
@@ -171,7 +217,8 @@ export const editarPropuesta = async(req : typeof request , res : typeof respons
                 data : null,
                 error : null
             })
-        })
+        });
+        
         await transaction.commit();
 
 

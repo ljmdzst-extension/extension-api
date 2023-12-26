@@ -10,9 +10,10 @@ import { PalabraClaveAttributes, PalabraClaveCreationAttributes } from "../model
 import { ProgramaSIPPEId } from "../models/ProgramaSIPPE";
 import { UbicacionAttributes, UbicacionId } from "../models/Ubicacion";
 import { LineaTematicaId } from "../models/LineaTematica";
+import { InstitucionCreationAttributes } from "../models/Institucion";
 
 export type TPropuesta = PropuestaAttributes & {
-    lInstituciones : PropuestaInstitucionAttributes[],
+    lInstituciones : (PropuestaInstitucionAttributes & InstitucionCreationAttributes)[],
     lIntegrantes : (IntegranteAttributes & PersonaAttributes)[],
     planificacion : {
         lObjetivosEspecificos : (ObjetivoEspecificoAttributes & {lActividades : ActividadObjetivoEspecificoAttributes[]})[]
@@ -27,7 +28,7 @@ export type TPropuesta = PropuestaAttributes & {
 }
 
 export type TPutPropuesta = PropuestaCreationAttributes & {
-    lInstituciones : PropuestaInstitucionCreationAttributes[],
+    lInstituciones : (PropuestaInstitucionCreationAttributes & InstitucionCreationAttributes)[],
     lIntegrantes : (IntegranteCreationAttributes & PersonaCreationAttributes)[],
     planificacion : {
         lObjetivosEspecificos : (ObjetivoEspecificoCreationAttributes & {lActividades : ActividadObjetivoEspecificoCreationAttributes[]})[]

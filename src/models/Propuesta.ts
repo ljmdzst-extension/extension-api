@@ -2,20 +2,23 @@ import * as Sequelize from 'sequelize';
 import { DataTypes, Model, Optional } from 'sequelize';
 import { PropuestaInstitucion, PropuestaInstitucionAttributes, PropuestaInstitucionCreationAttributes } from './PropuestaInstitucion';
 import { Institucion, InstitucionAttributes } from './Institucion';
-import { Integrante, IntegranteAttributes } from './Integrante';
-import { Persona, PersonaAttributes } from './Persona';
+import { Integrante, IntegranteAttributes, IntegranteCreationAttributes } from './Integrante';
+import { PersonaAttributes } from './Persona';
 import { ObjetivoEspecificoAttributes } from './ObjetivoEspecifico';
 import { ActividadObjetivoEspecificoAttributes } from './ActividadObjetivoEspecifico';
 import { PropuestaPrevia, PropuestaPreviaAttributes } from './PropuestaPrevia';
 import { PropuestaRelacionada, PropuestaRelacionadaAttributes } from './PropuestaRelacionada';
-import { UbicacionProblematica, UbicacionProblematicaAttributes } from './UbicacionProblematica';
+import { UbicacionProblematica } from './UbicacionProblematica';
 import { PropuestaProgramaExtension, PropuestaProgramaExtensionAttributes } from './PropuestaProgramaExtension';
 import { PropuestaCapacitacion, PropuestaCapacitacionAttributes } from './PropuestaCapacitacion';
 import { PropuestaLineaTematica, PropuestaLineaTematicaAttributes } from './PropuestaLineaTematica';
-import { PropuestaPalabraClave, PropuestaPalabraClaveAttributes } from './PropuestaPalabraClave';
+import { PropuestaPalabraClave } from './PropuestaPalabraClave';
 import { indexar, indexarAsociacion, splitNuevosRegistros } from '../helpers/general';
 import { PalabraClave, PalabraClaveAttributes, PalabraClaveCreationAttributes, PalabraClaveId } from './PalabraClave';
 import { UbicacionAttributes } from './Ubicacion';
+import { ProgramaSIPPEId } from './ProgramaSIPPE';
+import { CapacitacionId } from './Capacitacion';
+import { LineaTematicaId } from './LineaTematica';
 
 
 export interface PropuestaAttributes {
@@ -244,6 +247,143 @@ export class Propuesta extends Model<PropuestaAttributes, PropuestaCreationAttri
     }
     
     return salida;
+  }
+
+  public async editarProgramasExtension( data : ProgramaSIPPEId[], sequelize : Sequelize.Sequelize, transaction ?: Sequelize.Transaction):
+  Promise<void>{
+
+    const asociarProgramas = PropuestaProgramaExtension.initModel(sequelize).bulkCreate(
+      data.map( progId => ({ codigoPropuesta : this.codigoPropuesta, idProgramaExtension : progId }) ),
+      {
+        ignoreDuplicates : true,
+        transaction
+      }
+    );
+
+    const darDeBajaDescartados = PropuestaProgramaExtension.destroy({
+      where : {
+        codigoPropuesta : this.codigoPropuesta,
+        idProgramaExtension : {
+          [Sequelize.Op.not] : data
+        } 
+      },
+      transaction
+    });
+
+    await asociarProgramas;
+    await darDeBajaDescartados;
+  }
+
+  public async editarCapacitaciones( data : CapacitacionId[], sequelize : Sequelize.Sequelize, transaction ?: Sequelize.Transaction):
+  Promise<void>{
+
+    const asociarCapactiaciones = PropuestaCapacitacion.initModel(sequelize).bulkCreate(
+      data.map( capacId => ({ codigoPropuesta : this.codigoPropuesta, idCapacitacion : capacId }) ),
+      {
+        ignoreDuplicates : true,
+        transaction
+      }
+    );
+
+    const darDeBajaDescartados = PropuestaCapacitacion.destroy({
+      where : {
+        codigoPropuesta : this.codigoPropuesta,
+        idCapacitacion : {
+          [Sequelize.Op.not] : data
+        } 
+      },
+      transaction
+    });
+
+    await asociarCapactiaciones;
+    await darDeBajaDescartados;
+  }
+  public async editarLineasTematicas( data : LineaTematicaId[], sequelize : Sequelize.Sequelize, transaction ?: Sequelize.Transaction):
+  Promise<void>{
+
+    const asociarLineasTematicas = PropuestaLineaTematica.initModel(sequelize).bulkCreate(
+      data.map( progId => ({ codigoPropuesta : this.codigoPropuesta, idLineaTematica : progId }) ),
+      {
+        ignoreDuplicates : true,
+        transaction
+      }
+    );
+
+    const darDeBajaDescartados = PropuestaLineaTematica.destroy({
+      where : {
+        codigoPropuesta : this.codigoPropuesta,
+        idLineaTematica : {
+          [Sequelize.Op.not] : data
+        } 
+      },
+      transaction
+    });
+
+    await asociarLineasTematicas;
+    await darDeBajaDescartados;
+  }
+
+  public async editarIntegrantes( data : IntegranteCreationAttributes[], sequelize : Sequelize.Sequelize, transaction ?: Sequelize.Transaction ) : 
+  Promise<void> {
+
+    if(data.length) {
+
+      const actualizarIntegrantes = Integrante.initModel(sequelize).bulkCreate(
+        data,
+        {
+          updateOnDuplicate : [
+            'categoriaDocente',
+            'dedicacionDocente',
+            'idAreaUnl',
+            'idCarrera',
+            'observ',
+            'periodoLectivo',
+            'tieneTarjeta',
+            'tipoIntegrante',
+            'titulo'
+          ],
+          transaction 
+        }
+      );
+
+      const darDeBajaDuplicados = Integrante.destroy({
+        where : {
+          codigoPropuesta : this.codigoPropuesta,
+          nroDoc : {
+            [Sequelize.Op.not] : data.map( integrante => integrante.nroDoc)
+          }
+        }
+      });
+
+      await actualizarIntegrantes;
+      await darDeBajaDuplicados;
+
+    }
+
+  }
+
+  public async editarInstituciones( data : PropuestaInstitucionCreationAttributes[], sequelize : Sequelize.Sequelize, transaction ?: Sequelize.Transaction  ) : 
+  Promise< void >{
+    if(data.length){
+        const asociarInstituciones = PropuestaInstitucion.initModel(sequelize).bulkCreate(
+          data,
+          {
+            updateOnDuplicate : ['antecedentes','valoracion'],
+            transaction
+          }
+        );
+        const darDeBajaDuplicados = PropuestaInstitucion.initModel(sequelize).destroy({
+          where : {
+            codigoPropuesta : this.codigoPropuesta,
+            idInstitucion : {
+              [Sequelize.Op.not] : data.map( inst => inst.idInstitucion)
+            }
+          },
+          transaction
+        });
+        await asociarInstituciones;
+        await darDeBajaDuplicados;
+    }
   }
 
   static initModel(sequelize: Sequelize.Sequelize): typeof Propuesta {
