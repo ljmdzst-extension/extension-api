@@ -12,7 +12,7 @@ export interface InstitucionAttributes {
 
 export type InstitucionPk = "idInstitucion";
 export type InstitucionId = Institucion[InstitucionPk];
-export type InstitucionOptionalAttributes = "idInstitucion" | "dom" | "email" | "tel" | "ubicacion";
+export type InstitucionOptionalAttributes = "idInstitucion" | "dom" | "email" | "tel" | "ubicacion" ;
 export type InstitucionCreationAttributes = Optional<InstitucionAttributes, InstitucionOptionalAttributes>;
 
 export class Institucion extends Model<InstitucionAttributes, InstitucionCreationAttributes> implements InstitucionAttributes {

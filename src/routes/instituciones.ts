@@ -1,11 +1,11 @@
 import express from 'express';
-import { bajaInstitucion, crearInstitucion, editarInstitucion, verInstituciones } from '../controllers/instituciones';
+import { bajaInstitucion, editarInstituciones, verInstituciones } from '../controllers/instituciones';
+import { validarCodigoPropuesta } from '../middlewares/propuesta';
 
 const RouterInstituciones = express.Router();
 
-RouterInstituciones.get('/:codigoPropuesta', verInstituciones);
-RouterInstituciones.post('/', crearInstitucion);
-RouterInstituciones.put('/',editarInstitucion);
-RouterInstituciones.delete('/:codigoPropuesta/:nroDoc',bajaInstitucion);
+RouterInstituciones.get('/:codigoPropuesta',validarCodigoPropuesta, verInstituciones);
+RouterInstituciones.put('/',editarInstituciones);
+RouterInstituciones.delete('/:codigoPropuesta/:nroDoc',validarCodigoPropuesta,bajaInstitucion);
 
 export default RouterInstituciones;

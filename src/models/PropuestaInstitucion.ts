@@ -6,11 +6,13 @@ export interface PropuestaInstitucionAttributes {
   codigoPropuesta: string;
   antecedentes?: string;
   valoracion?: number;
+  updatedAt ?: Date;
+  deletedAt ?: Date;
 }
 
 export type PropuestaInstitucionPk = "idInstitucion" | "codigoPropuesta";
 export type PropuestaInstitucionId = PropuestaInstitucion[PropuestaInstitucionPk];
-export type PropuestaInstitucionOptionalAttributes = "antecedentes" | "valoracion" ;
+export type PropuestaInstitucionOptionalAttributes = "antecedentes" | "valoracion"| "deletedAt" |"updatedAt";
 export type PropuestaInstitucionCreationAttributes = Optional<PropuestaInstitucionAttributes, PropuestaInstitucionOptionalAttributes>;
 
 export class PropuestaInstitucion extends Model<PropuestaInstitucionAttributes, PropuestaInstitucionCreationAttributes> implements PropuestaInstitucionAttributes {

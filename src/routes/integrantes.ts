@@ -1,11 +1,11 @@
 import express from 'express';
-import { bajaIntegrante, crearIntegrante, editarIntegrante, verIntegrates } from '../controllers/integrantes';
+import { bajaIntegrante, editarIntegrantes, verIntegrates } from '../controllers/integrantes';
+import { validarCodigoPropuesta } from '../middlewares/propuesta';
 
 const RouterIntegrates = express.Router();
 
-RouterIntegrates.get('/:codigoPropuesta', verIntegrates);
-RouterIntegrates.post('/', crearIntegrante);
-RouterIntegrates.put('/',editarIntegrante);
-RouterIntegrates.delete('/:codigoPropuesta/:nroDoc',bajaIntegrante);
+RouterIntegrates.get('/:codigoPropuesta',validarCodigoPropuesta, verIntegrates);
+RouterIntegrates.put('/',editarIntegrantes);
+RouterIntegrates.delete('/:codigoPropuesta/:nroDoc',validarCodigoPropuesta,bajaIntegrante);
 
 export default RouterIntegrates;

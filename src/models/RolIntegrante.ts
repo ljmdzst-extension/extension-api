@@ -5,9 +5,11 @@ export interface RolIntegranteAttributes {
   idRolIntegrante: number;
   nroDoc: string;
   codigoPropuesta: string;
+  updatedAt ?: Date;
+  deletedAt ?: Date;
 }
 
-export type RolIntegrantePk = "idRolIntegrante" | "nroDoc" | "codigoPropuesta";
+export type RolIntegrantePk = "idRolIntegrante" | "nroDoc" | "codigoPropuesta" |"updatedAt" |"deletedAt";
 export type RolIntegranteId = RolIntegrante[RolIntegrantePk];
 
 export class RolIntegrante extends Model<RolIntegranteAttributes> implements RolIntegranteAttributes {

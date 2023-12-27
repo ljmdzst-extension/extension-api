@@ -5,6 +5,7 @@ import { Propuesta } from "../models/Propuesta";
 import { Institucion, InstitucionCreationAttributes } from "../models/Institucion";
 import { Persona, PersonaCreationAttributes } from "../models/Persona";
 import { PropuestaInstitucion, PropuestaInstitucionCreationAttributes } from "../models/PropuestaInstitucion";
+import { TPutPropuesta } from "../types/propuesta";
 
 
 export const verInstituciones = async (req : typeof request , res : typeof response)=>{
@@ -39,72 +40,37 @@ export const verInstituciones = async (req : typeof request , res : typeof respo
 
 }
 
-export const crearInstitucion = async (req : typeof request , res : typeof response)=>{
-    
-    const transaction = await sequelizeExtension.transaction();
-    
-    try {
-        
-        const data : InstitucionCreationAttributes & PropuestaInstitucionCreationAttributes = req.body;
 
-        await Institucion.initModel(sequelizeExtension).findOrCreate({
-            defaults : data,
-            where: {idInstitucion : data.idInstitucion},
-            transaction
-        })
-
-        const [institucion,creado] = await PropuestaInstitucion.initModel(sequelizeExtension).findOrCreate({
-            defaults : data,
-            where : {codigoPropuesta : data.codigoPropuesta, idInstitucion : data.idInstitucion},
-            transaction
-        });
-
-        if(creado) {
-            await institucion.update(data,{transaction});
-        }
-
-        res.status(200).json({
-            ok : true,
-            data : Institucion,
-            error : null
-        })
-        
-    } catch (error : any) {
-        logger.log('error',error.status,' - ',error.message);
-        console.log(error)
-        res.status(500).json({
-            ok : false,
-            data : null,
-            error : 'Error de servidor'
-        })
-    }
-}
-
-export const editarInstitucion = async (req : typeof request , res : typeof response)=>{
+export const editarInstituciones = async (req : typeof request , res : typeof response)=>{
     
     const transaction = await sequelizeExtension.transaction({logging : (sql)=>console.log(sql)})
     try {
         
-        const data : InstitucionCreationAttributes & PropuestaInstitucionCreationAttributes = req.body;
+        const {lInstituciones,codigoPropuesta} : TPutPropuesta  = req.body;
 
-        await Institucion.initModel(sequelizeExtension).update(data,{where : {idInstitucion : data.idInstitucion}, transaction});
+        const iPropuesta = await Propuesta.initModel(sequelizeExtension).findByPk(codigoPropuesta,{transaction});
+        if(!iPropuesta) throw { status : 500 , message : 'Propuesta no encontrada'}
 
-        const institucion = await PropuestaInstitucion.initModel(sequelizeExtension).findOne({
-            where : {
-                codigoPropuesta : data.codigoPropuesta,
-                idInstitucion : data.idInstitucion
-            }
-        });
+        if(lInstituciones.length) {
+            const guardarInstituciones = Institucion.initModel(sequelizeExtension).bulkCreate(
+                lInstituciones,
+                {
+                    updateOnDuplicate : ['dom','email','tel','ubicacion'],
+                    transaction
+                }
+            );
 
-        if(!institucion) throw { status: 500 , message : 'Institucion inexistente'}
+            const editarInsttiucionesAsociadas  = iPropuesta.editarInstituciones(lInstituciones,sequelizeExtension,transaction);
 
+           await guardarInstituciones;
+           await editarInsttiucionesAsociadas;
 
-        const institucionActualizado = await institucion.update(data,{transaction});
+        }
 
         transaction.afterCommit(()=>{
             res.status(200).json({
                 ok : true,
-                data : institucionActualizado.dataValues,
+                data : null,
                 error : null
             });
         })

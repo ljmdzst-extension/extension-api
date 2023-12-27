@@ -1,5 +1,13 @@
 import { Model } from "sequelize";
 
+export const indexarJsons = (lista : Array<any>, indice : string) => lista.reduce(
+    (salida , elemento : any )=>({
+        ...salida,
+        [elemento[indice]] : {...elemento}
+    })
+    ,{}
+)
+
 export const indexar = ( registros : Array<any>, indice : string )=> registros.reduce(
         (salida , elemento : any )=>({
             ...salida,

@@ -1,8 +1,9 @@
 import * as Sequelize from 'sequelize';
 import { DataTypes, Model, Optional } from 'sequelize';
-import { RolIntegranteAttributes, RolIntegranteId } from './RolIntegrante';
-import { RolIntegrante } from './RolIntegrante';
+import { RolIntegrante, RolIntegranteAttributes } from './RolIntegrante';
 import { Persona, PersonaAttributes } from './Persona';
+import { HookReturn } from 'sequelize/types/hooks';
+import { RolId } from './Rol';
 
 
 export interface IntegranteAttributes {
@@ -17,11 +18,13 @@ export interface IntegranteAttributes {
   idAreaUnl?: number;
   idCarrera?: number;
   periodoLectivo?: string;
+  updatedAt ?: Date;
+  deletedAt ?: Date;
 }
 
 export type IntegrantePk = "nroDoc" | "codigoPropuesta";
 export type IntegranteId = Integrante[IntegrantePk];
-export type IntegranteOptionalAttributes = "observ" | "titulo" | "tieneTarjeta" | "dedicacionDocente" | "categoriaDocente" | "idAreaUnl" | "idCarrera" | "periodoLectivo" ;
+export type IntegranteOptionalAttributes = "observ" | "titulo" | "tieneTarjeta" | "dedicacionDocente" | "categoriaDocente" | "idAreaUnl" | "idCarrera" | "periodoLectivo" | "updatedAt" | "deletedAt" ;
 export type IntegranteCreationAttributes = Optional<IntegranteAttributes, IntegranteOptionalAttributes>;
 
 export class Integrante extends Model<IntegranteAttributes, IntegranteCreationAttributes> implements IntegranteAttributes {
@@ -48,12 +51,36 @@ export class Integrante extends Model<IntegranteAttributes, IntegranteCreationAt
     });
   }
 
+  public async editarRoles ( data : RolId[], sequelize : Sequelize.Sequelize, transaction ?: Sequelize.Transaction) :
+  Promise< void >{
+
+    if(data.length) {
+      const acutalizarRoles = RolIntegrante.initModel(sequelize).bulkCreate(
+        data.map( rol => ({nroDoc : this.nroDoc, idRolIntegrante : rol, codigoPropuesta : this.codigoPropuesta}) ),
+        {
+          updateOnDuplicate : ['updatedAt','deletedAt'],
+          transaction
+        }
+      );
+  
+      const darDeBajaSobrantes = RolIntegrante.destroy({
+        where : {
+          codigoPropuesta : this.codigoPropuesta,
+          idRolIntegrante : {[Sequelize.Op.not] : data.map( rol => rol)}
+        },
+        transaction
+      });
+  
+      await acutalizarRoles;
+      await darDeBajaSobrantes;
+    }
+
+  }
+
   public async verPersona( sequelize : Sequelize.Sequelize, transaction ?: Sequelize.Transaction) :
   Promise< PersonaAttributes | null > {
      return Persona.initModel(sequelize).findByPk(this.nroDoc,{transaction});
   }
-
-  
 
   static initModel(sequelize: Sequelize.Sequelize): typeof Integrante {
     return Integrante.init({

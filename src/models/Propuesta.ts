@@ -8,17 +8,19 @@ import { ObjetivoEspecificoAttributes } from './ObjetivoEspecifico';
 import { ActividadObjetivoEspecificoAttributes } from './ActividadObjetivoEspecifico';
 import { PropuestaPrevia, PropuestaPreviaAttributes } from './PropuestaPrevia';
 import { PropuestaRelacionada, PropuestaRelacionadaAttributes } from './PropuestaRelacionada';
-import { UbicacionProblematica } from './UbicacionProblematica';
+import { UbicacionProblematica, UbicacionProblematicaAttributes } from './UbicacionProblematica';
 import { PropuestaProgramaExtension, PropuestaProgramaExtensionAttributes } from './PropuestaProgramaExtension';
 import { PropuestaCapacitacion, PropuestaCapacitacionAttributes } from './PropuestaCapacitacion';
 import { PropuestaLineaTematica, PropuestaLineaTematicaAttributes } from './PropuestaLineaTematica';
 import { PropuestaPalabraClave } from './PropuestaPalabraClave';
-import { indexar, indexarAsociacion, splitNuevosRegistros } from '../helpers/general';
+import { indexar, indexarAsociacion, indexarJsons, splitNuevosRegistros } from '../helpers/general';
 import { PalabraClave, PalabraClaveAttributes, PalabraClaveCreationAttributes, PalabraClaveId } from './PalabraClave';
-import { UbicacionAttributes } from './Ubicacion';
+import { Ubicacion, UbicacionAttributes, UbicacionId } from './Ubicacion';
 import { ProgramaSIPPEId } from './ProgramaSIPPE';
 import { CapacitacionId } from './Capacitacion';
 import { LineaTematicaId } from './LineaTematica';
+import { RolIntegrante } from './RolIntegrante';
+import { RolId } from './Rol';
 
 
 export interface PropuestaAttributes {
@@ -143,7 +145,7 @@ export class Propuesta extends Model<PropuestaAttributes, PropuestaCreationAttri
 
       const selectPersonas = lIntegrantes.map(integrante => integrante.verPersona(sequelize,transaction));
 
-      const selectRoles = lIntegrantes.map( integrante => integrante.verRoles(sequelize,transaction) );
+      const selectRoles = lIntegrantes.map( async integrante =>  await integrante.verRoles(sequelize,transaction) );
 
       const lPersonas = await Promise.all( selectPersonas);
       const lRoles = await Promise.all(selectRoles);
@@ -323,8 +325,10 @@ export class Propuesta extends Model<PropuestaAttributes, PropuestaCreationAttri
     await darDeBajaDescartados;
   }
 
-  public async editarIntegrantes( data : IntegranteCreationAttributes[], sequelize : Sequelize.Sequelize, transaction ?: Sequelize.Transaction ) : 
+  public async editarIntegrantes( data : (IntegranteCreationAttributes & {lRoles : RolId[]})[], sequelize : Sequelize.Sequelize, transaction ?: Sequelize.Transaction ) : 
   Promise<void> {
+
+    const dataIndexada = indexarJsons(data,'nroDoc');
 
     if(data.length) {
 
@@ -340,24 +344,38 @@ export class Propuesta extends Model<PropuestaAttributes, PropuestaCreationAttri
             'periodoLectivo',
             'tieneTarjeta',
             'tipoIntegrante',
-            'titulo'
+            'titulo',
+            'updatedAt',
+            'deletedAt'
           ],
           transaction 
         }
       );
 
-      const darDeBajaDuplicados = Integrante.destroy({
+      const darDeBajaDuplicados = Integrante.initModel(sequelize).destroy({
         where : {
           codigoPropuesta : this.codigoPropuesta,
           nroDoc : {
             [Sequelize.Op.not] : data.map( integrante => integrante.nroDoc)
           }
-        }
+        },
+        transaction
       });
 
       await actualizarIntegrantes;
       await darDeBajaDuplicados;
 
+      const integrantesEditados = await Integrante.initModel(sequelize).findAll({
+        where : {
+          codigoPropuesta : this.codigoPropuesta,
+          nroDoc : data.map( integ => integ.nroDoc )
+        },  
+        transaction
+      })
+
+      const acutalizarRoles = integrantesEditados.map(async integ =>await integ.editarRoles(dataIndexada[integ.nroDoc].lRoles,sequelize,transaction));
+
+      await Promise.all(acutalizarRoles);
     }
 
   }
@@ -368,7 +386,7 @@ export class Propuesta extends Model<PropuestaAttributes, PropuestaCreationAttri
         const asociarInstituciones = PropuestaInstitucion.initModel(sequelize).bulkCreate(
           data,
           {
-            updateOnDuplicate : ['antecedentes','valoracion'],
+            updateOnDuplicate : ['antecedentes','valoracion','updatedAt','deletedAt'],
             transaction
           }
         );
@@ -385,6 +403,46 @@ export class Propuesta extends Model<PropuestaAttributes, PropuestaCreationAttri
         await darDeBajaDuplicados;
     }
   }
+
+  public async editarGeolocalizaciones(data : UbicacionAttributes[] ,sequelize : Sequelize.Sequelize, transaction ?: Sequelize.Transaction) :
+  Promise<boolean> {
+    let salida : boolean = false;
+    
+    try {
+      const splitData = splitNuevosRegistros(data,'idPalabraClave');
+      let geolocalizacionesNuevas : UbicacionAttributes[] = [];
+      if(splitData['NUEVOS'].length){
+
+        const desde : UbicacionId = await Ubicacion.max('idUbicacion',{transaction});
+
+        await Ubicacion.initModel(sequelize).bulkCreate(splitData['NUEVOS'],{transaction});
+
+        geolocalizacionesNuevas = await Ubicacion.findAll({where : { idUbicacion : { [Sequelize.Op.gt ]: desde } }});
+
+      }
+
+      await UbicacionProblematica.bulkCreate(
+        [...geolocalizacionesNuevas,splitData['VIEJOS']].map( 
+          ubicacion => ({
+            idUbicacion : ubicacion.idUbicacion, 
+            codigoPropuesta : this.codigoPropuesta
+          }) 
+        ),
+        {
+            transaction,
+            ignoreDuplicates : true
+        }
+      );
+
+      salida = true;
+    } catch (error) {
+      console.log('Error - Propuesta.editarGeolocalizaciones');
+      throw error;
+    }
+    
+    return salida;
+  }
+
 
   static initModel(sequelize: Sequelize.Sequelize): typeof Propuesta {
     return Propuesta.init({

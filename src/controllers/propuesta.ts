@@ -149,8 +149,6 @@ export const editarPropuesta = async(req : typeof request , res : typeof respons
             idUsuario,
             lCapacitaciones,
             lGeolocalizaciones,
-            lInstituciones,
-            lIntegrantes,
             lLineasTematicas,
             lPalabrasClave,
             lProgramasExtension,
@@ -170,46 +168,14 @@ export const editarPropuesta = async(req : typeof request , res : typeof respons
         if(lCapacitaciones.length) tareas.push(iPropuesta.editarCapacitaciones(lCapacitaciones,sequelizeExtension,transaction));
         if(lLineasTematicas.length) tareas.push(iPropuesta.editarLineasTematicas(lLineasTematicas,sequelizeExtension,transaction));
         if(lCapacitaciones.length) tareas.push(iPropuesta.editarCapacitaciones(lCapacitaciones,sequelizeExtension,transaction));
-        if(lPalabrasClave) tareas.push(iPropuesta.editarPalabrasClave(lPalabrasClave,sequelizeExtension,transaction))
-        if(lInstituciones.length) {
-            const guardarInstituciones = Institucion.initModel(sequelizeExtension).bulkCreate(
-                lInstituciones,
-                {
-                    updateOnDuplicate : ['dom','email','tel','ubicacion'],
-                    transaction
-                }
-            );
-
-            const editarInsttiucionesAsociadas  = iPropuesta.editarInstituciones(lInstituciones,sequelizeExtension,transaction);
-
-            tareas.push(guardarInstituciones);
-            tareas.push(editarInsttiucionesAsociadas);
-
-        }
-        if(lIntegrantes.length) {
-            const guardarPersonas = Persona.initModel(sequelizeExtension).bulkCreate(
-                lIntegrantes,
-                {
-                    updateOnDuplicate : ['ape','nom','dom','tel','email'],
-                    transaction
-                }
-            );
-
-            const editarIntegrantes  = iPropuesta.editarIntegrantes(lIntegrantes,sequelizeExtension,transaction);
-
-            tareas.push(guardarPersonas);
-            tareas.push(editarIntegrantes);
-        }
-        
+        if(lPalabrasClave) tareas.push(iPropuesta.editarPalabrasClave(lPalabrasClave,sequelizeExtension,transaction));
+        if(lGeolocalizaciones) tareas.push(iPropuesta.editarGeolocalizaciones(lGeolocalizaciones,sequelizeExtension,transaction));
         
         await iPropuesta.update(datosActualizar,{transaction});
 
         if(tareas.length){
             await Promise.all(tareas);
         }   
-
-        // if(!await iPropuesta.editarPalabrasClave(lPalabrasClave,sequelizePropuestas,transaction))
-        //     throw { status : 500 , message : 'Error al editar palabras clave'}
 
         transaction.afterCommit(()=>{
             res.status(200).json({
