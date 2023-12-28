@@ -31,9 +31,7 @@ export type TPropuesta = PropuestaAttributes & {
 export type TPutPropuesta = PropuestaCreationAttributes & {
     lInstituciones : (PropuestaInstitucionCreationAttributes & InstitucionCreationAttributes)[],
     lIntegrantes : (IntegranteCreationAttributes & {lRoles : RolId[]} & PersonaCreationAttributes)[],
-    planificacion : {
-        lObjetivosEspecificos : (ObjetivoEspecificoCreationAttributes & {lActividades : ActividadObjetivoEspecificoCreationAttributes[]})[]
-    },
+    lObjetivosEspecificos : (ObjetivoEspecificoCreationAttributes & {lActividades : ActividadObjetivoEspecificoCreationAttributes[]})[],
     lPropuestasPrevias : PropuestaPreviaAttributes[],
     lPropuestasRelacionadas : PropuestaRelacionadaAttributes[],
     lGeolocalizaciones : UbicacionAttributes[],

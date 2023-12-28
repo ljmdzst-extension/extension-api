@@ -5,11 +5,8 @@ import logger from '../config/logsConfig';
 import { TPropuesta, TPutPropuesta } from "../types/propuesta";
 import { Usuario } from "../models/Usuario";
 import { Relacion } from "../models/Relacion";
-import { armarCantPropuestasXModalidad, splitNuevosRegistros } from "../helpers/general";
+import { armarCantPropuestasXModalidad } from "../helpers/general";
 import sequelizeExtension from "../config/dbConfig";
-import { Institucion } from "../models/Institucion";
-import { Integrante } from "../models/Integrante";
-import { Persona } from "../models/Persona";
 
 export const verPropuesta = async(req : typeof request , res : typeof response)=>{
     
@@ -154,7 +151,6 @@ export const editarPropuesta = async(req : typeof request , res : typeof respons
             lProgramasExtension,
             lPropuestasPrevias,
             lPropuestasRelacionadas,
-            planificacion,
             ...datosActualizar
         } : TPutPropuesta = req.body;
 
@@ -170,7 +166,6 @@ export const editarPropuesta = async(req : typeof request , res : typeof respons
         if(lCapacitaciones.length) tareas.push(iPropuesta.editarCapacitaciones(lCapacitaciones,sequelizeExtension,transaction));
         if(lPalabrasClave) tareas.push(iPropuesta.editarPalabrasClave(lPalabrasClave,sequelizeExtension,transaction));
         if(lGeolocalizaciones) tareas.push(iPropuesta.editarGeolocalizaciones(lGeolocalizaciones,sequelizeExtension,transaction));
-        
         await iPropuesta.update(datosActualizar,{transaction});
 
         if(tareas.length){

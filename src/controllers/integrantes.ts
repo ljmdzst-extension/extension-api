@@ -2,8 +2,8 @@ import { request, response } from "express";
 import logger from "../config/logsConfig";
 import sequelizeExtension from "../config/dbConfig";
 import { Propuesta } from "../models/Propuesta";
-import { Integrante, IntegranteCreationAttributes } from "../models/Integrante";
-import { Persona, PersonaCreationAttributes } from "../models/Persona";
+import { Integrante } from "../models/Integrante";
+import { Persona } from "../models/Persona";
 import { TPutPropuesta } from "../types/propuesta";
 
 

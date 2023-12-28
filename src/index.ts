@@ -16,6 +16,7 @@ import RouterPersonas from './routes/personas';
 import RouterIntegrates from './routes/integrantes';
 import RouterBases from './routes/bases';
 import RouterInstituciones from './routes/instituciones';
+import RouterPlanificacion from './routes/planificacion';
 
 
 
@@ -36,6 +37,8 @@ app.use('/api/v2/persona',RouterPersonas);
 app.use('/api/v2/integrantes',RouterIntegrates);
 app.use('/api/v2/bases',RouterBases);
 app.use('/api/v2/instituciones',RouterInstituciones);
+app.use('/api/v2/planificacion',RouterPlanificacion);
+
 
 app.listen( process.env.PORT , async()=>{
     try {

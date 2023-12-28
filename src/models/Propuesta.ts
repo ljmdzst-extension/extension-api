@@ -4,7 +4,7 @@ import { PropuestaInstitucion, PropuestaInstitucionAttributes, PropuestaInstituc
 import { Institucion, InstitucionAttributes } from './Institucion';
 import { Integrante, IntegranteAttributes, IntegranteCreationAttributes } from './Integrante';
 import { PersonaAttributes } from './Persona';
-import { ObjetivoEspecificoAttributes } from './ObjetivoEspecifico';
+import { ObjetivoEspecifico, ObjetivoEspecificoAttributes } from './ObjetivoEspecifico';
 import { ActividadObjetivoEspecificoAttributes } from './ActividadObjetivoEspecifico';
 import { PropuestaPrevia, PropuestaPreviaAttributes } from './PropuestaPrevia';
 import { PropuestaRelacionada, PropuestaRelacionadaAttributes } from './PropuestaRelacionada';
@@ -172,6 +172,19 @@ export class Propuesta extends Model<PropuestaAttributes, PropuestaCreationAttri
       objetivoGeneral : '',
       lObjetivosEspecificos : []
     };
+
+    salida.finalidad = this.planificacionFinalidad || '';
+    salida.objetivoGeneral = this.planificacionObjetivoGeneral || '';
+
+    const lObjetivosEspecificos = await ObjetivoEspecifico.initModel(sequelize).findAll({ transaction });
+
+    if(lObjetivosEspecificos.length) {
+      const dataObjetivosEspecificos = lObjetivosEspecificos.map(async objEsp => ({...objEsp, lActividades : await objEsp.verActividades(sequelize,transaction)}))
+      
+      salida.lObjetivosEspecificos = await Promise.all(dataObjetivosEspecificos);
+
+    }
+
     return salida;
   }
   public async verPropuestasPrevias( sequelize : Sequelize.Sequelize, transaction ?: Sequelize.Transaction) : 
@@ -443,6 +456,50 @@ export class Propuesta extends Model<PropuestaAttributes, PropuestaCreationAttri
     return salida;
   }
 
+  public async editarPlanificacion(data : PlanificacionAttributes, sequelize : Sequelize.Sequelize, transaction ?: Sequelize.Transaction) :
+  Promise<void>{
+
+    this.set('planificacionFinalidad',data.finalidad);
+    this.set('planificacionObjetivoGeneral',data.objetivoGeneral);
+
+
+    const actualizarObjetivos = data.lObjetivosEspecificos.map(
+      async obj => {
+        
+        const iObjetivo = await ObjetivoEspecifico.initModel(sequelize).create(
+          {
+            ...obj,
+            codigoPropuesta : this.codigoPropuesta
+          },
+          {
+            transaction
+          }
+        );
+        await iObjetivo.editarActividades(obj.lActividades,sequelize,transaction);
+
+      }
+    );
+
+    const darDeBajaSobrantes =  ObjetivoEspecifico.initModel(sequelize).destroy({
+      where : {
+         codigoPropuesta : this.codigoPropuesta,
+         idObjetivoEspecifico : {
+          [Sequelize.Op.not] : data.lObjetivosEspecificos.map( (obj) => obj.idObjetivoEspecifico)
+        }
+      },
+      transaction
+    });
+
+    await Promise.all(actualizarObjetivos);
+
+    await darDeBajaSobrantes;
+
+
+    
+    
+    
+
+  }
 
   static initModel(sequelize: Sequelize.Sequelize): typeof Propuesta {
     return Propuesta.init({

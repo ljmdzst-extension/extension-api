@@ -7,11 +7,13 @@ export interface ActividadObjetivoEspecificoAttributes {
   desc?: string;
   motivoModificacion?: string;
   motivoSuspension?: string;
+  updatedAt ?: Date;
+  deletedAt ?: Date;
 }
 
 export type ActividadObjetivoEspecificoPk = "idActividadObjetivoEspecifico";
 export type ActividadObjetivoEspecificoId = ActividadObjetivoEspecifico[ActividadObjetivoEspecificoPk];
-export type ActividadObjetivoEspecificoOptionalAttributes = "desc" | "motivoModificacion" | "motivoSuspension";
+export type ActividadObjetivoEspecificoOptionalAttributes = "desc" | "motivoModificacion" | "motivoSuspension" | "updatedAt" | "deletedAt";
 export type ActividadObjetivoEspecificoCreationAttributes = Optional<ActividadObjetivoEspecificoAttributes, ActividadObjetivoEspecificoOptionalAttributes>;
 
 export class ActividadObjetivoEspecifico extends Model<ActividadObjetivoEspecificoAttributes, ActividadObjetivoEspecificoCreationAttributes> implements ActividadObjetivoEspecificoAttributes {
