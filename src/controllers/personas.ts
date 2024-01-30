@@ -1,7 +1,7 @@
 import { request, response } from "express";
-import { Persona } from "../models/Persona";
 import sequelizeExtension from "../config/dbConfig";
 import logger from "../config/logsConfig";
+import { initModels } from "../models/init-models";
 
 
 export const buscar = async(req : typeof request , res : typeof response)=>{
@@ -9,13 +9,13 @@ export const buscar = async(req : typeof request , res : typeof response)=>{
    
     try {
 
+        const {Persona} = initModels(sequelizeExtension);
+
         const {nroDoc} = req.params;
-       
-        const iPersona = await Persona.initModel(sequelizeExtension).findByPk(nroDoc);
 
         res.status(200).json({
             ok : true,
-            data : iPersona,
+            data :  await Persona.findByPk(nroDoc),
             error : null
         });
 

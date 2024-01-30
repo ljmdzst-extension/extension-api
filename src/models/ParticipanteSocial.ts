@@ -1,5 +1,7 @@
 import * as Sequelize from 'sequelize';
 import { DataTypes, Model, Optional } from 'sequelize';
+import type { ActividadParticipanteSocial, ActividadParticipanteSocialId } from './ActividadParticipanteSocial';
+import type { Propuesta, PropuestaId } from './Propuesta';
 
 export interface ParticipanteSocialAttributes {
   idParticipanteSocial: number;
@@ -12,7 +14,7 @@ export interface ParticipanteSocialAttributes {
 
 export type ParticipanteSocialPk = "idParticipanteSocial";
 export type ParticipanteSocialId = ParticipanteSocial[ParticipanteSocialPk];
-export type ParticipanteSocialOptionalAttributes = "valoracion" | "esDirecto" | "observ";
+export type ParticipanteSocialOptionalAttributes = "valoracion" | "esDirecto" | "observ" ;
 export type ParticipanteSocialCreationAttributes = Optional<ParticipanteSocialAttributes, ParticipanteSocialOptionalAttributes>;
 
 export class ParticipanteSocial extends Model<ParticipanteSocialAttributes, ParticipanteSocialCreationAttributes> implements ParticipanteSocialAttributes {
@@ -23,6 +25,23 @@ export class ParticipanteSocial extends Model<ParticipanteSocialAttributes, Part
   esDirecto?: number;
   observ?: string;
 
+  // ParticipanteSocial hasMany ActividadParticipanteSocial via idParticipanteSocial
+  ActividadParticipanteSocials!: ActividadParticipanteSocial[];
+  getActividadParticipanteSocials!: Sequelize.HasManyGetAssociationsMixin<ActividadParticipanteSocial>;
+  setActividadParticipanteSocials!: Sequelize.HasManySetAssociationsMixin<ActividadParticipanteSocial, ActividadParticipanteSocialId>;
+  addActividadParticipanteSocial!: Sequelize.HasManyAddAssociationMixin<ActividadParticipanteSocial, ActividadParticipanteSocialId>;
+  addActividadParticipanteSocials!: Sequelize.HasManyAddAssociationsMixin<ActividadParticipanteSocial, ActividadParticipanteSocialId>;
+  createActividadParticipanteSocial!: Sequelize.HasManyCreateAssociationMixin<ActividadParticipanteSocial>;
+  removeActividadParticipanteSocial!: Sequelize.HasManyRemoveAssociationMixin<ActividadParticipanteSocial, ActividadParticipanteSocialId>;
+  removeActividadParticipanteSocials!: Sequelize.HasManyRemoveAssociationsMixin<ActividadParticipanteSocial, ActividadParticipanteSocialId>;
+  hasActividadParticipanteSocial!: Sequelize.HasManyHasAssociationMixin<ActividadParticipanteSocial, ActividadParticipanteSocialId>;
+  hasActividadParticipanteSocials!: Sequelize.HasManyHasAssociationsMixin<ActividadParticipanteSocial, ActividadParticipanteSocialId>;
+  countActividadParticipanteSocials!: Sequelize.HasManyCountAssociationsMixin;
+  // ParticipanteSocial belongsTo Propuesta via codigoPropuesta
+  codigoPropuesta_Propuestum!: Propuesta;
+  getCodigoPropuesta_Propuestum!: Sequelize.BelongsToGetAssociationMixin<Propuesta>;
+  setCodigoPropuesta_Propuestum!: Sequelize.BelongsToSetAssociationMixin<Propuesta, PropuestaId>;
+  createCodigoPropuesta_Propuestum!: Sequelize.BelongsToCreateAssociationMixin<Propuesta>;
 
   static initModel(sequelize: Sequelize.Sequelize): typeof ParticipanteSocial {
     return ParticipanteSocial.init({
@@ -33,7 +52,11 @@ export class ParticipanteSocial extends Model<ParticipanteSocialAttributes, Part
     },
     codigoPropuesta: {
       type: DataTypes.STRING(255),
-      allowNull: false
+      allowNull: false,
+      references: {
+        model: 'Propuesta',
+        key: 'codigoPropuesta'
+      }
     },
     nom: {
       type: DataTypes.STRING(500),
@@ -55,24 +78,7 @@ export class ParticipanteSocial extends Model<ParticipanteSocialAttributes, Part
     sequelize,
     tableName: 'ParticipanteSocial',
     timestamps: true,
-    paranoid: true,
-    indexes: [
-      {
-        name: "PRIMARY",
-        unique: true,
-        using: "BTREE",
-        fields: [
-          { name: "idParticipanteSocial" },
-        ]
-      },
-      {
-        name: "fkPropuestaParticipanteSocialPropuesta1_idx",
-        using: "BTREE",
-        fields: [
-          { name: "codigoPropuesta" },
-        ]
-      },
-    ]
+    paranoid: true
   });
   }
 }

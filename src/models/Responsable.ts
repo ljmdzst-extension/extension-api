@@ -1,5 +1,7 @@
 import * as Sequelize from 'sequelize';
 import { DataTypes, Model, Optional } from 'sequelize';
+import type { Institucion, InstitucionId } from './Institucion';
+import type { Persona, PersonaId } from './Persona';
 
 export interface ResponsableAttributes {
   idInstitucion: number;
@@ -19,18 +21,36 @@ export class Responsable extends Model<ResponsableAttributes, ResponsableCreatio
   desde!: string;
   hasta?: string;
 
+  // Responsable belongsTo Institucion via idInstitucion
+  idInstitucion_Institucion!: Institucion;
+  getIdInstitucion_Institucion!: Sequelize.BelongsToGetAssociationMixin<Institucion>;
+  setIdInstitucion_Institucion!: Sequelize.BelongsToSetAssociationMixin<Institucion, InstitucionId>;
+  createIdInstitucion_Institucion!: Sequelize.BelongsToCreateAssociationMixin<Institucion>;
+  // Responsable belongsTo Persona via nroDoc
+  nroDoc_Persona!: Persona;
+  getNroDoc_Persona!: Sequelize.BelongsToGetAssociationMixin<Persona>;
+  setNroDoc_Persona!: Sequelize.BelongsToSetAssociationMixin<Persona, PersonaId>;
+  createNroDoc_Persona!: Sequelize.BelongsToCreateAssociationMixin<Persona>;
 
   static initModel(sequelize: Sequelize.Sequelize): typeof Responsable {
     return Responsable.init({
     idInstitucion: {
       type: DataTypes.INTEGER,
       allowNull: false,
-      primaryKey: true
+      primaryKey: true,
+      references: {
+        model: 'Institucion',
+        key: 'idInstitucion'
+      }
     },
     nroDoc: {
       type: DataTypes.STRING(9),
       allowNull: false,
-      primaryKey: true
+      primaryKey: true,
+      references: {
+        model: 'Persona',
+        key: 'nroDoc'
+      }
     },
     desde: {
       type: DataTypes.DATEONLY,
@@ -44,25 +64,7 @@ export class Responsable extends Model<ResponsableAttributes, ResponsableCreatio
     sequelize,
     tableName: 'Responsable',
     timestamps: true,
-    paranoid: true,
-    indexes: [
-      {
-        name: "PRIMARY",
-        unique: true,
-        using: "BTREE",
-        fields: [
-          { name: "idInstitucion" },
-          { name: "nroDoc" },
-        ]
-      },
-      {
-        name: "fkResponsablePersona1_idx",
-        using: "BTREE",
-        fields: [
-          { name: "nroDoc" },
-        ]
-      },
-    ]
+    paranoid: true
   });
   }
 }

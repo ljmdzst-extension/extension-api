@@ -10,8 +10,9 @@ export interface PropuestaLineaTematicaAttributes {
 
 export type PropuestaLineaTematicaPk = "idLineaTematica" | "codigoPropuesta";
 export type PropuestaLineaTematicaId = PropuestaLineaTematica[PropuestaLineaTematicaPk];
+export type PropuestaLineaTematicaCreationAttributes = PropuestaLineaTematicaAttributes;
 
-export class PropuestaLineaTematica extends Model<PropuestaLineaTematicaAttributes> implements PropuestaLineaTematicaAttributes {
+export class PropuestaLineaTematica extends Model<PropuestaLineaTematicaAttributes, PropuestaLineaTematicaCreationAttributes> implements PropuestaLineaTematicaAttributes {
   idLineaTematica!: number;
   codigoPropuesta!: string;
 
@@ -50,25 +51,7 @@ export class PropuestaLineaTematica extends Model<PropuestaLineaTematicaAttribut
     sequelize,
     tableName: 'PropuestaLineaTematica',
     timestamps: true,
-    paranoid: true,
-    indexes: [
-      {
-        name: "PRIMARY",
-        unique: true,
-        using: "BTREE",
-        fields: [
-          { name: "idLineaTematica" },
-          { name: "codigoPropuesta" },
-        ]
-      },
-      {
-        name: "fkPropuestaLineaTematicaPropuesta1_idx",
-        using: "BTREE",
-        fields: [
-          { name: "codigoPropuesta" },
-        ]
-      },
-    ]
+    paranoid: true
   });
   }
 }

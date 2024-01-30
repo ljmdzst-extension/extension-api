@@ -1,5 +1,7 @@
 import * as Sequelize from 'sequelize';
 import { DataTypes, Model, Optional } from 'sequelize';
+import type { CronogramaActividad, CronogramaActividadId } from './CronogramaActividad';
+import type { ObjetivoEspecifico, ObjetivoEspecificoId } from './ObjetivoEspecifico';
 
 export interface ActividadObjetivoEspecificoAttributes {
   idActividadObjetivoEspecifico: number;
@@ -7,13 +9,11 @@ export interface ActividadObjetivoEspecificoAttributes {
   desc?: string;
   motivoModificacion?: string;
   motivoSuspension?: string;
-  updatedAt ?: Date;
-  deletedAt ?: Date;
 }
 
 export type ActividadObjetivoEspecificoPk = "idActividadObjetivoEspecifico";
 export type ActividadObjetivoEspecificoId = ActividadObjetivoEspecifico[ActividadObjetivoEspecificoPk];
-export type ActividadObjetivoEspecificoOptionalAttributes = "desc" | "motivoModificacion" | "motivoSuspension" | "updatedAt" | "deletedAt";
+export type ActividadObjetivoEspecificoOptionalAttributes = "idActividadObjetivoEspecifico" | "desc" | "motivoModificacion" | "motivoSuspension" ;
 export type ActividadObjetivoEspecificoCreationAttributes = Optional<ActividadObjetivoEspecificoAttributes, ActividadObjetivoEspecificoOptionalAttributes>;
 
 export class ActividadObjetivoEspecifico extends Model<ActividadObjetivoEspecificoAttributes, ActividadObjetivoEspecificoCreationAttributes> implements ActividadObjetivoEspecificoAttributes {
@@ -23,17 +23,39 @@ export class ActividadObjetivoEspecifico extends Model<ActividadObjetivoEspecifi
   motivoModificacion?: string;
   motivoSuspension?: string;
 
+  // ActividadObjetivoEspecifico hasMany CronogramaActividad via idActividadObjetivoEspecifico
+  CronogramaActividads!: CronogramaActividad[];
+  getCronogramaActividads!: Sequelize.HasManyGetAssociationsMixin<CronogramaActividad>;
+  setCronogramaActividads!: Sequelize.HasManySetAssociationsMixin<CronogramaActividad, CronogramaActividadId>;
+  addCronogramaActividad!: Sequelize.HasManyAddAssociationMixin<CronogramaActividad, CronogramaActividadId>;
+  addCronogramaActividads!: Sequelize.HasManyAddAssociationsMixin<CronogramaActividad, CronogramaActividadId>;
+  createCronogramaActividad!: Sequelize.HasManyCreateAssociationMixin<CronogramaActividad>;
+  removeCronogramaActividad!: Sequelize.HasManyRemoveAssociationMixin<CronogramaActividad, CronogramaActividadId>;
+  removeCronogramaActividads!: Sequelize.HasManyRemoveAssociationsMixin<CronogramaActividad, CronogramaActividadId>;
+  hasCronogramaActividad!: Sequelize.HasManyHasAssociationMixin<CronogramaActividad, CronogramaActividadId>;
+  hasCronogramaActividads!: Sequelize.HasManyHasAssociationsMixin<CronogramaActividad, CronogramaActividadId>;
+  countCronogramaActividads!: Sequelize.HasManyCountAssociationsMixin;
+  // ActividadObjetivoEspecifico belongsTo ObjetivoEspecifico via idObjetivoEspecifico
+  idObjetivoEspecifico_ObjetivoEspecifico!: ObjetivoEspecifico;
+  getIdObjetivoEspecifico_ObjetivoEspecifico!: Sequelize.BelongsToGetAssociationMixin<ObjetivoEspecifico>;
+  setIdObjetivoEspecifico_ObjetivoEspecifico!: Sequelize.BelongsToSetAssociationMixin<ObjetivoEspecifico, ObjetivoEspecificoId>;
+  createIdObjetivoEspecifico_ObjetivoEspecifico!: Sequelize.BelongsToCreateAssociationMixin<ObjetivoEspecifico>;
 
   static initModel(sequelize: Sequelize.Sequelize): typeof ActividadObjetivoEspecifico {
     return ActividadObjetivoEspecifico.init({
     idActividadObjetivoEspecifico: {
+      autoIncrement: true,
       type: DataTypes.INTEGER,
       allowNull: false,
       primaryKey: true
     },
     idObjetivoEspecifico: {
       type: DataTypes.INTEGER,
-      allowNull: false
+      allowNull: false,
+      references: {
+        model: 'ObjetivoEspecifico',
+        key: 'idObjetivoEspecifico'
+      }
     },
     desc: {
       type: DataTypes.STRING(500),
@@ -51,24 +73,7 @@ export class ActividadObjetivoEspecifico extends Model<ActividadObjetivoEspecifi
     sequelize,
     tableName: 'ActividadObjetivoEspecifico',
     timestamps: true,
-    paranoid: true,
-    indexes: [
-      {
-        name: "PRIMARY",
-        unique: true,
-        using: "BTREE",
-        fields: [
-          { name: "idActividadObjetivoEspecifico" },
-        ]
-      },
-      {
-        name: "fk_ActividadObjetivoEspecifico_ObjetivoEspecifico1_idx",
-        using: "BTREE",
-        fields: [
-          { name: "idObjetivoEspecifico" },
-        ]
-      },
-    ]
+    paranoid: true
   });
   }
 }

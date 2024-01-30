@@ -7,36 +7,63 @@ import { PropuestaPreviaAttributes } from "../models/PropuestaPrevia";
 import { PropuestaRelacionadaAttributes } from "../models/PropuestaRelacionada";
 import { PersonaAttributes, PersonaCreationAttributes } from "../models/Persona";
 import { PalabraClaveAttributes, PalabraClaveCreationAttributes } from "../models/PalabraClave";
-import { ProgramaSIPPEId } from "../models/ProgramaSIPPE";
+import { ProgramaSippeId } from "../models/ProgramaSippe";
 import { UbicacionAttributes, UbicacionId } from "../models/Ubicacion";
 import { LineaTematicaId } from "../models/LineaTematica";
 import { InstitucionCreationAttributes } from "../models/Institucion";
 import { RolId } from "../models/Rol";
+import { CronogramaActividadAttributes, CronogramaActividadCreationAttributes } from "../models/CronogramaActividad";
+import { ResponsableAttributes, ResponsableCreationAttributes } from "../models/Responsable";
 
 export type TPropuesta = PropuestaAttributes & {
-    lInstituciones : (PropuestaInstitucionAttributes & InstitucionCreationAttributes)[],
+    lInstituciones : (PropuestaInstitucionAttributes & InstitucionCreationAttributes & {responsable ?: ResponsableAttributes & PersonaAttributes})[],
     lIntegrantes : (IntegranteAttributes & PersonaAttributes)[],
-    planificacion : {
-        lObjetivosEspecificos : (ObjetivoEspecificoAttributes & {lActividades : ActividadObjetivoEspecificoAttributes[]})[]
-    },
     lPropuestasPrevias : PropuestaPreviaAttributes[],
     lPropuestasRelacionadas : PropuestaRelacionadaAttributes[],
     lGeolocalizaciones : UbicacionAttributes[],
-    lProgramasExtension : ProgramaSIPPEId[],
+    lProgramasExtension : ProgramaSippeId[],
     lCapacitaciones : UbicacionId[],
     lLineasTematicas : LineaTematicaId[],
-    lPalabrasClave  : PalabraClaveAttributes[]
+    lPalabrasClave  : PalabraClaveAttributes[],
+    planificacion : {
+        lObjetivosEspecificos : (ObjetivoEspecificoAttributes & {
+            lActividades : (ActividadObjetivoEspecificoAttributes & {cronograma ?: CronogramaActividadAttributes[]})[]
+        })[]
+    },
 }
 
 export type TPutPropuesta = PropuestaCreationAttributes & {
-    lInstituciones : (PropuestaInstitucionCreationAttributes & InstitucionCreationAttributes)[],
-    lIntegrantes : (IntegranteCreationAttributes & {lRoles : RolId[]} & PersonaCreationAttributes)[],
-    lObjetivosEspecificos : (ObjetivoEspecificoCreationAttributes & {lActividades : ActividadObjetivoEspecificoCreationAttributes[]})[],
-    lPropuestasPrevias : PropuestaPreviaAttributes[],
-    lPropuestasRelacionadas : PropuestaRelacionadaAttributes[],
-    lGeolocalizaciones : UbicacionAttributes[],
-    lProgramasExtension : ProgramaSIPPEId[],
-    lCapacitaciones : UbicacionId[],
-    lLineasTematicas : LineaTematicaId[],
-    lPalabrasClave  : PalabraClaveCreationAttributes[]
+    lInstituciones ?: (PropuestaInstitucionCreationAttributes & InstitucionCreationAttributes & {responsable ?: ResponsableCreationAttributes & PersonaCreationAttributes})[],
+    lIntegrantes ?: (IntegranteCreationAttributes & {lRoles : RolId[]} & PersonaCreationAttributes)[],
+    lObjetivosEspecificos ?: (ObjetivoEspecificoCreationAttributes & {
+        lActividades : (ActividadObjetivoEspecificoCreationAttributes & {
+            cronograma : CronogramaActividadCreationAttributes[]
+        })[]
+    })[],
+    lPropuestasPrevias ?: PropuestaPreviaAttributes[],
+    lPropuestasRelacionadas ?: PropuestaRelacionadaAttributes[],
+    lGeolocalizaciones ?: UbicacionAttributes[],
+    lProgramasExtension ?: ProgramaSippeId[],
+    lCapacitaciones ?: UbicacionId[],
+    lLineasTematicas ?: LineaTematicaId[],
+    lPalabrasClave ? : PalabraClaveCreationAttributes[]
+}
+
+export const PROPUESTA_VACIA : TPropuesta = {
+    codigoPropuesta : '',
+    modalidad : '',
+    titulo : '',
+    idUsuario : '',
+    lInstituciones : [],
+    lIntegrantes : [],
+    lPropuestasPrevias : [],
+    lPropuestasRelacionadas : [],
+    lGeolocalizaciones : [],
+    lProgramasExtension : [],
+    lCapacitaciones : [],
+    lLineasTematicas : [],
+    lPalabrasClave : [],
+    planificacion : {
+        lObjetivosEspecificos : []
+    }
 }

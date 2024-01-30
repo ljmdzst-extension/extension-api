@@ -1,20 +1,18 @@
 import * as Sequelize from 'sequelize';
 import { DataTypes, Model, Optional } from 'sequelize';
-import { ActividadObjetivoEspecifico, ActividadObjetivoEspecificoAttributes } from './ActividadObjetivoEspecifico';
-import { splitNuevosRegistros } from '../helpers/general';
+import type { ActividadObjetivoEspecifico, ActividadObjetivoEspecificoId } from './ActividadObjetivoEspecifico';
+import type { Propuesta, PropuestaId } from './Propuesta';
 
 export interface ObjetivoEspecificoAttributes {
   idObjetivoEspecifico: number;
   codigoPropuesta: string;
   desc?: string;
   resEsp?: string;
-  updatedAt ?: Date;
-  deletedAt ?: Date;
 }
 
 export type ObjetivoEspecificoPk = "idObjetivoEspecifico";
 export type ObjetivoEspecificoId = ObjetivoEspecifico[ObjetivoEspecificoPk];
-export type ObjetivoEspecificoOptionalAttributes = "desc" | "resEsp" | "updatedAt" | "deletedAt" ;
+export type ObjetivoEspecificoOptionalAttributes = "idObjetivoEspecifico" | "desc" | "resEsp" ;
 export type ObjetivoEspecificoCreationAttributes = Optional<ObjetivoEspecificoAttributes, ObjetivoEspecificoOptionalAttributes>;
 
 export class ObjetivoEspecifico extends Model<ObjetivoEspecificoAttributes, ObjetivoEspecificoCreationAttributes> implements ObjetivoEspecificoAttributes {
@@ -23,49 +21,39 @@ export class ObjetivoEspecifico extends Model<ObjetivoEspecificoAttributes, Obje
   desc?: string;
   resEsp?: string;
 
-  public async verActividades ( sequelize : Sequelize.Sequelize, transaction ?: Sequelize.Transaction) : 
-  Promise< ActividadObjetivoEspecificoAttributes[] >{
-    return await ActividadObjetivoEspecifico.initModel(sequelize).findAll({where : {idObjetivoEspecifico : this.idObjetivoEspecifico}, transaction});
-  }
-
-  public async editarActividades (data : ActividadObjetivoEspecificoAttributes[], sequelize : Sequelize.Sequelize, transaction ?: Sequelize.Transaction) : 
-  Promise<void> {
-
-    const actividadesAEditar = splitNuevosRegistros(data,'idActividadObjetivoEspecifico')
-
-    const actualizarActividades = ActividadObjetivoEspecifico.initModel(sequelize).bulkCreate(
-      data.map(act => ({...act,idObjetivoEspecifico : this.idObjetivoEspecifico})),
-      {
-        updateOnDuplicate : ['desc','motivoModificacion','motivoSuspension','updatedAt','deletedAt'],
-        transaction
-      }
-    );
-    
-    const darDeBajaSobrantes =  ActividadObjetivoEspecifico.initModel(sequelize).destroy({
-      where : {
-        idObjetivoEspecifico : this.idObjetivoEspecifico,
-        idActividadObjetivoEspecifico : {
-          [Sequelize.Op.not] : actividadesAEditar['VIEJOS'].map( (act : any) => act.idActividadObjetivoEspecifico)
-        }
-      },
-      transaction
-    });
-
-    await actualizarActividades;
-    await darDeBajaSobrantes;
-
-  }
+  // ObjetivoEspecifico hasMany ActividadObjetivoEspecifico via idObjetivoEspecifico
+  ActividadObjetivoEspecificos!: ActividadObjetivoEspecifico[];
+  getActividadObjetivoEspecificos!: Sequelize.HasManyGetAssociationsMixin<ActividadObjetivoEspecifico>;
+  setActividadObjetivoEspecificos!: Sequelize.HasManySetAssociationsMixin<ActividadObjetivoEspecifico, ActividadObjetivoEspecificoId>;
+  addActividadObjetivoEspecifico!: Sequelize.HasManyAddAssociationMixin<ActividadObjetivoEspecifico, ActividadObjetivoEspecificoId>;
+  addActividadObjetivoEspecificos!: Sequelize.HasManyAddAssociationsMixin<ActividadObjetivoEspecifico, ActividadObjetivoEspecificoId>;
+  createActividadObjetivoEspecifico!: Sequelize.HasManyCreateAssociationMixin<ActividadObjetivoEspecifico>;
+  removeActividadObjetivoEspecifico!: Sequelize.HasManyRemoveAssociationMixin<ActividadObjetivoEspecifico, ActividadObjetivoEspecificoId>;
+  removeActividadObjetivoEspecificos!: Sequelize.HasManyRemoveAssociationsMixin<ActividadObjetivoEspecifico, ActividadObjetivoEspecificoId>;
+  hasActividadObjetivoEspecifico!: Sequelize.HasManyHasAssociationMixin<ActividadObjetivoEspecifico, ActividadObjetivoEspecificoId>;
+  hasActividadObjetivoEspecificos!: Sequelize.HasManyHasAssociationsMixin<ActividadObjetivoEspecifico, ActividadObjetivoEspecificoId>;
+  countActividadObjetivoEspecificos!: Sequelize.HasManyCountAssociationsMixin;
+  // ObjetivoEspecifico belongsTo Propuesta via codigoPropuesta
+  codigoPropuesta_Propuestum!: Propuesta;
+  getCodigoPropuesta_Propuestum!: Sequelize.BelongsToGetAssociationMixin<Propuesta>;
+  setCodigoPropuesta_Propuestum!: Sequelize.BelongsToSetAssociationMixin<Propuesta, PropuestaId>;
+  createCodigoPropuesta_Propuestum!: Sequelize.BelongsToCreateAssociationMixin<Propuesta>;
 
   static initModel(sequelize: Sequelize.Sequelize): typeof ObjetivoEspecifico {
     return ObjetivoEspecifico.init({
     idObjetivoEspecifico: {
+      autoIncrement: true,
       type: DataTypes.INTEGER,
       allowNull: false,
       primaryKey: true
     },
     codigoPropuesta: {
       type: DataTypes.STRING(255),
-      allowNull: false
+      allowNull: false,
+      references: {
+        model: 'Propuesta',
+        key: 'codigoPropuesta'
+      }
     },
     desc: {
       type: DataTypes.STRING(500),
@@ -79,24 +67,7 @@ export class ObjetivoEspecifico extends Model<ObjetivoEspecificoAttributes, Obje
     sequelize,
     tableName: 'ObjetivoEspecifico',
     timestamps: true,
-    paranoid: true,
-    indexes: [
-      {
-        name: "PRIMARY",
-        unique: true,
-        using: "BTREE",
-        fields: [
-          { name: "idObjetivoEspecifico" },
-        ]
-      },
-      {
-        name: "fkObjetivoEspecificoPropuesta1_idx",
-        using: "BTREE",
-        fields: [
-          { name: "codigoPropuesta" },
-        ]
-      },
-    ]
+    paranoid: true
   });
   }
 }

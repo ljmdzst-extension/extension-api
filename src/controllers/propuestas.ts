@@ -1,53 +1,62 @@
 import { request, response } from "express";
-import { Propuesta } from "../models/Propuesta";
 import sequelizePropuestas from "../config/dbConfig";
-import { Usuario } from "../models/Usuario";
 import logger from "../config/logsConfig";
+import { Persona, PropuestaAttributes, initModels } from "../models/init-models";
 
 
 export const verPropuestas = async(req : typeof request , res : typeof response)=>{
 
-    const transaction = await sequelizePropuestas.transaction();
+    const transaction = await sequelizePropuestas.transaction({logging : console.log});
     try {
         /**... */
-        
+        let salida : PropuestaAttributes[] = [];
+
+        const {Propuesta,Usuario} = initModels(sequelizePropuestas);
+
         const { idUsuario } = req.params;
 
-        const lPropuestasUsuario =  Propuesta.initModel(sequelizePropuestas).findAll({
-            attributes : ['codigoPropuesta','modalidad','titulo','createdAt'],
-            where : { idUsuario },
+        const iUsuario = await Usuario.findByPk(idUsuario);
+
+        if(!iUsuario) throw { status : 500 , message : `No existe el usuario : ${idUsuario}`}
+        
+        const iPersona : Persona = await iUsuario.getNroDoc_Persona();
+
+        const lPropuestas = await Propuesta.findAll({
+            attributes : ['codigoPropuesta','titulo','modalidad','duracion'],
+            where : {idUsuario},
             transaction
         });
-
-        const iUsuario = await Usuario.initModel(sequelizePropuestas).findByPk( idUsuario, {transaction})
-
-        if(!iUsuario) throw {status : 500 , message : 'Usuario no encontrado.'}
-
-        const dataUsuario = await iUsuario.verDatos(sequelizePropuestas,transaction)
-
-        if(!dataUsuario)  throw {status : 500 , message : 'Usuario no encontrado.'}
-
-        const data = (await lPropuestasUsuario).map(
-            propuesta => ({
-                ...propuesta.dataValues,
-                director : `${dataUsuario.ape}, ${dataUsuario.nom}`
-            })
-        )
        
+
+        if(lPropuestas.length) {
+
+        salida = lPropuestas.map( propuesta => ({ 
+            codigoPropuesta : propuesta.codigoPropuesta,  
+            titulo : propuesta.titulo,
+            modalidad : propuesta.modalidad,
+            duracion : propuesta.duracion,
+            responsable : `${iPersona.ape}, ${iPersona.nom}`,
+            idUsuario : iUsuario.idUsuario
+        }))
+
+        }
+
         transaction.afterCommit(()=>{
             res.status(200).json({
                 ok : true,
-                data : data,
+                data : salida,
                 error : null
             })
         })
+
         await transaction.commit();
+
 
        
 
     } catch (error : any) {
         await transaction.rollback();
-        logger.log('error',error.status,' - ',error.message);
+        console.log(error);
         res.status(500).json({
             ok :false,
             data : null,

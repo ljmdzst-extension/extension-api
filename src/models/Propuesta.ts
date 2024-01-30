@@ -1,27 +1,25 @@
 import * as Sequelize from 'sequelize';
 import { DataTypes, Model, Optional } from 'sequelize';
-import { PropuestaInstitucion, PropuestaInstitucionAttributes, PropuestaInstitucionCreationAttributes } from './PropuestaInstitucion';
-import { Institucion, InstitucionAttributes } from './Institucion';
-import { Integrante, IntegranteAttributes, IntegranteCreationAttributes } from './Integrante';
-import { PersonaAttributes } from './Persona';
-import { ObjetivoEspecifico, ObjetivoEspecificoAttributes } from './ObjetivoEspecifico';
-import { ActividadObjetivoEspecificoAttributes } from './ActividadObjetivoEspecifico';
-import { PropuestaPrevia, PropuestaPreviaAttributes } from './PropuestaPrevia';
-import { PropuestaRelacionada, PropuestaRelacionadaAttributes } from './PropuestaRelacionada';
-import { UbicacionProblematica, UbicacionProblematicaAttributes } from './UbicacionProblematica';
-import { PropuestaProgramaExtension, PropuestaProgramaExtensionAttributes } from './PropuestaProgramaExtension';
-import { PropuestaCapacitacion, PropuestaCapacitacionAttributes } from './PropuestaCapacitacion';
-import { PropuestaLineaTematica, PropuestaLineaTematicaAttributes } from './PropuestaLineaTematica';
-import { PropuestaPalabraClave } from './PropuestaPalabraClave';
-import { indexar, indexarAsociacion, indexarJsons, splitNuevosRegistros } from '../helpers/general';
-import { PalabraClave, PalabraClaveAttributes, PalabraClaveCreationAttributes, PalabraClaveId } from './PalabraClave';
-import { Ubicacion, UbicacionAttributes, UbicacionId } from './Ubicacion';
-import { ProgramaSIPPEId } from './ProgramaSIPPE';
-import { CapacitacionId } from './Capacitacion';
-import { LineaTematicaId } from './LineaTematica';
-import { RolIntegrante } from './RolIntegrante';
-import { RolId } from './Rol';
-
+import type { Capacitacion, CapacitacionId } from './Capacitacion';
+import type { Evaluacion, EvaluacionId } from './Evaluacion';
+import type { Institucion, InstitucionId } from './Institucion';
+import type { Integrante, IntegranteId } from './Integrante';
+import type { LineaTematica, LineaTematicaId } from './LineaTematica';
+import type { ObjetivoEspecifico, ObjetivoEspecificoId } from './ObjetivoEspecifico';
+import type { PalabraClave, PalabraClaveId } from './PalabraClave';
+import type { ParticipanteSocial, ParticipanteSocialId } from './ParticipanteSocial';
+import type { Persona, PersonaId } from './Persona';
+import type { ProgramaSippe, ProgramaSippeId } from './ProgramaSippe';
+import type { PropuestaCapacitacion, PropuestaCapacitacionId } from './PropuestaCapacitacion';
+import type { PropuestaInstitucion, PropuestaInstitucionId } from './PropuestaInstitucion';
+import type { PropuestaLineaTematica, PropuestaLineaTematicaId } from './PropuestaLineaTematica';
+import type { PropuestaPalabraClave, PropuestaPalabraClaveId } from './PropuestaPalabraClave';
+import type { PropuestaPrevia, PropuestaPreviaId } from './PropuestaPrevia';
+import type { PropuestaProgramaExtension, PropuestaProgramaExtensionId } from './PropuestaProgramaExtension';
+import type { PropuestaRelacionada, PropuestaRelacionadaId } from './PropuestaRelacionada';
+import type { UbicacionProblematica, UbicacionProblematicaId } from './UbicacionProblematica';
+import type { Usuario, UsuarioId } from './Usuario';
+import { PROPUESTA_VACIA, TPropuesta } from '../types/propuesta';
 
 export interface PropuestaAttributes {
   codigoPropuesta: string;
@@ -59,15 +57,9 @@ export interface PropuestaAttributes {
   planificacionObjetivoGeneral?: string;
 }
 
-export interface PlanificacionAttributes {
-  finalidad : string,
-  objetivoGeneral : string,
-  lObjetivosEspecificos : ( ObjetivoEspecificoAttributes & { lActividades : ActividadObjetivoEspecificoAttributes[]} )[]
-}
-
 export type PropuestaPk = "codigoPropuesta";
 export type PropuestaId = Propuesta[PropuestaPk];
-export type PropuestaOptionalAttributes = "duracion" | "categoriaEquipo" | "integralidad" | "problematicaDetalle" | "problematicaSintesis" | "proyectosCAID" | "propuestaMetodologica" | "accionesCoordinacion" | "politicasPublicas" | "accionesComunicacion" | "integralidadDescripcion" | "sustentabilidad" | "sintesis" | "tipoMateriales" | "capacitacionAgentesMultip" | "perfilAgentesMultip" | "solicitaBecarioJustif" | "solicitaVoluntarioJustif" | "instanciasCapacitacionDetalle" | "solicitaBecario" | "ipFinalidad" | "ipParticipantesSociales" | "ipObserv" | "ipPotencialesActividades" | "ipCampoTematico" | "ipPoliticasPublicas" | "ipProblematica" | "planificacionFinalidad" | "planificacionObjetivoGeneral";
+export type PropuestaOptionalAttributes = "duracion" | "categoriaEquipo" | "integralidad" | "problematicaDetalle" | "problematicaSintesis" | "proyectosCAID" | "propuestaMetodologica" | "accionesCoordinacion" | "politicasPublicas" | "accionesComunicacion" | "integralidadDescripcion" | "sustentabilidad" | "sintesis" | "tipoMateriales" | "capacitacionAgentesMultip" | "perfilAgentesMultip" | "solicitaBecarioJustif" | "solicitaVoluntarioJustif" | "instanciasCapacitacionDetalle" | "solicitaBecario" | "ipFinalidad" | "ipParticipantesSociales" | "ipObserv" | "ipPotencialesActividades" | "ipCampoTematico" | "ipPoliticasPublicas" | "ipProblematica" | "planificacionFinalidad" | "planificacionObjetivoGeneral" ;
 export type PropuestaCreationAttributes = Optional<PropuestaAttributes, PropuestaOptionalAttributes>;
 
 export class Propuesta extends Model<PropuestaAttributes, PropuestaCreationAttributes> implements PropuestaAttributes {
@@ -105,401 +97,325 @@ export class Propuesta extends Model<PropuestaAttributes, PropuestaCreationAttri
   planificacionFinalidad?: string;
   planificacionObjetivoGeneral?: string;
 
+  // Propuesta belongsToMany Capacitacion via codigoPropuesta and idCapacitacion
+  idCapacitacion_Capacitacions!: Capacitacion[];
+  getIdCapacitacion_Capacitacions!: Sequelize.BelongsToManyGetAssociationsMixin<Capacitacion>;
+  setIdCapacitacion_Capacitacions!: Sequelize.BelongsToManySetAssociationsMixin<Capacitacion, CapacitacionId>;
+  addIdCapacitacion_Capacitacion!: Sequelize.BelongsToManyAddAssociationMixin<Capacitacion, CapacitacionId>;
+  addIdCapacitacion_Capacitacions!: Sequelize.BelongsToManyAddAssociationsMixin<Capacitacion, CapacitacionId>;
+  createIdCapacitacion_Capacitacion!: Sequelize.BelongsToManyCreateAssociationMixin<Capacitacion>;
+  removeIdCapacitacion_Capacitacion!: Sequelize.BelongsToManyRemoveAssociationMixin<Capacitacion, CapacitacionId>;
+  removeIdCapacitacion_Capacitacions!: Sequelize.BelongsToManyRemoveAssociationsMixin<Capacitacion, CapacitacionId>;
+  hasIdCapacitacion_Capacitacion!: Sequelize.BelongsToManyHasAssociationMixin<Capacitacion, CapacitacionId>;
+  hasIdCapacitacion_Capacitacions!: Sequelize.BelongsToManyHasAssociationsMixin<Capacitacion, CapacitacionId>;
+  countIdCapacitacion_Capacitacions!: Sequelize.BelongsToManyCountAssociationsMixin;
+  // Propuesta hasMany Evaluacion via codigoPropuesta
+  Evaluacions!: Evaluacion[];
+  getEvaluacions!: Sequelize.HasManyGetAssociationsMixin<Evaluacion>;
+  setEvaluacions!: Sequelize.HasManySetAssociationsMixin<Evaluacion, EvaluacionId>;
+  addEvaluacion!: Sequelize.HasManyAddAssociationMixin<Evaluacion, EvaluacionId>;
+  addEvaluacions!: Sequelize.HasManyAddAssociationsMixin<Evaluacion, EvaluacionId>;
+  createEvaluacion!: Sequelize.HasManyCreateAssociationMixin<Evaluacion>;
+  removeEvaluacion!: Sequelize.HasManyRemoveAssociationMixin<Evaluacion, EvaluacionId>;
+  removeEvaluacions!: Sequelize.HasManyRemoveAssociationsMixin<Evaluacion, EvaluacionId>;
+  hasEvaluacion!: Sequelize.HasManyHasAssociationMixin<Evaluacion, EvaluacionId>;
+  hasEvaluacions!: Sequelize.HasManyHasAssociationsMixin<Evaluacion, EvaluacionId>;
+  countEvaluacions!: Sequelize.HasManyCountAssociationsMixin;
+  // Propuesta belongsToMany Institucion via codigoPropuesta and idInstitucion
+  idInstitucion_Institucion_PropuestaInstitucions!: Institucion[];
+  getIdInstitucion_Institucion_PropuestaInstitucions!: Sequelize.BelongsToManyGetAssociationsMixin<Institucion>;
+  setIdInstitucion_Institucion_PropuestaInstitucions!: Sequelize.BelongsToManySetAssociationsMixin<Institucion, InstitucionId>;
+  addIdInstitucion_Institucion_PropuestaInstitucion!: Sequelize.BelongsToManyAddAssociationMixin<Institucion, InstitucionId>;
+  addIdInstitucion_Institucion_PropuestaInstitucions!: Sequelize.BelongsToManyAddAssociationsMixin<Institucion, InstitucionId>;
+  createIdInstitucion_Institucion_PropuestaInstitucion!: Sequelize.BelongsToManyCreateAssociationMixin<Institucion>;
+  removeIdInstitucion_Institucion_PropuestaInstitucion!: Sequelize.BelongsToManyRemoveAssociationMixin<Institucion, InstitucionId>;
+  removeIdInstitucion_Institucion_PropuestaInstitucions!: Sequelize.BelongsToManyRemoveAssociationsMixin<Institucion, InstitucionId>;
+  hasIdInstitucion_Institucion_PropuestaInstitucion!: Sequelize.BelongsToManyHasAssociationMixin<Institucion, InstitucionId>;
+  hasIdInstitucion_Institucion_PropuestaInstitucions!: Sequelize.BelongsToManyHasAssociationsMixin<Institucion, InstitucionId>;
+  countIdInstitucion_Institucion_PropuestaInstitucions!: Sequelize.BelongsToManyCountAssociationsMixin;
+  // Propuesta hasMany Integrante via codigoPropuesta
+  Integrantes!: Integrante[];
+  getIntegrantes!: Sequelize.HasManyGetAssociationsMixin<Integrante>;
+  setIntegrantes!: Sequelize.HasManySetAssociationsMixin<Integrante, IntegranteId>;
+  addIntegrante!: Sequelize.HasManyAddAssociationMixin<Integrante, IntegranteId>;
+  addIntegrantes!: Sequelize.HasManyAddAssociationsMixin<Integrante, IntegranteId>;
+  createIntegrante!: Sequelize.HasManyCreateAssociationMixin<Integrante>;
+  removeIntegrante!: Sequelize.HasManyRemoveAssociationMixin<Integrante, IntegranteId>;
+  removeIntegrantes!: Sequelize.HasManyRemoveAssociationsMixin<Integrante, IntegranteId>;
+  hasIntegrante!: Sequelize.HasManyHasAssociationMixin<Integrante, IntegranteId>;
+  hasIntegrantes!: Sequelize.HasManyHasAssociationsMixin<Integrante, IntegranteId>;
+  countIntegrantes!: Sequelize.HasManyCountAssociationsMixin;
+  // Propuesta belongsToMany LineaTematica via codigoPropuesta and idLineaTematica
+  idLineaTematica_LineaTematicas!: LineaTematica[];
+  getIdLineaTematica_LineaTematicas!: Sequelize.BelongsToManyGetAssociationsMixin<LineaTematica>;
+  setIdLineaTematica_LineaTematicas!: Sequelize.BelongsToManySetAssociationsMixin<LineaTematica, LineaTematicaId>;
+  addIdLineaTematica_LineaTematica!: Sequelize.BelongsToManyAddAssociationMixin<LineaTematica, LineaTematicaId>;
+  addIdLineaTematica_LineaTematicas!: Sequelize.BelongsToManyAddAssociationsMixin<LineaTematica, LineaTematicaId>;
+  createIdLineaTematica_LineaTematica!: Sequelize.BelongsToManyCreateAssociationMixin<LineaTematica>;
+  removeIdLineaTematica_LineaTematica!: Sequelize.BelongsToManyRemoveAssociationMixin<LineaTematica, LineaTematicaId>;
+  removeIdLineaTematica_LineaTematicas!: Sequelize.BelongsToManyRemoveAssociationsMixin<LineaTematica, LineaTematicaId>;
+  hasIdLineaTematica_LineaTematica!: Sequelize.BelongsToManyHasAssociationMixin<LineaTematica, LineaTematicaId>;
+  hasIdLineaTematica_LineaTematicas!: Sequelize.BelongsToManyHasAssociationsMixin<LineaTematica, LineaTematicaId>;
+  countIdLineaTematica_LineaTematicas!: Sequelize.BelongsToManyCountAssociationsMixin;
+  // Propuesta hasMany ObjetivoEspecifico via codigoPropuesta
+  ObjetivoEspecificos!: ObjetivoEspecifico[];
+  getObjetivoEspecificos!: Sequelize.HasManyGetAssociationsMixin<ObjetivoEspecifico>;
+  setObjetivoEspecificos!: Sequelize.HasManySetAssociationsMixin<ObjetivoEspecifico, ObjetivoEspecificoId>;
+  addObjetivoEspecifico!: Sequelize.HasManyAddAssociationMixin<ObjetivoEspecifico, ObjetivoEspecificoId>;
+  addObjetivoEspecificos!: Sequelize.HasManyAddAssociationsMixin<ObjetivoEspecifico, ObjetivoEspecificoId>;
+  createObjetivoEspecifico!: Sequelize.HasManyCreateAssociationMixin<ObjetivoEspecifico>;
+  removeObjetivoEspecifico!: Sequelize.HasManyRemoveAssociationMixin<ObjetivoEspecifico, ObjetivoEspecificoId>;
+  removeObjetivoEspecificos!: Sequelize.HasManyRemoveAssociationsMixin<ObjetivoEspecifico, ObjetivoEspecificoId>;
+  hasObjetivoEspecifico!: Sequelize.HasManyHasAssociationMixin<ObjetivoEspecifico, ObjetivoEspecificoId>;
+  hasObjetivoEspecificos!: Sequelize.HasManyHasAssociationsMixin<ObjetivoEspecifico, ObjetivoEspecificoId>;
+  countObjetivoEspecificos!: Sequelize.HasManyCountAssociationsMixin;
+  // Propuesta belongsToMany PalabraClave via codigoPropuesta and idPalabraClave
+  idPalabraClave_PalabraClaves!: PalabraClave[];
+  getIdPalabraClave_PalabraClaves!: Sequelize.BelongsToManyGetAssociationsMixin<PalabraClave>;
+  setIdPalabraClave_PalabraClaves!: Sequelize.BelongsToManySetAssociationsMixin<PalabraClave, PalabraClaveId>;
+  addIdPalabraClave_PalabraClave!: Sequelize.BelongsToManyAddAssociationMixin<PalabraClave, PalabraClaveId>;
+  addIdPalabraClave_PalabraClaves!: Sequelize.BelongsToManyAddAssociationsMixin<PalabraClave, PalabraClaveId>;
+  createIdPalabraClave_PalabraClave!: Sequelize.BelongsToManyCreateAssociationMixin<PalabraClave>;
+  removeIdPalabraClave_PalabraClave!: Sequelize.BelongsToManyRemoveAssociationMixin<PalabraClave, PalabraClaveId>;
+  removeIdPalabraClave_PalabraClaves!: Sequelize.BelongsToManyRemoveAssociationsMixin<PalabraClave, PalabraClaveId>;
+  hasIdPalabraClave_PalabraClave!: Sequelize.BelongsToManyHasAssociationMixin<PalabraClave, PalabraClaveId>;
+  hasIdPalabraClave_PalabraClaves!: Sequelize.BelongsToManyHasAssociationsMixin<PalabraClave, PalabraClaveId>;
+  countIdPalabraClave_PalabraClaves!: Sequelize.BelongsToManyCountAssociationsMixin;
+  // Propuesta hasMany ParticipanteSocial via codigoPropuesta
+  ParticipanteSocials!: ParticipanteSocial[];
+  getParticipanteSocials!: Sequelize.HasManyGetAssociationsMixin<ParticipanteSocial>;
+  setParticipanteSocials!: Sequelize.HasManySetAssociationsMixin<ParticipanteSocial, ParticipanteSocialId>;
+  addParticipanteSocial!: Sequelize.HasManyAddAssociationMixin<ParticipanteSocial, ParticipanteSocialId>;
+  addParticipanteSocials!: Sequelize.HasManyAddAssociationsMixin<ParticipanteSocial, ParticipanteSocialId>;
+  createParticipanteSocial!: Sequelize.HasManyCreateAssociationMixin<ParticipanteSocial>;
+  removeParticipanteSocial!: Sequelize.HasManyRemoveAssociationMixin<ParticipanteSocial, ParticipanteSocialId>;
+  removeParticipanteSocials!: Sequelize.HasManyRemoveAssociationsMixin<ParticipanteSocial, ParticipanteSocialId>;
+  hasParticipanteSocial!: Sequelize.HasManyHasAssociationMixin<ParticipanteSocial, ParticipanteSocialId>;
+  hasParticipanteSocials!: Sequelize.HasManyHasAssociationsMixin<ParticipanteSocial, ParticipanteSocialId>;
+  countParticipanteSocials!: Sequelize.HasManyCountAssociationsMixin;
+  // Propuesta belongsToMany Persona via codigoPropuesta and nroDoc
+  nroDoc_Personas!: Persona[];
+  getNroDoc_Personas!: Sequelize.BelongsToManyGetAssociationsMixin<Persona>;
+  setNroDoc_Personas!: Sequelize.BelongsToManySetAssociationsMixin<Persona, PersonaId>;
+  addNroDoc_Persona!: Sequelize.BelongsToManyAddAssociationMixin<Persona, PersonaId>;
+  addNroDoc_Personas!: Sequelize.BelongsToManyAddAssociationsMixin<Persona, PersonaId>;
+  createNroDoc_Persona!: Sequelize.BelongsToManyCreateAssociationMixin<Persona>;
+  removeNroDoc_Persona!: Sequelize.BelongsToManyRemoveAssociationMixin<Persona, PersonaId>;
+  removeNroDoc_Personas!: Sequelize.BelongsToManyRemoveAssociationsMixin<Persona, PersonaId>;
+  hasNroDoc_Persona!: Sequelize.BelongsToManyHasAssociationMixin<Persona, PersonaId>;
+  hasNroDoc_Personas!: Sequelize.BelongsToManyHasAssociationsMixin<Persona, PersonaId>;
+  countNroDoc_Personas!: Sequelize.BelongsToManyCountAssociationsMixin;
+  // Propuesta belongsToMany ProgramaSippe via codigoPropuesta and idProgramaExtension
+  idProgramaExtension_ProgramaSIPPEs!: ProgramaSippe[];
+  getIdProgramaExtension_ProgramaSIPPEs!: Sequelize.BelongsToManyGetAssociationsMixin<ProgramaSippe>;
+  setIdProgramaExtension_ProgramaSIPPEs!: Sequelize.BelongsToManySetAssociationsMixin<ProgramaSippe, ProgramaSippeId>;
+  addIdProgramaExtension_ProgramaSIPPE!: Sequelize.BelongsToManyAddAssociationMixin<ProgramaSippe, ProgramaSippeId>;
+  addIdProgramaExtension_ProgramaSIPPEs!: Sequelize.BelongsToManyAddAssociationsMixin<ProgramaSippe, ProgramaSippeId>;
+  createIdProgramaExtension_ProgramaSIPPE!: Sequelize.BelongsToManyCreateAssociationMixin<ProgramaSippe>;
+  removeIdProgramaExtension_ProgramaSIPPE!: Sequelize.BelongsToManyRemoveAssociationMixin<ProgramaSippe, ProgramaSippeId>;
+  removeIdProgramaExtension_ProgramaSIPPEs!: Sequelize.BelongsToManyRemoveAssociationsMixin<ProgramaSippe, ProgramaSippeId>;
+  hasIdProgramaExtension_ProgramaSIPPE!: Sequelize.BelongsToManyHasAssociationMixin<ProgramaSippe, ProgramaSippeId>;
+  hasIdProgramaExtension_ProgramaSIPPEs!: Sequelize.BelongsToManyHasAssociationsMixin<ProgramaSippe, ProgramaSippeId>;
+  countIdProgramaExtension_ProgramaSIPPEs!: Sequelize.BelongsToManyCountAssociationsMixin;
+  // Propuesta belongsToMany Propuesta via codigoPropuesta and codigoPropuestaPrevia
+  codigoPropuestaPrevia_Propuesta!: Propuesta[];
+  getCodigoPropuestaPrevia_Propuesta!: Sequelize.BelongsToManyGetAssociationsMixin<Propuesta>;
+  setCodigoPropuestaPrevia_Propuesta!: Sequelize.BelongsToManySetAssociationsMixin<Propuesta, PropuestaId>;
+  addCodigoPropuestaPrevia_Propuestum!: Sequelize.BelongsToManyAddAssociationMixin<Propuesta, PropuestaId>;
+  addCodigoPropuestaPrevia_Propuesta!: Sequelize.BelongsToManyAddAssociationsMixin<Propuesta, PropuestaId>;
+  createCodigoPropuestaPrevia_Propuestum!: Sequelize.BelongsToManyCreateAssociationMixin<Propuesta>;
+  removeCodigoPropuestaPrevia_Propuestum!: Sequelize.BelongsToManyRemoveAssociationMixin<Propuesta, PropuestaId>;
+  removeCodigoPropuestaPrevia_Propuesta!: Sequelize.BelongsToManyRemoveAssociationsMixin<Propuesta, PropuestaId>;
+  hasCodigoPropuestaPrevia_Propuestum!: Sequelize.BelongsToManyHasAssociationMixin<Propuesta, PropuestaId>;
+  hasCodigoPropuestaPrevia_Propuesta!: Sequelize.BelongsToManyHasAssociationsMixin<Propuesta, PropuestaId>;
+  countCodigoPropuestaPrevia_Propuesta!: Sequelize.BelongsToManyCountAssociationsMixin;
+  // Propuesta belongsToMany Propuesta via codigoPropuestaPrevia and codigoPropuesta
+  codigoPropuesta_Propuesta_PropuestaPrevia!: Propuesta[];
+  getCodigoPropuesta_Propuesta_PropuestaPrevia!: Sequelize.BelongsToManyGetAssociationsMixin<Propuesta>;
+  setCodigoPropuesta_Propuesta_PropuestaPrevia!: Sequelize.BelongsToManySetAssociationsMixin<Propuesta, PropuestaId>;
+  addCodigoPropuesta_Propuesta_PropuestaPrevium!: Sequelize.BelongsToManyAddAssociationMixin<Propuesta, PropuestaId>;
+  addCodigoPropuesta_Propuesta_PropuestaPrevia!: Sequelize.BelongsToManyAddAssociationsMixin<Propuesta, PropuestaId>;
+  createCodigoPropuesta_Propuesta_PropuestaPrevium!: Sequelize.BelongsToManyCreateAssociationMixin<Propuesta>;
+  removeCodigoPropuesta_Propuesta_PropuestaPrevium!: Sequelize.BelongsToManyRemoveAssociationMixin<Propuesta, PropuestaId>;
+  removeCodigoPropuesta_Propuesta_PropuestaPrevia!: Sequelize.BelongsToManyRemoveAssociationsMixin<Propuesta, PropuestaId>;
+  hasCodigoPropuesta_Propuesta_PropuestaPrevium!: Sequelize.BelongsToManyHasAssociationMixin<Propuesta, PropuestaId>;
+  hasCodigoPropuesta_Propuesta_PropuestaPrevia!: Sequelize.BelongsToManyHasAssociationsMixin<Propuesta, PropuestaId>;
+  countCodigoPropuesta_Propuesta_PropuestaPrevia!: Sequelize.BelongsToManyCountAssociationsMixin;
+  // Propuesta belongsToMany Propuesta via codigoPropuesta and codigoPropuestaRelacionada
+  codigoPropuestaRelacionada_Propuesta!: Propuesta[];
+  getCodigoPropuestaRelacionada_Propuesta!: Sequelize.BelongsToManyGetAssociationsMixin<Propuesta>;
+  setCodigoPropuestaRelacionada_Propuesta!: Sequelize.BelongsToManySetAssociationsMixin<Propuesta, PropuestaId>;
+  addCodigoPropuestaRelacionada_Propuestum!: Sequelize.BelongsToManyAddAssociationMixin<Propuesta, PropuestaId>;
+  addCodigoPropuestaRelacionada_Propuesta!: Sequelize.BelongsToManyAddAssociationsMixin<Propuesta, PropuestaId>;
+  createCodigoPropuestaRelacionada_Propuestum!: Sequelize.BelongsToManyCreateAssociationMixin<Propuesta>;
+  removeCodigoPropuestaRelacionada_Propuestum!: Sequelize.BelongsToManyRemoveAssociationMixin<Propuesta, PropuestaId>;
+  removeCodigoPropuestaRelacionada_Propuesta!: Sequelize.BelongsToManyRemoveAssociationsMixin<Propuesta, PropuestaId>;
+  hasCodigoPropuestaRelacionada_Propuestum!: Sequelize.BelongsToManyHasAssociationMixin<Propuesta, PropuestaId>;
+  hasCodigoPropuestaRelacionada_Propuesta!: Sequelize.BelongsToManyHasAssociationsMixin<Propuesta, PropuestaId>;
+  countCodigoPropuestaRelacionada_Propuesta!: Sequelize.BelongsToManyCountAssociationsMixin;
+  // Propuesta belongsToMany Propuesta via codigoPropuestaRelacionada and codigoPropuesta
+  codigoPropuesta_Propuesta_PropuestaRelacionadas!: Propuesta[];
+  getCodigoPropuesta_Propuesta_PropuestaRelacionadas!: Sequelize.BelongsToManyGetAssociationsMixin<Propuesta>;
+  setCodigoPropuesta_Propuesta_PropuestaRelacionadas!: Sequelize.BelongsToManySetAssociationsMixin<Propuesta, PropuestaId>;
+  addCodigoPropuesta_Propuesta_PropuestaRelacionada!: Sequelize.BelongsToManyAddAssociationMixin<Propuesta, PropuestaId>;
+  addCodigoPropuesta_Propuesta_PropuestaRelacionadas!: Sequelize.BelongsToManyAddAssociationsMixin<Propuesta, PropuestaId>;
+  createCodigoPropuesta_Propuesta_PropuestaRelacionada!: Sequelize.BelongsToManyCreateAssociationMixin<Propuesta>;
+  removeCodigoPropuesta_Propuesta_PropuestaRelacionada!: Sequelize.BelongsToManyRemoveAssociationMixin<Propuesta, PropuestaId>;
+  removeCodigoPropuesta_Propuesta_PropuestaRelacionadas!: Sequelize.BelongsToManyRemoveAssociationsMixin<Propuesta, PropuestaId>;
+  hasCodigoPropuesta_Propuesta_PropuestaRelacionada!: Sequelize.BelongsToManyHasAssociationMixin<Propuesta, PropuestaId>;
+  hasCodigoPropuesta_Propuesta_PropuestaRelacionadas!: Sequelize.BelongsToManyHasAssociationsMixin<Propuesta, PropuestaId>;
+  countCodigoPropuesta_Propuesta_PropuestaRelacionadas!: Sequelize.BelongsToManyCountAssociationsMixin;
+  // Propuesta hasMany PropuestaCapacitacion via codigoPropuesta
+  PropuestaCapacitacions!: PropuestaCapacitacion[];
+  getPropuestaCapacitacions!: Sequelize.HasManyGetAssociationsMixin<PropuestaCapacitacion>;
+  setPropuestaCapacitacions!: Sequelize.HasManySetAssociationsMixin<PropuestaCapacitacion, PropuestaCapacitacionId>;
+  addPropuestaCapacitacion!: Sequelize.HasManyAddAssociationMixin<PropuestaCapacitacion, PropuestaCapacitacionId>;
+  addPropuestaCapacitacions!: Sequelize.HasManyAddAssociationsMixin<PropuestaCapacitacion, PropuestaCapacitacionId>;
+  createPropuestaCapacitacion!: Sequelize.HasManyCreateAssociationMixin<PropuestaCapacitacion>;
+  removePropuestaCapacitacion!: Sequelize.HasManyRemoveAssociationMixin<PropuestaCapacitacion, PropuestaCapacitacionId>;
+  removePropuestaCapacitacions!: Sequelize.HasManyRemoveAssociationsMixin<PropuestaCapacitacion, PropuestaCapacitacionId>;
+  hasPropuestaCapacitacion!: Sequelize.HasManyHasAssociationMixin<PropuestaCapacitacion, PropuestaCapacitacionId>;
+  hasPropuestaCapacitacions!: Sequelize.HasManyHasAssociationsMixin<PropuestaCapacitacion, PropuestaCapacitacionId>;
+  countPropuestaCapacitacions!: Sequelize.HasManyCountAssociationsMixin;
+  // Propuesta hasMany PropuestaInstitucion via codigoPropuesta
+  PropuestaInstitucions!: PropuestaInstitucion[];
+  getPropuestaInstitucions!: Sequelize.HasManyGetAssociationsMixin<PropuestaInstitucion>;
+  setPropuestaInstitucions!: Sequelize.HasManySetAssociationsMixin<PropuestaInstitucion, PropuestaInstitucionId>;
+  addPropuestaInstitucion!: Sequelize.HasManyAddAssociationMixin<PropuestaInstitucion, PropuestaInstitucionId>;
+  addPropuestaInstitucions!: Sequelize.HasManyAddAssociationsMixin<PropuestaInstitucion, PropuestaInstitucionId>;
+  createPropuestaInstitucion!: Sequelize.HasManyCreateAssociationMixin<PropuestaInstitucion>;
+  removePropuestaInstitucion!: Sequelize.HasManyRemoveAssociationMixin<PropuestaInstitucion, PropuestaInstitucionId>;
+  removePropuestaInstitucions!: Sequelize.HasManyRemoveAssociationsMixin<PropuestaInstitucion, PropuestaInstitucionId>;
+  hasPropuestaInstitucion!: Sequelize.HasManyHasAssociationMixin<PropuestaInstitucion, PropuestaInstitucionId>;
+  hasPropuestaInstitucions!: Sequelize.HasManyHasAssociationsMixin<PropuestaInstitucion, PropuestaInstitucionId>;
+  countPropuestaInstitucions!: Sequelize.HasManyCountAssociationsMixin;
+  // Propuesta hasMany PropuestaLineaTematica via codigoPropuesta
+  PropuestaLineaTematicas!: PropuestaLineaTematica[];
+  getPropuestaLineaTematicas!: Sequelize.HasManyGetAssociationsMixin<PropuestaLineaTematica>;
+  setPropuestaLineaTematicas!: Sequelize.HasManySetAssociationsMixin<PropuestaLineaTematica, PropuestaLineaTematicaId>;
+  addPropuestaLineaTematica!: Sequelize.HasManyAddAssociationMixin<PropuestaLineaTematica, PropuestaLineaTematicaId>;
+  addPropuestaLineaTematicas!: Sequelize.HasManyAddAssociationsMixin<PropuestaLineaTematica, PropuestaLineaTematicaId>;
+  createPropuestaLineaTematica!: Sequelize.HasManyCreateAssociationMixin<PropuestaLineaTematica>;
+  removePropuestaLineaTematica!: Sequelize.HasManyRemoveAssociationMixin<PropuestaLineaTematica, PropuestaLineaTematicaId>;
+  removePropuestaLineaTematicas!: Sequelize.HasManyRemoveAssociationsMixin<PropuestaLineaTematica, PropuestaLineaTematicaId>;
+  hasPropuestaLineaTematica!: Sequelize.HasManyHasAssociationMixin<PropuestaLineaTematica, PropuestaLineaTematicaId>;
+  hasPropuestaLineaTematicas!: Sequelize.HasManyHasAssociationsMixin<PropuestaLineaTematica, PropuestaLineaTematicaId>;
+  countPropuestaLineaTematicas!: Sequelize.HasManyCountAssociationsMixin;
+  // Propuesta hasMany PropuestaPalabraClave via codigoPropuesta
+  PropuestaPalabraClaves!: PropuestaPalabraClave[];
+  getPropuestaPalabraClaves!: Sequelize.HasManyGetAssociationsMixin<PropuestaPalabraClave>;
+  setPropuestaPalabraClaves!: Sequelize.HasManySetAssociationsMixin<PropuestaPalabraClave, PropuestaPalabraClaveId>;
+  addPropuestaPalabraClave!: Sequelize.HasManyAddAssociationMixin<PropuestaPalabraClave, PropuestaPalabraClaveId>;
+  addPropuestaPalabraClaves!: Sequelize.HasManyAddAssociationsMixin<PropuestaPalabraClave, PropuestaPalabraClaveId>;
+  createPropuestaPalabraClave!: Sequelize.HasManyCreateAssociationMixin<PropuestaPalabraClave>;
+  removePropuestaPalabraClave!: Sequelize.HasManyRemoveAssociationMixin<PropuestaPalabraClave, PropuestaPalabraClaveId>;
+  removePropuestaPalabraClaves!: Sequelize.HasManyRemoveAssociationsMixin<PropuestaPalabraClave, PropuestaPalabraClaveId>;
+  hasPropuestaPalabraClave!: Sequelize.HasManyHasAssociationMixin<PropuestaPalabraClave, PropuestaPalabraClaveId>;
+  hasPropuestaPalabraClaves!: Sequelize.HasManyHasAssociationsMixin<PropuestaPalabraClave, PropuestaPalabraClaveId>;
+  countPropuestaPalabraClaves!: Sequelize.HasManyCountAssociationsMixin;
+  // Propuesta hasMany PropuestaPrevia via codigoPropuesta
+  PropuestaPrevia!: PropuestaPrevia[];
+  getPropuestaPrevia!: Sequelize.HasManyGetAssociationsMixin<PropuestaPrevia>;
+  setPropuestaPrevia!: Sequelize.HasManySetAssociationsMixin<PropuestaPrevia, PropuestaPreviaId>;
+  addPropuestaPrevium!: Sequelize.HasManyAddAssociationMixin<PropuestaPrevia, PropuestaPreviaId>;
+  addPropuestaPrevia!: Sequelize.HasManyAddAssociationsMixin<PropuestaPrevia, PropuestaPreviaId>;
+  createPropuestaPrevium!: Sequelize.HasManyCreateAssociationMixin<PropuestaPrevia>;
+  removePropuestaPrevium!: Sequelize.HasManyRemoveAssociationMixin<PropuestaPrevia, PropuestaPreviaId>;
+  removePropuestaPrevia!: Sequelize.HasManyRemoveAssociationsMixin<PropuestaPrevia, PropuestaPreviaId>;
+  hasPropuestaPrevium!: Sequelize.HasManyHasAssociationMixin<PropuestaPrevia, PropuestaPreviaId>;
+  hasPropuestaPrevia!: Sequelize.HasManyHasAssociationsMixin<PropuestaPrevia, PropuestaPreviaId>;
+  countPropuestaPrevia!: Sequelize.HasManyCountAssociationsMixin;
+  // Propuesta hasMany PropuestaPrevia via codigoPropuestaPrevia
+  codigoPropuestaPrevia_PropuestaPrevia!: PropuestaPrevia[];
+  getCodigoPropuestaPrevia_PropuestaPrevia!: Sequelize.HasManyGetAssociationsMixin<PropuestaPrevia>;
+  setCodigoPropuestaPrevia_PropuestaPrevia!: Sequelize.HasManySetAssociationsMixin<PropuestaPrevia, PropuestaPreviaId>;
+  addCodigoPropuestaPrevia_PropuestaPrevium!: Sequelize.HasManyAddAssociationMixin<PropuestaPrevia, PropuestaPreviaId>;
+  addCodigoPropuestaPrevia_PropuestaPrevia!: Sequelize.HasManyAddAssociationsMixin<PropuestaPrevia, PropuestaPreviaId>;
+  createCodigoPropuestaPrevia_PropuestaPrevium!: Sequelize.HasManyCreateAssociationMixin<PropuestaPrevia>;
+  removeCodigoPropuestaPrevia_PropuestaPrevium!: Sequelize.HasManyRemoveAssociationMixin<PropuestaPrevia, PropuestaPreviaId>;
+  removeCodigoPropuestaPrevia_PropuestaPrevia!: Sequelize.HasManyRemoveAssociationsMixin<PropuestaPrevia, PropuestaPreviaId>;
+  hasCodigoPropuestaPrevia_PropuestaPrevium!: Sequelize.HasManyHasAssociationMixin<PropuestaPrevia, PropuestaPreviaId>;
+  hasCodigoPropuestaPrevia_PropuestaPrevia!: Sequelize.HasManyHasAssociationsMixin<PropuestaPrevia, PropuestaPreviaId>;
+  countCodigoPropuestaPrevia_PropuestaPrevia!: Sequelize.HasManyCountAssociationsMixin;
+  // Propuesta hasMany PropuestaProgramaExtension via codigoPropuesta
+  PropuestaProgramaExtensions!: PropuestaProgramaExtension[];
+  getPropuestaProgramaExtensions!: Sequelize.HasManyGetAssociationsMixin<PropuestaProgramaExtension>;
+  setPropuestaProgramaExtensions!: Sequelize.HasManySetAssociationsMixin<PropuestaProgramaExtension, PropuestaProgramaExtensionId>;
+  addPropuestaProgramaExtension!: Sequelize.HasManyAddAssociationMixin<PropuestaProgramaExtension, PropuestaProgramaExtensionId>;
+  addPropuestaProgramaExtensions!: Sequelize.HasManyAddAssociationsMixin<PropuestaProgramaExtension, PropuestaProgramaExtensionId>;
+  createPropuestaProgramaExtension!: Sequelize.HasManyCreateAssociationMixin<PropuestaProgramaExtension>;
+  removePropuestaProgramaExtension!: Sequelize.HasManyRemoveAssociationMixin<PropuestaProgramaExtension, PropuestaProgramaExtensionId>;
+  removePropuestaProgramaExtensions!: Sequelize.HasManyRemoveAssociationsMixin<PropuestaProgramaExtension, PropuestaProgramaExtensionId>;
+  hasPropuestaProgramaExtension!: Sequelize.HasManyHasAssociationMixin<PropuestaProgramaExtension, PropuestaProgramaExtensionId>;
+  hasPropuestaProgramaExtensions!: Sequelize.HasManyHasAssociationsMixin<PropuestaProgramaExtension, PropuestaProgramaExtensionId>;
+  countPropuestaProgramaExtensions!: Sequelize.HasManyCountAssociationsMixin;
+  // Propuesta hasMany PropuestaRelacionada via codigoPropuesta
+  PropuestaRelacionadas!: PropuestaRelacionada[];
+  getPropuestaRelacionadas!: Sequelize.HasManyGetAssociationsMixin<PropuestaRelacionada>;
+  setPropuestaRelacionadas!: Sequelize.HasManySetAssociationsMixin<PropuestaRelacionada, PropuestaRelacionadaId>;
+  addPropuestaRelacionada!: Sequelize.HasManyAddAssociationMixin<PropuestaRelacionada, PropuestaRelacionadaId>;
+  addPropuestaRelacionadas!: Sequelize.HasManyAddAssociationsMixin<PropuestaRelacionada, PropuestaRelacionadaId>;
+  createPropuestaRelacionada!: Sequelize.HasManyCreateAssociationMixin<PropuestaRelacionada>;
+  removePropuestaRelacionada!: Sequelize.HasManyRemoveAssociationMixin<PropuestaRelacionada, PropuestaRelacionadaId>;
+  removePropuestaRelacionadas!: Sequelize.HasManyRemoveAssociationsMixin<PropuestaRelacionada, PropuestaRelacionadaId>;
+  hasPropuestaRelacionada!: Sequelize.HasManyHasAssociationMixin<PropuestaRelacionada, PropuestaRelacionadaId>;
+  hasPropuestaRelacionadas!: Sequelize.HasManyHasAssociationsMixin<PropuestaRelacionada, PropuestaRelacionadaId>;
+  countPropuestaRelacionadas!: Sequelize.HasManyCountAssociationsMixin;
+  // Propuesta hasMany PropuestaRelacionada via codigoPropuestaRelacionada
+  codigoPropuestaRelacionada_PropuestaRelacionadas!: PropuestaRelacionada[];
+  getCodigoPropuestaRelacionada_PropuestaRelacionadas!: Sequelize.HasManyGetAssociationsMixin<PropuestaRelacionada>;
+  setCodigoPropuestaRelacionada_PropuestaRelacionadas!: Sequelize.HasManySetAssociationsMixin<PropuestaRelacionada, PropuestaRelacionadaId>;
+  addCodigoPropuestaRelacionada_PropuestaRelacionada!: Sequelize.HasManyAddAssociationMixin<PropuestaRelacionada, PropuestaRelacionadaId>;
+  addCodigoPropuestaRelacionada_PropuestaRelacionadas!: Sequelize.HasManyAddAssociationsMixin<PropuestaRelacionada, PropuestaRelacionadaId>;
+  createCodigoPropuestaRelacionada_PropuestaRelacionada!: Sequelize.HasManyCreateAssociationMixin<PropuestaRelacionada>;
+  removeCodigoPropuestaRelacionada_PropuestaRelacionada!: Sequelize.HasManyRemoveAssociationMixin<PropuestaRelacionada, PropuestaRelacionadaId>;
+  removeCodigoPropuestaRelacionada_PropuestaRelacionadas!: Sequelize.HasManyRemoveAssociationsMixin<PropuestaRelacionada, PropuestaRelacionadaId>;
+  hasCodigoPropuestaRelacionada_PropuestaRelacionada!: Sequelize.HasManyHasAssociationMixin<PropuestaRelacionada, PropuestaRelacionadaId>;
+  hasCodigoPropuestaRelacionada_PropuestaRelacionadas!: Sequelize.HasManyHasAssociationsMixin<PropuestaRelacionada, PropuestaRelacionadaId>;
+  countCodigoPropuestaRelacionada_PropuestaRelacionadas!: Sequelize.HasManyCountAssociationsMixin;
+  // Propuesta hasMany UbicacionProblematica via codigoPropuesta
+  UbicacionProblematicas!: UbicacionProblematica[];
+  getUbicacionProblematicas!: Sequelize.HasManyGetAssociationsMixin<UbicacionProblematica>;
+  setUbicacionProblematicas!: Sequelize.HasManySetAssociationsMixin<UbicacionProblematica, UbicacionProblematicaId>;
+  addUbicacionProblematica!: Sequelize.HasManyAddAssociationMixin<UbicacionProblematica, UbicacionProblematicaId>;
+  addUbicacionProblematicas!: Sequelize.HasManyAddAssociationsMixin<UbicacionProblematica, UbicacionProblematicaId>;
+  createUbicacionProblematica!: Sequelize.HasManyCreateAssociationMixin<UbicacionProblematica>;
+  removeUbicacionProblematica!: Sequelize.HasManyRemoveAssociationMixin<UbicacionProblematica, UbicacionProblematicaId>;
+  removeUbicacionProblematicas!: Sequelize.HasManyRemoveAssociationsMixin<UbicacionProblematica, UbicacionProblematicaId>;
+  hasUbicacionProblematica!: Sequelize.HasManyHasAssociationMixin<UbicacionProblematica, UbicacionProblematicaId>;
+  hasUbicacionProblematicas!: Sequelize.HasManyHasAssociationsMixin<UbicacionProblematica, UbicacionProblematicaId>;
+  countUbicacionProblematicas!: Sequelize.HasManyCountAssociationsMixin;
+  // Propuesta belongsTo Usuario via idUsuario
+  idUsuario_Usuario!: Usuario;
+  getIdUsuario_Usuario!: Sequelize.BelongsToGetAssociationMixin<Usuario>;
+  setIdUsuario_Usuario!: Sequelize.BelongsToSetAssociationMixin<Usuario, UsuarioId>;
+  createIdUsuario_Usuario!: Sequelize.BelongsToCreateAssociationMixin<Usuario>;
 
-  public async verInstituciones( sequelize : Sequelize.Sequelize, transaction ?: Sequelize.Transaction) : 
-  Promise<(PropuestaInstitucionAttributes & InstitucionAttributes )[]> {
 
-    let salida : (PropuestaInstitucionAttributes & InstitucionAttributes )[] = [];
-
-    const lInstitucionesRelacionadas = await PropuestaInstitucion.initModel(sequelize).findAll({
-      where : {codigoPropuesta : this.codigoPropuesta}, 
-      transaction
-    });
-    if(lInstitucionesRelacionadas.length ){
-      const lInstituciones = await Institucion.initModel(sequelize).findAll({
-        where : {idInstitucion : lInstitucionesRelacionadas.map(inst => inst.idInstitucion)}, 
-        transaction
-      });
-      
-      const lInstitucionesIndexado : any = indexar(lInstituciones,'idInstitucion');
-
-      salida = lInstitucionesRelacionadas.map( inst => ({ 
-        ...inst.dataValues,
-        ...lInstitucionesIndexado[inst.idInstitucion]
-      }) )
-    }
-   
-
-    return salida;
-  }
-  public async verIntegrantes( sequelize : Sequelize.Sequelize, transaction ?: Sequelize.Transaction) : 
-  Promise<(IntegranteAttributes & PersonaAttributes )[]> {
-     let salida : (IntegranteAttributes & PersonaAttributes )[] = [];
-
-    const lIntegrantes = await Integrante.initModel(sequelize).findAll({
-      where : {codigoPropuesta : this.codigoPropuesta}, 
-      transaction
-    });
-
-    if(lIntegrantes.length ){
-
-      const selectPersonas = lIntegrantes.map(integrante => integrante.verPersona(sequelize,transaction));
-
-      const selectRoles = lIntegrantes.map( async integrante =>  await integrante.verRoles(sequelize,transaction) );
-
-      const lPersonas = await Promise.all( selectPersonas);
-      const lRoles = await Promise.all(selectRoles);
-
-      const lPersonasIndexado : any = indexar(lPersonas,'nroDoc');
-      const lRolesIndexado : any = indexarAsociacion(lRoles,'nroDoc');
-
-      salida =  lIntegrantes.map(  integrante => ({ 
-        ...integrante.dataValues,
-        ...lPersonasIndexado[integrante.nroDoc],
-        lRoles : lRolesIndexado[integrante.nroDoc]
-      }) )
-
-     
-    }
-   
-
-    return salida;
-  }
-  public async verPlanificacion( sequelize : Sequelize.Sequelize, transaction ?: Sequelize.Transaction) : 
-  Promise<PlanificacionAttributes> {
-    let salida : PlanificacionAttributes  = {
-      finalidad : '',
-      objetivoGeneral : '',
-      lObjetivosEspecificos : []
-    };
-
-    salida.finalidad = this.planificacionFinalidad || '';
-    salida.objetivoGeneral = this.planificacionObjetivoGeneral || '';
-
-    const lObjetivosEspecificos = await ObjetivoEspecifico.initModel(sequelize).findAll({ transaction });
-
-    if(lObjetivosEspecificos.length) {
-      const dataObjetivosEspecificos = lObjetivosEspecificos.map(async objEsp => ({...objEsp, lActividades : await objEsp.verActividades(sequelize,transaction)}))
-      
-      salida.lObjetivosEspecificos = await Promise.all(dataObjetivosEspecificos);
-
-    }
-
-    return salida;
-  }
-  public async verPropuestasPrevias( sequelize : Sequelize.Sequelize, transaction ?: Sequelize.Transaction) : 
-  Promise<PropuestaPreviaAttributes[]> {
-    return await PropuestaPrevia.initModel(sequelize).findAll({where : {codigoPropuesta : this.codigoPropuesta},transaction});
-  }
-  public async verPropuestasRelacionadas( sequelize : Sequelize.Sequelize, transaction ?: Sequelize.Transaction) : 
-  Promise<PropuestaRelacionadaAttributes[]> {
-    return await PropuestaRelacionada.initModel(sequelize).findAll({where : {codigoPropuesta : this.codigoPropuesta},transaction});
-  }
-  public async verGeolocalizaciones( sequelize : Sequelize.Sequelize, transaction ?: Sequelize.Transaction) : 
-  Promise<UbicacionAttributes[]> {
-    let salida : UbicacionAttributes[] =[];
-    const geolocalizacionesAsociadas = await UbicacionProblematica.initModel(sequelize).findAll({where : {codigoPropuesta : this.codigoPropuesta},transaction});;
-    const lGeolocalizaciones = geolocalizacionesAsociadas.map(async item => await item.verDatos(sequelize,transaction));
-
-    (await Promise.all(lGeolocalizaciones)).forEach(item => item !== null ? salida.push(item) : null);
+  public async leerDatosDeBD( ) : Promise<TPropuesta> {
+    let salida : TPropuesta = PROPUESTA_VACIA;
     
-    return salida;
-  }
-  public async verProgramasExtension( sequelize : Sequelize.Sequelize, transaction ?: Sequelize.Transaction) : 
-  Promise<PropuestaProgramaExtensionAttributes[]> {
-    return await PropuestaProgramaExtension.initModel(sequelize).findAll({where : {codigoPropuesta : this.codigoPropuesta},transaction});
-  }
-  public async verCapacitaciones( sequelize : Sequelize.Sequelize, transaction ?: Sequelize.Transaction) : 
-  Promise<PropuestaCapacitacionAttributes[]> {
-    return await PropuestaCapacitacion.initModel(sequelize).findAll({where : {codigoPropuesta : this.codigoPropuesta},transaction});
-  }
-  public async verLineasTematicas( sequelize : Sequelize.Sequelize, transaction ?: Sequelize.Transaction) : 
-  Promise<PropuestaLineaTematicaAttributes[]> {
-    return await PropuestaLineaTematica.initModel(sequelize).findAll({where : {codigoPropuesta : this.codigoPropuesta},transaction});
-  }
-  public async verPalabrasClave( sequelize : Sequelize.Sequelize, transaction ?: Sequelize.Transaction) : 
-  Promise<PalabraClaveAttributes[]> {
-    let salida : PalabraClaveAttributes[] = [];
-    const lPalabrasAsociadas = await PropuestaPalabraClave.initModel(sequelize).findAll({
-      where : {codigoPropuesta : this.codigoPropuesta},
-      transaction
-    });
-    
-    const lPalabrasClave = await PalabraClave.initModel(sequelize).findAll({
-      where : {idPalabraClave : lPalabrasAsociadas.map( item => item.idPalabraClave )},
-      transaction
-    });
-    salida = lPalabrasClave.map(palabra =>  palabra.dataValues);
-    return salida;
-  }
-
-  public async editarPalabrasClave(data : PalabraClaveCreationAttributes[] ,sequelize : Sequelize.Sequelize, transaction ?: Sequelize.Transaction) :
-  Promise<boolean> {
-    let salida : boolean = false;
+    const transaction = await this.sequelize.transaction(
+      {
+        logging : msg => console.log(msg)
+      }
+    );
     
     try {
-      const splitData = splitNuevosRegistros(data,'idPalabraClave');
-      let palabrasNuevas : PalabraClaveAttributes[] = [];
-      if(splitData['NUEVOS'].length){
-        const desde : PalabraClaveId = await PalabraClave.max('idPalabraClave',{transaction});
-        await PalabraClave.initModel(sequelize).bulkCreate(splitData['NUEVOS'],{transaction});
-        palabrasNuevas = await PalabraClave.findAll({where : { idPalabraClave : { [Sequelize.Op.gt ]: desde } }});
+      
+      const obteniendoInstituciones = await this.getIns
 
-      }
 
-      await PropuestaPalabraClave.bulkCreate(
-        [...palabrasNuevas,splitData['viejos']].map( 
-          palabra => ({
-            idPalabraClave : palabra.idPalabraClave, 
-            codigoPropuesta : this.codigoPropuesta
-          }) ),{
-            transaction,
-            ignoreDuplicates : true
-          });
-      salida = true;
+      await transaction.commit();
     } catch (error) {
-      console.log(error);
-    }
-    
-    return salida;
-  }
-
-  public async editarProgramasExtension( data : ProgramaSIPPEId[], sequelize : Sequelize.Sequelize, transaction ?: Sequelize.Transaction):
-  Promise<void>{
-
-    const asociarProgramas = PropuestaProgramaExtension.initModel(sequelize).bulkCreate(
-      data.map( progId => ({ codigoPropuesta : this.codigoPropuesta, idProgramaExtension : progId }) ),
-      {
-        ignoreDuplicates : true,
-        transaction
-      }
-    );
-
-    const darDeBajaDescartados = PropuestaProgramaExtension.destroy({
-      where : {
-        codigoPropuesta : this.codigoPropuesta,
-        idProgramaExtension : {
-          [Sequelize.Op.not] : data
-        } 
-      },
-      transaction
-    });
-
-    await asociarProgramas;
-    await darDeBajaDescartados;
-  }
-
-  public async editarCapacitaciones( data : CapacitacionId[], sequelize : Sequelize.Sequelize, transaction ?: Sequelize.Transaction):
-  Promise<void>{
-
-    const asociarCapactiaciones = PropuestaCapacitacion.initModel(sequelize).bulkCreate(
-      data.map( capacId => ({ codigoPropuesta : this.codigoPropuesta, idCapacitacion : capacId }) ),
-      {
-        ignoreDuplicates : true,
-        transaction
-      }
-    );
-
-    const darDeBajaDescartados = PropuestaCapacitacion.destroy({
-      where : {
-        codigoPropuesta : this.codigoPropuesta,
-        idCapacitacion : {
-          [Sequelize.Op.not] : data
-        } 
-      },
-      transaction
-    });
-
-    await asociarCapactiaciones;
-    await darDeBajaDescartados;
-  }
-  public async editarLineasTematicas( data : LineaTematicaId[], sequelize : Sequelize.Sequelize, transaction ?: Sequelize.Transaction):
-  Promise<void>{
-
-    const asociarLineasTematicas = PropuestaLineaTematica.initModel(sequelize).bulkCreate(
-      data.map( progId => ({ codigoPropuesta : this.codigoPropuesta, idLineaTematica : progId }) ),
-      {
-        ignoreDuplicates : true,
-        transaction
-      }
-    );
-
-    const darDeBajaDescartados = PropuestaLineaTematica.destroy({
-      where : {
-        codigoPropuesta : this.codigoPropuesta,
-        idLineaTematica : {
-          [Sequelize.Op.not] : data
-        } 
-      },
-      transaction
-    });
-
-    await asociarLineasTematicas;
-    await darDeBajaDescartados;
-  }
-
-  public async editarIntegrantes( data : (IntegranteCreationAttributes & {lRoles : RolId[]})[], sequelize : Sequelize.Sequelize, transaction ?: Sequelize.Transaction ) : 
-  Promise<void> {
-
-    const dataIndexada = indexarJsons(data,'nroDoc');
-
-    if(data.length) {
-
-      const actualizarIntegrantes = Integrante.initModel(sequelize).bulkCreate(
-        data,
-        {
-          updateOnDuplicate : [
-            'categoriaDocente',
-            'dedicacionDocente',
-            'idAreaUnl',
-            'idCarrera',
-            'observ',
-            'periodoLectivo',
-            'tieneTarjeta',
-            'tipoIntegrante',
-            'titulo',
-            'updatedAt',
-            'deletedAt'
-          ],
-          transaction 
-        }
-      );
-
-      const darDeBajaDuplicados = Integrante.initModel(sequelize).destroy({
-        where : {
-          codigoPropuesta : this.codigoPropuesta,
-          nroDoc : {
-            [Sequelize.Op.not] : data.map( integrante => integrante.nroDoc)
-          }
-        },
-        transaction
-      });
-
-      await actualizarIntegrantes;
-      await darDeBajaDuplicados;
-
-      const integrantesEditados = await Integrante.initModel(sequelize).findAll({
-        where : {
-          codigoPropuesta : this.codigoPropuesta,
-          nroDoc : data.map( integ => integ.nroDoc )
-        },  
-        transaction
-      })
-
-      const acutalizarRoles = integrantesEditados.map(async integ =>await integ.editarRoles(dataIndexada[integ.nroDoc].lRoles,sequelize,transaction));
-
-      await Promise.all(acutalizarRoles);
+      
+      await transaction.rollback();
+      throw error;    
     }
 
+    return salida;    
   }
 
-  public async editarInstituciones( data : PropuestaInstitucionCreationAttributes[], sequelize : Sequelize.Sequelize, transaction ?: Sequelize.Transaction  ) : 
-  Promise< void >{
-    if(data.length){
-        const asociarInstituciones = PropuestaInstitucion.initModel(sequelize).bulkCreate(
-          data,
-          {
-            updateOnDuplicate : ['antecedentes','valoracion','updatedAt','deletedAt'],
-            transaction
-          }
-        );
-        const darDeBajaDuplicados = PropuestaInstitucion.initModel(sequelize).destroy({
-          where : {
-            codigoPropuesta : this.codigoPropuesta,
-            idInstitucion : {
-              [Sequelize.Op.not] : data.map( inst => inst.idInstitucion)
-            }
-          },
-          transaction
-        });
-        await asociarInstituciones;
-        await darDeBajaDuplicados;
-    }
-  }
-
-  public async editarGeolocalizaciones(data : UbicacionAttributes[] ,sequelize : Sequelize.Sequelize, transaction ?: Sequelize.Transaction) :
-  Promise<boolean> {
-    let salida : boolean = false;
-    
-    try {
-      const splitData = splitNuevosRegistros(data,'idPalabraClave');
-      let geolocalizacionesNuevas : UbicacionAttributes[] = [];
-      if(splitData['NUEVOS'].length){
-
-        const desde : UbicacionId = await Ubicacion.max('idUbicacion',{transaction});
-
-        await Ubicacion.initModel(sequelize).bulkCreate(splitData['NUEVOS'],{transaction});
-
-        geolocalizacionesNuevas = await Ubicacion.findAll({where : { idUbicacion : { [Sequelize.Op.gt ]: desde } }});
-
-      }
-
-      await UbicacionProblematica.bulkCreate(
-        [...geolocalizacionesNuevas,splitData['VIEJOS']].map( 
-          ubicacion => ({
-            idUbicacion : ubicacion.idUbicacion, 
-            codigoPropuesta : this.codigoPropuesta
-          }) 
-        ),
-        {
-            transaction,
-            ignoreDuplicates : true
-        }
-      );
-
-      salida = true;
-    } catch (error) {
-      console.log('Error - Propuesta.editarGeolocalizaciones');
-      throw error;
-    }
-    
-    return salida;
-  }
-
-  public async editarPlanificacion(data : PlanificacionAttributes, sequelize : Sequelize.Sequelize, transaction ?: Sequelize.Transaction) :
-  Promise<void>{
-
-    this.set('planificacionFinalidad',data.finalidad);
-    this.set('planificacionObjetivoGeneral',data.objetivoGeneral);
-
-
-    const actualizarObjetivos = data.lObjetivosEspecificos.map(
-      async obj => {
-        
-        const iObjetivo = await ObjetivoEspecifico.initModel(sequelize).create(
-          {
-            ...obj,
-            codigoPropuesta : this.codigoPropuesta
-          },
-          {
-            transaction
-          }
-        );
-        await iObjetivo.editarActividades(obj.lActividades,sequelize,transaction);
-
-      }
-    );
-
-    const darDeBajaSobrantes =  ObjetivoEspecifico.initModel(sequelize).destroy({
-      where : {
-         codigoPropuesta : this.codigoPropuesta,
-         idObjetivoEspecifico : {
-          [Sequelize.Op.not] : data.lObjetivosEspecificos.map( (obj) => obj.idObjetivoEspecifico)
-        }
-      },
-      transaction
-    });
-
-    await Promise.all(actualizarObjetivos);
-
-    await darDeBajaSobrantes;
-
-
-    
-    
-    
-
-  }
 
   static initModel(sequelize: Sequelize.Sequelize): typeof Propuesta {
     return Propuesta.init({
@@ -644,24 +560,7 @@ export class Propuesta extends Model<PropuestaAttributes, PropuestaCreationAttri
     sequelize,
     tableName: 'Propuesta',
     timestamps: true,
-    paranoid: true,
-    indexes: [
-      {
-        name: "PRIMARY",
-        unique: true,
-        using: "BTREE",
-        fields: [
-          { name: "codigoPropuesta" },
-        ]
-      },
-      {
-        name: "fk_Propuesta_Usuario1_idx",
-        using: "BTREE",
-        fields: [
-          { name: "idUsuario" },
-        ]
-      },
-    ]
+    paranoid: true
   });
   }
 }

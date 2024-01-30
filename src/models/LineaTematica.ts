@@ -55,17 +55,7 @@ export class LineaTematica extends Model<LineaTematicaAttributes, LineaTematicaC
   }, {
     sequelize,
     tableName: 'LineaTematica',
-    timestamps: false,
-    indexes: [
-      {
-        name: "PRIMARY",
-        unique: true,
-        using: "BTREE",
-        fields: [
-          { name: "idLineaTematica" },
-        ]
-      },
-    ]
+    timestamps: false
   });
   }
 }

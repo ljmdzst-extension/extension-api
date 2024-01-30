@@ -1,5 +1,6 @@
 import * as Sequelize from 'sequelize';
 import { DataTypes, Model, Optional } from 'sequelize';
+import type { UsuarioCategoria, UsuarioCategoriaId } from './UsuarioCategoria';
 
 export interface PermisoAttributes {
   idPermiso: number;
@@ -15,6 +16,18 @@ export class Permiso extends Model<PermisoAttributes, PermisoCreationAttributes>
   idPermiso!: number;
   nombre!: string;
 
+  // Permiso hasMany UsuarioCategoria via idPermiso
+  UsuarioCategoria!: UsuarioCategoria[];
+  getUsuarioCategoria!: Sequelize.HasManyGetAssociationsMixin<UsuarioCategoria>;
+  setUsuarioCategoria!: Sequelize.HasManySetAssociationsMixin<UsuarioCategoria, UsuarioCategoriaId>;
+  addUsuarioCategorium!: Sequelize.HasManyAddAssociationMixin<UsuarioCategoria, UsuarioCategoriaId>;
+  addUsuarioCategoria!: Sequelize.HasManyAddAssociationsMixin<UsuarioCategoria, UsuarioCategoriaId>;
+  createUsuarioCategorium!: Sequelize.HasManyCreateAssociationMixin<UsuarioCategoria>;
+  removeUsuarioCategorium!: Sequelize.HasManyRemoveAssociationMixin<UsuarioCategoria, UsuarioCategoriaId>;
+  removeUsuarioCategoria!: Sequelize.HasManyRemoveAssociationsMixin<UsuarioCategoria, UsuarioCategoriaId>;
+  hasUsuarioCategorium!: Sequelize.HasManyHasAssociationMixin<UsuarioCategoria, UsuarioCategoriaId>;
+  hasUsuarioCategoria!: Sequelize.HasManyHasAssociationsMixin<UsuarioCategoria, UsuarioCategoriaId>;
+  countUsuarioCategoria!: Sequelize.HasManyCountAssociationsMixin;
 
   static initModel(sequelize: Sequelize.Sequelize): typeof Permiso {
     return Permiso.init({
@@ -31,17 +44,7 @@ export class Permiso extends Model<PermisoAttributes, PermisoCreationAttributes>
   }, {
     sequelize,
     tableName: 'Permiso',
-    timestamps: false,
-    indexes: [
-      {
-        name: "PRIMARY",
-        unique: true,
-        using: "BTREE",
-        fields: [
-          { name: "idPermiso" },
-        ]
-      },
-    ]
+    timestamps: false
   });
   }
 }

@@ -1,5 +1,7 @@
 import * as Sequelize from 'sequelize';
 import { DataTypes, Model, Optional } from 'sequelize';
+import type { Actividad, ActividadId } from './Actividad';
+import type { Programa, ProgramaId } from './Programa';
 
 export interface AreaAttributes {
   idArea: number;
@@ -17,6 +19,23 @@ export class Area extends Model<AreaAttributes, AreaCreationAttributes> implemen
   nom!: string;
   idPrograma!: number;
 
+  // Area hasMany Actividad via idArea
+  Actividads!: Actividad[];
+  getActividads!: Sequelize.HasManyGetAssociationsMixin<Actividad>;
+  setActividads!: Sequelize.HasManySetAssociationsMixin<Actividad, ActividadId>;
+  addActividad!: Sequelize.HasManyAddAssociationMixin<Actividad, ActividadId>;
+  addActividads!: Sequelize.HasManyAddAssociationsMixin<Actividad, ActividadId>;
+  createActividad!: Sequelize.HasManyCreateAssociationMixin<Actividad>;
+  removeActividad!: Sequelize.HasManyRemoveAssociationMixin<Actividad, ActividadId>;
+  removeActividads!: Sequelize.HasManyRemoveAssociationsMixin<Actividad, ActividadId>;
+  hasActividad!: Sequelize.HasManyHasAssociationMixin<Actividad, ActividadId>;
+  hasActividads!: Sequelize.HasManyHasAssociationsMixin<Actividad, ActividadId>;
+  countActividads!: Sequelize.HasManyCountAssociationsMixin;
+  // Area belongsTo Programa via idPrograma
+  idPrograma_Programa!: Programa;
+  getIdPrograma_Programa!: Sequelize.BelongsToGetAssociationMixin<Programa>;
+  setIdPrograma_Programa!: Sequelize.BelongsToSetAssociationMixin<Programa, ProgramaId>;
+  createIdPrograma_Programa!: Sequelize.BelongsToCreateAssociationMixin<Programa>;
 
   static initModel(sequelize: Sequelize.Sequelize): typeof Area {
     return Area.init({
@@ -32,29 +51,16 @@ export class Area extends Model<AreaAttributes, AreaCreationAttributes> implemen
     },
     idPrograma: {
       type: DataTypes.INTEGER,
-      allowNull: false
+      allowNull: false,
+      references: {
+        model: 'Programa',
+        key: 'idPrograma'
+      }
     }
   }, {
     sequelize,
     tableName: 'Area',
-    timestamps: false,
-    indexes: [
-      {
-        name: "PRIMARY",
-        unique: true,
-        using: "BTREE",
-        fields: [
-          { name: "idArea" },
-        ]
-      },
-      {
-        name: "fkAreaPrograma1_idx",
-        using: "BTREE",
-        fields: [
-          { name: "idPrograma" },
-        ]
-      },
-    ]
+    timestamps: false
   });
   }
 }

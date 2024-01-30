@@ -1,5 +1,6 @@
 import * as Sequelize from 'sequelize';
 import { DataTypes, Model, Optional } from 'sequelize';
+import type { ParticipanteSocial, ParticipanteSocialId } from './ParticipanteSocial';
 
 export interface ActividadParticipanteSocialAttributes {
   idActividadPartSocial: number;
@@ -9,17 +10,19 @@ export interface ActividadParticipanteSocialAttributes {
 
 export type ActividadParticipanteSocialPk = "idActividadPartSocial";
 export type ActividadParticipanteSocialId = ActividadParticipanteSocial[ActividadParticipanteSocialPk];
-export type ActividadParticipanteSocialOptionalAttributes = "idActividadPartSocial";
+export type ActividadParticipanteSocialOptionalAttributes = "idActividadPartSocial" ;
 export type ActividadParticipanteSocialCreationAttributes = Optional<ActividadParticipanteSocialAttributes, ActividadParticipanteSocialOptionalAttributes>;
 
 export class ActividadParticipanteSocial extends Model<ActividadParticipanteSocialAttributes, ActividadParticipanteSocialCreationAttributes> implements ActividadParticipanteSocialAttributes {
   idActividadPartSocial!: number;
   idParticipanteSocial!: number;
   desc!: string;
-  createdAt!: Date;
-  updatedAt!: Date;
-  deletedAt?: Date;
 
+  // ActividadParticipanteSocial belongsTo ParticipanteSocial via idParticipanteSocial
+  idParticipanteSocial_ParticipanteSocial!: ParticipanteSocial;
+  getIdParticipanteSocial_ParticipanteSocial!: Sequelize.BelongsToGetAssociationMixin<ParticipanteSocial>;
+  setIdParticipanteSocial_ParticipanteSocial!: Sequelize.BelongsToSetAssociationMixin<ParticipanteSocial, ParticipanteSocialId>;
+  createIdParticipanteSocial_ParticipanteSocial!: Sequelize.BelongsToCreateAssociationMixin<ParticipanteSocial>;
 
   static initModel(sequelize: Sequelize.Sequelize): typeof ActividadParticipanteSocial {
     return ActividadParticipanteSocial.init({
@@ -31,7 +34,11 @@ export class ActividadParticipanteSocial extends Model<ActividadParticipanteSoci
     },
     idParticipanteSocial: {
       type: DataTypes.INTEGER,
-      allowNull: false
+      allowNull: false,
+      references: {
+        model: 'ParticipanteSocial',
+        key: 'idParticipanteSocial'
+      }
     },
     desc: {
       type: DataTypes.TEXT,
@@ -41,24 +48,7 @@ export class ActividadParticipanteSocial extends Model<ActividadParticipanteSoci
     sequelize,
     tableName: 'ActividadParticipanteSocial',
     timestamps: true,
-    paranoid: true,
-    indexes: [
-      {
-        name: "PRIMARY",
-        unique: true,
-        using: "BTREE",
-        fields: [
-          { name: "idActividadPartSocial" },
-        ]
-      },
-      {
-        name: "fkPropuestaActividadPartSocialPropuestaParticipanteSocial1_idx",
-        using: "BTREE",
-        fields: [
-          { name: "idParticipanteSocial" },
-        ]
-      },
-    ]
+    paranoid: true
   });
   }
 }

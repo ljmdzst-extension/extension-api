@@ -10,13 +10,11 @@ export interface PropuestaCapacitacionAttributes {
 
 export type PropuestaCapacitacionPk = "codigoPropuesta" | "idCapacitacion";
 export type PropuestaCapacitacionId = PropuestaCapacitacion[PropuestaCapacitacionPk];
+export type PropuestaCapacitacionCreationAttributes =PropuestaCapacitacionAttributes;
 
-export class PropuestaCapacitacion extends Model<PropuestaCapacitacionAttributes> implements PropuestaCapacitacionAttributes {
+export class PropuestaCapacitacion extends Model<PropuestaCapacitacionAttributes, PropuestaCapacitacionCreationAttributes> implements PropuestaCapacitacionAttributes {
   codigoPropuesta!: string;
   idCapacitacion!: number;
-  createdAt!: Date;
-  updatedAt!: Date;
-  deletedAt?: Date;
 
   // PropuestaCapacitacion belongsTo Capacitacion via idCapacitacion
   idCapacitacion_Capacitacion!: Capacitacion;
@@ -53,32 +51,7 @@ export class PropuestaCapacitacion extends Model<PropuestaCapacitacionAttributes
     sequelize,
     tableName: 'PropuestaCapacitacion',
     timestamps: true,
-    paranoid: true,
-    indexes: [
-      {
-        name: "PRIMARY",
-        unique: true,
-        using: "BTREE",
-        fields: [
-          { name: "codigoPropuesta" },
-          { name: "idCapacitacion" },
-        ]
-      },
-      {
-        name: "fkPropuestaInstanciaCapacitacionPropuesta1_idx",
-        using: "BTREE",
-        fields: [
-          { name: "codigoPropuesta" },
-        ]
-      },
-      {
-        name: "fkPropuestaCapacitacionInstanciaCapacitacion1_idx",
-        using: "BTREE",
-        fields: [
-          { name: "idCapacitacion" },
-        ]
-      },
-    ]
+    paranoid: true
   });
   }
 }

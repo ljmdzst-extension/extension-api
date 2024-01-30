@@ -17,17 +17,17 @@ export class Capacitacion extends Model<CapacitacionAttributes, CapacitacionCrea
   nom!: string;
 
   // Capacitacion belongsToMany Propuesta via idCapacitacion and codigoPropuesta
-  codigoPropuesta_Propuesta!: Propuesta[];
-  getCodigoPropuesta_Propuesta!: Sequelize.BelongsToManyGetAssociationsMixin<Propuesta>;
-  setCodigoPropuesta_Propuesta!: Sequelize.BelongsToManySetAssociationsMixin<Propuesta, PropuestaId>;
-  addCodigoPropuesta_Propuestum!: Sequelize.BelongsToManyAddAssociationMixin<Propuesta, PropuestaId>;
-  addCodigoPropuesta_Propuesta!: Sequelize.BelongsToManyAddAssociationsMixin<Propuesta, PropuestaId>;
-  createCodigoPropuesta_Propuestum!: Sequelize.BelongsToManyCreateAssociationMixin<Propuesta>;
-  removeCodigoPropuesta_Propuestum!: Sequelize.BelongsToManyRemoveAssociationMixin<Propuesta, PropuestaId>;
-  removeCodigoPropuesta_Propuesta!: Sequelize.BelongsToManyRemoveAssociationsMixin<Propuesta, PropuestaId>;
-  hasCodigoPropuesta_Propuestum!: Sequelize.BelongsToManyHasAssociationMixin<Propuesta, PropuestaId>;
-  hasCodigoPropuesta_Propuesta!: Sequelize.BelongsToManyHasAssociationsMixin<Propuesta, PropuestaId>;
-  countCodigoPropuesta_Propuesta!: Sequelize.BelongsToManyCountAssociationsMixin;
+  codigoPropuesta_Propuesta_PropuestaCapacitacions!: Propuesta[];
+  getCodigoPropuesta_Propuesta_PropuestaCapacitacions!: Sequelize.BelongsToManyGetAssociationsMixin<Propuesta>;
+  setCodigoPropuesta_Propuesta_PropuestaCapacitacions!: Sequelize.BelongsToManySetAssociationsMixin<Propuesta, PropuestaId>;
+  addCodigoPropuesta_Propuesta_PropuestaCapacitacion!: Sequelize.BelongsToManyAddAssociationMixin<Propuesta, PropuestaId>;
+  addCodigoPropuesta_Propuesta_PropuestaCapacitacions!: Sequelize.BelongsToManyAddAssociationsMixin<Propuesta, PropuestaId>;
+  createCodigoPropuesta_Propuesta_PropuestaCapacitacion!: Sequelize.BelongsToManyCreateAssociationMixin<Propuesta>;
+  removeCodigoPropuesta_Propuesta_PropuestaCapacitacion!: Sequelize.BelongsToManyRemoveAssociationMixin<Propuesta, PropuestaId>;
+  removeCodigoPropuesta_Propuesta_PropuestaCapacitacions!: Sequelize.BelongsToManyRemoveAssociationsMixin<Propuesta, PropuestaId>;
+  hasCodigoPropuesta_Propuesta_PropuestaCapacitacion!: Sequelize.BelongsToManyHasAssociationMixin<Propuesta, PropuestaId>;
+  hasCodigoPropuesta_Propuesta_PropuestaCapacitacions!: Sequelize.BelongsToManyHasAssociationsMixin<Propuesta, PropuestaId>;
+  countCodigoPropuesta_Propuesta_PropuestaCapacitacions!: Sequelize.BelongsToManyCountAssociationsMixin;
   // Capacitacion hasMany PropuestaCapacitacion via idCapacitacion
   PropuestaCapacitacions!: PropuestaCapacitacion[];
   getPropuestaCapacitacions!: Sequelize.HasManyGetAssociationsMixin<PropuestaCapacitacion>;
@@ -55,17 +55,7 @@ export class Capacitacion extends Model<CapacitacionAttributes, CapacitacionCrea
   }, {
     sequelize,
     tableName: 'Capacitacion',
-    timestamps: false,
-    indexes: [
-      {
-        name: "PRIMARY",
-        unique: true,
-        using: "BTREE",
-        fields: [
-          { name: "idCapacitacion" },
-        ]
-      },
-    ]
+    timestamps: false
   });
   }
 }

@@ -1,5 +1,6 @@
 import * as Sequelize from 'sequelize';
 import { DataTypes, Model, Optional } from 'sequelize';
+import type { Evaluacion, EvaluacionId } from './Evaluacion';
 
 export interface TipoEvaluacionAttributes {
   idTipoEvaluacion: number;
@@ -14,6 +15,18 @@ export class TipoEvaluacion extends Model<TipoEvaluacionAttributes, TipoEvaluaci
   idTipoEvaluacion!: number;
   nom!: string;
 
+  // TipoEvaluacion hasMany Evaluacion via idTipoEvaluacion
+  Evaluacions!: Evaluacion[];
+  getEvaluacions!: Sequelize.HasManyGetAssociationsMixin<Evaluacion>;
+  setEvaluacions!: Sequelize.HasManySetAssociationsMixin<Evaluacion, EvaluacionId>;
+  addEvaluacion!: Sequelize.HasManyAddAssociationMixin<Evaluacion, EvaluacionId>;
+  addEvaluacions!: Sequelize.HasManyAddAssociationsMixin<Evaluacion, EvaluacionId>;
+  createEvaluacion!: Sequelize.HasManyCreateAssociationMixin<Evaluacion>;
+  removeEvaluacion!: Sequelize.HasManyRemoveAssociationMixin<Evaluacion, EvaluacionId>;
+  removeEvaluacions!: Sequelize.HasManyRemoveAssociationsMixin<Evaluacion, EvaluacionId>;
+  hasEvaluacion!: Sequelize.HasManyHasAssociationMixin<Evaluacion, EvaluacionId>;
+  hasEvaluacions!: Sequelize.HasManyHasAssociationsMixin<Evaluacion, EvaluacionId>;
+  countEvaluacions!: Sequelize.HasManyCountAssociationsMixin;
 
   static initModel(sequelize: Sequelize.Sequelize): typeof TipoEvaluacion {
     return TipoEvaluacion.init({
@@ -29,17 +42,7 @@ export class TipoEvaluacion extends Model<TipoEvaluacionAttributes, TipoEvaluaci
   }, {
     sequelize,
     tableName: 'TipoEvaluacion',
-    timestamps: false,
-    indexes: [
-      {
-        name: "PRIMARY",
-        unique: true,
-        using: "BTREE",
-        fields: [
-          { name: "idTipoEvaluacion" },
-        ]
-      },
-    ]
+    timestamps: false
   });
   }
 }
