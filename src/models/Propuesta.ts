@@ -392,30 +392,6 @@ export class Propuesta extends Model<PropuestaAttributes, PropuestaCreationAttri
   createIdUsuario_Usuario!: Sequelize.BelongsToCreateAssociationMixin<Usuario>;
 
 
-  public async leerDatosDeBD( ) : Promise<TPropuesta> {
-    let salida : TPropuesta = PROPUESTA_VACIA;
-    
-    const transaction = await this.sequelize.transaction(
-      {
-        logging : msg => console.log(msg)
-      }
-    );
-    
-    try {
-      
-      const obteniendoInstituciones = await this.getIns
-
-
-      await transaction.commit();
-    } catch (error) {
-      
-      await transaction.rollback();
-      throw error;    
-    }
-
-    return salida;    
-  }
-
 
   static initModel(sequelize: Sequelize.Sequelize): typeof Propuesta {
     return Propuesta.init({

@@ -17,7 +17,7 @@ import { ResponsableAttributes, ResponsableCreationAttributes } from "../models/
 
 export type TPropuesta = PropuestaAttributes & {
     lInstituciones : (PropuestaInstitucionAttributes & InstitucionCreationAttributes & {responsable ?: ResponsableAttributes & PersonaAttributes})[],
-    lIntegrantes : (IntegranteAttributes & PersonaAttributes)[],
+    lIntegrantes : (IntegranteAttributes & PersonaAttributes & { lRoles : RolId[]})[],
     lPropuestasPrevias : PropuestaPreviaAttributes[],
     lPropuestasRelacionadas : PropuestaRelacionadaAttributes[],
     lGeolocalizaciones : UbicacionAttributes[],

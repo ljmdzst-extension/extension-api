@@ -1,6 +1,7 @@
 import { request, response } from "express";
 import logger from '../config/logsConfig';
 import { initModels } from "../models/init-models";
+import * as ServiciosPropuesta from '../services/propuesta';
 import sequelizeExtension from "../config/dbConfig";
 
 export const verPropuesta = async(req : typeof request , res : typeof response)=>{
@@ -9,11 +10,11 @@ export const verPropuesta = async(req : typeof request , res : typeof response)=
     try {
         const {codigoPropuesta} = req.params;
 
-        const iPropuesta = await initModels(sequelizeExtension).Propuesta.findByPk(codigoPropuesta);
-
-        if(!iPropuesta) throw {status : 400 , message : `Propuesta ${codigoPropuesta} inexistente` };
-        
-        const salida = await iPropuesta.verDatos(transaction);
+        res.status(200).json({
+            ok : true,
+            data : await ServiciosPropuesta.verPropuesta(codigoPropuesta,sequelizeExtension),
+            error : null
+        })
         
 
     } catch (error : any) {
