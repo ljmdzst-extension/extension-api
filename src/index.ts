@@ -17,6 +17,9 @@ import RouterIntegrates from './routes/integrantes';
 import RouterBases from './routes/bases';
 import RouterInstituciones from './routes/instituciones';
 import RouterPlanificacion from './routes/planificacion';
+import routerPrograma from './routes/programa';
+import routerArea from './routes/area';
+import routerActividad from './routes/actividad';
 
 
 
@@ -38,7 +41,10 @@ app.use('/api/v2/integrantes',RouterIntegrates);
 app.use('/api/v2/bases',RouterBases);
 app.use('/api/v2/instituciones',RouterInstituciones);
 app.use('/api/v2/planificacion',RouterPlanificacion);
-
+app.use('/api/v2/metas/programas',routerPrograma);
+app.use('/api/v2/metas/areas',routerArea);
+app.use('/api/v2/metas/bases',RouterBases);
+app.use('/api/v2/metas/actividad',routerActividad);
 
 app.listen( process.env.PORT , async()=>{
     try {

@@ -1,7 +1,20 @@
 import { request, response } from "express";
-import { Relacion } from "../models/Relacion";
+import { Relacion as ModelRelacion } from "../models/Relacion";
 import sequelizeExtension from "../config/dbConfig";
+import { Transaction } from "sequelize";
+import Objetivo, { IObjetivo } from "../classes/Objetivo";
+import ProgramaSIPPE, { IProgramaSIPPE } from "../classes/ProgramaSIPPE";
+import Relacion, { IRelacion } from "../classes/Relacion";
+import Valoracion, { IValoracion } from "../classes/Valoracion";
+import Institucion, { IInstitucion } from "../classes/Institucion";
+import { DataGetInstituciones } from "../types/base";
 
+export interface IBases {
+    listaObjetivos : IObjetivo[],
+    listaProgramasSIPPE : IProgramaSIPPE[]
+    listaRelaciones : IRelacion[],
+    listaValoraciones : IValoracion[],
+}
 
 export const verBases = async(req : typeof request , res : typeof response)=>{
     try {
@@ -9,7 +22,8 @@ export const verBases = async(req : typeof request , res : typeof response)=>{
         res.status(200).json({
             ok : true,
             data : {
-                lAreas : await Relacion.initModel(sequelizeExtension).findAll()
+                lAreas : await ModelRelacion.initModel(sequelizeExtension).findAll(),
+                ...await ControllerBases.mostrarBases({},await sequelizeExtension.transaction())
             }
         })
 
@@ -18,5 +32,50 @@ export const verBases = async(req : typeof request , res : typeof response)=>{
             ok : false,
             error
         })   
+    }
+}
+
+
+export default class ControllerBases {
+
+   
+
+    public static async mostrarBases( data : any, transaction ?: Transaction) 
+    : Promise<IBases> 
+    {
+        let salida : IBases = {
+            listaObjetivos : [],
+            listaProgramasSIPPE : [],
+            listaRelaciones : [],
+            listaValoraciones : []
+        }
+
+        salida.listaRelaciones = await Relacion.verListaBD(transaction);
+
+        salida.listaObjetivos = await Objetivo.verListaBD(transaction);
+
+        salida.listaProgramasSIPPE = await ProgramaSIPPE.verListaBD(transaction);
+
+        salida.listaValoraciones= await Valoracion.verListaBD(transaction);
+
+
+        return salida;
+    }
+
+    public static async verInstituciones( data : DataGetInstituciones, transaction ?: Transaction , transactionInsituciones ?: Transaction ) 
+    : Promise<IInstitucion[]>
+    {
+        let salida : IInstitucion[] = [];
+
+        // implementar con db_instituciones
+
+       const instituciones =  await Institucion.buscarPorPalabraClave(data.query, data.offset, data.limit,transactionInsituciones);
+
+       if(instituciones.length) {
+         salida = instituciones.map( institucion => institucion.verDatos())
+       }
+
+
+        return salida;
     }
 }

@@ -1,6 +1,7 @@
+
+import { initModels } from "../models/init-models";
 import { request, response } from "express";
 import logger from '../config/logsConfig';
-import { initModels } from "../models/init-models";
 import * as ServiciosPropuesta from '../services/propuesta';
 import sequelizeExtension from "../config/dbConfig";
 
@@ -26,6 +27,7 @@ export const verPropuesta = async(req : typeof request , res : typeof response)=
         })
     }
 }
+
 export const crearPropuesta = async(req : typeof request , res : typeof response)=>{
     const transaction = await sequelizeExtension.transaction();
     try {
