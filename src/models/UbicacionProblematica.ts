@@ -17,15 +17,15 @@ export class UbicacionProblematica extends Model<UbicacionProblematicaAttributes
   codigoPropuesta!: string;
 
   // UbicacionProblematica belongsTo Propuesta via codigoPropuesta
-  codigoPropuesta_Propuestum!: Propuesta;
-  getCodigoPropuesta_Propuestum!: Sequelize.BelongsToGetAssociationMixin<Propuesta>;
-  setCodigoPropuesta_Propuestum!: Sequelize.BelongsToSetAssociationMixin<Propuesta, PropuestaId>;
-  createCodigoPropuesta_Propuestum!: Sequelize.BelongsToCreateAssociationMixin<Propuesta>;
+  codigoPropuestaPropuestum!: Propuesta;
+  getCodigoPropuestaPropuestum!: Sequelize.BelongsToGetAssociationMixin<Propuesta>;
+  setCodigoPropuestaPropuestum!: Sequelize.BelongsToSetAssociationMixin<Propuesta, PropuestaId>;
+  createCodigoPropuestaPropuestum!: Sequelize.BelongsToCreateAssociationMixin<Propuesta>;
   // UbicacionProblematica belongsTo Ubicacion via idUbicacion
-  idUbicacion_Ubicacion!: Ubicacion;
-  getIdUbicacion_Ubicacion!: Sequelize.BelongsToGetAssociationMixin<Ubicacion>;
-  setIdUbicacion_Ubicacion!: Sequelize.BelongsToSetAssociationMixin<Ubicacion, UbicacionId>;
-  createIdUbicacion_Ubicacion!: Sequelize.BelongsToCreateAssociationMixin<Ubicacion>;
+  idUbicacionUbicacion!: Ubicacion;
+  getIdUbicacionUbicacion!: Sequelize.BelongsToGetAssociationMixin<Ubicacion>;
+  setIdUbicacionUbicacion!: Sequelize.BelongsToSetAssociationMixin<Ubicacion, UbicacionId>;
+  createIdUbicacionUbicacion!: Sequelize.BelongsToCreateAssociationMixin<Ubicacion>;
 
   static initModel(sequelize: Sequelize.Sequelize): typeof UbicacionProblematica {
     return UbicacionProblematica.init({

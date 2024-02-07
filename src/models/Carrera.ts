@@ -19,7 +19,7 @@ export class Carrera extends Model<CarreraAttributes, CarreraCreationAttributes>
   nom!: string;
 
   // Carrera hasMany Integrante via idCarrera
-  Integrantes!: Integrante[];
+  integrantes!: Integrante[];
   getIntegrantes!: Sequelize.HasManyGetAssociationsMixin<Integrante>;
   setIntegrantes!: Sequelize.HasManySetAssociationsMixin<Integrante, IntegranteId>;
   addIntegrante!: Sequelize.HasManyAddAssociationMixin<Integrante, IntegranteId>;
@@ -31,10 +31,10 @@ export class Carrera extends Model<CarreraAttributes, CarreraCreationAttributes>
   hasIntegrantes!: Sequelize.HasManyHasAssociationsMixin<Integrante, IntegranteId>;
   countIntegrantes!: Sequelize.HasManyCountAssociationsMixin;
   // Carrera belongsTo Relacion via idUnidadAcademica
-  idUnidadAcademica_Relacion!: Relacion;
-  getIdUnidadAcademica_Relacion!: Sequelize.BelongsToGetAssociationMixin<Relacion>;
-  setIdUnidadAcademica_Relacion!: Sequelize.BelongsToSetAssociationMixin<Relacion, RelacionId>;
-  createIdUnidadAcademica_Relacion!: Sequelize.BelongsToCreateAssociationMixin<Relacion>;
+  idUnidadAcademicaRelacion!: Relacion;
+  getIdUnidadAcademicaRelacion!: Sequelize.BelongsToGetAssociationMixin<Relacion>;
+  setIdUnidadAcademicaRelacion!: Sequelize.BelongsToSetAssociationMixin<Relacion, RelacionId>;
+  createIdUnidadAcademicaRelacion!: Sequelize.BelongsToCreateAssociationMixin<Relacion>;
 
   static initModel(sequelize: Sequelize.Sequelize): typeof Carrera {
     return Carrera.init({

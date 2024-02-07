@@ -17,15 +17,15 @@ export class ObjetivoActividad extends Model<ObjetivoActividadAttributes, Objeti
   idActividad!: number;
 
   // ObjetivoActividad belongsTo Actividad via idActividad
-  idActividad_Actividad!: Actividad;
-  getIdActividad_Actividad!: Sequelize.BelongsToGetAssociationMixin<Actividad>;
-  setIdActividad_Actividad!: Sequelize.BelongsToSetAssociationMixin<Actividad, ActividadId>;
-  createIdActividad_Actividad!: Sequelize.BelongsToCreateAssociationMixin<Actividad>;
+  idActividadActividad!: Actividad;
+  getIdActividadActividad!: Sequelize.BelongsToGetAssociationMixin<Actividad>;
+  setIdActividadActividad!: Sequelize.BelongsToSetAssociationMixin<Actividad, ActividadId>;
+  createIdActividadActividad!: Sequelize.BelongsToCreateAssociationMixin<Actividad>;
   // ObjetivoActividad belongsTo Objetivo via idObjetivo
-  idObjetivo_Objetivo!: Objetivo;
-  getIdObjetivo_Objetivo!: Sequelize.BelongsToGetAssociationMixin<Objetivo>;
-  setIdObjetivo_Objetivo!: Sequelize.BelongsToSetAssociationMixin<Objetivo, ObjetivoId>;
-  createIdObjetivo_Objetivo!: Sequelize.BelongsToCreateAssociationMixin<Objetivo>;
+  idObjetivoObjetivo!: Objetivo;
+  getIdObjetivoObjetivo!: Sequelize.BelongsToGetAssociationMixin<Objetivo>;
+  setIdObjetivoObjetivo!: Sequelize.BelongsToSetAssociationMixin<Objetivo, ObjetivoId>;
+  createIdObjetivoObjetivo!: Sequelize.BelongsToCreateAssociationMixin<Objetivo>;
 
   static initModel(sequelize: Sequelize.Sequelize): typeof ObjetivoActividad {
     return ObjetivoActividad.init({

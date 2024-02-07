@@ -1,6 +1,7 @@
 import * as Sequelize from 'sequelize';
 import { DataTypes, Model, Optional } from 'sequelize';
-import type { UsuarioCategoria, UsuarioCategoriaId } from './UsuarioCategoria';
+import type { Categoria, CategoriaId } from './Categoria';
+import type { PermisoCategoria, PermisoCategoriaId } from './PermisoCategoria';
 
 export interface PermisoAttributes {
   idPermiso: number;
@@ -16,18 +17,30 @@ export class Permiso extends Model<PermisoAttributes, PermisoCreationAttributes>
   idPermiso!: number;
   nombre!: string;
 
-  // Permiso hasMany UsuarioCategoria via idPermiso
-  UsuarioCategoria!: UsuarioCategoria[];
-  getUsuarioCategoria!: Sequelize.HasManyGetAssociationsMixin<UsuarioCategoria>;
-  setUsuarioCategoria!: Sequelize.HasManySetAssociationsMixin<UsuarioCategoria, UsuarioCategoriaId>;
-  addUsuarioCategorium!: Sequelize.HasManyAddAssociationMixin<UsuarioCategoria, UsuarioCategoriaId>;
-  addUsuarioCategoria!: Sequelize.HasManyAddAssociationsMixin<UsuarioCategoria, UsuarioCategoriaId>;
-  createUsuarioCategorium!: Sequelize.HasManyCreateAssociationMixin<UsuarioCategoria>;
-  removeUsuarioCategorium!: Sequelize.HasManyRemoveAssociationMixin<UsuarioCategoria, UsuarioCategoriaId>;
-  removeUsuarioCategoria!: Sequelize.HasManyRemoveAssociationsMixin<UsuarioCategoria, UsuarioCategoriaId>;
-  hasUsuarioCategorium!: Sequelize.HasManyHasAssociationMixin<UsuarioCategoria, UsuarioCategoriaId>;
-  hasUsuarioCategoria!: Sequelize.HasManyHasAssociationsMixin<UsuarioCategoria, UsuarioCategoriaId>;
-  countUsuarioCategoria!: Sequelize.HasManyCountAssociationsMixin;
+  // Permiso belongsToMany Categoria via idPermiso and idCategoria
+  idCategoriaCategoria!: Categoria[];
+  getIdCategoriaCategoria!: Sequelize.BelongsToManyGetAssociationsMixin<Categoria>;
+  setIdCategoriaCategoria!: Sequelize.BelongsToManySetAssociationsMixin<Categoria, CategoriaId>;
+  addIdCategoriaCategorium!: Sequelize.BelongsToManyAddAssociationMixin<Categoria, CategoriaId>;
+  addIdCategoriaCategoria!: Sequelize.BelongsToManyAddAssociationsMixin<Categoria, CategoriaId>;
+  createIdCategoriaCategorium!: Sequelize.BelongsToManyCreateAssociationMixin<Categoria>;
+  removeIdCategoriaCategorium!: Sequelize.BelongsToManyRemoveAssociationMixin<Categoria, CategoriaId>;
+  removeIdCategoriaCategoria!: Sequelize.BelongsToManyRemoveAssociationsMixin<Categoria, CategoriaId>;
+  hasIdCategoriaCategorium!: Sequelize.BelongsToManyHasAssociationMixin<Categoria, CategoriaId>;
+  hasIdCategoriaCategoria!: Sequelize.BelongsToManyHasAssociationsMixin<Categoria, CategoriaId>;
+  countIdCategoriaCategoria!: Sequelize.BelongsToManyCountAssociationsMixin;
+  // Permiso hasMany PermisoCategoria via idPermiso
+  permisoCategoria!: PermisoCategoria[];
+  getPermisoCategoria!: Sequelize.HasManyGetAssociationsMixin<PermisoCategoria>;
+  setPermisoCategoria!: Sequelize.HasManySetAssociationsMixin<PermisoCategoria, PermisoCategoriaId>;
+  addPermisoCategorium!: Sequelize.HasManyAddAssociationMixin<PermisoCategoria, PermisoCategoriaId>;
+  addPermisoCategoria!: Sequelize.HasManyAddAssociationsMixin<PermisoCategoria, PermisoCategoriaId>;
+  createPermisoCategorium!: Sequelize.HasManyCreateAssociationMixin<PermisoCategoria>;
+  removePermisoCategorium!: Sequelize.HasManyRemoveAssociationMixin<PermisoCategoria, PermisoCategoriaId>;
+  removePermisoCategoria!: Sequelize.HasManyRemoveAssociationsMixin<PermisoCategoria, PermisoCategoriaId>;
+  hasPermisoCategorium!: Sequelize.HasManyHasAssociationMixin<PermisoCategoria, PermisoCategoriaId>;
+  hasPermisoCategoria!: Sequelize.HasManyHasAssociationsMixin<PermisoCategoria, PermisoCategoriaId>;
+  countPermisoCategoria!: Sequelize.HasManyCountAssociationsMixin;
 
   static initModel(sequelize: Sequelize.Sequelize): typeof Permiso {
     return Permiso.init({

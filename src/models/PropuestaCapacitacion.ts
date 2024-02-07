@@ -17,15 +17,15 @@ export class PropuestaCapacitacion extends Model<PropuestaCapacitacionAttributes
   idCapacitacion!: number;
 
   // PropuestaCapacitacion belongsTo Capacitacion via idCapacitacion
-  idCapacitacion_Capacitacion!: Capacitacion;
-  getIdCapacitacion_Capacitacion!: Sequelize.BelongsToGetAssociationMixin<Capacitacion>;
-  setIdCapacitacion_Capacitacion!: Sequelize.BelongsToSetAssociationMixin<Capacitacion, CapacitacionId>;
-  createIdCapacitacion_Capacitacion!: Sequelize.BelongsToCreateAssociationMixin<Capacitacion>;
+  idCapacitacionCapacitacion!: Capacitacion;
+  getIdCapacitacionCapacitacion!: Sequelize.BelongsToGetAssociationMixin<Capacitacion>;
+  setIdCapacitacionCapacitacion!: Sequelize.BelongsToSetAssociationMixin<Capacitacion, CapacitacionId>;
+  createIdCapacitacionCapacitacion!: Sequelize.BelongsToCreateAssociationMixin<Capacitacion>;
   // PropuestaCapacitacion belongsTo Propuesta via codigoPropuesta
-  codigoPropuesta_Propuestum!: Propuesta;
-  getCodigoPropuesta_Propuestum!: Sequelize.BelongsToGetAssociationMixin<Propuesta>;
-  setCodigoPropuesta_Propuestum!: Sequelize.BelongsToSetAssociationMixin<Propuesta, PropuestaId>;
-  createCodigoPropuesta_Propuestum!: Sequelize.BelongsToCreateAssociationMixin<Propuesta>;
+  codigoPropuestaPropuestum!: Propuesta;
+  getCodigoPropuestaPropuestum!: Sequelize.BelongsToGetAssociationMixin<Propuesta>;
+  setCodigoPropuestaPropuestum!: Sequelize.BelongsToSetAssociationMixin<Propuesta, PropuestaId>;
+  createCodigoPropuestaPropuestum!: Sequelize.BelongsToCreateAssociationMixin<Propuesta>;
 
   static initModel(sequelize: Sequelize.Sequelize): typeof PropuestaCapacitacion {
     return PropuestaCapacitacion.init({

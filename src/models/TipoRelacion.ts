@@ -17,7 +17,7 @@ export class TipoRelacion extends Model<TipoRelacionAttributes, TipoRelacionCrea
   nom!: string;
 
   // TipoRelacion hasMany Relacion via idTipoRelacion
-  Relacions!: Relacion[];
+  relacions!: Relacion[];
   getRelacions!: Sequelize.HasManyGetAssociationsMixin<Relacion>;
   setRelacions!: Sequelize.HasManySetAssociationsMixin<Relacion, RelacionId>;
   addRelacion!: Sequelize.HasManyAddAssociationMixin<Relacion, RelacionId>;

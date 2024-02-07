@@ -23,19 +23,19 @@ export class Relacion extends Model<RelacionAttributes, RelacionCreationAttribut
   idTipoRelacion!: number;
 
   // Relacion belongsToMany Actividad via idRelacion and idActividad
-  idActividad_Actividad_RelacionActividads!: Actividad[];
-  getIdActividad_Actividad_RelacionActividads!: Sequelize.BelongsToManyGetAssociationsMixin<Actividad>;
-  setIdActividad_Actividad_RelacionActividads!: Sequelize.BelongsToManySetAssociationsMixin<Actividad, ActividadId>;
-  addIdActividad_Actividad_RelacionActividad!: Sequelize.BelongsToManyAddAssociationMixin<Actividad, ActividadId>;
-  addIdActividad_Actividad_RelacionActividads!: Sequelize.BelongsToManyAddAssociationsMixin<Actividad, ActividadId>;
-  createIdActividad_Actividad_RelacionActividad!: Sequelize.BelongsToManyCreateAssociationMixin<Actividad>;
-  removeIdActividad_Actividad_RelacionActividad!: Sequelize.BelongsToManyRemoveAssociationMixin<Actividad, ActividadId>;
-  removeIdActividad_Actividad_RelacionActividads!: Sequelize.BelongsToManyRemoveAssociationsMixin<Actividad, ActividadId>;
-  hasIdActividad_Actividad_RelacionActividad!: Sequelize.BelongsToManyHasAssociationMixin<Actividad, ActividadId>;
-  hasIdActividad_Actividad_RelacionActividads!: Sequelize.BelongsToManyHasAssociationsMixin<Actividad, ActividadId>;
-  countIdActividad_Actividad_RelacionActividads!: Sequelize.BelongsToManyCountAssociationsMixin;
+  idActividadActividadRelacionActividads!: Actividad[];
+  getIdActividadActividadRelacionActividads!: Sequelize.BelongsToManyGetAssociationsMixin<Actividad>;
+  setIdActividadActividadRelacionActividads!: Sequelize.BelongsToManySetAssociationsMixin<Actividad, ActividadId>;
+  addIdActividadActividadRelacionActividad!: Sequelize.BelongsToManyAddAssociationMixin<Actividad, ActividadId>;
+  addIdActividadActividadRelacionActividads!: Sequelize.BelongsToManyAddAssociationsMixin<Actividad, ActividadId>;
+  createIdActividadActividadRelacionActividad!: Sequelize.BelongsToManyCreateAssociationMixin<Actividad>;
+  removeIdActividadActividadRelacionActividad!: Sequelize.BelongsToManyRemoveAssociationMixin<Actividad, ActividadId>;
+  removeIdActividadActividadRelacionActividads!: Sequelize.BelongsToManyRemoveAssociationsMixin<Actividad, ActividadId>;
+  hasIdActividadActividadRelacionActividad!: Sequelize.BelongsToManyHasAssociationMixin<Actividad, ActividadId>;
+  hasIdActividadActividadRelacionActividads!: Sequelize.BelongsToManyHasAssociationsMixin<Actividad, ActividadId>;
+  countIdActividadActividadRelacionActividads!: Sequelize.BelongsToManyCountAssociationsMixin;
   // Relacion hasMany Carrera via idUnidadAcademica
-  Carreras!: Carrera[];
+  carreras!: Carrera[];
   getCarreras!: Sequelize.HasManyGetAssociationsMixin<Carrera>;
   setCarreras!: Sequelize.HasManySetAssociationsMixin<Carrera, CarreraId>;
   addCarrera!: Sequelize.HasManyAddAssociationMixin<Carrera, CarreraId>;
@@ -46,8 +46,8 @@ export class Relacion extends Model<RelacionAttributes, RelacionCreationAttribut
   hasCarrera!: Sequelize.HasManyHasAssociationMixin<Carrera, CarreraId>;
   hasCarreras!: Sequelize.HasManyHasAssociationsMixin<Carrera, CarreraId>;
   countCarreras!: Sequelize.HasManyCountAssociationsMixin;
-  // Relacion hasMany Integrante via idAreaUNL
-  Integrantes!: Integrante[];
+  // Relacion hasMany Integrante via idAreaUnl
+  integrantes!: Integrante[];
   getIntegrantes!: Sequelize.HasManyGetAssociationsMixin<Integrante>;
   setIntegrantes!: Sequelize.HasManySetAssociationsMixin<Integrante, IntegranteId>;
   addIntegrante!: Sequelize.HasManyAddAssociationMixin<Integrante, IntegranteId>;
@@ -59,7 +59,7 @@ export class Relacion extends Model<RelacionAttributes, RelacionCreationAttribut
   hasIntegrantes!: Sequelize.HasManyHasAssociationsMixin<Integrante, IntegranteId>;
   countIntegrantes!: Sequelize.HasManyCountAssociationsMixin;
   // Relacion hasMany RelacionActividad via idRelacion
-  RelacionActividads!: RelacionActividad[];
+  relacionActividads!: RelacionActividad[];
   getRelacionActividads!: Sequelize.HasManyGetAssociationsMixin<RelacionActividad>;
   setRelacionActividads!: Sequelize.HasManySetAssociationsMixin<RelacionActividad, RelacionActividadId>;
   addRelacionActividad!: Sequelize.HasManyAddAssociationMixin<RelacionActividad, RelacionActividadId>;
@@ -71,10 +71,10 @@ export class Relacion extends Model<RelacionAttributes, RelacionCreationAttribut
   hasRelacionActividads!: Sequelize.HasManyHasAssociationsMixin<RelacionActividad, RelacionActividadId>;
   countRelacionActividads!: Sequelize.HasManyCountAssociationsMixin;
   // Relacion belongsTo TipoRelacion via idTipoRelacion
-  idTipoRelacion_TipoRelacion!: TipoRelacion;
-  getIdTipoRelacion_TipoRelacion!: Sequelize.BelongsToGetAssociationMixin<TipoRelacion>;
-  setIdTipoRelacion_TipoRelacion!: Sequelize.BelongsToSetAssociationMixin<TipoRelacion, TipoRelacionId>;
-  createIdTipoRelacion_TipoRelacion!: Sequelize.BelongsToCreateAssociationMixin<TipoRelacion>;
+  idTipoRelacionTipoRelacion!: TipoRelacion;
+  getIdTipoRelacionTipoRelacion!: Sequelize.BelongsToGetAssociationMixin<TipoRelacion>;
+  setIdTipoRelacionTipoRelacion!: Sequelize.BelongsToSetAssociationMixin<TipoRelacion, TipoRelacionId>;
+  createIdTipoRelacionTipoRelacion!: Sequelize.BelongsToCreateAssociationMixin<TipoRelacion>;
 
   static initModel(sequelize: Sequelize.Sequelize): typeof Relacion {
     return Relacion.init({

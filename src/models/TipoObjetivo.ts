@@ -16,8 +16,8 @@ export class TipoObjetivo extends Model<TipoObjetivoAttributes, TipoObjetivoCrea
   idTipoObj!: number;
   nom!: string;
 
-  // TipoObjetivo hasMany Objetivo via tipo_obj_id
-  Objetivos!: Objetivo[];
+  // TipoObjetivo hasMany Objetivo via tipoObjId
+  objetivos!: Objetivo[];
   getObjetivos!: Sequelize.HasManyGetAssociationsMixin<Objetivo>;
   setObjetivos!: Sequelize.HasManySetAssociationsMixin<Objetivo, ObjetivoId>;
   addObjetivo!: Sequelize.HasManyAddAssociationMixin<Objetivo, ObjetivoId>;

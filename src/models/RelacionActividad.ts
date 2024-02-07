@@ -10,22 +10,22 @@ export interface RelacionActividadAttributes {
 
 export type RelacionActividadPk = "idRelacion" | "idActividad";
 export type RelacionActividadId = RelacionActividad[RelacionActividadPk];
-export type RelacionActividadCreationAttributes =RelacionActividadAttributes;
+export type RelacionActividadCreationAttributes = RelacionActividadAttributes;
 
 export class RelacionActividad extends Model<RelacionActividadAttributes, RelacionActividadCreationAttributes> implements RelacionActividadAttributes {
   idRelacion!: number;
   idActividad!: number;
 
   // RelacionActividad belongsTo Actividad via idActividad
-  idActividad_Actividad!: Actividad;
-  getIdActividad_Actividad!: Sequelize.BelongsToGetAssociationMixin<Actividad>;
-  setIdActividad_Actividad!: Sequelize.BelongsToSetAssociationMixin<Actividad, ActividadId>;
-  createIdActividad_Actividad!: Sequelize.BelongsToCreateAssociationMixin<Actividad>;
+  idActividadActividad!: Actividad;
+  getIdActividadActividad!: Sequelize.BelongsToGetAssociationMixin<Actividad>;
+  setIdActividadActividad!: Sequelize.BelongsToSetAssociationMixin<Actividad, ActividadId>;
+  createIdActividadActividad!: Sequelize.BelongsToCreateAssociationMixin<Actividad>;
   // RelacionActividad belongsTo Relacion via idRelacion
-  idRelacion_Relacion!: Relacion;
-  getIdRelacion_Relacion!: Sequelize.BelongsToGetAssociationMixin<Relacion>;
-  setIdRelacion_Relacion!: Sequelize.BelongsToSetAssociationMixin<Relacion, RelacionId>;
-  createIdRelacion_Relacion!: Sequelize.BelongsToCreateAssociationMixin<Relacion>;
+  idRelacionRelacion!: Relacion;
+  getIdRelacionRelacion!: Sequelize.BelongsToGetAssociationMixin<Relacion>;
+  setIdRelacionRelacion!: Sequelize.BelongsToSetAssociationMixin<Relacion, RelacionId>;
+  createIdRelacionRelacion!: Sequelize.BelongsToCreateAssociationMixin<Relacion>;
 
   static initModel(sequelize: Sequelize.Sequelize): typeof RelacionActividad {
     return RelacionActividad.init({

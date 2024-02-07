@@ -10,7 +10,7 @@ export interface ActividadParticipanteSocialAttributes {
 
 export type ActividadParticipanteSocialPk = "idActividadPartSocial";
 export type ActividadParticipanteSocialId = ActividadParticipanteSocial[ActividadParticipanteSocialPk];
-export type ActividadParticipanteSocialOptionalAttributes = "idActividadPartSocial" ;
+export type ActividadParticipanteSocialOptionalAttributes = "idActividadPartSocial";
 export type ActividadParticipanteSocialCreationAttributes = Optional<ActividadParticipanteSocialAttributes, ActividadParticipanteSocialOptionalAttributes>;
 
 export class ActividadParticipanteSocial extends Model<ActividadParticipanteSocialAttributes, ActividadParticipanteSocialCreationAttributes> implements ActividadParticipanteSocialAttributes {
@@ -19,10 +19,10 @@ export class ActividadParticipanteSocial extends Model<ActividadParticipanteSoci
   desc!: string;
 
   // ActividadParticipanteSocial belongsTo ParticipanteSocial via idParticipanteSocial
-  idParticipanteSocial_ParticipanteSocial!: ParticipanteSocial;
-  getIdParticipanteSocial_ParticipanteSocial!: Sequelize.BelongsToGetAssociationMixin<ParticipanteSocial>;
-  setIdParticipanteSocial_ParticipanteSocial!: Sequelize.BelongsToSetAssociationMixin<ParticipanteSocial, ParticipanteSocialId>;
-  createIdParticipanteSocial_ParticipanteSocial!: Sequelize.BelongsToCreateAssociationMixin<ParticipanteSocial>;
+  idParticipanteSocialParticipanteSocial!: ParticipanteSocial;
+  getIdParticipanteSocialParticipanteSocial!: Sequelize.BelongsToGetAssociationMixin<ParticipanteSocial>;
+  setIdParticipanteSocialParticipanteSocial!: Sequelize.BelongsToSetAssociationMixin<ParticipanteSocial, ParticipanteSocialId>;
+  createIdParticipanteSocialParticipanteSocial!: Sequelize.BelongsToCreateAssociationMixin<ParticipanteSocial>;
 
   static initModel(sequelize: Sequelize.Sequelize): typeof ActividadParticipanteSocial {
     return ActividadParticipanteSocial.init({

@@ -1,39 +1,31 @@
 import * as Sequelize from 'sequelize';
 import { DataTypes, Model, Optional } from 'sequelize';
 import type { Categoria, CategoriaId } from './Categoria';
-import type { Permiso, PermisoId } from './Permiso';
 import type { Usuario, UsuarioId } from './Usuario';
 
 export interface UsuarioCategoriaAttributes {
   idCategoria: number;
-  idPermiso: number;
   idUsuario: string;
 }
 
-export type UsuarioCategoriaPk = "idCategoria" | "idPermiso" | "idUsuario";
+export type UsuarioCategoriaPk = "idCategoria" | "idUsuario";
 export type UsuarioCategoriaId = UsuarioCategoria[UsuarioCategoriaPk];
 export type UsuarioCategoriaCreationAttributes = UsuarioCategoriaAttributes;
 
 export class UsuarioCategoria extends Model<UsuarioCategoriaAttributes, UsuarioCategoriaCreationAttributes> implements UsuarioCategoriaAttributes {
   idCategoria!: number;
-  idPermiso!: number;
   idUsuario!: string;
 
   // UsuarioCategoria belongsTo Categoria via idCategoria
-  idCategoria_Categorium!: Categoria;
-  getIdCategoria_Categorium!: Sequelize.BelongsToGetAssociationMixin<Categoria>;
-  setIdCategoria_Categorium!: Sequelize.BelongsToSetAssociationMixin<Categoria, CategoriaId>;
-  createIdCategoria_Categorium!: Sequelize.BelongsToCreateAssociationMixin<Categoria>;
-  // UsuarioCategoria belongsTo Permiso via idPermiso
-  idPermiso_Permiso!: Permiso;
-  getIdPermiso_Permiso!: Sequelize.BelongsToGetAssociationMixin<Permiso>;
-  setIdPermiso_Permiso!: Sequelize.BelongsToSetAssociationMixin<Permiso, PermisoId>;
-  createIdPermiso_Permiso!: Sequelize.BelongsToCreateAssociationMixin<Permiso>;
+  idCategoriaCategorium!: Categoria;
+  getIdCategoriaCategorium!: Sequelize.BelongsToGetAssociationMixin<Categoria>;
+  setIdCategoriaCategorium!: Sequelize.BelongsToSetAssociationMixin<Categoria, CategoriaId>;
+  createIdCategoriaCategorium!: Sequelize.BelongsToCreateAssociationMixin<Categoria>;
   // UsuarioCategoria belongsTo Usuario via idUsuario
-  idUsuario_Usuario!: Usuario;
-  getIdUsuario_Usuario!: Sequelize.BelongsToGetAssociationMixin<Usuario>;
-  setIdUsuario_Usuario!: Sequelize.BelongsToSetAssociationMixin<Usuario, UsuarioId>;
-  createIdUsuario_Usuario!: Sequelize.BelongsToCreateAssociationMixin<Usuario>;
+  idUsuarioUsuario!: Usuario;
+  getIdUsuarioUsuario!: Sequelize.BelongsToGetAssociationMixin<Usuario>;
+  setIdUsuarioUsuario!: Sequelize.BelongsToSetAssociationMixin<Usuario, UsuarioId>;
+  createIdUsuarioUsuario!: Sequelize.BelongsToCreateAssociationMixin<Usuario>;
 
   static initModel(sequelize: Sequelize.Sequelize): typeof UsuarioCategoria {
     return UsuarioCategoria.init({
@@ -44,15 +36,6 @@ export class UsuarioCategoria extends Model<UsuarioCategoriaAttributes, UsuarioC
       references: {
         model: 'Categoria',
         key: 'idCategoria'
-      }
-    },
-    idPermiso: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-      primaryKey: true,
-      references: {
-        model: 'Permiso',
-        key: 'idPermiso'
       }
     },
     idUsuario: {

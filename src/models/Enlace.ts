@@ -21,10 +21,10 @@ export class Enlace extends Model<EnlaceAttributes, EnlaceCreationAttributes> im
   idActividad!: number;
 
   // Enlace belongsTo Actividad via idActividad
-  idActividad_Actividad!: Actividad;
-  getIdActividad_Actividad!: Sequelize.BelongsToGetAssociationMixin<Actividad>;
-  setIdActividad_Actividad!: Sequelize.BelongsToSetAssociationMixin<Actividad, ActividadId>;
-  createIdActividad_Actividad!: Sequelize.BelongsToCreateAssociationMixin<Actividad>;
+  idActividadActividad!: Actividad;
+  getIdActividadActividad!: Sequelize.BelongsToGetAssociationMixin<Actividad>;
+  setIdActividadActividad!: Sequelize.BelongsToSetAssociationMixin<Actividad, ActividadId>;
+  createIdActividadActividad!: Sequelize.BelongsToCreateAssociationMixin<Actividad>;
 
   static initModel(sequelize: Sequelize.Sequelize): typeof Enlace {
     return Enlace.init({

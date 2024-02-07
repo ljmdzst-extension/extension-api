@@ -16,7 +16,7 @@ export class TipoEvaluacion extends Model<TipoEvaluacionAttributes, TipoEvaluaci
   nom!: string;
 
   // TipoEvaluacion hasMany Evaluacion via idTipoEvaluacion
-  Evaluacions!: Evaluacion[];
+  evaluacions!: Evaluacion[];
   getEvaluacions!: Sequelize.HasManyGetAssociationsMixin<Evaluacion>;
   setEvaluacions!: Sequelize.HasManySetAssociationsMixin<Evaluacion, EvaluacionId>;
   addEvaluacion!: Sequelize.HasManyAddAssociationMixin<Evaluacion, EvaluacionId>;

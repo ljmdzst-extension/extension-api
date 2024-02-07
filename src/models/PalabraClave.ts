@@ -17,19 +17,19 @@ export class PalabraClave extends Model<PalabraClaveAttributes, PalabraClaveCrea
   nom!: string;
 
   // PalabraClave belongsToMany Propuesta via idPalabraClave and codigoPropuesta
-  codigoPropuesta_Propuesta_PropuestaPalabraClaves!: Propuesta[];
-  getCodigoPropuesta_Propuesta_PropuestaPalabraClaves!: Sequelize.BelongsToManyGetAssociationsMixin<Propuesta>;
-  setCodigoPropuesta_Propuesta_PropuestaPalabraClaves!: Sequelize.BelongsToManySetAssociationsMixin<Propuesta, PropuestaId>;
-  addCodigoPropuesta_Propuesta_PropuestaPalabraClave!: Sequelize.BelongsToManyAddAssociationMixin<Propuesta, PropuestaId>;
-  addCodigoPropuesta_Propuesta_PropuestaPalabraClaves!: Sequelize.BelongsToManyAddAssociationsMixin<Propuesta, PropuestaId>;
-  createCodigoPropuesta_Propuesta_PropuestaPalabraClave!: Sequelize.BelongsToManyCreateAssociationMixin<Propuesta>;
-  removeCodigoPropuesta_Propuesta_PropuestaPalabraClave!: Sequelize.BelongsToManyRemoveAssociationMixin<Propuesta, PropuestaId>;
-  removeCodigoPropuesta_Propuesta_PropuestaPalabraClaves!: Sequelize.BelongsToManyRemoveAssociationsMixin<Propuesta, PropuestaId>;
-  hasCodigoPropuesta_Propuesta_PropuestaPalabraClave!: Sequelize.BelongsToManyHasAssociationMixin<Propuesta, PropuestaId>;
-  hasCodigoPropuesta_Propuesta_PropuestaPalabraClaves!: Sequelize.BelongsToManyHasAssociationsMixin<Propuesta, PropuestaId>;
-  countCodigoPropuesta_Propuesta_PropuestaPalabraClaves!: Sequelize.BelongsToManyCountAssociationsMixin;
+  codigoPropuestaPropuestaPropuestaPalabraClaves!: Propuesta[];
+  getCodigoPropuestaPropuestaPropuestaPalabraClaves!: Sequelize.BelongsToManyGetAssociationsMixin<Propuesta>;
+  setCodigoPropuestaPropuestaPropuestaPalabraClaves!: Sequelize.BelongsToManySetAssociationsMixin<Propuesta, PropuestaId>;
+  addCodigoPropuestaPropuestaPropuestaPalabraClave!: Sequelize.BelongsToManyAddAssociationMixin<Propuesta, PropuestaId>;
+  addCodigoPropuestaPropuestaPropuestaPalabraClaves!: Sequelize.BelongsToManyAddAssociationsMixin<Propuesta, PropuestaId>;
+  createCodigoPropuestaPropuestaPropuestaPalabraClave!: Sequelize.BelongsToManyCreateAssociationMixin<Propuesta>;
+  removeCodigoPropuestaPropuestaPropuestaPalabraClave!: Sequelize.BelongsToManyRemoveAssociationMixin<Propuesta, PropuestaId>;
+  removeCodigoPropuestaPropuestaPropuestaPalabraClaves!: Sequelize.BelongsToManyRemoveAssociationsMixin<Propuesta, PropuestaId>;
+  hasCodigoPropuestaPropuestaPropuestaPalabraClave!: Sequelize.BelongsToManyHasAssociationMixin<Propuesta, PropuestaId>;
+  hasCodigoPropuestaPropuestaPropuestaPalabraClaves!: Sequelize.BelongsToManyHasAssociationsMixin<Propuesta, PropuestaId>;
+  countCodigoPropuestaPropuestaPropuestaPalabraClaves!: Sequelize.BelongsToManyCountAssociationsMixin;
   // PalabraClave hasMany PropuestaPalabraClave via idPalabraClave
-  PropuestaPalabraClaves!: PropuestaPalabraClave[];
+  propuestaPalabraClaves!: PropuestaPalabraClave[];
   getPropuestaPalabraClaves!: Sequelize.HasManyGetAssociationsMixin<PropuestaPalabraClave>;
   setPropuestaPalabraClaves!: Sequelize.HasManySetAssociationsMixin<PropuestaPalabraClave, PropuestaPalabraClaveId>;
   addPropuestaPalabraClave!: Sequelize.HasManyAddAssociationMixin<PropuestaPalabraClave, PropuestaPalabraClaveId>;

@@ -9,22 +9,22 @@ export interface PropuestaRelacionadaAttributes {
 
 export type PropuestaRelacionadaPk = "codigoPropuesta" | "codigoPropuestaRelacionada";
 export type PropuestaRelacionadaId = PropuestaRelacionada[PropuestaRelacionadaPk];
-export type PropuestaRelacionadaCreationAttributes = PropuestaRelacionadaAttributes;
+export type PropuestaRelacionadaCreationAttributes =PropuestaRelacionadaAttributes;
 
 export class PropuestaRelacionada extends Model<PropuestaRelacionadaAttributes, PropuestaRelacionadaCreationAttributes> implements PropuestaRelacionadaAttributes {
   codigoPropuesta!: string;
   codigoPropuestaRelacionada!: string;
 
   // PropuestaRelacionada belongsTo Propuesta via codigoPropuesta
-  codigoPropuesta_Propuestum!: Propuesta;
-  getCodigoPropuesta_Propuestum!: Sequelize.BelongsToGetAssociationMixin<Propuesta>;
-  setCodigoPropuesta_Propuestum!: Sequelize.BelongsToSetAssociationMixin<Propuesta, PropuestaId>;
-  createCodigoPropuesta_Propuestum!: Sequelize.BelongsToCreateAssociationMixin<Propuesta>;
+  codigoPropuestaPropuestum!: Propuesta;
+  getCodigoPropuestaPropuestum!: Sequelize.BelongsToGetAssociationMixin<Propuesta>;
+  setCodigoPropuestaPropuestum!: Sequelize.BelongsToSetAssociationMixin<Propuesta, PropuestaId>;
+  createCodigoPropuestaPropuestum!: Sequelize.BelongsToCreateAssociationMixin<Propuesta>;
   // PropuestaRelacionada belongsTo Propuesta via codigoPropuestaRelacionada
-  codigoPropuestaRelacionada_Propuestum!: Propuesta;
-  getCodigoPropuestaRelacionada_Propuestum!: Sequelize.BelongsToGetAssociationMixin<Propuesta>;
-  setCodigoPropuestaRelacionada_Propuestum!: Sequelize.BelongsToSetAssociationMixin<Propuesta, PropuestaId>;
-  createCodigoPropuestaRelacionada_Propuestum!: Sequelize.BelongsToCreateAssociationMixin<Propuesta>;
+  codigoPropuestaRelacionadaPropuestum!: Propuesta;
+  getCodigoPropuestaRelacionadaPropuestum!: Sequelize.BelongsToGetAssociationMixin<Propuesta>;
+  setCodigoPropuestaRelacionadaPropuestum!: Sequelize.BelongsToSetAssociationMixin<Propuesta, PropuestaId>;
+  createCodigoPropuestaRelacionadaPropuestum!: Sequelize.BelongsToCreateAssociationMixin<Propuesta>;
 
   static initModel(sequelize: Sequelize.Sequelize): typeof PropuestaRelacionada {
     return PropuestaRelacionada.init({

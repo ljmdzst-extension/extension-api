@@ -24,15 +24,15 @@ export class EvaluacionItem extends Model<EvaluacionItemAttributes, EvaluacionIt
   valoracion?: number;
 
   // EvaluacionItem belongsTo Evaluacion via idEvaluacion
-  idEvaluacion_Evaluacion!: Evaluacion;
-  getIdEvaluacion_Evaluacion!: Sequelize.BelongsToGetAssociationMixin<Evaluacion>;
-  setIdEvaluacion_Evaluacion!: Sequelize.BelongsToSetAssociationMixin<Evaluacion, EvaluacionId>;
-  createIdEvaluacion_Evaluacion!: Sequelize.BelongsToCreateAssociationMixin<Evaluacion>;
+  idEvaluacionEvaluacion!: Evaluacion;
+  getIdEvaluacionEvaluacion!: Sequelize.BelongsToGetAssociationMixin<Evaluacion>;
+  setIdEvaluacionEvaluacion!: Sequelize.BelongsToSetAssociationMixin<Evaluacion, EvaluacionId>;
+  createIdEvaluacionEvaluacion!: Sequelize.BelongsToCreateAssociationMixin<Evaluacion>;
   // EvaluacionItem belongsTo Usuario via idUsuario
-  idUsuario_Usuario!: Usuario;
-  getIdUsuario_Usuario!: Sequelize.BelongsToGetAssociationMixin<Usuario>;
-  setIdUsuario_Usuario!: Sequelize.BelongsToSetAssociationMixin<Usuario, UsuarioId>;
-  createIdUsuario_Usuario!: Sequelize.BelongsToCreateAssociationMixin<Usuario>;
+  idUsuarioUsuario!: Usuario;
+  getIdUsuarioUsuario!: Sequelize.BelongsToGetAssociationMixin<Usuario>;
+  setIdUsuarioUsuario!: Sequelize.BelongsToSetAssociationMixin<Usuario, UsuarioId>;
+  createIdUsuarioUsuario!: Sequelize.BelongsToCreateAssociationMixin<Usuario>;
 
   static initModel(sequelize: Sequelize.Sequelize): typeof EvaluacionItem {
     return EvaluacionItem.init({

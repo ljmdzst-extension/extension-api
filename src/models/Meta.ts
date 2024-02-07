@@ -26,15 +26,15 @@ export class Meta extends Model<MetaAttributes, MetaCreationAttributes> implemen
   idActividad!: number;
 
   // Meta belongsTo Actividad via idActividad
-  idActividad_Actividad!: Actividad;
-  getIdActividad_Actividad!: Sequelize.BelongsToGetAssociationMixin<Actividad>;
-  setIdActividad_Actividad!: Sequelize.BelongsToSetAssociationMixin<Actividad, ActividadId>;
-  createIdActividad_Actividad!: Sequelize.BelongsToCreateAssociationMixin<Actividad>;
+  idActividadActividad!: Actividad;
+  getIdActividadActividad!: Sequelize.BelongsToGetAssociationMixin<Actividad>;
+  setIdActividadActividad!: Sequelize.BelongsToSetAssociationMixin<Actividad, ActividadId>;
+  createIdActividadActividad!: Sequelize.BelongsToCreateAssociationMixin<Actividad>;
   // Meta belongsTo Valoracion via idValoracion
-  idValoracion_Valoracion!: Valoracion;
-  getIdValoracion_Valoracion!: Sequelize.BelongsToGetAssociationMixin<Valoracion>;
-  setIdValoracion_Valoracion!: Sequelize.BelongsToSetAssociationMixin<Valoracion, ValoracionId>;
-  createIdValoracion_Valoracion!: Sequelize.BelongsToCreateAssociationMixin<Valoracion>;
+  idValoracionValoracion!: Valoracion;
+  getIdValoracionValoracion!: Sequelize.BelongsToGetAssociationMixin<Valoracion>;
+  setIdValoracionValoracion!: Sequelize.BelongsToSetAssociationMixin<Valoracion, ValoracionId>;
+  createIdValoracionValoracion!: Sequelize.BelongsToCreateAssociationMixin<Valoracion>;
 
   static initModel(sequelize: Sequelize.Sequelize): typeof Meta {
     return Meta.init({

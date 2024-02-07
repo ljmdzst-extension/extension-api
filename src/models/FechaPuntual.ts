@@ -18,19 +18,19 @@ export class FechaPuntual extends Model<FechaPuntualAttributes, FechaPuntualCrea
   fecha!: string;
 
   // FechaPuntual belongsToMany Actividad via idFecha and idActividad
-  idActividad_Actividads!: Actividad[];
-  getIdActividad_Actividads!: Sequelize.BelongsToManyGetAssociationsMixin<Actividad>;
-  setIdActividad_Actividads!: Sequelize.BelongsToManySetAssociationsMixin<Actividad, ActividadId>;
-  addIdActividad_Actividad!: Sequelize.BelongsToManyAddAssociationMixin<Actividad, ActividadId>;
-  addIdActividad_Actividads!: Sequelize.BelongsToManyAddAssociationsMixin<Actividad, ActividadId>;
-  createIdActividad_Actividad!: Sequelize.BelongsToManyCreateAssociationMixin<Actividad>;
-  removeIdActividad_Actividad!: Sequelize.BelongsToManyRemoveAssociationMixin<Actividad, ActividadId>;
-  removeIdActividad_Actividads!: Sequelize.BelongsToManyRemoveAssociationsMixin<Actividad, ActividadId>;
-  hasIdActividad_Actividad!: Sequelize.BelongsToManyHasAssociationMixin<Actividad, ActividadId>;
-  hasIdActividad_Actividads!: Sequelize.BelongsToManyHasAssociationsMixin<Actividad, ActividadId>;
-  countIdActividad_Actividads!: Sequelize.BelongsToManyCountAssociationsMixin;
+  idActividadActividads!: Actividad[];
+  getIdActividadActividads!: Sequelize.BelongsToManyGetAssociationsMixin<Actividad>;
+  setIdActividadActividads!: Sequelize.BelongsToManySetAssociationsMixin<Actividad, ActividadId>;
+  addIdActividadActividad!: Sequelize.BelongsToManyAddAssociationMixin<Actividad, ActividadId>;
+  addIdActividadActividads!: Sequelize.BelongsToManyAddAssociationsMixin<Actividad, ActividadId>;
+  createIdActividadActividad!: Sequelize.BelongsToManyCreateAssociationMixin<Actividad>;
+  removeIdActividadActividad!: Sequelize.BelongsToManyRemoveAssociationMixin<Actividad, ActividadId>;
+  removeIdActividadActividads!: Sequelize.BelongsToManyRemoveAssociationsMixin<Actividad, ActividadId>;
+  hasIdActividadActividad!: Sequelize.BelongsToManyHasAssociationMixin<Actividad, ActividadId>;
+  hasIdActividadActividads!: Sequelize.BelongsToManyHasAssociationsMixin<Actividad, ActividadId>;
+  countIdActividadActividads!: Sequelize.BelongsToManyCountAssociationsMixin;
   // FechaPuntual hasMany FechaPuntualActividad via idFecha
-  FechaPuntualActividads!: FechaPuntualActividad[];
+  fechaPuntualActividads!: FechaPuntualActividad[];
   getFechaPuntualActividads!: Sequelize.HasManyGetAssociationsMixin<FechaPuntualActividad>;
   setFechaPuntualActividads!: Sequelize.HasManySetAssociationsMixin<FechaPuntualActividad, FechaPuntualActividadId>;
   addFechaPuntualActividad!: Sequelize.HasManyAddAssociationMixin<FechaPuntualActividad, FechaPuntualActividadId>;

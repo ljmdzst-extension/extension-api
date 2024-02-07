@@ -17,17 +17,26 @@ export interface IBases {
 }
 
 export const verBases = async(req : typeof request , res : typeof response)=>{
+    const transaction = await sequelizeExtension.transaction();
     try {
         
-        res.status(200).json({
-            ok : true,
-            data : {
-                lAreas : await ModelRelacion.initModel(sequelizeExtension).findAll(),
-                ...await ControllerBases.mostrarBases({},await sequelizeExtension.transaction())
-            }
+        const otrasBases = await ControllerBases.mostrarBases({},transaction);
+
+        transaction.afterCommit(async()=>{
+            res.status(200).json({
+                ok : true,
+                data : {
+                    lAreas : await ModelRelacion.initModel(sequelizeExtension).findAll(),
+                    ...otrasBases
+                }
+            })
         })
 
+        await transaction.commit();
+        
+
     } catch (error : any) {
+
         res.status(500).json({
             ok : false,
             error

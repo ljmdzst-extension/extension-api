@@ -16,7 +16,7 @@ export class Rol extends Model<RolAttributes, RolCreationAttributes> implements 
   nom!: string;
 
   // Rol hasMany RolIntegrante via idRolIntegrante
-  RolIntegrantes!: RolIntegrante[];
+  rolIntegrantes!: RolIntegrante[];
   getRolIntegrantes!: Sequelize.HasManyGetAssociationsMixin<RolIntegrante>;
   setRolIntegrantes!: Sequelize.HasManySetAssociationsMixin<RolIntegrante, RolIntegranteId>;
   addRolIntegrante!: Sequelize.HasManyAddAssociationMixin<RolIntegrante, RolIntegranteId>;

@@ -22,15 +22,15 @@ export class PropuestaInstitucion extends Model<PropuestaInstitucionAttributes, 
   valoracion?: number;
 
   // PropuestaInstitucion belongsTo Institucion via idInstitucion
-  idInstitucion_Institucion!: Institucion;
-  getIdInstitucion_Institucion!: Sequelize.BelongsToGetAssociationMixin<Institucion>;
-  setIdInstitucion_Institucion!: Sequelize.BelongsToSetAssociationMixin<Institucion, InstitucionId>;
-  createIdInstitucion_Institucion!: Sequelize.BelongsToCreateAssociationMixin<Institucion>;
+  idInstitucionInstitucion!: Institucion;
+  getIdInstitucionInstitucion!: Sequelize.BelongsToGetAssociationMixin<Institucion>;
+  setIdInstitucionInstitucion!: Sequelize.BelongsToSetAssociationMixin<Institucion, InstitucionId>;
+  createIdInstitucionInstitucion!: Sequelize.BelongsToCreateAssociationMixin<Institucion>;
   // PropuestaInstitucion belongsTo Propuesta via codigoPropuesta
-  codigoPropuesta_Propuestum!: Propuesta;
-  getCodigoPropuesta_Propuestum!: Sequelize.BelongsToGetAssociationMixin<Propuesta>;
-  setCodigoPropuesta_Propuestum!: Sequelize.BelongsToSetAssociationMixin<Propuesta, PropuestaId>;
-  createCodigoPropuesta_Propuestum!: Sequelize.BelongsToCreateAssociationMixin<Propuesta>;
+  codigoPropuestaPropuestum!: Propuesta;
+  getCodigoPropuestaPropuestum!: Sequelize.BelongsToGetAssociationMixin<Propuesta>;
+  setCodigoPropuestaPropuestum!: Sequelize.BelongsToSetAssociationMixin<Propuesta, PropuestaId>;
+  createCodigoPropuestaPropuestum!: Sequelize.BelongsToCreateAssociationMixin<Propuesta>;
 
   static initModel(sequelize: Sequelize.Sequelize): typeof PropuestaInstitucion {
     return PropuestaInstitucion.init({

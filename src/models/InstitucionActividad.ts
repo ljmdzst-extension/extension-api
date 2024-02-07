@@ -10,22 +10,22 @@ export interface InstitucionActividadAttributes {
 
 export type InstitucionActividadPk = "idActividad" | "idInstitucion";
 export type InstitucionActividadId = InstitucionActividad[InstitucionActividadPk];
-export type InstitucionActividadCreationAttributes =InstitucionActividadAttributes;
+export type InstitucionActividadCreationAttributes = InstitucionActividadAttributes;
 
 export class InstitucionActividad extends Model<InstitucionActividadAttributes, InstitucionActividadCreationAttributes> implements InstitucionActividadAttributes {
   idActividad!: number;
   idInstitucion!: number;
 
   // InstitucionActividad belongsTo Actividad via idActividad
-  idActividad_Actividad!: Actividad;
-  getIdActividad_Actividad!: Sequelize.BelongsToGetAssociationMixin<Actividad>;
-  setIdActividad_Actividad!: Sequelize.BelongsToSetAssociationMixin<Actividad, ActividadId>;
-  createIdActividad_Actividad!: Sequelize.BelongsToCreateAssociationMixin<Actividad>;
+  idActividadActividad!: Actividad;
+  getIdActividadActividad!: Sequelize.BelongsToGetAssociationMixin<Actividad>;
+  setIdActividadActividad!: Sequelize.BelongsToSetAssociationMixin<Actividad, ActividadId>;
+  createIdActividadActividad!: Sequelize.BelongsToCreateAssociationMixin<Actividad>;
   // InstitucionActividad belongsTo Institucion via idInstitucion
-  idInstitucion_Institucion!: Institucion;
-  getIdInstitucion_Institucion!: Sequelize.BelongsToGetAssociationMixin<Institucion>;
-  setIdInstitucion_Institucion!: Sequelize.BelongsToSetAssociationMixin<Institucion, InstitucionId>;
-  createIdInstitucion_Institucion!: Sequelize.BelongsToCreateAssociationMixin<Institucion>;
+  idInstitucionInstitucion!: Institucion;
+  getIdInstitucionInstitucion!: Sequelize.BelongsToGetAssociationMixin<Institucion>;
+  setIdInstitucionInstitucion!: Sequelize.BelongsToSetAssociationMixin<Institucion, InstitucionId>;
+  createIdInstitucionInstitucion!: Sequelize.BelongsToCreateAssociationMixin<Institucion>;
 
   static initModel(sequelize: Sequelize.Sequelize): typeof InstitucionActividad {
     return InstitucionActividad.init({

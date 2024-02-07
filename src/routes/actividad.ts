@@ -43,18 +43,18 @@ routerActividad.put (
             idArea : { isNumeric : true, errorMessage : 'idArea obligatorio'   },
             desc : { escape : true, isString : true, isEmpty : { negated : true }, errorMessage : 'desc obligatorio' },
             fechaDesde : { 
-                isDate : { 
-                    if : body('fechaHasta').not().isEmpty(),
-                    options : { format : 'YYYY-MM-DD' }, 
-                    errorMessage : 'fechaDesde debe ser : YYYY-MM-DD' 
-                }
+                // isDate : { 
+                //     if : body('fechaHasta').not().isEmpty(),
+                //     options : { format : 'YYYY-MM-DD' }, 
+                //     errorMessage : 'fechaDesde debe ser : YYYY-MM-DD' 
+                // }
             },
             fechaHasta : { 
-                isDate : {
-                    if : body('fechaDesde').not().isEmpty(),
-                    options : { format : 'YYYY-MM-DD' }, 
-                    errorMessage : 'fechaHasta debe ser : YYYY-MM-DD' 
-                }
+                // isDate : {
+                //     if : body('fechaDesde').not().isEmpty(),
+                //     options : { format : 'YYYY-MM-DD' }, 
+                //     errorMessage : 'fechaHasta debe ser : YYYY-MM-DD' 
+                // }
             },
             mot_cancel : { 
                 isString : {

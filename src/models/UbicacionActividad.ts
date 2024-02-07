@@ -17,15 +17,15 @@ export class UbicacionActividad extends Model<UbicacionActividadAttributes, Ubic
   idUbicacion!: number;
 
   // UbicacionActividad belongsTo Actividad via idActividad
-  idActividad_Actividad!: Actividad;
-  getIdActividad_Actividad!: Sequelize.BelongsToGetAssociationMixin<Actividad>;
-  setIdActividad_Actividad!: Sequelize.BelongsToSetAssociationMixin<Actividad, ActividadId>;
-  createIdActividad_Actividad!: Sequelize.BelongsToCreateAssociationMixin<Actividad>;
+  idActividadActividad!: Actividad;
+  getIdActividadActividad!: Sequelize.BelongsToGetAssociationMixin<Actividad>;
+  setIdActividadActividad!: Sequelize.BelongsToSetAssociationMixin<Actividad, ActividadId>;
+  createIdActividadActividad!: Sequelize.BelongsToCreateAssociationMixin<Actividad>;
   // UbicacionActividad belongsTo Ubicacion via idUbicacion
-  idUbicacion_Ubicacion!: Ubicacion;
-  getIdUbicacion_Ubicacion!: Sequelize.BelongsToGetAssociationMixin<Ubicacion>;
-  setIdUbicacion_Ubicacion!: Sequelize.BelongsToSetAssociationMixin<Ubicacion, UbicacionId>;
-  createIdUbicacion_Ubicacion!: Sequelize.BelongsToCreateAssociationMixin<Ubicacion>;
+  idUbicacionUbicacion!: Ubicacion;
+  getIdUbicacionUbicacion!: Sequelize.BelongsToGetAssociationMixin<Ubicacion>;
+  setIdUbicacionUbicacion!: Sequelize.BelongsToSetAssociationMixin<Ubicacion, UbicacionId>;
+  createIdUbicacionUbicacion!: Sequelize.BelongsToCreateAssociationMixin<Ubicacion>;
 
   static initModel(sequelize: Sequelize.Sequelize): typeof UbicacionActividad {
     return UbicacionActividad.init({

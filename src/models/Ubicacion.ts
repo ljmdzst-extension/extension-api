@@ -21,19 +21,19 @@ export class Ubicacion extends Model<UbicacionAttributes, UbicacionCreationAttri
   desc?: string;
 
   // Ubicacion belongsToMany Actividad via idUbicacion and idActividad
-  idActividad_Actividad_UbicacionActividads!: Actividad[];
-  getIdActividad_Actividad_UbicacionActividads!: Sequelize.BelongsToManyGetAssociationsMixin<Actividad>;
-  setIdActividad_Actividad_UbicacionActividads!: Sequelize.BelongsToManySetAssociationsMixin<Actividad, ActividadId>;
-  addIdActividad_Actividad_UbicacionActividad!: Sequelize.BelongsToManyAddAssociationMixin<Actividad, ActividadId>;
-  addIdActividad_Actividad_UbicacionActividads!: Sequelize.BelongsToManyAddAssociationsMixin<Actividad, ActividadId>;
-  createIdActividad_Actividad_UbicacionActividad!: Sequelize.BelongsToManyCreateAssociationMixin<Actividad>;
-  removeIdActividad_Actividad_UbicacionActividad!: Sequelize.BelongsToManyRemoveAssociationMixin<Actividad, ActividadId>;
-  removeIdActividad_Actividad_UbicacionActividads!: Sequelize.BelongsToManyRemoveAssociationsMixin<Actividad, ActividadId>;
-  hasIdActividad_Actividad_UbicacionActividad!: Sequelize.BelongsToManyHasAssociationMixin<Actividad, ActividadId>;
-  hasIdActividad_Actividad_UbicacionActividads!: Sequelize.BelongsToManyHasAssociationsMixin<Actividad, ActividadId>;
-  countIdActividad_Actividad_UbicacionActividads!: Sequelize.BelongsToManyCountAssociationsMixin;
+  idActividadActividadUbicacionActividads!: Actividad[];
+  getIdActividadActividadUbicacionActividads!: Sequelize.BelongsToManyGetAssociationsMixin<Actividad>;
+  setIdActividadActividadUbicacionActividads!: Sequelize.BelongsToManySetAssociationsMixin<Actividad, ActividadId>;
+  addIdActividadActividadUbicacionActividad!: Sequelize.BelongsToManyAddAssociationMixin<Actividad, ActividadId>;
+  addIdActividadActividadUbicacionActividads!: Sequelize.BelongsToManyAddAssociationsMixin<Actividad, ActividadId>;
+  createIdActividadActividadUbicacionActividad!: Sequelize.BelongsToManyCreateAssociationMixin<Actividad>;
+  removeIdActividadActividadUbicacionActividad!: Sequelize.BelongsToManyRemoveAssociationMixin<Actividad, ActividadId>;
+  removeIdActividadActividadUbicacionActividads!: Sequelize.BelongsToManyRemoveAssociationsMixin<Actividad, ActividadId>;
+  hasIdActividadActividadUbicacionActividad!: Sequelize.BelongsToManyHasAssociationMixin<Actividad, ActividadId>;
+  hasIdActividadActividadUbicacionActividads!: Sequelize.BelongsToManyHasAssociationsMixin<Actividad, ActividadId>;
+  countIdActividadActividadUbicacionActividads!: Sequelize.BelongsToManyCountAssociationsMixin;
   // Ubicacion hasMany UbicacionActividad via idUbicacion
-  UbicacionActividads!: UbicacionActividad[];
+  ubicacionActividads!: UbicacionActividad[];
   getUbicacionActividads!: Sequelize.HasManyGetAssociationsMixin<UbicacionActividad>;
   setUbicacionActividads!: Sequelize.HasManySetAssociationsMixin<UbicacionActividad, UbicacionActividadId>;
   addUbicacionActividad!: Sequelize.HasManyAddAssociationMixin<UbicacionActividad, UbicacionActividadId>;
@@ -45,7 +45,7 @@ export class Ubicacion extends Model<UbicacionAttributes, UbicacionCreationAttri
   hasUbicacionActividads!: Sequelize.HasManyHasAssociationsMixin<UbicacionActividad, UbicacionActividadId>;
   countUbicacionActividads!: Sequelize.HasManyCountAssociationsMixin;
   // Ubicacion hasOne UbicacionProblematica via idUbicacion
-  UbicacionProblematica!: UbicacionProblematica;
+  ubicacionProblematica!: UbicacionProblematica;
   getUbicacionProblematica!: Sequelize.HasOneGetAssociationMixin<UbicacionProblematica>;
   setUbicacionProblematica!: Sequelize.HasOneSetAssociationMixin<UbicacionProblematica, UbicacionProblematicaId>;
   createUbicacionProblematica!: Sequelize.HasOneCreateAssociationMixin<UbicacionProblematica>;

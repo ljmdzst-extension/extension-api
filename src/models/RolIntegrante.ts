@@ -19,20 +19,20 @@ export class RolIntegrante extends Model<RolIntegranteAttributes, RolIntegranteC
   codigoPropuesta!: string;
 
   // RolIntegrante belongsTo Integrante via nroDoc
-  nroDoc_Integrante!: Integrante;
-  getNroDoc_Integrante!: Sequelize.BelongsToGetAssociationMixin<Integrante>;
-  setNroDoc_Integrante!: Sequelize.BelongsToSetAssociationMixin<Integrante, IntegranteId>;
-  createNroDoc_Integrante!: Sequelize.BelongsToCreateAssociationMixin<Integrante>;
+  nroDocIntegrante!: Integrante;
+  getNroDocIntegrante!: Sequelize.BelongsToGetAssociationMixin<Integrante>;
+  setNroDocIntegrante!: Sequelize.BelongsToSetAssociationMixin<Integrante, IntegranteId>;
+  createNroDocIntegrante!: Sequelize.BelongsToCreateAssociationMixin<Integrante>;
   // RolIntegrante belongsTo Integrante via codigoPropuesta
-  codigoPropuesta_Integrante!: Integrante;
-  getCodigoPropuesta_Integrante!: Sequelize.BelongsToGetAssociationMixin<Integrante>;
-  setCodigoPropuesta_Integrante!: Sequelize.BelongsToSetAssociationMixin<Integrante, IntegranteId>;
-  createCodigoPropuesta_Integrante!: Sequelize.BelongsToCreateAssociationMixin<Integrante>;
+  codigoPropuestaIntegrante!: Integrante;
+  getCodigoPropuestaIntegrante!: Sequelize.BelongsToGetAssociationMixin<Integrante>;
+  setCodigoPropuestaIntegrante!: Sequelize.BelongsToSetAssociationMixin<Integrante, IntegranteId>;
+  createCodigoPropuestaIntegrante!: Sequelize.BelongsToCreateAssociationMixin<Integrante>;
   // RolIntegrante belongsTo Rol via idRolIntegrante
-  idRolIntegrante_Rol!: Rol;
-  getIdRolIntegrante_Rol!: Sequelize.BelongsToGetAssociationMixin<Rol>;
-  setIdRolIntegrante_Rol!: Sequelize.BelongsToSetAssociationMixin<Rol, RolId>;
-  createIdRolIntegrante_Rol!: Sequelize.BelongsToCreateAssociationMixin<Rol>;
+  idRolIntegranteRol!: Rol;
+  getIdRolIntegranteRol!: Sequelize.BelongsToGetAssociationMixin<Rol>;
+  setIdRolIntegranteRol!: Sequelize.BelongsToSetAssociationMixin<Rol, RolId>;
+  createIdRolIntegranteRol!: Sequelize.BelongsToCreateAssociationMixin<Rol>;
 
   static initModel(sequelize: Sequelize.Sequelize): typeof RolIntegrante {
     return RolIntegrante.init({

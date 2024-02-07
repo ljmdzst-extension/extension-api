@@ -15,14 +15,14 @@ export interface IntegranteAttributes {
   tieneTarjeta?: number;
   dedicacionDocente?: string;
   categoriaDocente?: string;
-  idAreaUNL?: number;
+  idAreaUnl?: number;
   idCarrera?: number;
   periodoLectivo?: string;
 }
 
 export type IntegrantePk = "nroDoc" | "codigoPropuesta";
 export type IntegranteId = Integrante[IntegrantePk];
-export type IntegranteOptionalAttributes = "observ" | "titulo" | "tieneTarjeta" | "dedicacionDocente" | "categoriaDocente" | "idAreaUNL" | "idCarrera" | "periodoLectivo";
+export type IntegranteOptionalAttributes = "observ" | "titulo" | "tieneTarjeta" | "dedicacionDocente" | "categoriaDocente" | "idAreaUnl" | "idCarrera" | "periodoLectivo" ;
 export type IntegranteCreationAttributes = Optional<IntegranteAttributes, IntegranteOptionalAttributes>;
 
 export class Integrante extends Model<IntegranteAttributes, IntegranteCreationAttributes> implements IntegranteAttributes {
@@ -34,17 +34,17 @@ export class Integrante extends Model<IntegranteAttributes, IntegranteCreationAt
   tieneTarjeta?: number;
   dedicacionDocente?: string;
   categoriaDocente?: string;
-  idAreaUNL?: number;
+  idAreaUnl?: number;
   idCarrera?: number;
   periodoLectivo?: string;
 
   // Integrante belongsTo Carrera via idCarrera
-  idCarrera_Carrera!: Carrera;
-  getIdCarrera_Carrera!: Sequelize.BelongsToGetAssociationMixin<Carrera>;
-  setIdCarrera_Carrera!: Sequelize.BelongsToSetAssociationMixin<Carrera, CarreraId>;
-  createIdCarrera_Carrera!: Sequelize.BelongsToCreateAssociationMixin<Carrera>;
+  idCarreraCarrera!: Carrera;
+  getIdCarreraCarrera!: Sequelize.BelongsToGetAssociationMixin<Carrera>;
+  setIdCarreraCarrera!: Sequelize.BelongsToSetAssociationMixin<Carrera, CarreraId>;
+  createIdCarreraCarrera!: Sequelize.BelongsToCreateAssociationMixin<Carrera>;
   // Integrante hasMany RolIntegrante via nroDoc
-  RolIntegrantes!: RolIntegrante[];
+  rolIntegrantes!: RolIntegrante[];
   getRolIntegrantes!: Sequelize.HasManyGetAssociationsMixin<RolIntegrante>;
   setRolIntegrantes!: Sequelize.HasManySetAssociationsMixin<RolIntegrante, RolIntegranteId>;
   addRolIntegrante!: Sequelize.HasManyAddAssociationMixin<RolIntegrante, RolIntegranteId>;
@@ -56,32 +56,32 @@ export class Integrante extends Model<IntegranteAttributes, IntegranteCreationAt
   hasRolIntegrantes!: Sequelize.HasManyHasAssociationsMixin<RolIntegrante, RolIntegranteId>;
   countRolIntegrantes!: Sequelize.HasManyCountAssociationsMixin;
   // Integrante hasMany RolIntegrante via codigoPropuesta
-  codigoPropuesta_RolIntegrantes!: RolIntegrante[];
-  getCodigoPropuesta_RolIntegrantes!: Sequelize.HasManyGetAssociationsMixin<RolIntegrante>;
-  setCodigoPropuesta_RolIntegrantes!: Sequelize.HasManySetAssociationsMixin<RolIntegrante, RolIntegranteId>;
-  addCodigoPropuesta_RolIntegrante!: Sequelize.HasManyAddAssociationMixin<RolIntegrante, RolIntegranteId>;
-  addCodigoPropuesta_RolIntegrantes!: Sequelize.HasManyAddAssociationsMixin<RolIntegrante, RolIntegranteId>;
-  createCodigoPropuesta_RolIntegrante!: Sequelize.HasManyCreateAssociationMixin<RolIntegrante>;
-  removeCodigoPropuesta_RolIntegrante!: Sequelize.HasManyRemoveAssociationMixin<RolIntegrante, RolIntegranteId>;
-  removeCodigoPropuesta_RolIntegrantes!: Sequelize.HasManyRemoveAssociationsMixin<RolIntegrante, RolIntegranteId>;
-  hasCodigoPropuesta_RolIntegrante!: Sequelize.HasManyHasAssociationMixin<RolIntegrante, RolIntegranteId>;
-  hasCodigoPropuesta_RolIntegrantes!: Sequelize.HasManyHasAssociationsMixin<RolIntegrante, RolIntegranteId>;
-  countCodigoPropuesta_RolIntegrantes!: Sequelize.HasManyCountAssociationsMixin;
+  codigoPropuestaRolIntegrantes!: RolIntegrante[];
+  getCodigoPropuestaRolIntegrantes!: Sequelize.HasManyGetAssociationsMixin<RolIntegrante>;
+  setCodigoPropuestaRolIntegrantes!: Sequelize.HasManySetAssociationsMixin<RolIntegrante, RolIntegranteId>;
+  addCodigoPropuestaRolIntegrante!: Sequelize.HasManyAddAssociationMixin<RolIntegrante, RolIntegranteId>;
+  addCodigoPropuestaRolIntegrantes!: Sequelize.HasManyAddAssociationsMixin<RolIntegrante, RolIntegranteId>;
+  createCodigoPropuestaRolIntegrante!: Sequelize.HasManyCreateAssociationMixin<RolIntegrante>;
+  removeCodigoPropuestaRolIntegrante!: Sequelize.HasManyRemoveAssociationMixin<RolIntegrante, RolIntegranteId>;
+  removeCodigoPropuestaRolIntegrantes!: Sequelize.HasManyRemoveAssociationsMixin<RolIntegrante, RolIntegranteId>;
+  hasCodigoPropuestaRolIntegrante!: Sequelize.HasManyHasAssociationMixin<RolIntegrante, RolIntegranteId>;
+  hasCodigoPropuestaRolIntegrantes!: Sequelize.HasManyHasAssociationsMixin<RolIntegrante, RolIntegranteId>;
+  countCodigoPropuestaRolIntegrantes!: Sequelize.HasManyCountAssociationsMixin;
   // Integrante belongsTo Persona via nroDoc
-  nroDoc_Persona!: Persona;
-  getNroDoc_Persona!: Sequelize.BelongsToGetAssociationMixin<Persona>;
-  setNroDoc_Persona!: Sequelize.BelongsToSetAssociationMixin<Persona, PersonaId>;
-  createNroDoc_Persona!: Sequelize.BelongsToCreateAssociationMixin<Persona>;
+  nroDocPersona!: Persona;
+  getNroDocPersona!: Sequelize.BelongsToGetAssociationMixin<Persona>;
+  setNroDocPersona!: Sequelize.BelongsToSetAssociationMixin<Persona, PersonaId>;
+  createNroDocPersona!: Sequelize.BelongsToCreateAssociationMixin<Persona>;
   // Integrante belongsTo Propuesta via codigoPropuesta
-  codigoPropuesta_Propuestum!: Propuesta;
-  getCodigoPropuesta_Propuestum!: Sequelize.BelongsToGetAssociationMixin<Propuesta>;
-  setCodigoPropuesta_Propuestum!: Sequelize.BelongsToSetAssociationMixin<Propuesta, PropuestaId>;
-  createCodigoPropuesta_Propuestum!: Sequelize.BelongsToCreateAssociationMixin<Propuesta>;
-  // Integrante belongsTo Relacion via idAreaUNL
-  idAreaUNL_Relacion!: Relacion;
-  getIdAreaUNL_Relacion!: Sequelize.BelongsToGetAssociationMixin<Relacion>;
-  setIdAreaUNL_Relacion!: Sequelize.BelongsToSetAssociationMixin<Relacion, RelacionId>;
-  createIdAreaUNL_Relacion!: Sequelize.BelongsToCreateAssociationMixin<Relacion>;
+  codigoPropuestaPropuestum!: Propuesta;
+  getCodigoPropuestaPropuestum!: Sequelize.BelongsToGetAssociationMixin<Propuesta>;
+  setCodigoPropuestaPropuestum!: Sequelize.BelongsToSetAssociationMixin<Propuesta, PropuestaId>;
+  createCodigoPropuestaPropuestum!: Sequelize.BelongsToCreateAssociationMixin<Propuesta>;
+  // Integrante belongsTo Relacion via idAreaUnl
+  idAreaUnlRelacion!: Relacion;
+  getIdAreaUnlRelacion!: Sequelize.BelongsToGetAssociationMixin<Relacion>;
+  setIdAreaUnlRelacion!: Sequelize.BelongsToSetAssociationMixin<Relacion, RelacionId>;
+  createIdAreaUnlRelacion!: Sequelize.BelongsToCreateAssociationMixin<Relacion>;
 
   static initModel(sequelize: Sequelize.Sequelize): typeof Integrante {
     return Integrante.init({
@@ -127,13 +127,14 @@ export class Integrante extends Model<IntegranteAttributes, IntegranteCreationAt
       type: DataTypes.STRING(255),
       allowNull: true
     },
-    idAreaUNL: {
+    idAreaUnl: {
       type: DataTypes.INTEGER,
       allowNull: true,
       references: {
         model: 'Relacion',
         key: 'idRelacion'
-      }
+      },
+      field: 'idAreaUNL'
     },
     idCarrera: {
       type: DataTypes.INTEGER,

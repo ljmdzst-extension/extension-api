@@ -17,7 +17,7 @@ export class Valoracion extends Model<ValoracionAttributes, ValoracionCreationAt
   nom!: string;
 
   // Valoracion hasMany Meta via idValoracion
-  Meta!: Meta[];
+  meta!: Meta[];
   getMeta!: Sequelize.HasManyGetAssociationsMixin<Meta>;
   setMeta!: Sequelize.HasManySetAssociationsMixin<Meta, MetaId>;
   addMetum!: Sequelize.HasManyAddAssociationMixin<Meta, MetaId>;

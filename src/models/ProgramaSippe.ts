@@ -6,57 +6,57 @@ import type { Propuesta, PropuestaId } from './Propuesta';
 import type { PropuestaProgramaExtension, PropuestaProgramaExtensionId } from './PropuestaProgramaExtension';
 
 export interface ProgramaSippeAttributes {
-  idProgramaSIPPE: number;
+  idProgramaSippe: number;
   nom: string;
 }
 
-export type ProgramaSippePk = "idProgramaSIPPE";
+export type ProgramaSippePk = "idProgramaSippe";
 export type ProgramaSippeId = ProgramaSippe[ProgramaSippePk];
-export type ProgramaSippeOptionalAttributes = "idProgramaSIPPE";
+export type ProgramaSippeOptionalAttributes = "idProgramaSippe";
 export type ProgramaSippeCreationAttributes = Optional<ProgramaSippeAttributes, ProgramaSippeOptionalAttributes>;
 
 export class ProgramaSippe extends Model<ProgramaSippeAttributes, ProgramaSippeCreationAttributes> implements ProgramaSippeAttributes {
-  idProgramaSIPPE!: number;
+  idProgramaSippe!: number;
   nom!: string;
 
-  // ProgramaSippe belongsToMany Actividad via idProgramaSIPPE and idActividad
-  idActividad_Actividad_ProgramaSIPPEActividads!: Actividad[];
-  getIdActividad_Actividad_ProgramaSIPPEActividads!: Sequelize.BelongsToManyGetAssociationsMixin<Actividad>;
-  setIdActividad_Actividad_ProgramaSIPPEActividads!: Sequelize.BelongsToManySetAssociationsMixin<Actividad, ActividadId>;
-  addIdActividad_Actividad_ProgramaSIPPEActividad!: Sequelize.BelongsToManyAddAssociationMixin<Actividad, ActividadId>;
-  addIdActividad_Actividad_ProgramaSIPPEActividads!: Sequelize.BelongsToManyAddAssociationsMixin<Actividad, ActividadId>;
-  createIdActividad_Actividad_ProgramaSIPPEActividad!: Sequelize.BelongsToManyCreateAssociationMixin<Actividad>;
-  removeIdActividad_Actividad_ProgramaSIPPEActividad!: Sequelize.BelongsToManyRemoveAssociationMixin<Actividad, ActividadId>;
-  removeIdActividad_Actividad_ProgramaSIPPEActividads!: Sequelize.BelongsToManyRemoveAssociationsMixin<Actividad, ActividadId>;
-  hasIdActividad_Actividad_ProgramaSIPPEActividad!: Sequelize.BelongsToManyHasAssociationMixin<Actividad, ActividadId>;
-  hasIdActividad_Actividad_ProgramaSIPPEActividads!: Sequelize.BelongsToManyHasAssociationsMixin<Actividad, ActividadId>;
-  countIdActividad_Actividad_ProgramaSIPPEActividads!: Sequelize.BelongsToManyCountAssociationsMixin;
-  // ProgramaSippe hasMany ProgramaSippeActividad via idProgramaSIPPE
-  ProgramaSIPPEActividads!: ProgramaSippeActividad[];
-  getProgramaSIPPEActividads!: Sequelize.HasManyGetAssociationsMixin<ProgramaSippeActividad>;
-  setProgramaSIPPEActividads!: Sequelize.HasManySetAssociationsMixin<ProgramaSippeActividad, ProgramaSippeActividadId>;
-  addProgramaSIPPEActividad!: Sequelize.HasManyAddAssociationMixin<ProgramaSippeActividad, ProgramaSippeActividadId>;
-  addProgramaSIPPEActividads!: Sequelize.HasManyAddAssociationsMixin<ProgramaSippeActividad, ProgramaSippeActividadId>;
-  createProgramaSIPPEActividad!: Sequelize.HasManyCreateAssociationMixin<ProgramaSippeActividad>;
-  removeProgramaSIPPEActividad!: Sequelize.HasManyRemoveAssociationMixin<ProgramaSippeActividad, ProgramaSippeActividadId>;
-  removeProgramaSIPPEActividads!: Sequelize.HasManyRemoveAssociationsMixin<ProgramaSippeActividad, ProgramaSippeActividadId>;
-  hasProgramaSIPPEActividad!: Sequelize.HasManyHasAssociationMixin<ProgramaSippeActividad, ProgramaSippeActividadId>;
-  hasProgramaSIPPEActividads!: Sequelize.HasManyHasAssociationsMixin<ProgramaSippeActividad, ProgramaSippeActividadId>;
-  countProgramaSIPPEActividads!: Sequelize.HasManyCountAssociationsMixin;
+  // ProgramaSippe belongsToMany Actividad via idProgramaSippe and idActividad
+  idActividadActividadProgramaSippeActividads!: Actividad[];
+  getIdActividadActividadProgramaSippeActividads!: Sequelize.BelongsToManyGetAssociationsMixin<Actividad>;
+  setIdActividadActividadProgramaSippeActividads!: Sequelize.BelongsToManySetAssociationsMixin<Actividad, ActividadId>;
+  addIdActividadActividadProgramaSippeActividad!: Sequelize.BelongsToManyAddAssociationMixin<Actividad, ActividadId>;
+  addIdActividadActividadProgramaSippeActividads!: Sequelize.BelongsToManyAddAssociationsMixin<Actividad, ActividadId>;
+  createIdActividadActividadProgramaSippeActividad!: Sequelize.BelongsToManyCreateAssociationMixin<Actividad>;
+  removeIdActividadActividadProgramaSippeActividad!: Sequelize.BelongsToManyRemoveAssociationMixin<Actividad, ActividadId>;
+  removeIdActividadActividadProgramaSippeActividads!: Sequelize.BelongsToManyRemoveAssociationsMixin<Actividad, ActividadId>;
+  hasIdActividadActividadProgramaSippeActividad!: Sequelize.BelongsToManyHasAssociationMixin<Actividad, ActividadId>;
+  hasIdActividadActividadProgramaSippeActividads!: Sequelize.BelongsToManyHasAssociationsMixin<Actividad, ActividadId>;
+  countIdActividadActividadProgramaSippeActividads!: Sequelize.BelongsToManyCountAssociationsMixin;
+  // ProgramaSippe hasMany ProgramaSippeActividad via idProgramaSippe
+  programaSippeActividads!: ProgramaSippeActividad[];
+  getProgramaSippeActividads!: Sequelize.HasManyGetAssociationsMixin<ProgramaSippeActividad>;
+  setProgramaSippeActividads!: Sequelize.HasManySetAssociationsMixin<ProgramaSippeActividad, ProgramaSippeActividadId>;
+  addProgramaSippeActividad!: Sequelize.HasManyAddAssociationMixin<ProgramaSippeActividad, ProgramaSippeActividadId>;
+  addProgramaSippeActividads!: Sequelize.HasManyAddAssociationsMixin<ProgramaSippeActividad, ProgramaSippeActividadId>;
+  createProgramaSippeActividad!: Sequelize.HasManyCreateAssociationMixin<ProgramaSippeActividad>;
+  removeProgramaSippeActividad!: Sequelize.HasManyRemoveAssociationMixin<ProgramaSippeActividad, ProgramaSippeActividadId>;
+  removeProgramaSippeActividads!: Sequelize.HasManyRemoveAssociationsMixin<ProgramaSippeActividad, ProgramaSippeActividadId>;
+  hasProgramaSippeActividad!: Sequelize.HasManyHasAssociationMixin<ProgramaSippeActividad, ProgramaSippeActividadId>;
+  hasProgramaSippeActividads!: Sequelize.HasManyHasAssociationsMixin<ProgramaSippeActividad, ProgramaSippeActividadId>;
+  countProgramaSippeActividads!: Sequelize.HasManyCountAssociationsMixin;
   // ProgramaSippe belongsToMany Propuesta via idProgramaExtension and codigoPropuesta
-  codigoPropuesta_Propuesta_PropuestaProgramaExtensions!: Propuesta[];
-  getCodigoPropuesta_Propuesta_PropuestaProgramaExtensions!: Sequelize.BelongsToManyGetAssociationsMixin<Propuesta>;
-  setCodigoPropuesta_Propuesta_PropuestaProgramaExtensions!: Sequelize.BelongsToManySetAssociationsMixin<Propuesta, PropuestaId>;
-  addCodigoPropuesta_Propuesta_PropuestaProgramaExtension!: Sequelize.BelongsToManyAddAssociationMixin<Propuesta, PropuestaId>;
-  addCodigoPropuesta_Propuesta_PropuestaProgramaExtensions!: Sequelize.BelongsToManyAddAssociationsMixin<Propuesta, PropuestaId>;
-  createCodigoPropuesta_Propuesta_PropuestaProgramaExtension!: Sequelize.BelongsToManyCreateAssociationMixin<Propuesta>;
-  removeCodigoPropuesta_Propuesta_PropuestaProgramaExtension!: Sequelize.BelongsToManyRemoveAssociationMixin<Propuesta, PropuestaId>;
-  removeCodigoPropuesta_Propuesta_PropuestaProgramaExtensions!: Sequelize.BelongsToManyRemoveAssociationsMixin<Propuesta, PropuestaId>;
-  hasCodigoPropuesta_Propuesta_PropuestaProgramaExtension!: Sequelize.BelongsToManyHasAssociationMixin<Propuesta, PropuestaId>;
-  hasCodigoPropuesta_Propuesta_PropuestaProgramaExtensions!: Sequelize.BelongsToManyHasAssociationsMixin<Propuesta, PropuestaId>;
-  countCodigoPropuesta_Propuesta_PropuestaProgramaExtensions!: Sequelize.BelongsToManyCountAssociationsMixin;
+  codigoPropuestaPropuestaPropuestaProgramaExtensions!: Propuesta[];
+  getCodigoPropuestaPropuestaPropuestaProgramaExtensions!: Sequelize.BelongsToManyGetAssociationsMixin<Propuesta>;
+  setCodigoPropuestaPropuestaPropuestaProgramaExtensions!: Sequelize.BelongsToManySetAssociationsMixin<Propuesta, PropuestaId>;
+  addCodigoPropuestaPropuestaPropuestaProgramaExtension!: Sequelize.BelongsToManyAddAssociationMixin<Propuesta, PropuestaId>;
+  addCodigoPropuestaPropuestaPropuestaProgramaExtensions!: Sequelize.BelongsToManyAddAssociationsMixin<Propuesta, PropuestaId>;
+  createCodigoPropuestaPropuestaPropuestaProgramaExtension!: Sequelize.BelongsToManyCreateAssociationMixin<Propuesta>;
+  removeCodigoPropuestaPropuestaPropuestaProgramaExtension!: Sequelize.BelongsToManyRemoveAssociationMixin<Propuesta, PropuestaId>;
+  removeCodigoPropuestaPropuestaPropuestaProgramaExtensions!: Sequelize.BelongsToManyRemoveAssociationsMixin<Propuesta, PropuestaId>;
+  hasCodigoPropuestaPropuestaPropuestaProgramaExtension!: Sequelize.BelongsToManyHasAssociationMixin<Propuesta, PropuestaId>;
+  hasCodigoPropuestaPropuestaPropuestaProgramaExtensions!: Sequelize.BelongsToManyHasAssociationsMixin<Propuesta, PropuestaId>;
+  countCodigoPropuestaPropuestaPropuestaProgramaExtensions!: Sequelize.BelongsToManyCountAssociationsMixin;
   // ProgramaSippe hasMany PropuestaProgramaExtension via idProgramaExtension
-  PropuestaProgramaExtensions!: PropuestaProgramaExtension[];
+  propuestaProgramaExtensions!: PropuestaProgramaExtension[];
   getPropuestaProgramaExtensions!: Sequelize.HasManyGetAssociationsMixin<PropuestaProgramaExtension>;
   setPropuestaProgramaExtensions!: Sequelize.HasManySetAssociationsMixin<PropuestaProgramaExtension, PropuestaProgramaExtensionId>;
   addPropuestaProgramaExtension!: Sequelize.HasManyAddAssociationMixin<PropuestaProgramaExtension, PropuestaProgramaExtensionId>;
@@ -70,11 +70,12 @@ export class ProgramaSippe extends Model<ProgramaSippeAttributes, ProgramaSippeC
 
   static initModel(sequelize: Sequelize.Sequelize): typeof ProgramaSippe {
     return ProgramaSippe.init({
-    idProgramaSIPPE: {
+    idProgramaSippe: {
       autoIncrement: true,
       type: DataTypes.INTEGER,
       allowNull: false,
-      primaryKey: true
+      primaryKey: true,
+      field: 'idProgramaSIPPE'
     },
     nom: {
       type: DataTypes.STRING(150),

@@ -15,7 +15,7 @@ const sequelizeExtension = new sequelize.Sequelize({
 
 export const BD = initModels(sequelizeExtension);
 
-export const iniciarTablas = async( transaction : Transaction)=>{
+const iniciarTablas = async( transaction : Transaction)=>{
 
     
     const cargaValoraciones = data_inicial.Valoracion.map(

@@ -10,22 +10,22 @@ export interface PropuestaProgramaExtensionAttributes {
 
 export type PropuestaProgramaExtensionPk = "idProgramaExtension" | "codigoPropuesta";
 export type PropuestaProgramaExtensionId = PropuestaProgramaExtension[PropuestaProgramaExtensionPk];
-export type PropuestaProgramaExtensionCreationAttributes =PropuestaProgramaExtensionAttributes;
+export type PropuestaProgramaExtensionCreationAttributes = PropuestaProgramaExtensionAttributes;
 
 export class PropuestaProgramaExtension extends Model<PropuestaProgramaExtensionAttributes, PropuestaProgramaExtensionCreationAttributes> implements PropuestaProgramaExtensionAttributes {
   idProgramaExtension!: number;
   codigoPropuesta!: string;
 
   // PropuestaProgramaExtension belongsTo ProgramaSippe via idProgramaExtension
-  idProgramaExtension_ProgramaSIPPE!: ProgramaSippe;
-  getIdProgramaExtension_ProgramaSIPPE!: Sequelize.BelongsToGetAssociationMixin<ProgramaSippe>;
-  setIdProgramaExtension_ProgramaSIPPE!: Sequelize.BelongsToSetAssociationMixin<ProgramaSippe, ProgramaSippeId>;
-  createIdProgramaExtension_ProgramaSIPPE!: Sequelize.BelongsToCreateAssociationMixin<ProgramaSippe>;
+  idProgramaExtensionProgramaSippe!: ProgramaSippe;
+  getIdProgramaExtensionProgramaSippe!: Sequelize.BelongsToGetAssociationMixin<ProgramaSippe>;
+  setIdProgramaExtensionProgramaSippe!: Sequelize.BelongsToSetAssociationMixin<ProgramaSippe, ProgramaSippeId>;
+  createIdProgramaExtensionProgramaSippe!: Sequelize.BelongsToCreateAssociationMixin<ProgramaSippe>;
   // PropuestaProgramaExtension belongsTo Propuesta via codigoPropuesta
-  codigoPropuesta_Propuestum!: Propuesta;
-  getCodigoPropuesta_Propuestum!: Sequelize.BelongsToGetAssociationMixin<Propuesta>;
-  setCodigoPropuesta_Propuestum!: Sequelize.BelongsToSetAssociationMixin<Propuesta, PropuestaId>;
-  createCodigoPropuesta_Propuestum!: Sequelize.BelongsToCreateAssociationMixin<Propuesta>;
+  codigoPropuestaPropuestum!: Propuesta;
+  getCodigoPropuestaPropuestum!: Sequelize.BelongsToGetAssociationMixin<Propuesta>;
+  setCodigoPropuestaPropuestum!: Sequelize.BelongsToSetAssociationMixin<Propuesta, PropuestaId>;
+  createCodigoPropuestaPropuestum!: Sequelize.BelongsToCreateAssociationMixin<Propuesta>;
 
   static initModel(sequelize: Sequelize.Sequelize): typeof PropuestaProgramaExtension {
     return PropuestaProgramaExtension.init({

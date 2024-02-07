@@ -20,7 +20,7 @@ export class Area extends Model<AreaAttributes, AreaCreationAttributes> implemen
   idPrograma!: number;
 
   // Area hasMany Actividad via idArea
-  Actividads!: Actividad[];
+  actividads!: Actividad[];
   getActividads!: Sequelize.HasManyGetAssociationsMixin<Actividad>;
   setActividads!: Sequelize.HasManySetAssociationsMixin<Actividad, ActividadId>;
   addActividad!: Sequelize.HasManyAddAssociationMixin<Actividad, ActividadId>;
@@ -32,10 +32,10 @@ export class Area extends Model<AreaAttributes, AreaCreationAttributes> implemen
   hasActividads!: Sequelize.HasManyHasAssociationsMixin<Actividad, ActividadId>;
   countActividads!: Sequelize.HasManyCountAssociationsMixin;
   // Area belongsTo Programa via idPrograma
-  idPrograma_Programa!: Programa;
-  getIdPrograma_Programa!: Sequelize.BelongsToGetAssociationMixin<Programa>;
-  setIdPrograma_Programa!: Sequelize.BelongsToSetAssociationMixin<Programa, ProgramaId>;
-  createIdPrograma_Programa!: Sequelize.BelongsToCreateAssociationMixin<Programa>;
+  idProgramaPrograma!: Programa;
+  getIdProgramaPrograma!: Sequelize.BelongsToGetAssociationMixin<Programa>;
+  setIdProgramaPrograma!: Sequelize.BelongsToSetAssociationMixin<Programa, ProgramaId>;
+  createIdProgramaPrograma!: Sequelize.BelongsToCreateAssociationMixin<Programa>;
 
   static initModel(sequelize: Sequelize.Sequelize): typeof Area {
     return Area.init({

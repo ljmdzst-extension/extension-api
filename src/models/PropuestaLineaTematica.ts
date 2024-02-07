@@ -17,15 +17,15 @@ export class PropuestaLineaTematica extends Model<PropuestaLineaTematicaAttribut
   codigoPropuesta!: string;
 
   // PropuestaLineaTematica belongsTo LineaTematica via idLineaTematica
-  idLineaTematica_LineaTematica!: LineaTematica;
-  getIdLineaTematica_LineaTematica!: Sequelize.BelongsToGetAssociationMixin<LineaTematica>;
-  setIdLineaTematica_LineaTematica!: Sequelize.BelongsToSetAssociationMixin<LineaTematica, LineaTematicaId>;
-  createIdLineaTematica_LineaTematica!: Sequelize.BelongsToCreateAssociationMixin<LineaTematica>;
+  idLineaTematicaLineaTematica!: LineaTematica;
+  getIdLineaTematicaLineaTematica!: Sequelize.BelongsToGetAssociationMixin<LineaTematica>;
+  setIdLineaTematicaLineaTematica!: Sequelize.BelongsToSetAssociationMixin<LineaTematica, LineaTematicaId>;
+  createIdLineaTematicaLineaTematica!: Sequelize.BelongsToCreateAssociationMixin<LineaTematica>;
   // PropuestaLineaTematica belongsTo Propuesta via codigoPropuesta
-  codigoPropuesta_Propuestum!: Propuesta;
-  getCodigoPropuesta_Propuestum!: Sequelize.BelongsToGetAssociationMixin<Propuesta>;
-  setCodigoPropuesta_Propuestum!: Sequelize.BelongsToSetAssociationMixin<Propuesta, PropuestaId>;
-  createCodigoPropuesta_Propuestum!: Sequelize.BelongsToCreateAssociationMixin<Propuesta>;
+  codigoPropuestaPropuestum!: Propuesta;
+  getCodigoPropuestaPropuestum!: Sequelize.BelongsToGetAssociationMixin<Propuesta>;
+  setCodigoPropuestaPropuestum!: Sequelize.BelongsToSetAssociationMixin<Propuesta, PropuestaId>;
+  createCodigoPropuestaPropuestum!: Sequelize.BelongsToCreateAssociationMixin<Propuesta>;
 
   static initModel(sequelize: Sequelize.Sequelize): typeof PropuestaLineaTematica {
     return PropuestaLineaTematica.init({

@@ -12,7 +12,7 @@ export interface ObjetivoEspecificoAttributes {
 
 export type ObjetivoEspecificoPk = "idObjetivoEspecifico";
 export type ObjetivoEspecificoId = ObjetivoEspecifico[ObjetivoEspecificoPk];
-export type ObjetivoEspecificoOptionalAttributes = "idObjetivoEspecifico" | "desc" | "resEsp" ;
+export type ObjetivoEspecificoOptionalAttributes = "desc" | "resEsp" ;
 export type ObjetivoEspecificoCreationAttributes = Optional<ObjetivoEspecificoAttributes, ObjetivoEspecificoOptionalAttributes>;
 
 export class ObjetivoEspecifico extends Model<ObjetivoEspecificoAttributes, ObjetivoEspecificoCreationAttributes> implements ObjetivoEspecificoAttributes {
@@ -22,7 +22,7 @@ export class ObjetivoEspecifico extends Model<ObjetivoEspecificoAttributes, Obje
   resEsp?: string;
 
   // ObjetivoEspecifico hasMany ActividadObjetivoEspecifico via idObjetivoEspecifico
-  ActividadObjetivoEspecificos!: ActividadObjetivoEspecifico[];
+  actividadObjetivoEspecificos!: ActividadObjetivoEspecifico[];
   getActividadObjetivoEspecificos!: Sequelize.HasManyGetAssociationsMixin<ActividadObjetivoEspecifico>;
   setActividadObjetivoEspecificos!: Sequelize.HasManySetAssociationsMixin<ActividadObjetivoEspecifico, ActividadObjetivoEspecificoId>;
   addActividadObjetivoEspecifico!: Sequelize.HasManyAddAssociationMixin<ActividadObjetivoEspecifico, ActividadObjetivoEspecificoId>;
@@ -34,15 +34,14 @@ export class ObjetivoEspecifico extends Model<ObjetivoEspecificoAttributes, Obje
   hasActividadObjetivoEspecificos!: Sequelize.HasManyHasAssociationsMixin<ActividadObjetivoEspecifico, ActividadObjetivoEspecificoId>;
   countActividadObjetivoEspecificos!: Sequelize.HasManyCountAssociationsMixin;
   // ObjetivoEspecifico belongsTo Propuesta via codigoPropuesta
-  codigoPropuesta_Propuestum!: Propuesta;
-  getCodigoPropuesta_Propuestum!: Sequelize.BelongsToGetAssociationMixin<Propuesta>;
-  setCodigoPropuesta_Propuestum!: Sequelize.BelongsToSetAssociationMixin<Propuesta, PropuestaId>;
-  createCodigoPropuesta_Propuestum!: Sequelize.BelongsToCreateAssociationMixin<Propuesta>;
+  codigoPropuestaPropuestum!: Propuesta;
+  getCodigoPropuestaPropuestum!: Sequelize.BelongsToGetAssociationMixin<Propuesta>;
+  setCodigoPropuestaPropuestum!: Sequelize.BelongsToSetAssociationMixin<Propuesta, PropuestaId>;
+  createCodigoPropuestaPropuestum!: Sequelize.BelongsToCreateAssociationMixin<Propuesta>;
 
   static initModel(sequelize: Sequelize.Sequelize): typeof ObjetivoEspecifico {
     return ObjetivoEspecifico.init({
     idObjetivoEspecifico: {
-      autoIncrement: true,
       type: DataTypes.INTEGER,
       allowNull: false,
       primaryKey: true

@@ -22,15 +22,15 @@ export class Responsable extends Model<ResponsableAttributes, ResponsableCreatio
   hasta?: string;
 
   // Responsable belongsTo Institucion via idInstitucion
-  idInstitucion_Institucion!: Institucion;
-  getIdInstitucion_Institucion!: Sequelize.BelongsToGetAssociationMixin<Institucion>;
-  setIdInstitucion_Institucion!: Sequelize.BelongsToSetAssociationMixin<Institucion, InstitucionId>;
-  createIdInstitucion_Institucion!: Sequelize.BelongsToCreateAssociationMixin<Institucion>;
+  idInstitucionInstitucion!: Institucion;
+  getIdInstitucionInstitucion!: Sequelize.BelongsToGetAssociationMixin<Institucion>;
+  setIdInstitucionInstitucion!: Sequelize.BelongsToSetAssociationMixin<Institucion, InstitucionId>;
+  createIdInstitucionInstitucion!: Sequelize.BelongsToCreateAssociationMixin<Institucion>;
   // Responsable belongsTo Persona via nroDoc
-  nroDoc_Persona!: Persona;
-  getNroDoc_Persona!: Sequelize.BelongsToGetAssociationMixin<Persona>;
-  setNroDoc_Persona!: Sequelize.BelongsToSetAssociationMixin<Persona, PersonaId>;
-  createNroDoc_Persona!: Sequelize.BelongsToCreateAssociationMixin<Persona>;
+  nroDocPersona!: Persona;
+  getNroDocPersona!: Sequelize.BelongsToGetAssociationMixin<Persona>;
+  setNroDocPersona!: Sequelize.BelongsToSetAssociationMixin<Persona, PersonaId>;
+  createNroDocPersona!: Sequelize.BelongsToCreateAssociationMixin<Persona>;
 
   static initModel(sequelize: Sequelize.Sequelize): typeof Responsable {
     return Responsable.init({

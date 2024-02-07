@@ -21,7 +21,7 @@ export interface PersonaAttributes {
 
 export type PersonaPk = "nroDoc";
 export type PersonaId = Persona[PersonaPk];
-export type PersonaOptionalAttributes = "tel" | "dom" | "email" | "ciudad" | "provincia" | "pais";
+export type PersonaOptionalAttributes = "tel" | "dom" | "email" | "ciudad" | "provincia" | "pais" ;
 export type PersonaCreationAttributes = Optional<PersonaAttributes, PersonaOptionalAttributes>;
 
 export class Persona extends Model<PersonaAttributes, PersonaCreationAttributes> implements PersonaAttributes {
@@ -37,19 +37,19 @@ export class Persona extends Model<PersonaAttributes, PersonaCreationAttributes>
   pais?: string;
 
   // Persona belongsToMany Institucion via nroDoc and idInstitucion
-  idInstitucion_Institucion_Responsables!: Institucion[];
-  getIdInstitucion_Institucion_Responsables!: Sequelize.BelongsToManyGetAssociationsMixin<Institucion>;
-  setIdInstitucion_Institucion_Responsables!: Sequelize.BelongsToManySetAssociationsMixin<Institucion, InstitucionId>;
-  addIdInstitucion_Institucion_Responsable!: Sequelize.BelongsToManyAddAssociationMixin<Institucion, InstitucionId>;
-  addIdInstitucion_Institucion_Responsables!: Sequelize.BelongsToManyAddAssociationsMixin<Institucion, InstitucionId>;
-  createIdInstitucion_Institucion_Responsable!: Sequelize.BelongsToManyCreateAssociationMixin<Institucion>;
-  removeIdInstitucion_Institucion_Responsable!: Sequelize.BelongsToManyRemoveAssociationMixin<Institucion, InstitucionId>;
-  removeIdInstitucion_Institucion_Responsables!: Sequelize.BelongsToManyRemoveAssociationsMixin<Institucion, InstitucionId>;
-  hasIdInstitucion_Institucion_Responsable!: Sequelize.BelongsToManyHasAssociationMixin<Institucion, InstitucionId>;
-  hasIdInstitucion_Institucion_Responsables!: Sequelize.BelongsToManyHasAssociationsMixin<Institucion, InstitucionId>;
-  countIdInstitucion_Institucion_Responsables!: Sequelize.BelongsToManyCountAssociationsMixin;
+  idInstitucionInstitucionResponsables!: Institucion[];
+  getIdInstitucionInstitucionResponsables!: Sequelize.BelongsToManyGetAssociationsMixin<Institucion>;
+  setIdInstitucionInstitucionResponsables!: Sequelize.BelongsToManySetAssociationsMixin<Institucion, InstitucionId>;
+  addIdInstitucionInstitucionResponsable!: Sequelize.BelongsToManyAddAssociationMixin<Institucion, InstitucionId>;
+  addIdInstitucionInstitucionResponsables!: Sequelize.BelongsToManyAddAssociationsMixin<Institucion, InstitucionId>;
+  createIdInstitucionInstitucionResponsable!: Sequelize.BelongsToManyCreateAssociationMixin<Institucion>;
+  removeIdInstitucionInstitucionResponsable!: Sequelize.BelongsToManyRemoveAssociationMixin<Institucion, InstitucionId>;
+  removeIdInstitucionInstitucionResponsables!: Sequelize.BelongsToManyRemoveAssociationsMixin<Institucion, InstitucionId>;
+  hasIdInstitucionInstitucionResponsable!: Sequelize.BelongsToManyHasAssociationMixin<Institucion, InstitucionId>;
+  hasIdInstitucionInstitucionResponsables!: Sequelize.BelongsToManyHasAssociationsMixin<Institucion, InstitucionId>;
+  countIdInstitucionInstitucionResponsables!: Sequelize.BelongsToManyCountAssociationsMixin;
   // Persona hasMany Integrante via nroDoc
-  Integrantes!: Integrante[];
+  integrantes!: Integrante[];
   getIntegrantes!: Sequelize.HasManyGetAssociationsMixin<Integrante>;
   setIntegrantes!: Sequelize.HasManySetAssociationsMixin<Integrante, IntegranteId>;
   addIntegrante!: Sequelize.HasManyAddAssociationMixin<Integrante, IntegranteId>;
@@ -61,19 +61,19 @@ export class Persona extends Model<PersonaAttributes, PersonaCreationAttributes>
   hasIntegrantes!: Sequelize.HasManyHasAssociationsMixin<Integrante, IntegranteId>;
   countIntegrantes!: Sequelize.HasManyCountAssociationsMixin;
   // Persona belongsToMany Propuesta via nroDoc and codigoPropuesta
-  codigoPropuesta_Propuesta!: Propuesta[];
-  getCodigoPropuesta_Propuesta!: Sequelize.BelongsToManyGetAssociationsMixin<Propuesta>;
-  setCodigoPropuesta_Propuesta!: Sequelize.BelongsToManySetAssociationsMixin<Propuesta, PropuestaId>;
-  addCodigoPropuesta_Propuestum!: Sequelize.BelongsToManyAddAssociationMixin<Propuesta, PropuestaId>;
-  addCodigoPropuesta_Propuesta!: Sequelize.BelongsToManyAddAssociationsMixin<Propuesta, PropuestaId>;
-  createCodigoPropuesta_Propuestum!: Sequelize.BelongsToManyCreateAssociationMixin<Propuesta>;
-  removeCodigoPropuesta_Propuestum!: Sequelize.BelongsToManyRemoveAssociationMixin<Propuesta, PropuestaId>;
-  removeCodigoPropuesta_Propuesta!: Sequelize.BelongsToManyRemoveAssociationsMixin<Propuesta, PropuestaId>;
-  hasCodigoPropuesta_Propuestum!: Sequelize.BelongsToManyHasAssociationMixin<Propuesta, PropuestaId>;
-  hasCodigoPropuesta_Propuesta!: Sequelize.BelongsToManyHasAssociationsMixin<Propuesta, PropuestaId>;
-  countCodigoPropuesta_Propuesta!: Sequelize.BelongsToManyCountAssociationsMixin;
+  codigoPropuestaPropuesta!: Propuesta[];
+  getCodigoPropuestaPropuesta!: Sequelize.BelongsToManyGetAssociationsMixin<Propuesta>;
+  setCodigoPropuestaPropuesta!: Sequelize.BelongsToManySetAssociationsMixin<Propuesta, PropuestaId>;
+  addCodigoPropuestaPropuestum!: Sequelize.BelongsToManyAddAssociationMixin<Propuesta, PropuestaId>;
+  addCodigoPropuestaPropuesta!: Sequelize.BelongsToManyAddAssociationsMixin<Propuesta, PropuestaId>;
+  createCodigoPropuestaPropuestum!: Sequelize.BelongsToManyCreateAssociationMixin<Propuesta>;
+  removeCodigoPropuestaPropuestum!: Sequelize.BelongsToManyRemoveAssociationMixin<Propuesta, PropuestaId>;
+  removeCodigoPropuestaPropuesta!: Sequelize.BelongsToManyRemoveAssociationsMixin<Propuesta, PropuestaId>;
+  hasCodigoPropuestaPropuestum!: Sequelize.BelongsToManyHasAssociationMixin<Propuesta, PropuestaId>;
+  hasCodigoPropuestaPropuesta!: Sequelize.BelongsToManyHasAssociationsMixin<Propuesta, PropuestaId>;
+  countCodigoPropuestaPropuesta!: Sequelize.BelongsToManyCountAssociationsMixin;
   // Persona hasMany Responsable via nroDoc
-  Responsables!: Responsable[];
+  responsables!: Responsable[];
   getResponsables!: Sequelize.HasManyGetAssociationsMixin<Responsable>;
   setResponsables!: Sequelize.HasManySetAssociationsMixin<Responsable, ResponsableId>;
   addResponsable!: Sequelize.HasManyAddAssociationMixin<Responsable, ResponsableId>;
@@ -85,7 +85,7 @@ export class Persona extends Model<PersonaAttributes, PersonaCreationAttributes>
   hasResponsables!: Sequelize.HasManyHasAssociationsMixin<Responsable, ResponsableId>;
   countResponsables!: Sequelize.HasManyCountAssociationsMixin;
   // Persona hasMany Usuario via nroDoc
-  Usuarios!: Usuario[];
+  usuarios!: Usuario[];
   getUsuarios!: Sequelize.HasManyGetAssociationsMixin<Usuario>;
   setUsuarios!: Sequelize.HasManySetAssociationsMixin<Usuario, UsuarioId>;
   addUsuario!: Sequelize.HasManyAddAssociationMixin<Usuario, UsuarioId>;

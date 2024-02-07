@@ -30,7 +30,7 @@ export interface ActividadAttributes {
 
 export type ActividadPk = "idActividad";
 export type ActividadId = Actividad[ActividadPk];
-export type ActividadOptionalAttributes = "idActividad" | "idUsuario" | "nro" | "motivoCancel" | "fechaDesde" | "fechaHasta";
+export type ActividadOptionalAttributes = "idActividad" | "idUsuario" | "nro" | "motivoCancel" | "fechaDesde" | "fechaHasta" ;
 export type ActividadCreationAttributes = Optional<ActividadAttributes, ActividadOptionalAttributes>;
 
 export class Actividad extends Model<ActividadAttributes, ActividadCreationAttributes> implements ActividadAttributes {
@@ -44,7 +44,7 @@ export class Actividad extends Model<ActividadAttributes, ActividadCreationAttri
   fechaHasta?: string;
 
   // Actividad hasMany Enlace via idActividad
-  Enlaces!: Enlace[];
+  enlaces!: Enlace[];
   getEnlaces!: Sequelize.HasManyGetAssociationsMixin<Enlace>;
   setEnlaces!: Sequelize.HasManySetAssociationsMixin<Enlace, EnlaceId>;
   addEnlace!: Sequelize.HasManyAddAssociationMixin<Enlace, EnlaceId>;
@@ -56,19 +56,19 @@ export class Actividad extends Model<ActividadAttributes, ActividadCreationAttri
   hasEnlaces!: Sequelize.HasManyHasAssociationsMixin<Enlace, EnlaceId>;
   countEnlaces!: Sequelize.HasManyCountAssociationsMixin;
   // Actividad belongsToMany FechaPuntual via idActividad and idFecha
-  idFecha_FechaPuntuals!: FechaPuntual[];
-  getIdFecha_FechaPuntuals!: Sequelize.BelongsToManyGetAssociationsMixin<FechaPuntual>;
-  setIdFecha_FechaPuntuals!: Sequelize.BelongsToManySetAssociationsMixin<FechaPuntual, FechaPuntualId>;
-  addIdFecha_FechaPuntual!: Sequelize.BelongsToManyAddAssociationMixin<FechaPuntual, FechaPuntualId>;
-  addIdFecha_FechaPuntuals!: Sequelize.BelongsToManyAddAssociationsMixin<FechaPuntual, FechaPuntualId>;
-  createIdFecha_FechaPuntual!: Sequelize.BelongsToManyCreateAssociationMixin<FechaPuntual>;
-  removeIdFecha_FechaPuntual!: Sequelize.BelongsToManyRemoveAssociationMixin<FechaPuntual, FechaPuntualId>;
-  removeIdFecha_FechaPuntuals!: Sequelize.BelongsToManyRemoveAssociationsMixin<FechaPuntual, FechaPuntualId>;
-  hasIdFecha_FechaPuntual!: Sequelize.BelongsToManyHasAssociationMixin<FechaPuntual, FechaPuntualId>;
-  hasIdFecha_FechaPuntuals!: Sequelize.BelongsToManyHasAssociationsMixin<FechaPuntual, FechaPuntualId>;
-  countIdFecha_FechaPuntuals!: Sequelize.BelongsToManyCountAssociationsMixin;
+  idFechaFechaPuntuals!: FechaPuntual[];
+  getIdFechaFechaPuntuals!: Sequelize.BelongsToManyGetAssociationsMixin<FechaPuntual>;
+  setIdFechaFechaPuntuals!: Sequelize.BelongsToManySetAssociationsMixin<FechaPuntual, FechaPuntualId>;
+  addIdFechaFechaPuntual!: Sequelize.BelongsToManyAddAssociationMixin<FechaPuntual, FechaPuntualId>;
+  addIdFechaFechaPuntuals!: Sequelize.BelongsToManyAddAssociationsMixin<FechaPuntual, FechaPuntualId>;
+  createIdFechaFechaPuntual!: Sequelize.BelongsToManyCreateAssociationMixin<FechaPuntual>;
+  removeIdFechaFechaPuntual!: Sequelize.BelongsToManyRemoveAssociationMixin<FechaPuntual, FechaPuntualId>;
+  removeIdFechaFechaPuntuals!: Sequelize.BelongsToManyRemoveAssociationsMixin<FechaPuntual, FechaPuntualId>;
+  hasIdFechaFechaPuntual!: Sequelize.BelongsToManyHasAssociationMixin<FechaPuntual, FechaPuntualId>;
+  hasIdFechaFechaPuntuals!: Sequelize.BelongsToManyHasAssociationsMixin<FechaPuntual, FechaPuntualId>;
+  countIdFechaFechaPuntuals!: Sequelize.BelongsToManyCountAssociationsMixin;
   // Actividad hasMany FechaPuntualActividad via idActividad
-  FechaPuntualActividads!: FechaPuntualActividad[];
+  fechaPuntualActividads!: FechaPuntualActividad[];
   getFechaPuntualActividads!: Sequelize.HasManyGetAssociationsMixin<FechaPuntualActividad>;
   setFechaPuntualActividads!: Sequelize.HasManySetAssociationsMixin<FechaPuntualActividad, FechaPuntualActividadId>;
   addFechaPuntualActividad!: Sequelize.HasManyAddAssociationMixin<FechaPuntualActividad, FechaPuntualActividadId>;
@@ -80,19 +80,19 @@ export class Actividad extends Model<ActividadAttributes, ActividadCreationAttri
   hasFechaPuntualActividads!: Sequelize.HasManyHasAssociationsMixin<FechaPuntualActividad, FechaPuntualActividadId>;
   countFechaPuntualActividads!: Sequelize.HasManyCountAssociationsMixin;
   // Actividad belongsToMany Institucion via idActividad and idInstitucion
-  idInstitucion_Institucions!: Institucion[];
-  getIdInstitucion_Institucions!: Sequelize.BelongsToManyGetAssociationsMixin<Institucion>;
-  setIdInstitucion_Institucions!: Sequelize.BelongsToManySetAssociationsMixin<Institucion, InstitucionId>;
-  addIdInstitucion_Institucion!: Sequelize.BelongsToManyAddAssociationMixin<Institucion, InstitucionId>;
-  addIdInstitucion_Institucions!: Sequelize.BelongsToManyAddAssociationsMixin<Institucion, InstitucionId>;
-  createIdInstitucion_Institucion!: Sequelize.BelongsToManyCreateAssociationMixin<Institucion>;
-  removeIdInstitucion_Institucion!: Sequelize.BelongsToManyRemoveAssociationMixin<Institucion, InstitucionId>;
-  removeIdInstitucion_Institucions!: Sequelize.BelongsToManyRemoveAssociationsMixin<Institucion, InstitucionId>;
-  hasIdInstitucion_Institucion!: Sequelize.BelongsToManyHasAssociationMixin<Institucion, InstitucionId>;
-  hasIdInstitucion_Institucions!: Sequelize.BelongsToManyHasAssociationsMixin<Institucion, InstitucionId>;
-  countIdInstitucion_Institucions!: Sequelize.BelongsToManyCountAssociationsMixin;
+  idInstitucionInstitucions!: Institucion[];
+  getIdInstitucionInstitucions!: Sequelize.BelongsToManyGetAssociationsMixin<Institucion>;
+  setIdInstitucionInstitucions!: Sequelize.BelongsToManySetAssociationsMixin<Institucion, InstitucionId>;
+  addIdInstitucionInstitucion!: Sequelize.BelongsToManyAddAssociationMixin<Institucion, InstitucionId>;
+  addIdInstitucionInstitucions!: Sequelize.BelongsToManyAddAssociationsMixin<Institucion, InstitucionId>;
+  createIdInstitucionInstitucion!: Sequelize.BelongsToManyCreateAssociationMixin<Institucion>;
+  removeIdInstitucionInstitucion!: Sequelize.BelongsToManyRemoveAssociationMixin<Institucion, InstitucionId>;
+  removeIdInstitucionInstitucions!: Sequelize.BelongsToManyRemoveAssociationsMixin<Institucion, InstitucionId>;
+  hasIdInstitucionInstitucion!: Sequelize.BelongsToManyHasAssociationMixin<Institucion, InstitucionId>;
+  hasIdInstitucionInstitucions!: Sequelize.BelongsToManyHasAssociationsMixin<Institucion, InstitucionId>;
+  countIdInstitucionInstitucions!: Sequelize.BelongsToManyCountAssociationsMixin;
   // Actividad hasMany InstitucionActividad via idActividad
-  InstitucionActividads!: InstitucionActividad[];
+  institucionActividads!: InstitucionActividad[];
   getInstitucionActividads!: Sequelize.HasManyGetAssociationsMixin<InstitucionActividad>;
   setInstitucionActividads!: Sequelize.HasManySetAssociationsMixin<InstitucionActividad, InstitucionActividadId>;
   addInstitucionActividad!: Sequelize.HasManyAddAssociationMixin<InstitucionActividad, InstitucionActividadId>;
@@ -104,7 +104,7 @@ export class Actividad extends Model<ActividadAttributes, ActividadCreationAttri
   hasInstitucionActividads!: Sequelize.HasManyHasAssociationsMixin<InstitucionActividad, InstitucionActividadId>;
   countInstitucionActividads!: Sequelize.HasManyCountAssociationsMixin;
   // Actividad hasMany Meta via idActividad
-  Meta!: Meta[];
+  meta!: Meta[];
   getMeta!: Sequelize.HasManyGetAssociationsMixin<Meta>;
   setMeta!: Sequelize.HasManySetAssociationsMixin<Meta, MetaId>;
   addMetum!: Sequelize.HasManyAddAssociationMixin<Meta, MetaId>;
@@ -116,19 +116,19 @@ export class Actividad extends Model<ActividadAttributes, ActividadCreationAttri
   hasMeta!: Sequelize.HasManyHasAssociationsMixin<Meta, MetaId>;
   countMeta!: Sequelize.HasManyCountAssociationsMixin;
   // Actividad belongsToMany Objetivo via idActividad and idObjetivo
-  idObjetivo_Objetivos!: Objetivo[];
-  getIdObjetivo_Objetivos!: Sequelize.BelongsToManyGetAssociationsMixin<Objetivo>;
-  setIdObjetivo_Objetivos!: Sequelize.BelongsToManySetAssociationsMixin<Objetivo, ObjetivoId>;
-  addIdObjetivo_Objetivo!: Sequelize.BelongsToManyAddAssociationMixin<Objetivo, ObjetivoId>;
-  addIdObjetivo_Objetivos!: Sequelize.BelongsToManyAddAssociationsMixin<Objetivo, ObjetivoId>;
-  createIdObjetivo_Objetivo!: Sequelize.BelongsToManyCreateAssociationMixin<Objetivo>;
-  removeIdObjetivo_Objetivo!: Sequelize.BelongsToManyRemoveAssociationMixin<Objetivo, ObjetivoId>;
-  removeIdObjetivo_Objetivos!: Sequelize.BelongsToManyRemoveAssociationsMixin<Objetivo, ObjetivoId>;
-  hasIdObjetivo_Objetivo!: Sequelize.BelongsToManyHasAssociationMixin<Objetivo, ObjetivoId>;
-  hasIdObjetivo_Objetivos!: Sequelize.BelongsToManyHasAssociationsMixin<Objetivo, ObjetivoId>;
-  countIdObjetivo_Objetivos!: Sequelize.BelongsToManyCountAssociationsMixin;
+  idObjetivoObjetivos!: Objetivo[];
+  getIdObjetivoObjetivos!: Sequelize.BelongsToManyGetAssociationsMixin<Objetivo>;
+  setIdObjetivoObjetivos!: Sequelize.BelongsToManySetAssociationsMixin<Objetivo, ObjetivoId>;
+  addIdObjetivoObjetivo!: Sequelize.BelongsToManyAddAssociationMixin<Objetivo, ObjetivoId>;
+  addIdObjetivoObjetivos!: Sequelize.BelongsToManyAddAssociationsMixin<Objetivo, ObjetivoId>;
+  createIdObjetivoObjetivo!: Sequelize.BelongsToManyCreateAssociationMixin<Objetivo>;
+  removeIdObjetivoObjetivo!: Sequelize.BelongsToManyRemoveAssociationMixin<Objetivo, ObjetivoId>;
+  removeIdObjetivoObjetivos!: Sequelize.BelongsToManyRemoveAssociationsMixin<Objetivo, ObjetivoId>;
+  hasIdObjetivoObjetivo!: Sequelize.BelongsToManyHasAssociationMixin<Objetivo, ObjetivoId>;
+  hasIdObjetivoObjetivos!: Sequelize.BelongsToManyHasAssociationsMixin<Objetivo, ObjetivoId>;
+  countIdObjetivoObjetivos!: Sequelize.BelongsToManyCountAssociationsMixin;
   // Actividad hasMany ObjetivoActividad via idActividad
-  ObjetivoActividads!: ObjetivoActividad[];
+  objetivoActividads!: ObjetivoActividad[];
   getObjetivoActividads!: Sequelize.HasManyGetAssociationsMixin<ObjetivoActividad>;
   setObjetivoActividads!: Sequelize.HasManySetAssociationsMixin<ObjetivoActividad, ObjetivoActividadId>;
   addObjetivoActividad!: Sequelize.HasManyAddAssociationMixin<ObjetivoActividad, ObjetivoActividadId>;
@@ -139,44 +139,44 @@ export class Actividad extends Model<ActividadAttributes, ActividadCreationAttri
   hasObjetivoActividad!: Sequelize.HasManyHasAssociationMixin<ObjetivoActividad, ObjetivoActividadId>;
   hasObjetivoActividads!: Sequelize.HasManyHasAssociationsMixin<ObjetivoActividad, ObjetivoActividadId>;
   countObjetivoActividads!: Sequelize.HasManyCountAssociationsMixin;
-  // Actividad belongsToMany ProgramaSippe via idActividad and idProgramaSIPPE
-  idProgramaSIPPE_ProgramaSIPPEs!: ProgramaSippe[];
-  getIdProgramaSIPPE_ProgramaSIPPEs!: Sequelize.BelongsToManyGetAssociationsMixin<ProgramaSippe>;
-  setIdProgramaSIPPE_ProgramaSIPPEs!: Sequelize.BelongsToManySetAssociationsMixin<ProgramaSippe, ProgramaSippeId>;
-  addIdProgramaSIPPE_ProgramaSIPPE!: Sequelize.BelongsToManyAddAssociationMixin<ProgramaSippe, ProgramaSippeId>;
-  addIdProgramaSIPPE_ProgramaSIPPEs!: Sequelize.BelongsToManyAddAssociationsMixin<ProgramaSippe, ProgramaSippeId>;
-  createIdProgramaSIPPE_ProgramaSIPPE!: Sequelize.BelongsToManyCreateAssociationMixin<ProgramaSippe>;
-  removeIdProgramaSIPPE_ProgramaSIPPE!: Sequelize.BelongsToManyRemoveAssociationMixin<ProgramaSippe, ProgramaSippeId>;
-  removeIdProgramaSIPPE_ProgramaSIPPEs!: Sequelize.BelongsToManyRemoveAssociationsMixin<ProgramaSippe, ProgramaSippeId>;
-  hasIdProgramaSIPPE_ProgramaSIPPE!: Sequelize.BelongsToManyHasAssociationMixin<ProgramaSippe, ProgramaSippeId>;
-  hasIdProgramaSIPPE_ProgramaSIPPEs!: Sequelize.BelongsToManyHasAssociationsMixin<ProgramaSippe, ProgramaSippeId>;
-  countIdProgramaSIPPE_ProgramaSIPPEs!: Sequelize.BelongsToManyCountAssociationsMixin;
+  // Actividad belongsToMany ProgramaSippe via idActividad and idProgramaSippe
+  idProgramaSippeProgramaSippes!: ProgramaSippe[];
+  getIdProgramaSippeProgramaSippes!: Sequelize.BelongsToManyGetAssociationsMixin<ProgramaSippe>;
+  setIdProgramaSippeProgramaSippes!: Sequelize.BelongsToManySetAssociationsMixin<ProgramaSippe, ProgramaSippeId>;
+  addIdProgramaSippeProgramaSippe!: Sequelize.BelongsToManyAddAssociationMixin<ProgramaSippe, ProgramaSippeId>;
+  addIdProgramaSippeProgramaSippes!: Sequelize.BelongsToManyAddAssociationsMixin<ProgramaSippe, ProgramaSippeId>;
+  createIdProgramaSippeProgramaSippe!: Sequelize.BelongsToManyCreateAssociationMixin<ProgramaSippe>;
+  removeIdProgramaSippeProgramaSippe!: Sequelize.BelongsToManyRemoveAssociationMixin<ProgramaSippe, ProgramaSippeId>;
+  removeIdProgramaSippeProgramaSippes!: Sequelize.BelongsToManyRemoveAssociationsMixin<ProgramaSippe, ProgramaSippeId>;
+  hasIdProgramaSippeProgramaSippe!: Sequelize.BelongsToManyHasAssociationMixin<ProgramaSippe, ProgramaSippeId>;
+  hasIdProgramaSippeProgramaSippes!: Sequelize.BelongsToManyHasAssociationsMixin<ProgramaSippe, ProgramaSippeId>;
+  countIdProgramaSippeProgramaSippes!: Sequelize.BelongsToManyCountAssociationsMixin;
   // Actividad hasMany ProgramaSippeActividad via idActividad
-  ProgramaSIPPEActividads!: ProgramaSippeActividad[];
-  getProgramaSIPPEActividads!: Sequelize.HasManyGetAssociationsMixin<ProgramaSippeActividad>;
-  setProgramaSIPPEActividads!: Sequelize.HasManySetAssociationsMixin<ProgramaSippeActividad, ProgramaSippeActividadId>;
-  addProgramaSIPPEActividad!: Sequelize.HasManyAddAssociationMixin<ProgramaSippeActividad, ProgramaSippeActividadId>;
-  addProgramaSIPPEActividads!: Sequelize.HasManyAddAssociationsMixin<ProgramaSippeActividad, ProgramaSippeActividadId>;
-  createProgramaSIPPEActividad!: Sequelize.HasManyCreateAssociationMixin<ProgramaSippeActividad>;
-  removeProgramaSIPPEActividad!: Sequelize.HasManyRemoveAssociationMixin<ProgramaSippeActividad, ProgramaSippeActividadId>;
-  removeProgramaSIPPEActividads!: Sequelize.HasManyRemoveAssociationsMixin<ProgramaSippeActividad, ProgramaSippeActividadId>;
-  hasProgramaSIPPEActividad!: Sequelize.HasManyHasAssociationMixin<ProgramaSippeActividad, ProgramaSippeActividadId>;
-  hasProgramaSIPPEActividads!: Sequelize.HasManyHasAssociationsMixin<ProgramaSippeActividad, ProgramaSippeActividadId>;
-  countProgramaSIPPEActividads!: Sequelize.HasManyCountAssociationsMixin;
+  programaSippeActividads!: ProgramaSippeActividad[];
+  getProgramaSippeActividads!: Sequelize.HasManyGetAssociationsMixin<ProgramaSippeActividad>;
+  setProgramaSippeActividads!: Sequelize.HasManySetAssociationsMixin<ProgramaSippeActividad, ProgramaSippeActividadId>;
+  addProgramaSippeActividad!: Sequelize.HasManyAddAssociationMixin<ProgramaSippeActividad, ProgramaSippeActividadId>;
+  addProgramaSippeActividads!: Sequelize.HasManyAddAssociationsMixin<ProgramaSippeActividad, ProgramaSippeActividadId>;
+  createProgramaSippeActividad!: Sequelize.HasManyCreateAssociationMixin<ProgramaSippeActividad>;
+  removeProgramaSippeActividad!: Sequelize.HasManyRemoveAssociationMixin<ProgramaSippeActividad, ProgramaSippeActividadId>;
+  removeProgramaSippeActividads!: Sequelize.HasManyRemoveAssociationsMixin<ProgramaSippeActividad, ProgramaSippeActividadId>;
+  hasProgramaSippeActividad!: Sequelize.HasManyHasAssociationMixin<ProgramaSippeActividad, ProgramaSippeActividadId>;
+  hasProgramaSippeActividads!: Sequelize.HasManyHasAssociationsMixin<ProgramaSippeActividad, ProgramaSippeActividadId>;
+  countProgramaSippeActividads!: Sequelize.HasManyCountAssociationsMixin;
   // Actividad belongsToMany Relacion via idActividad and idRelacion
-  idRelacion_Relacions!: Relacion[];
-  getIdRelacion_Relacions!: Sequelize.BelongsToManyGetAssociationsMixin<Relacion>;
-  setIdRelacion_Relacions!: Sequelize.BelongsToManySetAssociationsMixin<Relacion, RelacionId>;
-  addIdRelacion_Relacion!: Sequelize.BelongsToManyAddAssociationMixin<Relacion, RelacionId>;
-  addIdRelacion_Relacions!: Sequelize.BelongsToManyAddAssociationsMixin<Relacion, RelacionId>;
-  createIdRelacion_Relacion!: Sequelize.BelongsToManyCreateAssociationMixin<Relacion>;
-  removeIdRelacion_Relacion!: Sequelize.BelongsToManyRemoveAssociationMixin<Relacion, RelacionId>;
-  removeIdRelacion_Relacions!: Sequelize.BelongsToManyRemoveAssociationsMixin<Relacion, RelacionId>;
-  hasIdRelacion_Relacion!: Sequelize.BelongsToManyHasAssociationMixin<Relacion, RelacionId>;
-  hasIdRelacion_Relacions!: Sequelize.BelongsToManyHasAssociationsMixin<Relacion, RelacionId>;
-  countIdRelacion_Relacions!: Sequelize.BelongsToManyCountAssociationsMixin;
+  idRelacionRelacions!: Relacion[];
+  getIdRelacionRelacions!: Sequelize.BelongsToManyGetAssociationsMixin<Relacion>;
+  setIdRelacionRelacions!: Sequelize.BelongsToManySetAssociationsMixin<Relacion, RelacionId>;
+  addIdRelacionRelacion!: Sequelize.BelongsToManyAddAssociationMixin<Relacion, RelacionId>;
+  addIdRelacionRelacions!: Sequelize.BelongsToManyAddAssociationsMixin<Relacion, RelacionId>;
+  createIdRelacionRelacion!: Sequelize.BelongsToManyCreateAssociationMixin<Relacion>;
+  removeIdRelacionRelacion!: Sequelize.BelongsToManyRemoveAssociationMixin<Relacion, RelacionId>;
+  removeIdRelacionRelacions!: Sequelize.BelongsToManyRemoveAssociationsMixin<Relacion, RelacionId>;
+  hasIdRelacionRelacion!: Sequelize.BelongsToManyHasAssociationMixin<Relacion, RelacionId>;
+  hasIdRelacionRelacions!: Sequelize.BelongsToManyHasAssociationsMixin<Relacion, RelacionId>;
+  countIdRelacionRelacions!: Sequelize.BelongsToManyCountAssociationsMixin;
   // Actividad hasMany RelacionActividad via idActividad
-  RelacionActividads!: RelacionActividad[];
+  relacionActividads!: RelacionActividad[];
   getRelacionActividads!: Sequelize.HasManyGetAssociationsMixin<RelacionActividad>;
   setRelacionActividads!: Sequelize.HasManySetAssociationsMixin<RelacionActividad, RelacionActividadId>;
   addRelacionActividad!: Sequelize.HasManyAddAssociationMixin<RelacionActividad, RelacionActividadId>;
@@ -188,19 +188,19 @@ export class Actividad extends Model<ActividadAttributes, ActividadCreationAttri
   hasRelacionActividads!: Sequelize.HasManyHasAssociationsMixin<RelacionActividad, RelacionActividadId>;
   countRelacionActividads!: Sequelize.HasManyCountAssociationsMixin;
   // Actividad belongsToMany Ubicacion via idActividad and idUbicacion
-  idUbicacion_Ubicacions!: Ubicacion[];
-  getIdUbicacion_Ubicacions!: Sequelize.BelongsToManyGetAssociationsMixin<Ubicacion>;
-  setIdUbicacion_Ubicacions!: Sequelize.BelongsToManySetAssociationsMixin<Ubicacion, UbicacionId>;
-  addIdUbicacion_Ubicacion!: Sequelize.BelongsToManyAddAssociationMixin<Ubicacion, UbicacionId>;
-  addIdUbicacion_Ubicacions!: Sequelize.BelongsToManyAddAssociationsMixin<Ubicacion, UbicacionId>;
-  createIdUbicacion_Ubicacion!: Sequelize.BelongsToManyCreateAssociationMixin<Ubicacion>;
-  removeIdUbicacion_Ubicacion!: Sequelize.BelongsToManyRemoveAssociationMixin<Ubicacion, UbicacionId>;
-  removeIdUbicacion_Ubicacions!: Sequelize.BelongsToManyRemoveAssociationsMixin<Ubicacion, UbicacionId>;
-  hasIdUbicacion_Ubicacion!: Sequelize.BelongsToManyHasAssociationMixin<Ubicacion, UbicacionId>;
-  hasIdUbicacion_Ubicacions!: Sequelize.BelongsToManyHasAssociationsMixin<Ubicacion, UbicacionId>;
-  countIdUbicacion_Ubicacions!: Sequelize.BelongsToManyCountAssociationsMixin;
+  idUbicacionUbicacions!: Ubicacion[];
+  getIdUbicacionUbicacions!: Sequelize.BelongsToManyGetAssociationsMixin<Ubicacion>;
+  setIdUbicacionUbicacions!: Sequelize.BelongsToManySetAssociationsMixin<Ubicacion, UbicacionId>;
+  addIdUbicacionUbicacion!: Sequelize.BelongsToManyAddAssociationMixin<Ubicacion, UbicacionId>;
+  addIdUbicacionUbicacions!: Sequelize.BelongsToManyAddAssociationsMixin<Ubicacion, UbicacionId>;
+  createIdUbicacionUbicacion!: Sequelize.BelongsToManyCreateAssociationMixin<Ubicacion>;
+  removeIdUbicacionUbicacion!: Sequelize.BelongsToManyRemoveAssociationMixin<Ubicacion, UbicacionId>;
+  removeIdUbicacionUbicacions!: Sequelize.BelongsToManyRemoveAssociationsMixin<Ubicacion, UbicacionId>;
+  hasIdUbicacionUbicacion!: Sequelize.BelongsToManyHasAssociationMixin<Ubicacion, UbicacionId>;
+  hasIdUbicacionUbicacions!: Sequelize.BelongsToManyHasAssociationsMixin<Ubicacion, UbicacionId>;
+  countIdUbicacionUbicacions!: Sequelize.BelongsToManyCountAssociationsMixin;
   // Actividad hasMany UbicacionActividad via idActividad
-  UbicacionActividads!: UbicacionActividad[];
+  ubicacionActividads!: UbicacionActividad[];
   getUbicacionActividads!: Sequelize.HasManyGetAssociationsMixin<UbicacionActividad>;
   setUbicacionActividads!: Sequelize.HasManySetAssociationsMixin<UbicacionActividad, UbicacionActividadId>;
   addUbicacionActividad!: Sequelize.HasManyAddAssociationMixin<UbicacionActividad, UbicacionActividadId>;
@@ -212,15 +212,15 @@ export class Actividad extends Model<ActividadAttributes, ActividadCreationAttri
   hasUbicacionActividads!: Sequelize.HasManyHasAssociationsMixin<UbicacionActividad, UbicacionActividadId>;
   countUbicacionActividads!: Sequelize.HasManyCountAssociationsMixin;
   // Actividad belongsTo Area via idArea
-  idArea_Area!: Area;
-  getIdArea_Area!: Sequelize.BelongsToGetAssociationMixin<Area>;
-  setIdArea_Area!: Sequelize.BelongsToSetAssociationMixin<Area, AreaId>;
-  createIdArea_Area!: Sequelize.BelongsToCreateAssociationMixin<Area>;
+  idAreaArea!: Area;
+  getIdAreaArea!: Sequelize.BelongsToGetAssociationMixin<Area>;
+  setIdAreaArea!: Sequelize.BelongsToSetAssociationMixin<Area, AreaId>;
+  createIdAreaArea!: Sequelize.BelongsToCreateAssociationMixin<Area>;
   // Actividad belongsTo Usuario via idUsuario
-  idUsuario_Usuario!: Usuario;
-  getIdUsuario_Usuario!: Sequelize.BelongsToGetAssociationMixin<Usuario>;
-  setIdUsuario_Usuario!: Sequelize.BelongsToSetAssociationMixin<Usuario, UsuarioId>;
-  createIdUsuario_Usuario!: Sequelize.BelongsToCreateAssociationMixin<Usuario>;
+  idUsuarioUsuario!: Usuario;
+  getIdUsuarioUsuario!: Sequelize.BelongsToGetAssociationMixin<Usuario>;
+  setIdUsuarioUsuario!: Sequelize.BelongsToSetAssociationMixin<Usuario, UsuarioId>;
+  createIdUsuarioUsuario!: Sequelize.BelongsToCreateAssociationMixin<Usuario>;
 
   static initModel(sequelize: Sequelize.Sequelize): typeof Actividad {
     return Actividad.init({

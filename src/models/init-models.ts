@@ -47,6 +47,8 @@ import { ParticipanteSocial as _ParticipanteSocial } from "./ParticipanteSocial"
 import type { ParticipanteSocialAttributes, ParticipanteSocialCreationAttributes } from "./ParticipanteSocial";
 import { Permiso as _Permiso } from "./Permiso";
 import type { PermisoAttributes, PermisoCreationAttributes } from "./Permiso";
+import { PermisoCategoria as _PermisoCategoria } from "./PermisoCategoria";
+import type { PermisoCategoriaAttributes, PermisoCategoriaCreationAttributes } from "./PermisoCategoria";
 import { Persona as _Persona } from "./Persona";
 import type { PersonaAttributes, PersonaCreationAttributes } from "./Persona";
 import { Programa as _Programa } from "./Programa";
@@ -125,6 +127,7 @@ export {
   _PalabraClave as PalabraClave,
   _ParticipanteSocial as ParticipanteSocial,
   _Permiso as Permiso,
+  _PermisoCategoria as PermisoCategoria,
   _Persona as Persona,
   _Programa as Programa,
   _ProgramaSippe as ProgramaSippe,
@@ -202,6 +205,8 @@ export type {
   ParticipanteSocialCreationAttributes,
   PermisoAttributes,
   PermisoCreationAttributes,
+  PermisoCategoriaAttributes,
+  PermisoCategoriaCreationAttributes,
   PersonaAttributes,
   PersonaCreationAttributes,
   ProgramaAttributes,
@@ -281,6 +286,7 @@ export function initModels(sequelize: Sequelize) {
   const PalabraClave = _PalabraClave.initModel(sequelize);
   const ParticipanteSocial = _ParticipanteSocial.initModel(sequelize);
   const Permiso = _Permiso.initModel(sequelize);
+  const PermisoCategoria = _PermisoCategoria.initModel(sequelize);
   const Persona = _Persona.initModel(sequelize);
   const Programa = _Programa.initModel(sequelize);
   const ProgramaSippe = _ProgramaSippe.initModel(sequelize);
@@ -308,38 +314,42 @@ export function initModels(sequelize: Sequelize) {
   const UsuarioCategoria = _UsuarioCategoria.initModel(sequelize);
   const Valoracion = _Valoracion.initModel(sequelize);
 
-  Actividad.belongsToMany(FechaPuntual, { as: 'idFecha_FechaPuntuals', through: FechaPuntualActividad, foreignKey: "idActividad", otherKey: "idFecha" });
-  Actividad.belongsToMany(Institucion, { as: 'idInstitucion_Institucions', through: InstitucionActividad, foreignKey: "idActividad", otherKey: "idInstitucion" });
-  Actividad.belongsToMany(Objetivo, { as: 'idObjetivo_Objetivos', through: ObjetivoActividad, foreignKey: "idActividad", otherKey: "idObjetivo" });
-  Actividad.belongsToMany(ProgramaSippe, { as: 'idProgramaSIPPE_ProgramaSIPPEs', through: ProgramaSippeActividad, foreignKey: "idActividad", otherKey: "idProgramaSIPPE" });
-  Actividad.belongsToMany(Relacion, { as: 'idRelacion_Relacions', through: RelacionActividad, foreignKey: "idActividad", otherKey: "idRelacion" });
-  Actividad.belongsToMany(Ubicacion, { as: 'idUbicacion_Ubicacions', through: UbicacionActividad, foreignKey: "idActividad", otherKey: "idUbicacion" });
-  Capacitacion.belongsToMany(Propuesta, { as: 'codigoPropuesta_Propuesta_PropuestaCapacitacions', through: PropuestaCapacitacion, foreignKey: "idCapacitacion", otherKey: "codigoPropuesta" });
-  Evaluacion.belongsToMany(Usuario, { as: 'idUsuario_Usuarios', through: EvaluacionItem, foreignKey: "idEvaluacion", otherKey: "idUsuario" });
-  FechaPuntual.belongsToMany(Actividad, { as: 'idActividad_Actividads', through: FechaPuntualActividad, foreignKey: "idFecha", otherKey: "idActividad" });
-  Institucion.belongsToMany(Actividad, { as: 'idActividad_Actividad_InstitucionActividads', through: InstitucionActividad, foreignKey: "idInstitucion", otherKey: "idActividad" });
-  Institucion.belongsToMany(Persona, { as: 'nroDoc_Persona_Responsables', through: Responsable, foreignKey: "idInstitucion", otherKey: "nroDoc" });
-  Institucion.belongsToMany(Propuesta, { as: 'codigoPropuesta_Propuesta_PropuestaInstitucions', through: PropuestaInstitucion, foreignKey: "idInstitucion", otherKey: "codigoPropuesta" });
-  LineaTematica.belongsToMany(Propuesta, { as: 'codigoPropuesta_Propuesta_PropuestaLineaTematicas', through: PropuestaLineaTematica, foreignKey: "idLineaTematica", otherKey: "codigoPropuesta" });
-  Objetivo.belongsToMany(Actividad, { as: 'idActividad_Actividad_ObjetivoActividads', through: ObjetivoActividad, foreignKey: "idObjetivo", otherKey: "idActividad" });
-  PalabraClave.belongsToMany(Propuesta, { as: 'codigoPropuesta_Propuesta_PropuestaPalabraClaves', through: PropuestaPalabraClave, foreignKey: "idPalabraClave", otherKey: "codigoPropuesta" });
-  Persona.belongsToMany(Institucion, { as: 'idInstitucion_Institucion_Responsables', through: Responsable, foreignKey: "nroDoc", otherKey: "idInstitucion" });
-  Persona.belongsToMany(Propuesta, { as: 'codigoPropuesta_Propuesta', through: Integrante, foreignKey: "nroDoc", otherKey: "codigoPropuesta" });
-  ProgramaSippe.belongsToMany(Actividad, { as: 'idActividad_Actividad_ProgramaSIPPEActividads', through: ProgramaSippeActividad, foreignKey: "idProgramaSIPPE", otherKey: "idActividad" });
-  ProgramaSippe.belongsToMany(Propuesta, { as: 'codigoPropuesta_Propuesta_PropuestaProgramaExtensions', through: PropuestaProgramaExtension, foreignKey: "idProgramaExtension", otherKey: "codigoPropuesta" });
-  Propuesta.belongsToMany(Capacitacion, { as: 'idCapacitacion_Capacitacions', through: PropuestaCapacitacion, foreignKey: "codigoPropuesta", otherKey: "idCapacitacion" });
-  Propuesta.belongsToMany(Institucion, { as: 'idInstitucion_Institucion_PropuestaInstitucions', through: PropuestaInstitucion, foreignKey: "codigoPropuesta", otherKey: "idInstitucion" });
-  Propuesta.belongsToMany(LineaTematica, { as: 'idLineaTematica_LineaTematicas', through: PropuestaLineaTematica, foreignKey: "codigoPropuesta", otherKey: "idLineaTematica" });
-  Propuesta.belongsToMany(PalabraClave, { as: 'idPalabraClave_PalabraClaves', through: PropuestaPalabraClave, foreignKey: "codigoPropuesta", otherKey: "idPalabraClave" });
-  Propuesta.belongsToMany(Persona, { as: 'nroDoc_Personas', through: Integrante, foreignKey: "codigoPropuesta", otherKey: "nroDoc" });
-  Propuesta.belongsToMany(ProgramaSippe, { as: 'idProgramaExtension_ProgramaSIPPEs', through: PropuestaProgramaExtension, foreignKey: "codigoPropuesta", otherKey: "idProgramaExtension" });
-  Propuesta.belongsToMany(Propuesta, { as: 'codigoPropuestaPrevia_Propuesta', through: PropuestaPrevia, foreignKey: "codigoPropuesta", otherKey: "codigoPropuestaPrevia" });
-  Propuesta.belongsToMany(Propuesta, { as: 'codigoPropuesta_Propuesta_PropuestaPrevia', through: PropuestaPrevia, foreignKey: "codigoPropuestaPrevia", otherKey: "codigoPropuesta" });
-  Propuesta.belongsToMany(Propuesta, { as: 'codigoPropuestaRelacionada_Propuesta', through: PropuestaRelacionada, foreignKey: "codigoPropuesta", otherKey: "codigoPropuestaRelacionada" });
-  Propuesta.belongsToMany(Propuesta, { as: 'codigoPropuesta_Propuesta_PropuestaRelacionadas', through: PropuestaRelacionada, foreignKey: "codigoPropuestaRelacionada", otherKey: "codigoPropuesta" });
-  Relacion.belongsToMany(Actividad, { as: 'idActividad_Actividad_RelacionActividads', through: RelacionActividad, foreignKey: "idRelacion", otherKey: "idActividad" });
-  Ubicacion.belongsToMany(Actividad, { as: 'idActividad_Actividad_UbicacionActividads', through: UbicacionActividad, foreignKey: "idUbicacion", otherKey: "idActividad" });
-  Usuario.belongsToMany(Evaluacion, { as: 'idEvaluacion_Evaluacions', through: EvaluacionItem, foreignKey: "idUsuario", otherKey: "idEvaluacion" });
+  Actividad.belongsToMany(FechaPuntual, { as: 'idFechaFechaPuntuals', through: FechaPuntualActividad, foreignKey: "idActividad", otherKey: "idFecha" });
+  Actividad.belongsToMany(Institucion, { as: 'idInstitucionInstitucions', through: InstitucionActividad, foreignKey: "idActividad", otherKey: "idInstitucion" });
+  Actividad.belongsToMany(Objetivo, { as: 'idObjetivoObjetivos', through: ObjetivoActividad, foreignKey: "idActividad", otherKey: "idObjetivo" });
+  Actividad.belongsToMany(ProgramaSippe, { as: 'idProgramaSippeProgramaSippes', through: ProgramaSippeActividad, foreignKey: "idActividad", otherKey: "idProgramaSippe" });
+  Actividad.belongsToMany(Relacion, { as: 'idRelacionRelacions', through: RelacionActividad, foreignKey: "idActividad", otherKey: "idRelacion" });
+  Actividad.belongsToMany(Ubicacion, { as: 'idUbicacionUbicacions', through: UbicacionActividad, foreignKey: "idActividad", otherKey: "idUbicacion" });
+  Capacitacion.belongsToMany(Propuesta, { as: 'codigoPropuestaPropuestaPropuestaCapacitacions', through: PropuestaCapacitacion, foreignKey: "idCapacitacion", otherKey: "codigoPropuesta" });
+  Categoria.belongsToMany(Permiso, { as: 'idPermisoPermisos', through: PermisoCategoria, foreignKey: "idCategoria", otherKey: "idPermiso" });
+  Categoria.belongsToMany(Usuario, { as: 'idUsuarioUsuarioUsuarioCategoria', through: UsuarioCategoria, foreignKey: "idCategoria", otherKey: "idUsuario" });
+  Evaluacion.belongsToMany(Usuario, { as: 'idUsuarioUsuarios', through: EvaluacionItem, foreignKey: "idEvaluacion", otherKey: "idUsuario" });
+  FechaPuntual.belongsToMany(Actividad, { as: 'idActividadActividads', through: FechaPuntualActividad, foreignKey: "idFecha", otherKey: "idActividad" });
+  Institucion.belongsToMany(Actividad, { as: 'idActividadActividadInstitucionActividads', through: InstitucionActividad, foreignKey: "idInstitucion", otherKey: "idActividad" });
+  Institucion.belongsToMany(Persona, { as: 'nroDocPersonaResponsables', through: Responsable, foreignKey: "idInstitucion", otherKey: "nroDoc" });
+  Institucion.belongsToMany(Propuesta, { as: 'codigoPropuestaPropuestaPropuestaInstitucions', through: PropuestaInstitucion, foreignKey: "idInstitucion", otherKey: "codigoPropuesta" });
+  LineaTematica.belongsToMany(Propuesta, { as: 'codigoPropuestaPropuestaPropuestaLineaTematicas', through: PropuestaLineaTematica, foreignKey: "idLineaTematica", otherKey: "codigoPropuesta" });
+  Objetivo.belongsToMany(Actividad, { as: 'idActividadActividadObjetivoActividads', through: ObjetivoActividad, foreignKey: "idObjetivo", otherKey: "idActividad" });
+  PalabraClave.belongsToMany(Propuesta, { as: 'codigoPropuestaPropuestaPropuestaPalabraClaves', through: PropuestaPalabraClave, foreignKey: "idPalabraClave", otherKey: "codigoPropuesta" });
+  Permiso.belongsToMany(Categoria, { as: 'idCategoriaCategoria', through: PermisoCategoria, foreignKey: "idPermiso", otherKey: "idCategoria" });
+  Persona.belongsToMany(Institucion, { as: 'idInstitucionInstitucionResponsables', through: Responsable, foreignKey: "nroDoc", otherKey: "idInstitucion" });
+  Persona.belongsToMany(Propuesta, { as: 'codigoPropuestaPropuesta', through: Integrante, foreignKey: "nroDoc", otherKey: "codigoPropuesta" });
+  ProgramaSippe.belongsToMany(Actividad, { as: 'idActividadActividadProgramaSippeActividads', through: ProgramaSippeActividad, foreignKey: "idProgramaSippe", otherKey: "idActividad" });
+  ProgramaSippe.belongsToMany(Propuesta, { as: 'codigoPropuestaPropuestaPropuestaProgramaExtensions', through: PropuestaProgramaExtension, foreignKey: "idProgramaExtension", otherKey: "codigoPropuesta" });
+  Propuesta.belongsToMany(Capacitacion, { as: 'idCapacitacionCapacitacions', through: PropuestaCapacitacion, foreignKey: "codigoPropuesta", otherKey: "idCapacitacion" });
+  Propuesta.belongsToMany(Institucion, { as: 'idInstitucionInstitucionPropuestaInstitucions', through: PropuestaInstitucion, foreignKey: "codigoPropuesta", otherKey: "idInstitucion" });
+  Propuesta.belongsToMany(LineaTematica, { as: 'idLineaTematicaLineaTematicas', through: PropuestaLineaTematica, foreignKey: "codigoPropuesta", otherKey: "idLineaTematica" });
+  Propuesta.belongsToMany(PalabraClave, { as: 'idPalabraClavePalabraClaves', through: PropuestaPalabraClave, foreignKey: "codigoPropuesta", otherKey: "idPalabraClave" });
+  Propuesta.belongsToMany(Persona, { as: 'nroDocPersonas', through: Integrante, foreignKey: "codigoPropuesta", otherKey: "nroDoc" });
+  Propuesta.belongsToMany(ProgramaSippe, { as: 'idProgramaExtensionProgramaSippes', through: PropuestaProgramaExtension, foreignKey: "codigoPropuesta", otherKey: "idProgramaExtension" });
+  Propuesta.belongsToMany(Propuesta, { as: 'codigoPropuestaPreviaPropuesta', through: PropuestaPrevia, foreignKey: "codigoPropuesta", otherKey: "codigoPropuestaPrevia" });
+  Propuesta.belongsToMany(Propuesta, { as: 'codigoPropuestaPropuestaPropuestaPrevia', through: PropuestaPrevia, foreignKey: "codigoPropuestaPrevia", otherKey: "codigoPropuesta" });
+  Propuesta.belongsToMany(Propuesta, { as: 'codigoPropuestaRelacionadaPropuesta', through: PropuestaRelacionada, foreignKey: "codigoPropuesta", otherKey: "codigoPropuestaRelacionada" });
+  Propuesta.belongsToMany(Propuesta, { as: 'codigoPropuestaPropuestaPropuestaRelacionadas', through: PropuestaRelacionada, foreignKey: "codigoPropuestaRelacionada", otherKey: "codigoPropuesta" });
+  Relacion.belongsToMany(Actividad, { as: 'idActividadActividadRelacionActividads', through: RelacionActividad, foreignKey: "idRelacion", otherKey: "idActividad" });
+  Ubicacion.belongsToMany(Actividad, { as: 'idActividadActividadUbicacionActividads', through: UbicacionActividad, foreignKey: "idUbicacion", otherKey: "idActividad" });
+  Usuario.belongsToMany(Categoria, { as: 'idCategoriaCategoriaUsuarioCategoria', through: UsuarioCategoria, foreignKey: "idUsuario", otherKey: "idCategoria" });
+  Usuario.belongsToMany(Evaluacion, { as: 'idEvaluacionEvaluacions', through: EvaluacionItem, foreignKey: "idUsuario", otherKey: "idEvaluacion" });
   Enlace.belongsTo(Actividad, { foreignKey: "idActividad"});
   Actividad.hasMany(Enlace, { foreignKey: "idActividad"});
   FechaPuntualActividad.belongsTo(Actividad, { foreignKey: "idActividad"});
@@ -364,6 +374,8 @@ export function initModels(sequelize: Sequelize) {
   Capacitacion.hasMany(PropuestaCapacitacion, { foreignKey: "idCapacitacion"});
   Integrante.belongsTo(Carrera, { foreignKey: "idCarrera"});
   Carrera.hasMany(Integrante, { foreignKey: "idCarrera"});
+  PermisoCategoria.belongsTo(Categoria, { foreignKey: "idCategoria"});
+  Categoria.hasMany(PermisoCategoria, { foreignKey: "idCategoria"});
   UsuarioCategoria.belongsTo(Categoria, { foreignKey: "idCategoria"});
   Categoria.hasMany(UsuarioCategoria, { foreignKey: "idCategoria"});
   EvaluacionItem.belongsTo(Evaluacion, { foreignKey: "idEvaluacion"});
@@ -390,8 +402,8 @@ export function initModels(sequelize: Sequelize) {
   PalabraClave.hasMany(PropuestaPalabraClave, { foreignKey: "idPalabraClave"});
   ActividadParticipanteSocial.belongsTo(ParticipanteSocial, { foreignKey: "idParticipanteSocial"});
   ParticipanteSocial.hasMany(ActividadParticipanteSocial, { foreignKey: "idParticipanteSocial"});
-  UsuarioCategoria.belongsTo(Permiso, { foreignKey: "idPermiso"});
-  Permiso.hasMany(UsuarioCategoria, { foreignKey: "idPermiso"});
+  PermisoCategoria.belongsTo(Permiso, { foreignKey: "idPermiso"});
+  Permiso.hasMany(PermisoCategoria, { foreignKey: "idPermiso"});
   Integrante.belongsTo(Persona, { foreignKey: "nroDoc"});
   Persona.hasMany(Integrante, { foreignKey: "nroDoc"});
   Responsable.belongsTo(Persona, { foreignKey: "nroDoc"});
@@ -400,8 +412,8 @@ export function initModels(sequelize: Sequelize) {
   Persona.hasMany(Usuario, { foreignKey: "nroDoc"});
   Area.belongsTo(Programa, { foreignKey: "idPrograma"});
   Programa.hasMany(Area, { foreignKey: "idPrograma"});
-  ProgramaSippeActividad.belongsTo(ProgramaSippe, { foreignKey: "idProgramaSIPPE"});
-  ProgramaSippe.hasMany(ProgramaSippeActividad, { foreignKey: "idProgramaSIPPE"});
+  ProgramaSippeActividad.belongsTo(ProgramaSippe, { foreignKey: "idProgramaSippe"});
+  ProgramaSippe.hasMany(ProgramaSippeActividad, { foreignKey: "idProgramaSippe"});
   PropuestaProgramaExtension.belongsTo(ProgramaSippe, { foreignKey: "idProgramaExtension"});
   ProgramaSippe.hasMany(PropuestaProgramaExtension, { foreignKey: "idProgramaExtension"});
   Evaluacion.belongsTo(Propuesta, { foreignKey: "codigoPropuesta"});
@@ -434,16 +446,16 @@ export function initModels(sequelize: Sequelize) {
   Propuesta.hasMany(UbicacionProblematica, { foreignKey: "codigoPropuesta"});
   Carrera.belongsTo(Relacion, { foreignKey: "idUnidadAcademica"});
   Relacion.hasMany(Carrera, { foreignKey: "idUnidadAcademica"});
-  Integrante.belongsTo(Relacion, { foreignKey: "idAreaUNL"});
-  Relacion.hasMany(Integrante, { foreignKey: "idAreaUNL"});
+  Integrante.belongsTo(Relacion, { foreignKey: "idAreaUnl"});
+  Relacion.hasMany(Integrante, { foreignKey: "idAreaUnl"});
   RelacionActividad.belongsTo(Relacion, { foreignKey: "idRelacion"});
   Relacion.hasMany(RelacionActividad, { foreignKey: "idRelacion"});
   RolIntegrante.belongsTo(Rol, { foreignKey: "idRolIntegrante"});
   Rol.hasMany(RolIntegrante, { foreignKey: "idRolIntegrante"});
   Evaluacion.belongsTo(TipoEvaluacion, { foreignKey: "idTipoEvaluacion"});
   TipoEvaluacion.hasMany(Evaluacion, { foreignKey: "idTipoEvaluacion"});
-  Objetivo.belongsTo(TipoObjetivo, { foreignKey: "tipo_obj_id"});
-  TipoObjetivo.hasMany(Objetivo, { foreignKey: "tipo_obj_id"});
+  Objetivo.belongsTo(TipoObjetivo, { foreignKey: "tipoObjId"});
+  TipoObjetivo.hasMany(Objetivo, { foreignKey: "tipoObjId"});
   Relacion.belongsTo(TipoRelacion, { foreignKey: "idTipoRelacion"});
   TipoRelacion.hasMany(Relacion, { foreignKey: "idTipoRelacion"});
   UbicacionActividad.belongsTo(Ubicacion, { foreignKey: "idUbicacion"});
@@ -486,6 +498,7 @@ export function initModels(sequelize: Sequelize) {
     PalabraClave: PalabraClave,
     ParticipanteSocial: ParticipanteSocial,
     Permiso: Permiso,
+    PermisoCategoria: PermisoCategoria,
     Persona: Persona,
     Programa: Programa,
     ProgramaSippe: ProgramaSippe,

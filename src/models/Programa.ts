@@ -19,7 +19,7 @@ export class Programa extends Model<ProgramaAttributes, ProgramaCreationAttribut
   anio!: number;
 
   // Programa hasMany Area via idPrograma
-  Areas!: Area[];
+  areas!: Area[];
   getAreas!: Sequelize.HasManyGetAssociationsMixin<Area>;
   setAreas!: Sequelize.HasManySetAssociationsMixin<Area, AreaId>;
   addArea!: Sequelize.HasManyAddAssociationMixin<Area, AreaId>;

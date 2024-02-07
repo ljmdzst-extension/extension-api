@@ -13,7 +13,7 @@ export interface ActividadObjetivoEspecificoAttributes {
 
 export type ActividadObjetivoEspecificoPk = "idActividadObjetivoEspecifico";
 export type ActividadObjetivoEspecificoId = ActividadObjetivoEspecifico[ActividadObjetivoEspecificoPk];
-export type ActividadObjetivoEspecificoOptionalAttributes = "idActividadObjetivoEspecifico" | "desc" | "motivoModificacion" | "motivoSuspension" ;
+export type ActividadObjetivoEspecificoOptionalAttributes = "desc" | "motivoModificacion" | "motivoSuspension";
 export type ActividadObjetivoEspecificoCreationAttributes = Optional<ActividadObjetivoEspecificoAttributes, ActividadObjetivoEspecificoOptionalAttributes>;
 
 export class ActividadObjetivoEspecifico extends Model<ActividadObjetivoEspecificoAttributes, ActividadObjetivoEspecificoCreationAttributes> implements ActividadObjetivoEspecificoAttributes {
@@ -24,7 +24,7 @@ export class ActividadObjetivoEspecifico extends Model<ActividadObjetivoEspecifi
   motivoSuspension?: string;
 
   // ActividadObjetivoEspecifico hasMany CronogramaActividad via idActividadObjetivoEspecifico
-  CronogramaActividads!: CronogramaActividad[];
+  cronogramaActividads!: CronogramaActividad[];
   getCronogramaActividads!: Sequelize.HasManyGetAssociationsMixin<CronogramaActividad>;
   setCronogramaActividads!: Sequelize.HasManySetAssociationsMixin<CronogramaActividad, CronogramaActividadId>;
   addCronogramaActividad!: Sequelize.HasManyAddAssociationMixin<CronogramaActividad, CronogramaActividadId>;
@@ -36,15 +36,14 @@ export class ActividadObjetivoEspecifico extends Model<ActividadObjetivoEspecifi
   hasCronogramaActividads!: Sequelize.HasManyHasAssociationsMixin<CronogramaActividad, CronogramaActividadId>;
   countCronogramaActividads!: Sequelize.HasManyCountAssociationsMixin;
   // ActividadObjetivoEspecifico belongsTo ObjetivoEspecifico via idObjetivoEspecifico
-  idObjetivoEspecifico_ObjetivoEspecifico!: ObjetivoEspecifico;
-  getIdObjetivoEspecifico_ObjetivoEspecifico!: Sequelize.BelongsToGetAssociationMixin<ObjetivoEspecifico>;
-  setIdObjetivoEspecifico_ObjetivoEspecifico!: Sequelize.BelongsToSetAssociationMixin<ObjetivoEspecifico, ObjetivoEspecificoId>;
-  createIdObjetivoEspecifico_ObjetivoEspecifico!: Sequelize.BelongsToCreateAssociationMixin<ObjetivoEspecifico>;
+  idObjetivoEspecificoObjetivoEspecifico!: ObjetivoEspecifico;
+  getIdObjetivoEspecificoObjetivoEspecifico!: Sequelize.BelongsToGetAssociationMixin<ObjetivoEspecifico>;
+  setIdObjetivoEspecificoObjetivoEspecifico!: Sequelize.BelongsToSetAssociationMixin<ObjetivoEspecifico, ObjetivoEspecificoId>;
+  createIdObjetivoEspecificoObjetivoEspecifico!: Sequelize.BelongsToCreateAssociationMixin<ObjetivoEspecifico>;
 
   static initModel(sequelize: Sequelize.Sequelize): typeof ActividadObjetivoEspecifico {
     return ActividadObjetivoEspecifico.init({
     idActividadObjetivoEspecifico: {
-      autoIncrement: true,
       type: DataTypes.INTEGER,
       allowNull: false,
       primaryKey: true

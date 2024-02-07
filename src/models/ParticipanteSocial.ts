@@ -26,7 +26,7 @@ export class ParticipanteSocial extends Model<ParticipanteSocialAttributes, Part
   observ?: string;
 
   // ParticipanteSocial hasMany ActividadParticipanteSocial via idParticipanteSocial
-  ActividadParticipanteSocials!: ActividadParticipanteSocial[];
+  actividadParticipanteSocials!: ActividadParticipanteSocial[];
   getActividadParticipanteSocials!: Sequelize.HasManyGetAssociationsMixin<ActividadParticipanteSocial>;
   setActividadParticipanteSocials!: Sequelize.HasManySetAssociationsMixin<ActividadParticipanteSocial, ActividadParticipanteSocialId>;
   addActividadParticipanteSocial!: Sequelize.HasManyAddAssociationMixin<ActividadParticipanteSocial, ActividadParticipanteSocialId>;
@@ -38,10 +38,10 @@ export class ParticipanteSocial extends Model<ParticipanteSocialAttributes, Part
   hasActividadParticipanteSocials!: Sequelize.HasManyHasAssociationsMixin<ActividadParticipanteSocial, ActividadParticipanteSocialId>;
   countActividadParticipanteSocials!: Sequelize.HasManyCountAssociationsMixin;
   // ParticipanteSocial belongsTo Propuesta via codigoPropuesta
-  codigoPropuesta_Propuestum!: Propuesta;
-  getCodigoPropuesta_Propuestum!: Sequelize.BelongsToGetAssociationMixin<Propuesta>;
-  setCodigoPropuesta_Propuestum!: Sequelize.BelongsToSetAssociationMixin<Propuesta, PropuestaId>;
-  createCodigoPropuesta_Propuestum!: Sequelize.BelongsToCreateAssociationMixin<Propuesta>;
+  codigoPropuestaPropuestum!: Propuesta;
+  getCodigoPropuestaPropuestum!: Sequelize.BelongsToGetAssociationMixin<Propuesta>;
+  setCodigoPropuestaPropuestum!: Sequelize.BelongsToSetAssociationMixin<Propuesta, PropuestaId>;
+  createCodigoPropuestaPropuestum!: Sequelize.BelongsToCreateAssociationMixin<Propuesta>;
 
   static initModel(sequelize: Sequelize.Sequelize): typeof ParticipanteSocial {
     return ParticipanteSocial.init({

@@ -17,15 +17,15 @@ export class FechaPuntualActividad extends Model<FechaPuntualActividadAttributes
   idActividad!: number;
 
   // FechaPuntualActividad belongsTo Actividad via idActividad
-  idActividad_Actividad!: Actividad;
-  getIdActividad_Actividad!: Sequelize.BelongsToGetAssociationMixin<Actividad>;
-  setIdActividad_Actividad!: Sequelize.BelongsToSetAssociationMixin<Actividad, ActividadId>;
-  createIdActividad_Actividad!: Sequelize.BelongsToCreateAssociationMixin<Actividad>;
+  idActividadActividad!: Actividad;
+  getIdActividadActividad!: Sequelize.BelongsToGetAssociationMixin<Actividad>;
+  setIdActividadActividad!: Sequelize.BelongsToSetAssociationMixin<Actividad, ActividadId>;
+  createIdActividadActividad!: Sequelize.BelongsToCreateAssociationMixin<Actividad>;
   // FechaPuntualActividad belongsTo FechaPuntual via idFecha
-  idFecha_FechaPuntual!: FechaPuntual;
-  getIdFecha_FechaPuntual!: Sequelize.BelongsToGetAssociationMixin<FechaPuntual>;
-  setIdFecha_FechaPuntual!: Sequelize.BelongsToSetAssociationMixin<FechaPuntual, FechaPuntualId>;
-  createIdFecha_FechaPuntual!: Sequelize.BelongsToCreateAssociationMixin<FechaPuntual>;
+  idFechaFechaPuntual!: FechaPuntual;
+  getIdFechaFechaPuntual!: Sequelize.BelongsToGetAssociationMixin<FechaPuntual>;
+  setIdFechaFechaPuntual!: Sequelize.BelongsToSetAssociationMixin<FechaPuntual, FechaPuntualId>;
+  createIdFechaFechaPuntual!: Sequelize.BelongsToCreateAssociationMixin<FechaPuntual>;
 
   static initModel(sequelize: Sequelize.Sequelize): typeof FechaPuntualActividad {
     return FechaPuntualActividad.init({

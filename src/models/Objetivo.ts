@@ -8,7 +8,7 @@ export interface ObjetivoAttributes {
   idObjetivo: number;
   nom: string;
   detalle?: string;
-  tipo_obj_id: number;
+  tipoObjId: number;
 }
 
 export type ObjetivoPk = "idObjetivo";
@@ -20,22 +20,22 @@ export class Objetivo extends Model<ObjetivoAttributes, ObjetivoCreationAttribut
   idObjetivo!: number;
   nom!: string;
   detalle?: string;
-  tipo_obj_id!: number;
+  tipoObjId!: number;
 
   // Objetivo belongsToMany Actividad via idObjetivo and idActividad
-  idActividad_Actividad_ObjetivoActividads!: Actividad[];
-  getIdActividad_Actividad_ObjetivoActividads!: Sequelize.BelongsToManyGetAssociationsMixin<Actividad>;
-  setIdActividad_Actividad_ObjetivoActividads!: Sequelize.BelongsToManySetAssociationsMixin<Actividad, ActividadId>;
-  addIdActividad_Actividad_ObjetivoActividad!: Sequelize.BelongsToManyAddAssociationMixin<Actividad, ActividadId>;
-  addIdActividad_Actividad_ObjetivoActividads!: Sequelize.BelongsToManyAddAssociationsMixin<Actividad, ActividadId>;
-  createIdActividad_Actividad_ObjetivoActividad!: Sequelize.BelongsToManyCreateAssociationMixin<Actividad>;
-  removeIdActividad_Actividad_ObjetivoActividad!: Sequelize.BelongsToManyRemoveAssociationMixin<Actividad, ActividadId>;
-  removeIdActividad_Actividad_ObjetivoActividads!: Sequelize.BelongsToManyRemoveAssociationsMixin<Actividad, ActividadId>;
-  hasIdActividad_Actividad_ObjetivoActividad!: Sequelize.BelongsToManyHasAssociationMixin<Actividad, ActividadId>;
-  hasIdActividad_Actividad_ObjetivoActividads!: Sequelize.BelongsToManyHasAssociationsMixin<Actividad, ActividadId>;
-  countIdActividad_Actividad_ObjetivoActividads!: Sequelize.BelongsToManyCountAssociationsMixin;
+  idActividadActividadObjetivoActividads!: Actividad[];
+  getIdActividadActividadObjetivoActividads!: Sequelize.BelongsToManyGetAssociationsMixin<Actividad>;
+  setIdActividadActividadObjetivoActividads!: Sequelize.BelongsToManySetAssociationsMixin<Actividad, ActividadId>;
+  addIdActividadActividadObjetivoActividad!: Sequelize.BelongsToManyAddAssociationMixin<Actividad, ActividadId>;
+  addIdActividadActividadObjetivoActividads!: Sequelize.BelongsToManyAddAssociationsMixin<Actividad, ActividadId>;
+  createIdActividadActividadObjetivoActividad!: Sequelize.BelongsToManyCreateAssociationMixin<Actividad>;
+  removeIdActividadActividadObjetivoActividad!: Sequelize.BelongsToManyRemoveAssociationMixin<Actividad, ActividadId>;
+  removeIdActividadActividadObjetivoActividads!: Sequelize.BelongsToManyRemoveAssociationsMixin<Actividad, ActividadId>;
+  hasIdActividadActividadObjetivoActividad!: Sequelize.BelongsToManyHasAssociationMixin<Actividad, ActividadId>;
+  hasIdActividadActividadObjetivoActividads!: Sequelize.BelongsToManyHasAssociationsMixin<Actividad, ActividadId>;
+  countIdActividadActividadObjetivoActividads!: Sequelize.BelongsToManyCountAssociationsMixin;
   // Objetivo hasMany ObjetivoActividad via idObjetivo
-  ObjetivoActividads!: ObjetivoActividad[];
+  objetivoActividads!: ObjetivoActividad[];
   getObjetivoActividads!: Sequelize.HasManyGetAssociationsMixin<ObjetivoActividad>;
   setObjetivoActividads!: Sequelize.HasManySetAssociationsMixin<ObjetivoActividad, ObjetivoActividadId>;
   addObjetivoActividad!: Sequelize.HasManyAddAssociationMixin<ObjetivoActividad, ObjetivoActividadId>;
@@ -46,11 +46,11 @@ export class Objetivo extends Model<ObjetivoAttributes, ObjetivoCreationAttribut
   hasObjetivoActividad!: Sequelize.HasManyHasAssociationMixin<ObjetivoActividad, ObjetivoActividadId>;
   hasObjetivoActividads!: Sequelize.HasManyHasAssociationsMixin<ObjetivoActividad, ObjetivoActividadId>;
   countObjetivoActividads!: Sequelize.HasManyCountAssociationsMixin;
-  // Objetivo belongsTo TipoObjetivo via tipo_obj_id
-  tipo_obj!: TipoObjetivo;
-  getTipo_obj!: Sequelize.BelongsToGetAssociationMixin<TipoObjetivo>;
-  setTipo_obj!: Sequelize.BelongsToSetAssociationMixin<TipoObjetivo, TipoObjetivoId>;
-  createTipo_obj!: Sequelize.BelongsToCreateAssociationMixin<TipoObjetivo>;
+  // Objetivo belongsTo TipoObjetivo via tipoObjId
+  tipoObj!: TipoObjetivo;
+  getTipoObj!: Sequelize.BelongsToGetAssociationMixin<TipoObjetivo>;
+  setTipoObj!: Sequelize.BelongsToSetAssociationMixin<TipoObjetivo, TipoObjetivoId>;
+  createTipoObj!: Sequelize.BelongsToCreateAssociationMixin<TipoObjetivo>;
 
   static initModel(sequelize: Sequelize.Sequelize): typeof Objetivo {
     return Objetivo.init({
@@ -68,13 +68,14 @@ export class Objetivo extends Model<ObjetivoAttributes, ObjetivoCreationAttribut
       type: DataTypes.STRING(500),
       allowNull: true
     },
-    tipo_obj_id: {
+    tipoObjId: {
       type: DataTypes.INTEGER,
       allowNull: false,
       references: {
         model: 'TipoObjetivo',
         key: 'idTipoObj'
-      }
+      },
+      field: 'tipo_obj_id'
     }
   }, {
     sequelize,

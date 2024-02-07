@@ -10,22 +10,22 @@ export interface PropuestaPalabraClaveAttributes {
 
 export type PropuestaPalabraClavePk = "codigoPropuesta" | "idPalabraClave";
 export type PropuestaPalabraClaveId = PropuestaPalabraClave[PropuestaPalabraClavePk];
-export type PropuestaPalabraClaveCreationAttributes = PropuestaPalabraClaveAttributes;
+export type PropuestaPalabraClaveCreationAttributes =PropuestaPalabraClaveAttributes;
 
 export class PropuestaPalabraClave extends Model<PropuestaPalabraClaveAttributes, PropuestaPalabraClaveCreationAttributes> implements PropuestaPalabraClaveAttributes {
   codigoPropuesta!: string;
   idPalabraClave!: number;
 
   // PropuestaPalabraClave belongsTo PalabraClave via idPalabraClave
-  idPalabraClave_PalabraClave!: PalabraClave;
-  getIdPalabraClave_PalabraClave!: Sequelize.BelongsToGetAssociationMixin<PalabraClave>;
-  setIdPalabraClave_PalabraClave!: Sequelize.BelongsToSetAssociationMixin<PalabraClave, PalabraClaveId>;
-  createIdPalabraClave_PalabraClave!: Sequelize.BelongsToCreateAssociationMixin<PalabraClave>;
+  idPalabraClavePalabraClave!: PalabraClave;
+  getIdPalabraClavePalabraClave!: Sequelize.BelongsToGetAssociationMixin<PalabraClave>;
+  setIdPalabraClavePalabraClave!: Sequelize.BelongsToSetAssociationMixin<PalabraClave, PalabraClaveId>;
+  createIdPalabraClavePalabraClave!: Sequelize.BelongsToCreateAssociationMixin<PalabraClave>;
   // PropuestaPalabraClave belongsTo Propuesta via codigoPropuesta
-  codigoPropuesta_Propuestum!: Propuesta;
-  getCodigoPropuesta_Propuestum!: Sequelize.BelongsToGetAssociationMixin<Propuesta>;
-  setCodigoPropuesta_Propuestum!: Sequelize.BelongsToSetAssociationMixin<Propuesta, PropuestaId>;
-  createCodigoPropuesta_Propuestum!: Sequelize.BelongsToCreateAssociationMixin<Propuesta>;
+  codigoPropuestaPropuestum!: Propuesta;
+  getCodigoPropuestaPropuestum!: Sequelize.BelongsToGetAssociationMixin<Propuesta>;
+  setCodigoPropuestaPropuestum!: Sequelize.BelongsToSetAssociationMixin<Propuesta, PropuestaId>;
+  createCodigoPropuestaPropuestum!: Sequelize.BelongsToCreateAssociationMixin<Propuesta>;
 
   static initModel(sequelize: Sequelize.Sequelize): typeof PropuestaPalabraClave {
     return PropuestaPalabraClave.init({

@@ -28,7 +28,7 @@ export class Evaluacion extends Model<EvaluacionAttributes, EvaluacionCreationAt
   puntaje?: number;
 
   // Evaluacion hasMany EvaluacionItem via idEvaluacion
-  EvaluacionItems!: EvaluacionItem[];
+  evaluacionItems!: EvaluacionItem[];
   getEvaluacionItems!: Sequelize.HasManyGetAssociationsMixin<EvaluacionItem>;
   setEvaluacionItems!: Sequelize.HasManySetAssociationsMixin<EvaluacionItem, EvaluacionItemId>;
   addEvaluacionItem!: Sequelize.HasManyAddAssociationMixin<EvaluacionItem, EvaluacionItemId>;
@@ -40,27 +40,27 @@ export class Evaluacion extends Model<EvaluacionAttributes, EvaluacionCreationAt
   hasEvaluacionItems!: Sequelize.HasManyHasAssociationsMixin<EvaluacionItem, EvaluacionItemId>;
   countEvaluacionItems!: Sequelize.HasManyCountAssociationsMixin;
   // Evaluacion belongsToMany Usuario via idEvaluacion and idUsuario
-  idUsuario_Usuarios!: Usuario[];
-  getIdUsuario_Usuarios!: Sequelize.BelongsToManyGetAssociationsMixin<Usuario>;
-  setIdUsuario_Usuarios!: Sequelize.BelongsToManySetAssociationsMixin<Usuario, UsuarioId>;
-  addIdUsuario_Usuario!: Sequelize.BelongsToManyAddAssociationMixin<Usuario, UsuarioId>;
-  addIdUsuario_Usuarios!: Sequelize.BelongsToManyAddAssociationsMixin<Usuario, UsuarioId>;
-  createIdUsuario_Usuario!: Sequelize.BelongsToManyCreateAssociationMixin<Usuario>;
-  removeIdUsuario_Usuario!: Sequelize.BelongsToManyRemoveAssociationMixin<Usuario, UsuarioId>;
-  removeIdUsuario_Usuarios!: Sequelize.BelongsToManyRemoveAssociationsMixin<Usuario, UsuarioId>;
-  hasIdUsuario_Usuario!: Sequelize.BelongsToManyHasAssociationMixin<Usuario, UsuarioId>;
-  hasIdUsuario_Usuarios!: Sequelize.BelongsToManyHasAssociationsMixin<Usuario, UsuarioId>;
-  countIdUsuario_Usuarios!: Sequelize.BelongsToManyCountAssociationsMixin;
+  idUsuarioUsuarios!: Usuario[];
+  getIdUsuarioUsuarios!: Sequelize.BelongsToManyGetAssociationsMixin<Usuario>;
+  setIdUsuarioUsuarios!: Sequelize.BelongsToManySetAssociationsMixin<Usuario, UsuarioId>;
+  addIdUsuarioUsuario!: Sequelize.BelongsToManyAddAssociationMixin<Usuario, UsuarioId>;
+  addIdUsuarioUsuarios!: Sequelize.BelongsToManyAddAssociationsMixin<Usuario, UsuarioId>;
+  createIdUsuarioUsuario!: Sequelize.BelongsToManyCreateAssociationMixin<Usuario>;
+  removeIdUsuarioUsuario!: Sequelize.BelongsToManyRemoveAssociationMixin<Usuario, UsuarioId>;
+  removeIdUsuarioUsuarios!: Sequelize.BelongsToManyRemoveAssociationsMixin<Usuario, UsuarioId>;
+  hasIdUsuarioUsuario!: Sequelize.BelongsToManyHasAssociationMixin<Usuario, UsuarioId>;
+  hasIdUsuarioUsuarios!: Sequelize.BelongsToManyHasAssociationsMixin<Usuario, UsuarioId>;
+  countIdUsuarioUsuarios!: Sequelize.BelongsToManyCountAssociationsMixin;
   // Evaluacion belongsTo Propuesta via codigoPropuesta
-  codigoPropuesta_Propuestum!: Propuesta;
-  getCodigoPropuesta_Propuestum!: Sequelize.BelongsToGetAssociationMixin<Propuesta>;
-  setCodigoPropuesta_Propuestum!: Sequelize.BelongsToSetAssociationMixin<Propuesta, PropuestaId>;
-  createCodigoPropuesta_Propuestum!: Sequelize.BelongsToCreateAssociationMixin<Propuesta>;
+  codigoPropuestaPropuestum!: Propuesta;
+  getCodigoPropuestaPropuestum!: Sequelize.BelongsToGetAssociationMixin<Propuesta>;
+  setCodigoPropuestaPropuestum!: Sequelize.BelongsToSetAssociationMixin<Propuesta, PropuestaId>;
+  createCodigoPropuestaPropuestum!: Sequelize.BelongsToCreateAssociationMixin<Propuesta>;
   // Evaluacion belongsTo TipoEvaluacion via idTipoEvaluacion
-  idTipoEvaluacion_TipoEvaluacion!: TipoEvaluacion;
-  getIdTipoEvaluacion_TipoEvaluacion!: Sequelize.BelongsToGetAssociationMixin<TipoEvaluacion>;
-  setIdTipoEvaluacion_TipoEvaluacion!: Sequelize.BelongsToSetAssociationMixin<TipoEvaluacion, TipoEvaluacionId>;
-  createIdTipoEvaluacion_TipoEvaluacion!: Sequelize.BelongsToCreateAssociationMixin<TipoEvaluacion>;
+  idTipoEvaluacionTipoEvaluacion!: TipoEvaluacion;
+  getIdTipoEvaluacionTipoEvaluacion!: Sequelize.BelongsToGetAssociationMixin<TipoEvaluacion>;
+  setIdTipoEvaluacionTipoEvaluacion!: Sequelize.BelongsToSetAssociationMixin<TipoEvaluacion, TipoEvaluacionId>;
+  createIdTipoEvaluacionTipoEvaluacion!: Sequelize.BelongsToCreateAssociationMixin<TipoEvaluacion>;
 
   static initModel(sequelize: Sequelize.Sequelize): typeof Evaluacion {
     return Evaluacion.init({
