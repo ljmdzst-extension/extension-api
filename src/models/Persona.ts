@@ -150,3 +150,11 @@ export class Persona extends Model<PersonaAttributes, PersonaCreationAttributes>
   });
   }
 }
+
+
+export const PERSONA_VACIA : PersonaAttributes = {
+  nroDoc : '',
+  tipoDoc : 1,
+  ape : '',
+  nom : ''
+} 

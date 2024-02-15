@@ -17,15 +17,15 @@ export class PermisoCategoria extends Model<PermisoCategoriaAttributes, PermisoC
   idCategoria!: number;
 
   // PermisoCategoria belongsTo Categoria via idCategoria
-  idCategoriaCategorium!: Categoria;
-  getIdCategoriaCategorium!: Sequelize.BelongsToGetAssociationMixin<Categoria>;
-  setIdCategoriaCategorium!: Sequelize.BelongsToSetAssociationMixin<Categoria, CategoriaId>;
-  createIdCategoriaCategorium!: Sequelize.BelongsToCreateAssociationMixin<Categoria>;
+  idCategoriaCategoria!: Categoria;
+  getIdCategoriaCategoria!: Sequelize.BelongsToGetAssociationMixin<Categoria>;
+  setIdCategoriaCategoria!: Sequelize.BelongsToSetAssociationMixin<Categoria, CategoriaId>;
+  createIdCategoriaCategoria!: Sequelize.BelongsToCreateAssociationMixin<Categoria>;
   // PermisoCategoria belongsTo Permiso via idPermiso
-  idPermisoPermiso!: Permiso;
-  getIdPermisoPermiso!: Sequelize.BelongsToGetAssociationMixin<Permiso>;
-  setIdPermisoPermiso!: Sequelize.BelongsToSetAssociationMixin<Permiso, PermisoId>;
-  createIdPermisoPermiso!: Sequelize.BelongsToCreateAssociationMixin<Permiso>;
+  permiso!: Permiso;
+  getPermiso!: Sequelize.BelongsToGetAssociationMixin<Permiso>;
+  setPermiso!: Sequelize.BelongsToSetAssociationMixin<Permiso, PermisoId>;
+  createPermiso!: Sequelize.BelongsToCreateAssociationMixin<Permiso>;
 
   static initModel(sequelize: Sequelize.Sequelize): typeof PermisoCategoria {
     return PermisoCategoria.init({

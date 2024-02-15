@@ -33,12 +33,9 @@ export class Permiso extends Model<PermisoAttributes, PermisoCreationAttributes>
   permisoCategoria!: PermisoCategoria[];
   getPermisoCategoria!: Sequelize.HasManyGetAssociationsMixin<PermisoCategoria>;
   setPermisoCategoria!: Sequelize.HasManySetAssociationsMixin<PermisoCategoria, PermisoCategoriaId>;
-  addPermisoCategorium!: Sequelize.HasManyAddAssociationMixin<PermisoCategoria, PermisoCategoriaId>;
   addPermisoCategoria!: Sequelize.HasManyAddAssociationsMixin<PermisoCategoria, PermisoCategoriaId>;
-  createPermisoCategorium!: Sequelize.HasManyCreateAssociationMixin<PermisoCategoria>;
-  removePermisoCategorium!: Sequelize.HasManyRemoveAssociationMixin<PermisoCategoria, PermisoCategoriaId>;
+  createPermisoCategoria!: Sequelize.HasManyCreateAssociationMixin<PermisoCategoria>;
   removePermisoCategoria!: Sequelize.HasManyRemoveAssociationsMixin<PermisoCategoria, PermisoCategoriaId>;
-  hasPermisoCategorium!: Sequelize.HasManyHasAssociationMixin<PermisoCategoria, PermisoCategoriaId>;
   hasPermisoCategoria!: Sequelize.HasManyHasAssociationsMixin<PermisoCategoria, PermisoCategoriaId>;
   countPermisoCategoria!: Sequelize.HasManyCountAssociationsMixin;
 

@@ -31,12 +31,12 @@ export class Usuario extends Model<UsuarioAttributes, UsuarioCreationAttributes>
   pendiente!: number;
 
   // Usuario belongsTo Persona via nroDoc
-  nroDocPersona!: Persona;
-  getNroDocPersona!: Sequelize.BelongsToGetAssociationMixin<Persona>;
-  setNroDocPersona!: Sequelize.BelongsToSetAssociationMixin<Persona, PersonaId>;
+  persona!: Persona;
+  getPersona!: Sequelize.BelongsToGetAssociationMixin<Persona>;
+  setPersona!: Sequelize.BelongsToSetAssociationMixin<Persona, PersonaId>;
   createNroDocPersona!: Sequelize.BelongsToCreateAssociationMixin<Persona>;
   // Usuario hasMany Actividad via idUsuario
-  actividads!: Actividad[];
+  actividades!: Actividad[];
   getActividads!: Sequelize.HasManyGetAssociationsMixin<Actividad>;
   setActividads!: Sequelize.HasManySetAssociationsMixin<Actividad, ActividadId>;
   addActividad!: Sequelize.HasManyAddAssociationMixin<Actividad, ActividadId>;
@@ -84,9 +84,9 @@ export class Usuario extends Model<UsuarioAttributes, UsuarioCreationAttributes>
   hasEvaluacionItems!: Sequelize.HasManyHasAssociationsMixin<EvaluacionItem, EvaluacionItemId>;
   countEvaluacionItems!: Sequelize.HasManyCountAssociationsMixin;
   // Usuario hasMany Propuesta via idUsuario
-  propuestas!: Propuesta[];
-  getPropuestas!: Sequelize.HasManyGetAssociationsMixin<Propuesta>;
-  setPropuestas!: Sequelize.HasManySetAssociationsMixin<Propuesta, PropuestaId>;
+  propuesta!: Propuesta[];
+  getPropuesta!: Sequelize.HasManyGetAssociationsMixin<Propuesta>;
+  setPropuesta!: Sequelize.HasManySetAssociationsMixin<Propuesta, PropuestaId>;
   addPropuestum!: Sequelize.HasManyAddAssociationMixin<Propuesta, PropuestaId>;
   addPropuesta!: Sequelize.HasManyAddAssociationsMixin<Propuesta, PropuestaId>;
   createPropuestum!: Sequelize.HasManyCreateAssociationMixin<Propuesta>;

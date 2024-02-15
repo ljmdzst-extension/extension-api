@@ -14,6 +14,7 @@ export interface InstitucionAttributes {
   email?: string;
   tel?: string;
   ubicacion?: string;
+  PropuestaInstitucion ?:{ antecedentes : string}
 }
 
 export type InstitucionPk = "idInstitucion";
