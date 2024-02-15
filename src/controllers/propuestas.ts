@@ -19,7 +19,7 @@ export const verPropuestas = async(req : typeof request , res : typeof response)
 
         if(!iUsuario) throw { status : 500 , message : `No existe el usuario : ${idUsuario}`}
         
-        const iPersona : Persona = await iUsuario.getNroDoc_Persona();
+        const iPersona : Persona = await iUsuario.getPersona({attributes : ['ape','nom']});
 
         const lPropuestas = await Propuesta.findAll({
             attributes : ['codigoPropuesta','titulo','modalidad','duracion'],

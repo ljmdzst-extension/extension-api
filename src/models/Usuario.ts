@@ -31,12 +31,12 @@ export class Usuario extends Model<UsuarioAttributes, UsuarioCreationAttributes>
   pendiente!: number;
 
   // Usuario belongsTo Persona via nroDoc
-  nroDocPersona!: Persona;
-  getNroDocPersona!: Sequelize.BelongsToGetAssociationMixin<Persona>;
-  setNroDocPersona!: Sequelize.BelongsToSetAssociationMixin<Persona, PersonaId>;
+  persona!: Persona;
+  getPersona!: Sequelize.BelongsToGetAssociationMixin<Persona>;
+  setPersona!: Sequelize.BelongsToSetAssociationMixin<Persona, PersonaId>;
   createNroDocPersona!: Sequelize.BelongsToCreateAssociationMixin<Persona>;
   // Usuario hasMany Actividad via idUsuario
-  actividads!: Actividad[];
+  actividades!: Actividad[];
   getActividads!: Sequelize.HasManyGetAssociationsMixin<Actividad>;
   setActividads!: Sequelize.HasManySetAssociationsMixin<Actividad, ActividadId>;
   addActividad!: Sequelize.HasManyAddAssociationMixin<Actividad, ActividadId>;

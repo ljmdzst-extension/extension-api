@@ -40,7 +40,7 @@ const iniciarTablas = async( transaction : Transaction)=>{
          item =>  BD.Area.findOrCreate({ defaults : { ...item }, where : {idArea : item.idArea}, transaction })
       );
     const cargarProgramasSIPPE = data_inicial.ProgramaSIPPE.map(
-         item =>  BD.ProgramaSippe.findOrCreate({ defaults : { ...item }, where : {idProgramaSIPPE : item.idProgramaSIPPE}, transaction })
+         item =>  BD.ProgramaSippe.findOrCreate({ defaults : { ...item }, where : {idProgramaSippe : item.idProgramaSIPPE}, transaction })
       );
 
     await Promise.all(cargarProgramas);

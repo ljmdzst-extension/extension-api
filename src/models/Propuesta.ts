@@ -216,42 +216,17 @@ export class Propuesta extends Model<PropuestaAttributes, PropuestaCreationAttri
   hasIdProgramaExtensionProgramaSippe!: Sequelize.BelongsToManyHasAssociationMixin<ProgramaSippe, ProgramaSippeId>;
   hasIdProgramaExtensionProgramaSippes!: Sequelize.BelongsToManyHasAssociationsMixin<ProgramaSippe, ProgramaSippeId>;
   countIdProgramaExtensionProgramaSippes!: Sequelize.BelongsToManyCountAssociationsMixin;
+
   // Propuesta belongsToMany Propuesta via codigoPropuesta and codigoPropuestaPrevia
-  codigoPropuestaPreviaPropuesta!: Propuesta[];
-  getCodigoPropuestaPreviaPropuesta!: Sequelize.BelongsToManyGetAssociationsMixin<Propuesta>;
-  setCodigoPropuestaPreviaPropuesta!: Sequelize.BelongsToManySetAssociationsMixin<Propuesta, PropuestaId>;
-  addCodigoPropuestaPreviaPropuestum!: Sequelize.BelongsToManyAddAssociationMixin<Propuesta, PropuestaId>;
-  addCodigoPropuestaPreviaPropuesta!: Sequelize.BelongsToManyAddAssociationsMixin<Propuesta, PropuestaId>;
-  createCodigoPropuestaPreviaPropuestum!: Sequelize.BelongsToManyCreateAssociationMixin<Propuesta>;
-  removeCodigoPropuestaPreviaPropuestum!: Sequelize.BelongsToManyRemoveAssociationMixin<Propuesta, PropuestaId>;
-  removeCodigoPropuestaPreviaPropuesta!: Sequelize.BelongsToManyRemoveAssociationsMixin<Propuesta, PropuestaId>;
-  hasCodigoPropuestaPreviaPropuestum!: Sequelize.BelongsToManyHasAssociationMixin<Propuesta, PropuestaId>;
-  hasCodigoPropuestaPreviaPropuesta!: Sequelize.BelongsToManyHasAssociationsMixin<Propuesta, PropuestaId>;
-  countCodigoPropuestaPreviaPropuesta!: Sequelize.BelongsToManyCountAssociationsMixin;
-  // Propuesta belongsToMany Propuesta via codigoPropuestaPrevia and codigoPropuesta
-  codigoPropuestaPropuestaPropuestaPrevia!: Propuesta[];
-  getCodigoPropuestaPropuestaPropuestaPrevia!: Sequelize.BelongsToManyGetAssociationsMixin<Propuesta>;
-  setCodigoPropuestaPropuestaPropuestaPrevia!: Sequelize.BelongsToManySetAssociationsMixin<Propuesta, PropuestaId>;
-  addCodigoPropuestaPropuestaPropuestaPrevium!: Sequelize.BelongsToManyAddAssociationMixin<Propuesta, PropuestaId>;
-  addCodigoPropuestaPropuestaPropuestaPrevia!: Sequelize.BelongsToManyAddAssociationsMixin<Propuesta, PropuestaId>;
-  createCodigoPropuestaPropuestaPropuestaPrevium!: Sequelize.BelongsToManyCreateAssociationMixin<Propuesta>;
-  removeCodigoPropuestaPropuestaPropuestaPrevium!: Sequelize.BelongsToManyRemoveAssociationMixin<Propuesta, PropuestaId>;
-  removeCodigoPropuestaPropuestaPropuestaPrevia!: Sequelize.BelongsToManyRemoveAssociationsMixin<Propuesta, PropuestaId>;
-  hasCodigoPropuestaPropuestaPropuestaPrevium!: Sequelize.BelongsToManyHasAssociationMixin<Propuesta, PropuestaId>;
-  hasCodigoPropuestaPropuestaPropuestaPrevia!: Sequelize.BelongsToManyHasAssociationsMixin<Propuesta, PropuestaId>;
-  countCodigoPropuestaPropuestaPropuestaPrevia!: Sequelize.BelongsToManyCountAssociationsMixin;
-  // Propuesta belongsToMany Propuesta via codigoPropuesta and codigoPropuestaRelacionada
-  codigoPropuestaRelacionadaPropuesta!: Propuesta[];
-  getCodigoPropuestaRelacionadaPropuesta!: Sequelize.BelongsToManyGetAssociationsMixin<Propuesta>;
-  setCodigoPropuestaRelacionadaPropuesta!: Sequelize.BelongsToManySetAssociationsMixin<Propuesta, PropuestaId>;
-  addCodigoPropuestaRelacionadaPropuestum!: Sequelize.BelongsToManyAddAssociationMixin<Propuesta, PropuestaId>;
-  addCodigoPropuestaRelacionadaPropuesta!: Sequelize.BelongsToManyAddAssociationsMixin<Propuesta, PropuestaId>;
-  createCodigoPropuestaRelacionadaPropuestum!: Sequelize.BelongsToManyCreateAssociationMixin<Propuesta>;
-  removeCodigoPropuestaRelacionadaPropuestum!: Sequelize.BelongsToManyRemoveAssociationMixin<Propuesta, PropuestaId>;
-  removeCodigoPropuestaRelacionadaPropuesta!: Sequelize.BelongsToManyRemoveAssociationsMixin<Propuesta, PropuestaId>;
-  hasCodigoPropuestaRelacionadaPropuestum!: Sequelize.BelongsToManyHasAssociationMixin<Propuesta, PropuestaId>;
-  hasCodigoPropuestaRelacionadaPropuesta!: Sequelize.BelongsToManyHasAssociationsMixin<Propuesta, PropuestaId>;
-  countCodigoPropuestaRelacionadaPropuesta!: Sequelize.BelongsToManyCountAssociationsMixin;
+  propuestasPrevias!: PropuestaPrevia[];
+  getPropuestasPrevias!: Sequelize.HasManyGetAssociationsMixin<PropuestaPrevia>;
+  setPropuestasPrevias!: Sequelize.HasManySetAssociationsMixin<PropuestaPrevia, PropuestaPreviaId>;
+  addPropuestaPrevia!: Sequelize.HasManyAddAssociationMixin<PropuestaPrevia, PropuestaPreviaId>;
+  createPropuestaPrevia !: Sequelize.HasManyCreateAssociationMixin<PropuestaPrevia>;
+  removePropuestaPrevia!: Sequelize.HasManyRemoveAssociationMixin<PropuestaPrevia, PropuestaPreviaId>;
+  hasPropuestaPrevia!: Sequelize.HasManyHasAssociationMixin<PropuestaPrevia, PropuestaPreviaId>;
+  countPropuestaPrevia!: Sequelize.HasManyCountAssociationsMixin;
+
   // Propuesta belongsToMany Propuesta via codigoPropuestaRelacionada and codigoPropuesta
   codigoPropuestaPropuestaPropuestaRelacionadas!: Propuesta[];
   getCodigoPropuestaPropuestaPropuestaRelacionadas!: Sequelize.BelongsToManyGetAssociationsMixin<Propuesta>;
@@ -312,30 +287,7 @@ export class Propuesta extends Model<PropuestaAttributes, PropuestaCreationAttri
   hasPropuestaPalabraClave!: Sequelize.HasManyHasAssociationMixin<PropuestaPalabraClave, PropuestaPalabraClaveId>;
   hasPropuestaPalabraClaves!: Sequelize.HasManyHasAssociationsMixin<PropuestaPalabraClave, PropuestaPalabraClaveId>;
   countPropuestaPalabraClaves!: Sequelize.HasManyCountAssociationsMixin;
-  // Propuesta hasMany PropuestaPrevia via codigoPropuesta
-  propuestaPrevia!: PropuestaPrevia[];
-  getPropuestaPrevia!: Sequelize.HasManyGetAssociationsMixin<PropuestaPrevia>;
-  setPropuestaPrevia!: Sequelize.HasManySetAssociationsMixin<PropuestaPrevia, PropuestaPreviaId>;
-  addPropuestaPrevium!: Sequelize.HasManyAddAssociationMixin<PropuestaPrevia, PropuestaPreviaId>;
-  addPropuestaPrevia!: Sequelize.HasManyAddAssociationsMixin<PropuestaPrevia, PropuestaPreviaId>;
-  createPropuestaPrevium!: Sequelize.HasManyCreateAssociationMixin<PropuestaPrevia>;
-  removePropuestaPrevium!: Sequelize.HasManyRemoveAssociationMixin<PropuestaPrevia, PropuestaPreviaId>;
-  removePropuestaPrevia!: Sequelize.HasManyRemoveAssociationsMixin<PropuestaPrevia, PropuestaPreviaId>;
-  hasPropuestaPrevium!: Sequelize.HasManyHasAssociationMixin<PropuestaPrevia, PropuestaPreviaId>;
-  hasPropuestaPrevia!: Sequelize.HasManyHasAssociationsMixin<PropuestaPrevia, PropuestaPreviaId>;
-  countPropuestaPrevia!: Sequelize.HasManyCountAssociationsMixin;
-  // Propuesta hasMany PropuestaPrevia via codigoPropuestaPrevia
-  codigoPropuestaPreviaPropuestaPrevia!: PropuestaPrevia[];
-  getCodigoPropuestaPreviaPropuestaPrevia!: Sequelize.HasManyGetAssociationsMixin<PropuestaPrevia>;
-  setCodigoPropuestaPreviaPropuestaPrevia!: Sequelize.HasManySetAssociationsMixin<PropuestaPrevia, PropuestaPreviaId>;
-  addCodigoPropuestaPreviaPropuestaPrevium!: Sequelize.HasManyAddAssociationMixin<PropuestaPrevia, PropuestaPreviaId>;
-  addCodigoPropuestaPreviaPropuestaPrevia!: Sequelize.HasManyAddAssociationsMixin<PropuestaPrevia, PropuestaPreviaId>;
-  createCodigoPropuestaPreviaPropuestaPrevium!: Sequelize.HasManyCreateAssociationMixin<PropuestaPrevia>;
-  removeCodigoPropuestaPreviaPropuestaPrevium!: Sequelize.HasManyRemoveAssociationMixin<PropuestaPrevia, PropuestaPreviaId>;
-  removeCodigoPropuestaPreviaPropuestaPrevia!: Sequelize.HasManyRemoveAssociationsMixin<PropuestaPrevia, PropuestaPreviaId>;
-  hasCodigoPropuestaPreviaPropuestaPrevium!: Sequelize.HasManyHasAssociationMixin<PropuestaPrevia, PropuestaPreviaId>;
-  hasCodigoPropuestaPreviaPropuestaPrevia!: Sequelize.HasManyHasAssociationsMixin<PropuestaPrevia, PropuestaPreviaId>;
-  countCodigoPropuestaPreviaPropuestaPrevia!: Sequelize.HasManyCountAssociationsMixin;
+  
   // Propuesta hasMany PropuestaProgramaExtension via codigoPropuesta
   propuestaProgramaExtensions!: PropuestaProgramaExtension[];
   getPropuestaProgramaExtensions!: Sequelize.HasManyGetAssociationsMixin<PropuestaProgramaExtension>;

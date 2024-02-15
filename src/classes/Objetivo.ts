@@ -105,7 +105,7 @@ class Objetivo {
  
          if(!bdObjetivo ) throw ERROR.OBJETIVO_INEXISTENTE;
  
-         const iTipoObjetivo = await TipoObjetivo.buscarPorIDBD(bdObjetivo.tipo_obj_id,transaction);
+         const iTipoObjetivo = await TipoObjetivo.buscarPorIDBD(bdObjetivo.tipoObjId,transaction);
  
          return new Objetivo(bdObjetivo.dataValues,iTipoObjetivo) ;
      } ;
@@ -144,7 +144,7 @@ class Objetivo {
                 idObjetivo : bdObj.idObjetivo,
                 nom : bdObj.nom,
                 detalle : bdObj.detalle,
-                tipoObjetivo : (await TipoObjetivo.buscarPorIDBD(bdObj.tipo_obj_id,transaction)).verDatos() 
+                tipoObjetivo : (await TipoObjetivo.buscarPorIDBD(bdObj.tipoObjId,transaction)).verDatos() 
             } )) 
         )
 
