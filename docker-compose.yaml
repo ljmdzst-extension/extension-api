@@ -1,0 +1,49 @@
+version: "3.9"
+services:
+ extension_api-mini:
+  build:
+    context: .
+    target: minimal
+  image: extension_api:v2
+  ports:
+   - ${PORT}:${PORT}
+  volumes:
+    - ./dist:/extension_api/src
+    - /extension_api/node_modules
+  restart: unless-stopped
+  environment:
+    - DB_HOST=${DB_HOST}
+    - DB_USER=${DB_USER}
+    - DB_PASS=${DB_PASS}
+    - DB_PORT=${DB_PORT}
+    - DB_NAME=${DB_NAME}
+    - NODE_ENV=${NODE_ENV}
+ extension_api-dev:
+  build:
+    context: .
+    target: dev
+  image: extension_api:v2
+  ports:
+   - ${PORT}:${PORT}
+  volumes:
+    - ./dist:/extension_api/src
+    - ./node_modules:/extension_api/node_modules
+  restart: unless-stopped
+  environment:
+    - DB_HOST=${DB_HOST}
+    - DB_USER=${DB_USER}
+    - DB_PASS=${DB_PASS}
+    - DB_PORT=${DB_PORT}
+    - DB_NAME=${DB_NAME}
+    - NODE_ENV=${NODE_ENV}
+ mysql:
+  image: mysql:5.7
+  volumes:
+    - ./db_estension_backup:/var/lib/mysql
+  ports:
+   - "3306:3306"
+  environment:
+    MYSQL_ROOT_PASSWORD: extension_1234
+    MYSQL_DATABASE: db_extension
+
+    

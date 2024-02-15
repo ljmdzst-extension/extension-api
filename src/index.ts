@@ -25,7 +25,7 @@ import routerActividad from './routes/actividad';
 
 const app = express();
 
-app.use(cors());
+// app.use(cors());
 
 app.use(morgan('dev',{stream : accesLogStream}));
 app.use(morgan('combined',{stream : combinedLogStream}));

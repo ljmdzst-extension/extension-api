@@ -9,7 +9,7 @@ import { ESTADO_BD } from "../types/general";
 type ID_PROG_SIPPE = number;
 
 interface IProgramaSIPPE {
-    idProgramaSIPPE : ID_PROG_SIPPE;
+    idProgramaSippe : ID_PROG_SIPPE;
     nom ?: string;
     subProgramaDe ?: ID_PROG_SIPPE;
 }
@@ -28,22 +28,22 @@ class ProgramaSIPPE{
 
     public verID() : number 
     {
-        return this.data.idProgramaSIPPE;
+        return this.data.idProgramaSippe;
     }
     public estaDeBaja() : boolean { 
         return this.estadoEnBD === ESTADO_BD.B;
     }
     public verDatos() : IProgramaSIPPE {
         return {
-            idProgramaSIPPE : this.data.idProgramaSIPPE,
+            idProgramaSippe : this.data.idProgramaSippe,
             nom : this.data.nom,
             subProgramaDe : this.data.subProgramaDe
         };
     }
 
     public static async validar ( data : IProgramaSIPPE, transaction ?: Transaction) : Promise<void> {
-        if(!(data.idProgramaSIPPE > 0)) throw INVALIDO.ID_PROG_SIPPE;
-        await new BD.ProgramaSippeActividad({idProgramaSIPPE : data.idProgramaSIPPE, idActividad : 0}).validate({skip : ['createdAt','updatedAt','deletedAt']});
+        if(!(data.idProgramaSippe > 0)) throw INVALIDO.ID_PROG_SIPPE;
+        await new BD.ProgramaSippeActividad({idProgramaSippe : data.idProgramaSippe, idActividad : 0}).validate({skip : ['createdAt','updatedAt','deletedAt']});
     }
 
     public cargarActividad ( iActividad : Actividad ){ 
@@ -66,7 +66,7 @@ class ProgramaSIPPE{
         
         if(!this.iActividad) throw { status : 500, msg : `La ProgramaSIPPE ${this.verID()} no tienne una actividad asociada`}
         
-        const registro = { idActividad : this.iActividad.verID(), idProgramaSIPPE : this.verID() }
+        const registro = { idActividad : this.iActividad.verID(), idProgramaSippe : this.verID() }
         
         switch (this.estadoEnBD) {
             case ESTADO_BD.A:
@@ -104,9 +104,9 @@ class ProgramaSIPPE{
 
             await Promise.all(
                 bdProgramaSIPPEesActividad.map( async dbProgAct => {
-                    const dbProg = await BD.ProgramaSippe.findByPk(dbProgAct.idProgramaSIPPE,{transaction});
+                    const dbProg = await BD.ProgramaSippe.findByPk(dbProgAct.idProgramaSippe,{transaction});
                     if(dbProg){
-                        salida.push( dbProg.idProgramaSIPPE );
+                        salida.push( dbProg.idProgramaSippe );
                     }
                    
                 } )

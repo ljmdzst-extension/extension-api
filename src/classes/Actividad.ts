@@ -401,7 +401,7 @@ class Actividad  {
         }
         if(data.listaProgramasSIPPE){
             console.log("validando programas sippe..")
-            await Promise.all( Array.from(data.listaProgramasSIPPE.values()).map( async (id: any) => await ProgramaSIPPE.validar({idProgramaSIPPE : id},transaction) ) )
+            await Promise.all( Array.from(data.listaProgramasSIPPE.values()).map( async (id: any) => await ProgramaSIPPE.validar({idProgramaSippe : id},transaction) ) )
         }
         if(data.listaRelaciones){
             console.log("validando relaciones..")

@@ -404,11 +404,11 @@ export function initModels(sequelize: Sequelize) {
   ParticipanteSocial.hasMany(ActividadParticipanteSocial, { foreignKey: "idParticipanteSocial"});
   PermisoCategoria.belongsTo(Permiso, { foreignKey: "idPermiso"});
   Permiso.hasMany(PermisoCategoria, { foreignKey: "idPermiso"});
-  Integrante.belongsTo(Persona, { foreignKey: "nroDoc"});
+  Integrante.belongsTo(Persona, { as : 'nroDocPersona', foreignKey: "nroDoc"});
   Persona.hasMany(Integrante, { foreignKey: "nroDoc"});
   Responsable.belongsTo(Persona, { foreignKey: "nroDoc"});
   Persona.hasMany(Responsable, { foreignKey: "nroDoc"});
-  Usuario.belongsTo(Persona, { foreignKey: "nroDoc"});
+  Usuario.belongsTo(Persona, { as : 'nroDocPersona' ,foreignKey: "nroDoc"});
   Persona.hasMany(Usuario, { foreignKey: "nroDoc"});
   Area.belongsTo(Programa, { foreignKey: "idPrograma"});
   Programa.hasMany(Area, { foreignKey: "idPrograma"});
@@ -467,7 +467,7 @@ export function initModels(sequelize: Sequelize) {
   EvaluacionItem.belongsTo(Usuario, { foreignKey: "idUsuario"});
   Usuario.hasMany(EvaluacionItem, { foreignKey: "idUsuario"});
   Propuesta.belongsTo(Usuario, { foreignKey: "idUsuario"});
-  Usuario.hasMany(Propuesta, { foreignKey: "idUsuario"});
+  Usuario.hasMany(Propuesta, { as : 'propuestas', foreignKey: "idUsuario"});
   UsuarioCategoria.belongsTo(Usuario, { foreignKey: "idUsuario"});
   Usuario.hasMany(UsuarioCategoria, { foreignKey: "idUsuario"});
   Meta.belongsTo(Valoracion, { foreignKey: "idValoracion"});

@@ -20,6 +20,8 @@ export const  verPropuesta = async( codigo : PropuestaId, db : Sequelize ) => {
 
     if(!iPropuesta) throw { status : 400 , message : 'propuesta no encontrada'}
     
+    salida = {...salida,...iPropuesta.dataValues}
+
     await db.transaction({}, async transaction => {
         // datos generales
 
@@ -29,10 +31,10 @@ export const  verPropuesta = async( codigo : PropuestaId, db : Sequelize ) => {
         const lPalabrasClave : PalabraClaveAttributes[] = [];
 
         await Promise.all([
-        iPropuesta.getIdCapacitacion_Capacitacions({transaction}).then( resp => lCapacitaciones.push(...resp.map( item => item.idCapacitacion)) ),
-        iPropuesta.getIdLineaTematica_LineaTematicas({transaction}).then( resp => lLineasTematicas.push(...resp.map( item => item.idLineaTematica)) ),
-        iPropuesta.getIdPalabraClave_PalabraClaves({transaction}).then( resp => lPalabrasClave.push(...resp)),
-        iPropuesta.getIdProgramaExtension_ProgramaSIPPEs({transaction}).then( resp => lProgramasExtension.push(...resp.map( item => item.idProgramaSIPPE)))
+            iPropuesta.getIdCapacitacionCapacitacions({transaction}).then( resp => lCapacitaciones.push(...resp.map( item => item.idCapacitacion)) ),
+            iPropuesta.getIdLineaTematicaLineaTematicas({transaction}).then( resp => lLineasTematicas.push(...resp.map( item => item.idLineaTematica)) ),
+            iPropuesta.getIdPalabraClavePalabraClaves({transaction}).then( resp => lPalabrasClave.push(...resp)),
+            iPropuesta.getIdProgramaExtensionProgramaSippes({transaction}).then( resp => lProgramasExtension.push(...resp.map( item => item.idProgramaSippe)))
         ]);
 
         transaction.afterCommit( ()=>{
@@ -49,10 +51,10 @@ export const  verPropuesta = async( codigo : PropuestaId, db : Sequelize ) => {
         const institucionesObtenidas : Institucion[] = [];
         const responsablesObtenidos : Map<InstitucionId,PersonaAttributes & ResponsableAttributes> = new Map();
         await Promise.all([
-            iPropuesta.getIdInstitucion_Institucion_PropuestaInstitucions({transaction}).then( instituciones => institucionesObtenidas.push(...instituciones)  ),
+            iPropuesta.getIdInstitucionInstitucionPropuestaInstitucions({transaction}).then( instituciones => institucionesObtenidas.push(...instituciones)  ),
             institucionesObtenidas.map( institucion => 
-                institucion.getNroDoc_Persona_Responsables({joinTableAttributes : ['idInstitucion','desde','hasta']})
-                .then( responsables => responsablesObtenidos.set(responsables[0].Responsables[0].idInstitucion,{...responsables[0],...responsables[0].Responsables[0]}) ) )
+                institucion.getNroDocPersonaResponsables({joinTableAttributes : ['idInstitucion','desde','hasta']})
+                .then( responsables => responsablesObtenidos.set(responsables[0].responsables[0].idInstitucion,{...responsables[0],...responsables[0].responsables[0]}) ) )
         ]);
 
         transaction.afterCommit(()=>{
@@ -67,69 +69,64 @@ export const  verPropuesta = async( codigo : PropuestaId, db : Sequelize ) => {
 
     });
     
+    const lIntegrantes : Integrante[] = [];
 
-    await db.transaction({}, async transaction => {
+    await iPropuesta.getIntegrantes({
+        attributes : [
+            'nroDoc',
+            'codigoPropuesta', 
+            'tipoIntegrante',
+            'observ',
+            'titulo',
+            'tieneTarjeta',
+            'dedicacionDocente',
+            'categoriaDocente',
+            'idAreaUNL',
+            'idCarrera',
+            'periodoLectivo'
+        ]
+    }).then(
+        resp => lIntegrantes.push(...resp)
+    )
 
-        // integrantes
+    if(lIntegrantes.length) {
+        await db.transaction({}, async transaction => {
 
-        // obtener integrantes 
-        //  c/u obtener datos personales
-        //  c/u obtener roles
-
-
-        let respPeticiones : typeof salida.lIntegrantes = [];
-
-        const lIntegrantes : Integrante[] = [];
-        
-        await Promise.all([
-            iPropuesta.getIntegrantes({
-                attributes : [
-                    'nroDoc',
-                    'codigoPropuesta', 
-                    'tipoIntegrante',
-                    'observ',
-                    'titulo',
-                    'tieneTarjeta',
-                    'dedicacionDocente',
-                    'categoriaDocente',
-                    'idAreaUNL',
-                    'idCarrera',
-                    'periodoLectivo'
-                ]
-            }).then(
-                resp => lIntegrantes.push(...resp)
-            ),
-        
-            lIntegrantes.map( async  integ => {
-                
-                const iPersona = await integ.getNroDoc_Persona({
-                    transaction,
-                    attributes : [
-                        'nroDoc',
-                        'tipoDoc',
-                        'ape',
-                        'nom',
-                        'tel',
-                        'dom',
-                        'email'
-                    ]
-                });
-
-                const lRoles = await integ.getRolIntegrantes({transaction});
-                
-                respPeticiones.push({
-                    ...integ.dataValues,
-                    ...iPersona.dataValues,
-                    lRoles : lRoles.map( rol => rol.idRolIntegrante)
-                })
-            } )
-        ]);
-
-        transaction.afterCommit(()=>{
-            salida.lIntegrantes = respPeticiones;
-        })
-        
-    });
+            // integrantes
+    
+            // obtener integrantes 
+            //  c/u obtener datos personales
+            //  c/u obtener roles
+            await Promise.all(
+                lIntegrantes.map( async  integ => {
+                    
+                    const iPersona = await integ.getNroDocPersona({
+                        transaction,
+                        attributes : [
+                            'nroDoc',
+                            'tipoDoc',
+                            'ape',
+                            'nom',
+                            'tel',
+                            'dom',
+                            'email'
+                        ]
+                    });
+    
+                    const lRoles = await integ.getRolIntegrantes({transaction});
+                    
+                    salida.lIntegrantes.push({
+                        ...integ.dataValues,
+                        ...iPersona.dataValues,
+                        lRoles : lRoles.map( rol => rol.idRolIntegrante)
+                    })
+                } )
+            );
+    
+            
+            
+        });
+    }
 
 
     return salida;

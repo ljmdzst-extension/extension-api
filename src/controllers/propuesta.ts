@@ -10,10 +10,10 @@ export const verPropuesta = async(req : typeof request , res : typeof response)=
     
     try {
         const {codigoPropuesta} = req.params;
-
+        const propuesta = await ServiciosPropuesta.verPropuesta(codigoPropuesta,sequelizeExtension);
         res.status(200).json({
             ok : true,
-            data : await ServiciosPropuesta.verPropuesta(codigoPropuesta,sequelizeExtension),
+            data : propuesta,
             error : null
         })
         
