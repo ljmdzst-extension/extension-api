@@ -1,7 +1,5 @@
 import { Transaction } from "sequelize"
 import { Integrante } from "../models/Integrante"
-import { TIntegrante } from "../types/propuesta"
-import { PERSONA_VACIA } from "../models/Persona"
 
 
 export default class ServiciosIntegrantes {
@@ -9,33 +7,27 @@ export default class ServiciosIntegrantes {
     static async leerDatos(iIntegrante : Integrante, transaction ?: Transaction ) {
         
 
-        iIntegrante.nroDocPersona = await iIntegrante.getNroDocPersona({transaction});
-        iIntegrante.rolIntegrantes = await iIntegrante.getRolIntegrantes({transaction});
+        iIntegrante.persona = await iIntegrante.getPersona({transaction});
+        iIntegrante.roles = await iIntegrante.getRoles({transaction});
+    }
+    
+    static async guardarDatos(iIntegrante : Integrante, transaction ?: Transaction ) {
+        if(iIntegrante.roles.length) {
+            await Promise.all(iIntegrante.roles.map( rol => rol.save({transaction}) ));
+        }
+
+        if(iIntegrante.persona){
+            await iIntegrante.persona.save({transaction});
+        }
+        await iIntegrante.save({transaction});
     }
 
     static  verDatos ( iIntegrante : Integrante){
     
-        let salida : TIntegrante =  {
-            ...PERSONA_VACIA,
-            codigoPropuesta : '',
-            tipoIntegrante : 1,
-            lRoles : []
-        }
-        if(iIntegrante.nroDocPersona){
-            salida = {
-                ...salida, 
-                ...iIntegrante.nroDocPersona.dataValues
-            }  
-        }
-        if(iIntegrante.rolIntegrantes){
-            salida = {
-                ...salida , 
-                lRoles : iIntegrante.rolIntegrantes.map( rol => rol.idRolIntegrante)
-            }
-        }
-    
-        return salida;
+        return iIntegrante.dataValues;
     }
+
+    
     
 }
 

@@ -20,12 +20,13 @@ import RouterPlanificacion from './routes/planificacion';
 import routerPrograma from './routes/programa';
 import routerArea from './routes/area';
 import routerActividad from './routes/actividad';
+import usuarioRouter from './routes/usuario';
 
 
 
 const app = express();
 
-// app.use(cors());
+app.use(cors());
 
 app.use(morgan('dev',{stream : accesLogStream}));
 app.use(morgan('combined',{stream : combinedLogStream}));
@@ -45,6 +46,8 @@ app.use('/api/v2/metas/programas',routerPrograma);
 app.use('/api/v2/metas/areas',routerArea);
 app.use('/api/v2/metas/bases',RouterBases);
 app.use('/api/v2/metas/actividad',routerActividad);
+app.use( '/api/v2/usr', usuarioRouter  ) 
+app.use( '/api/v2/usr/bases', RouterBases  ) 
 
 app.listen( process.env.PORT , async()=>{
     try {

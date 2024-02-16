@@ -14,6 +14,7 @@ export interface IBases {
     listaProgramasSIPPE : IProgramaSIPPE[]
     listaRelaciones : IRelacion[],
     listaValoraciones : IValoracion[],
+    unidadesAcademicas : IRelacion[]
 }
 
 export const verBases = async(req : typeof request , res : typeof response)=>{
@@ -56,7 +57,8 @@ export default class ControllerBases {
             listaObjetivos : [],
             listaProgramasSIPPE : [],
             listaRelaciones : [],
-            listaValoraciones : []
+            listaValoraciones : [],
+            unidadesAcademicas : []
         }
 
         salida.listaRelaciones = await Relacion.verListaBD(transaction);
@@ -67,7 +69,7 @@ export default class ControllerBases {
 
         salida.listaValoraciones= await Valoracion.verListaBD(transaction);
 
-
+        salida.unidadesAcademicas = salida.listaRelaciones.filter( rel => rel.tipoRelacion?.idTipoRelacion === 3 )
         return salida;
     }
 

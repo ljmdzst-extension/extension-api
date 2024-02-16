@@ -1,12 +1,17 @@
 import express from 'express';
-import { bajaPropuesta, crearPropuesta, editarPropuesta, verPropuesta } from '../controllers/propuesta';
+import { 
+    deletePropuesta,
+    getPropuesta, 
+    postPropuesta, 
+    putPropuesta 
+} from '../controllers/propuesta';
 import { validarCodigoPropuesta } from '../middlewares/propuesta';
 
 const RouterPropuesta = express.Router();
 
-RouterPropuesta.get('/:codigoPropuesta',validarCodigoPropuesta ,verPropuesta);
-RouterPropuesta.post('/', crearPropuesta);
-RouterPropuesta.put('/:codigoPropuesta',validarCodigoPropuesta,editarPropuesta);
-RouterPropuesta.delete('/:idUsuario/:codigoPropuesta',validarCodigoPropuesta,bajaPropuesta);
+RouterPropuesta.get('/:codigoPropuesta',validarCodigoPropuesta ,getPropuesta);
+RouterPropuesta.post('/', postPropuesta);
+RouterPropuesta.put('/:codigoPropuesta',validarCodigoPropuesta,putPropuesta);
+RouterPropuesta.delete('/:idUsuario/:codigoPropuesta',validarCodigoPropuesta,deletePropuesta);
 
 export default RouterPropuesta;

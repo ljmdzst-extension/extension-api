@@ -9,6 +9,7 @@ import {
 } from "../models/init-models";
 
 export const verPropuestas = async( db : Sequelize , idUsuario : UsuarioId )=>{
+    
     let salida : PropuestaAttributes[] = [];
     
     const {Usuario,Persona} = initModels(db);
@@ -22,6 +23,7 @@ export const verPropuestas = async( db : Sequelize , idUsuario : UsuarioId )=>{
     let iPersona :  Persona = new Persona();
 
     await db.transaction(
+
         {logging : process.env.NODE_ENV==='development' ? sql => console.log(sql) : undefined},
 
         async transaction =>{

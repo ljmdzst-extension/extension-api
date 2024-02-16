@@ -19,10 +19,10 @@ export class CronogramaActividad extends Model<CronogramaActividadAttributes, Cr
   anio!: number;
 
   // CronogramaActividad belongsTo ActividadObjetivoEspecifico via idActividadObjetivoEspecifico
-  idActividadObjetivoEspecificoActividadObjetivoEspecifico!: ActividadObjetivoEspecifico;
-  getIdActividadObjetivoEspecificoActividadObjetivoEspecifico!: Sequelize.BelongsToGetAssociationMixin<ActividadObjetivoEspecifico>;
-  setIdActividadObjetivoEspecificoActividadObjetivoEspecifico!: Sequelize.BelongsToSetAssociationMixin<ActividadObjetivoEspecifico, ActividadObjetivoEspecificoId>;
-  createIdActividadObjetivoEspecificoActividadObjetivoEspecifico!: Sequelize.BelongsToCreateAssociationMixin<ActividadObjetivoEspecifico>;
+  actividadObjetivoEspecifico!: ActividadObjetivoEspecifico;
+  getActividadObjetivoEspecifico!: Sequelize.BelongsToGetAssociationMixin<ActividadObjetivoEspecifico>;
+  setActividadObjetivoEspecifico!: Sequelize.BelongsToSetAssociationMixin<ActividadObjetivoEspecifico, ActividadObjetivoEspecificoId>;
+  createActividadObjetivoEspecifico!: Sequelize.BelongsToCreateAssociationMixin<ActividadObjetivoEspecifico>;
 
   static initModel(sequelize: Sequelize.Sequelize): typeof CronogramaActividad {
     return CronogramaActividad.init({

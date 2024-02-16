@@ -4,37 +4,33 @@ import { request, response } from "express";
 import logger from '../config/logsConfig';
 import ServiciosPropuesta from '../services/propuesta';
 import sequelizeExtension from "../config/dbConfig";
-import { PROPUESTA_VACIA, TPropuesta } from "../types/propuesta";
 import ServiciosIntegrantes from "../services/integrante";
 
-export const verPropuesta = async(req : typeof request , res : typeof response)=>{
-    
+export const getPropuesta = async(req : typeof request , res : typeof response)=>{
     
     try {
         const {codigoPropuesta} = req.params;
-        let salida : TPropuesta = PROPUESTA_VACIA;
+
 
         const {Propuesta} = initModels(sequelizeExtension);
-        
-        const iServiciosPropuesta = new ServiciosPropuesta(Propuesta, new ServiciosIntegrantes());
 
-        const iPropuesta = await iServiciosPropuesta.verPropuesta(codigoPropuesta);
+        const iPropuesta = await Propuesta.findByPk(codigoPropuesta);
         
         if(!iPropuesta) throw { status : 400 , message : 'propuesta no encontrada'}
-
-        salida = {...salida , ...iPropuesta.dataValues}
     
-        salida = { ...salida , ...await iServiciosPropuesta.verDatosGrales(iPropuesta)}
+        await ServiciosPropuesta.leerDatos(iPropuesta);
         
-        salida = { ...salida , ...await iServiciosPropuesta.verInstituciones(iPropuesta)}
+        // salida = { ...salida , ...await iServiciosPropuesta.verDatosGrales(iPropuesta)}
         
-        salida = { ...salida , equipoExtension : await iServiciosPropuesta.verEquipoExtension(iPropuesta)}
+        // salida = { ...salida , ...await iServiciosPropuesta.verInstituciones(iPropuesta)}
+        
+        // salida = { ...salida , equipoExtension : await iServiciosPropuesta.verEquipoExtension(iPropuesta)}
     
-        salida = { ...salida , planificacion : await iServiciosPropuesta.verPlanificacion(iPropuesta)}
+        // salida = { ...salida , planificacion : await iServiciosPropuesta.verPlanificacion(iPropuesta)}
 
         res.status(200).json({
             ok : true,
-            data : salida,
+            data :  ServiciosPropuesta.verDatos(iPropuesta),
             error : null
         })
         
@@ -49,7 +45,7 @@ export const verPropuesta = async(req : typeof request , res : typeof response)=
     }
 }
 
-export const crearPropuesta = async(req : typeof request , res : typeof response)=>{
+export const postPropuesta = async(req : typeof request , res : typeof response)=>{
     const transaction = await sequelizeExtension.transaction();
     try {
       
@@ -64,7 +60,7 @@ export const crearPropuesta = async(req : typeof request , res : typeof response
         })
     }
 }
-export const editarPropuesta = async(req : typeof request , res : typeof response)=>{
+export const putPropuesta = async(req : typeof request , res : typeof response)=>{
     const transaction = await sequelizeExtension.transaction({logging : msg => console.log(msg)});
     try {
         /**... */
@@ -82,7 +78,7 @@ export const editarPropuesta = async(req : typeof request , res : typeof respons
         })
     }
 }
-export const bajaPropuesta = async(req : typeof request , res : typeof response)=>{
+export const deletePropuesta = async(req : typeof request , res : typeof response)=>{
     try {
         /**... */
         

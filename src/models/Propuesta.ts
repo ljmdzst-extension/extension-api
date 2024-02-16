@@ -1,15 +1,8 @@
 import * as Sequelize from 'sequelize';
 import { DataTypes, Model, Optional } from 'sequelize';
-import type { Capacitacion, CapacitacionId } from './Capacitacion';
-import type { Evaluacion, EvaluacionId } from './Evaluacion';
-import type { Institucion, InstitucionId } from './Institucion';
 import type { Integrante, IntegranteId } from './Integrante';
-import type { LineaTematica, LineaTematicaId } from './LineaTematica';
 import type { ObjetivoEspecifico, ObjetivoEspecificoId } from './ObjetivoEspecifico';
-import type { PalabraClave, PalabraClaveId } from './PalabraClave';
 import type { ParticipanteSocial, ParticipanteSocialId } from './ParticipanteSocial';
-import type { Persona, PersonaId } from './Persona';
-import type { ProgramaSippe, ProgramaSippeId } from './ProgramaSippe';
 import type { PropuestaCapacitacion, PropuestaCapacitacionId } from './PropuestaCapacitacion';
 import type { PropuestaInstitucion, PropuestaInstitucionId } from './PropuestaInstitucion';
 import type { PropuestaLineaTematica, PropuestaLineaTematicaId } from './PropuestaLineaTematica';

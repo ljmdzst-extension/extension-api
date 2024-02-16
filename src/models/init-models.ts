@@ -364,8 +364,8 @@ export function initModels(sequelize: Sequelize) {
   InstitucionActividad.belongsTo(Actividad, { foreignKey: "idActividad"});
   InstitucionActividad.belongsTo(Institucion, { foreignKey: "idInstitucion"});
   Integrante.belongsTo(Carrera, { foreignKey: "idCarrera"});
-  Integrante.hasMany(RolIntegrante, { foreignKey: "nroDoc"});
-  Integrante.hasMany(RolIntegrante, { foreignKey: "codigoPropuesta"});
+  Integrante.hasMany(RolIntegrante, {as :'roles' ,foreignKey: "codigoPropuesta"});
+  Integrante.belongsTo(Persona, { as : 'persona', foreignKey: "nroDoc"});
   LineaTematica.belongsToMany(Propuesta, { as: 'codigoPropuestaPropuestaPropuestaLineaTematicas', through: PropuestaLineaTematica, foreignKey: "idLineaTematica", otherKey: "codigoPropuesta" });
   LineaTematica.hasMany(PropuestaLineaTematica, { foreignKey: "idLineaTematica"});
   Meta.belongsTo(Actividad, { foreignKey: "idActividad"});
@@ -395,18 +395,17 @@ export function initModels(sequelize: Sequelize) {
   Propuesta.belongsToMany(Propuesta, { as: 'codigoPropuestaRelacionadaPropuesta', through: PropuestaRelacionada, foreignKey: "codigoPropuesta", otherKey: "codigoPropuestaRelacionada" });
   Propuesta.belongsToMany(Propuesta, { as: 'codigoPropuestaPropuestaPropuestaRelacionadas', through: PropuestaRelacionada, foreignKey: "codigoPropuestaRelacionada", otherKey: "codigoPropuesta" });
   Propuesta.hasMany(Evaluacion, { foreignKey: "codigoPropuesta"});
-  Propuesta.hasMany(Integrante, { foreignKey: "codigoPropuesta"});
-  Propuesta.hasMany(ObjetivoEspecifico, { foreignKey: "codigoPropuesta"});
-  Propuesta.hasMany(ParticipanteSocial, { foreignKey: "codigoPropuesta"});
-  Propuesta.hasMany(PropuestaCapacitacion, { foreignKey: "codigoPropuesta"});
-  Propuesta.hasMany(PropuestaInstitucion, { foreignKey: "codigoPropuesta"});
-  Propuesta.hasMany(PropuestaLineaTematica, { foreignKey: "codigoPropuesta"});
-  Propuesta.hasMany(PropuestaPalabraClave, { foreignKey: "codigoPropuesta"});
+  Propuesta.hasMany(Integrante, { as : 'integrantes', foreignKey: "codigoPropuesta"});
+  Propuesta.hasMany(ObjetivoEspecifico, {as : 'objetivoEspecificos', foreignKey: "codigoPropuesta"});
+  Propuesta.hasMany(ParticipanteSocial, { as : 'participanteSociales', foreignKey: "codigoPropuesta"});
+  Propuesta.hasMany(PropuestaCapacitacion, { as : 'propuestaCapacitaciones', foreignKey: "codigoPropuesta"});
+  Propuesta.hasMany(PropuestaInstitucion, { as : 'propuestaInstituciones', foreignKey: "codigoPropuesta"});
+  Propuesta.hasMany(PropuestaLineaTematica, { as : 'propuestaLineaTematicas', foreignKey: "codigoPropuesta"});
+  Propuesta.hasMany(PropuestaPalabraClave, { as : 'propuestaPalabraClaves', foreignKey: "codigoPropuesta"});
   Propuesta.hasMany(PropuestaPrevia, {as : 'propuestasPrevias', foreignKey: "codigoPropuesta"});
-  Propuesta.hasMany(PropuestaProgramaExtension, { foreignKey: "codigoPropuesta"});
-  Propuesta.hasMany(PropuestaRelacionada, { foreignKey: "codigoPropuesta"});
-  Propuesta.hasMany(PropuestaRelacionada, { foreignKey: "codigoPropuestaRelacionada"});
-  Propuesta.hasMany(UbicacionProblematica, { foreignKey: "codigoPropuesta"});
+  Propuesta.hasMany(PropuestaProgramaExtension, {as : 'propuestaProgramaExtensions', foreignKey: "codigoPropuesta"});
+  Propuesta.hasMany(PropuestaRelacionada, {as : 'propuestaRelacionadas', foreignKey: "codigoPropuesta"});
+  Propuesta.hasMany(UbicacionProblematica, {as : 'ubicacionProblematicas', foreignKey: "codigoPropuesta"});
   PropuestaLineaTematica.belongsTo(LineaTematica, { foreignKey: "idLineaTematica"});
   PropuestaCapacitacion.belongsTo(Propuesta, { foreignKey: "codigoPropuesta"});
   PropuestaInstitucion.belongsTo(Propuesta, { foreignKey: "codigoPropuesta"});
@@ -445,7 +444,7 @@ export function initModels(sequelize: Sequelize) {
   PalabraClave.hasMany(PropuestaPalabraClave, { foreignKey: "idPalabraClave"});
   ParticipanteSocial.hasMany(ActividadParticipanteSocial, { foreignKey: "idParticipanteSocial"});
   
-  Integrante.belongsTo(Persona, { as : 'nroDocPersona', foreignKey: "nroDoc"});
+
   Persona.hasMany(Integrante, { foreignKey: "nroDoc"});
   Responsable.belongsTo(Persona, { foreignKey: "nroDoc"});
   Persona.hasMany(Responsable, { foreignKey: "nroDoc"});

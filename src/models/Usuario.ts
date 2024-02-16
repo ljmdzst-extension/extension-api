@@ -7,6 +7,7 @@ import type { EvaluacionItem, EvaluacionItemId } from './EvaluacionItem';
 import type { Persona, PersonaId } from './Persona';
 import type { Propuesta, PropuestaId } from './Propuesta';
 import type { UsuarioCategoria, UsuarioCategoriaId } from './UsuarioCategoria';
+import { Permiso } from './Permiso';
 
 export interface UsuarioAttributes {
   idUsuario: string;
@@ -103,6 +104,11 @@ export class Usuario extends Model<UsuarioAttributes, UsuarioCreationAttributes>
   hasUsuarioCategorium!: Sequelize.HasManyHasAssociationMixin<UsuarioCategoria, UsuarioCategoriaId>;
   hasUsuarioCategoria!: Sequelize.HasManyHasAssociationsMixin<UsuarioCategoria, UsuarioCategoriaId>;
   countUsuarioCategoria!: Sequelize.HasManyCountAssociationsMixin;
+
+
+  public static async verlistaIdsUsados ( db :Sequelize.Sequelize, transaction ?: Sequelize.Transaction ) : Promise<string[]> {
+    return (await Usuario.initModel(db).findAll({ attributes : ['idUsuario'], transaction})).map( usr => usr.idUsuario )
+  }
 
   static initModel(sequelize: Sequelize.Sequelize): typeof Usuario {
     return Usuario.init({
