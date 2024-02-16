@@ -18,12 +18,13 @@ export const endpoint = <ENTRADA,SALIDA >( _servicio : servicio<ENTRADA,SALIDA>)
         try {
             
             let data : any = undefined;
-    
-            if(req.method === 'GET'){
+            if(req.header('Authorization')){
+                data = { token : req.header('Authorization')?.split(' ')[1] }
+            }
+            else if(req.method === 'GET'){
                 data = req.params;
             }
-    
-            if(req.method !== 'GET'){
+            else if(req.method !== 'GET'){
                 data = req.body;
             }
             const salida = await _servicio(data,transaction);

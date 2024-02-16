@@ -27,8 +27,8 @@ export const verPropuestas = async( db : Sequelize , idUsuario : UsuarioId )=>{
         async transaction =>{
         
             await Promise.all([
-                iUsuario.getPropuestas({attributes : ['codigoPropuesta','titulo','modalidad','duracion'],transaction}).then( resp => lPropuestas.push(...resp) ),
-                iUsuario.getNroDocPersona({attributes : ['nroDoc','ape','nom'],transaction}).then( persona => iPersona = persona)
+                iUsuario.getPropuesta({attributes : ['codigoPropuesta','titulo','modalidad','duracion'],transaction}).then( resp => lPropuestas.push(...resp) ),
+                iUsuario.getPersona({attributes : ['nroDoc','ape','nom'],transaction}).then( persona => iPersona = persona)
                 
             ])
             
