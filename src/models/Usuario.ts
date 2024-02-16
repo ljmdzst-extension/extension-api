@@ -84,17 +84,13 @@ export class Usuario extends Model<UsuarioAttributes, UsuarioCreationAttributes>
   hasEvaluacionItems!: Sequelize.HasManyHasAssociationsMixin<EvaluacionItem, EvaluacionItemId>;
   countEvaluacionItems!: Sequelize.HasManyCountAssociationsMixin;
   // Usuario hasMany Propuesta via idUsuario
-  propuesta!: Propuesta[];
-  getPropuesta!: Sequelize.HasManyGetAssociationsMixin<Propuesta>;
-  setPropuesta!: Sequelize.HasManySetAssociationsMixin<Propuesta, PropuestaId>;
-  addPropuestum!: Sequelize.HasManyAddAssociationMixin<Propuesta, PropuestaId>;
-  addPropuesta!: Sequelize.HasManyAddAssociationsMixin<Propuesta, PropuestaId>;
-  createPropuestum!: Sequelize.HasManyCreateAssociationMixin<Propuesta>;
-  removePropuestum!: Sequelize.HasManyRemoveAssociationMixin<Propuesta, PropuestaId>;
-  removePropuesta!: Sequelize.HasManyRemoveAssociationsMixin<Propuesta, PropuestaId>;
-  hasPropuestum!: Sequelize.HasManyHasAssociationMixin<Propuesta, PropuestaId>;
-  hasPropuesta!: Sequelize.HasManyHasAssociationsMixin<Propuesta, PropuestaId>;
-  countPropuesta!: Sequelize.HasManyCountAssociationsMixin;
+  propuestas!: Propuesta[];
+  getPropuestas!: Sequelize.HasManyGetAssociationsMixin<Propuesta>;
+  setPropuestas!: Sequelize.HasManySetAssociationsMixin<Propuesta, PropuestaId>;
+  addPropuestas!: Sequelize.HasManyAddAssociationsMixin<Propuesta, PropuestaId>;
+  removePropuestas!: Sequelize.HasManyRemoveAssociationsMixin<Propuesta, PropuestaId>;
+  hasPropuestas!: Sequelize.HasManyHasAssociationsMixin<Propuesta, PropuestaId>;
+  countPropuestas!: Sequelize.HasManyCountAssociationsMixin;
   // Usuario hasMany UsuarioCategoria via idUsuario
   usuarioCategoria!: UsuarioCategoria[];
   getUsuarioCategoria!: Sequelize.HasManyGetAssociationsMixin<UsuarioCategoria>;

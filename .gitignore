@@ -66,4 +66,4 @@ package.json
 package-lock.json
 
 #docker
-db_extension_backup/
+db_estension_backup/

@@ -22,10 +22,10 @@ export class UbicacionProblematica extends Model<UbicacionProblematicaAttributes
   setCodigoPropuestaPropuestum!: Sequelize.BelongsToSetAssociationMixin<Propuesta, PropuestaId>;
   createCodigoPropuestaPropuestum!: Sequelize.BelongsToCreateAssociationMixin<Propuesta>;
   // UbicacionProblematica belongsTo Ubicacion via idUbicacion
-  idUbicacionUbicacion!: Ubicacion;
-  getIdUbicacionUbicacion!: Sequelize.BelongsToGetAssociationMixin<Ubicacion>;
-  setIdUbicacionUbicacion!: Sequelize.BelongsToSetAssociationMixin<Ubicacion, UbicacionId>;
-  createIdUbicacionUbicacion!: Sequelize.BelongsToCreateAssociationMixin<Ubicacion>;
+  ubicacion!: Ubicacion;
+  getUbicacion!: Sequelize.BelongsToGetAssociationMixin<Ubicacion>;
+  setUbicacion!: Sequelize.BelongsToSetAssociationMixin<Ubicacion, UbicacionId>;
+  createUbicacion!: Sequelize.BelongsToCreateAssociationMixin<Ubicacion>;
 
   static initModel(sequelize: Sequelize.Sequelize): typeof UbicacionProblematica {
     return UbicacionProblematica.init({

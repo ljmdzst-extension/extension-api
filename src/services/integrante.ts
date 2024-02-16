@@ -4,41 +4,40 @@ import { TIntegrante } from "../types/propuesta"
 import { PERSONA_VACIA } from "../models/Persona"
 
 
-export const verPersona = async( iIntegrante : Integrante, transaction ?: Transaction ) => {
-    
-    iIntegrante.nroDocPersona = await iIntegrante.getNroDocPersona({transaction})
-    
-}
+export default class ServiciosIntegrantes {
 
-export const verRoles = async( iIntegrante : Integrante , transaction ?: Transaction) => {
-    iIntegrante.rolIntegrantes = await iIntegrante.getRolIntegrantes({transaction});
-}
+    static async leerDatos(iIntegrante : Integrante, transaction ?: Transaction ) {
+        
 
-export const verDatos = ( iIntegrante : Integrante) => {
-
-    let salida : TIntegrante =  {
-        ...PERSONA_VACIA,
-        codigoPropuesta : '',
-        tipoIntegrante : 1,
-        lRoles : []
-    }
-    
-
-    if(iIntegrante.nroDocPersona){
-        salida = {
-            ...salida, 
-            ...iIntegrante.nroDocPersona.dataValues
-        }  
+        iIntegrante.nroDocPersona = await iIntegrante.getNroDocPersona({transaction});
+        iIntegrante.rolIntegrantes = await iIntegrante.getRolIntegrantes({transaction});
     }
 
-    if(iIntegrante.rolIntegrantes){
-        salida = {
-            ...salida , 
-            lRoles : iIntegrante.rolIntegrantes.map( rol => rol.idRolIntegrante)
+    static  verDatos ( iIntegrante : Integrante){
+    
+        let salida : TIntegrante =  {
+            ...PERSONA_VACIA,
+            codigoPropuesta : '',
+            tipoIntegrante : 1,
+            lRoles : []
         }
+        if(iIntegrante.nroDocPersona){
+            salida = {
+                ...salida, 
+                ...iIntegrante.nroDocPersona.dataValues
+            }  
+        }
+        if(iIntegrante.rolIntegrantes){
+            salida = {
+                ...salida , 
+                lRoles : iIntegrante.rolIntegrantes.map( rol => rol.idRolIntegrante)
+            }
+        }
+    
+        return salida;
     }
-
-    return salida;
+    
 }
+
 
 

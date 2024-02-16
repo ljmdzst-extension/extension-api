@@ -43,6 +43,7 @@ export class Integrante extends Model<IntegranteAttributes, IntegranteCreationAt
   getIdCarreraCarrera!: Sequelize.BelongsToGetAssociationMixin<Carrera>;
   setIdCarreraCarrera!: Sequelize.BelongsToSetAssociationMixin<Carrera, CarreraId>;
   createIdCarreraCarrera!: Sequelize.BelongsToCreateAssociationMixin<Carrera>;
+
   // Integrante hasMany RolIntegrante via nroDoc
   rolIntegrantes!: RolIntegrante[];
   getRolIntegrantes!: Sequelize.HasManyGetAssociationsMixin<RolIntegrante>;
@@ -55,28 +56,19 @@ export class Integrante extends Model<IntegranteAttributes, IntegranteCreationAt
   hasRolIntegrante!: Sequelize.HasManyHasAssociationMixin<RolIntegrante, RolIntegranteId>;
   hasRolIntegrantes!: Sequelize.HasManyHasAssociationsMixin<RolIntegrante, RolIntegranteId>;
   countRolIntegrantes!: Sequelize.HasManyCountAssociationsMixin;
-  // Integrante hasMany RolIntegrante via codigoPropuesta
-  codigoPropuestaRolIntegrantes!: RolIntegrante[];
-  getCodigoPropuestaRolIntegrantes!: Sequelize.HasManyGetAssociationsMixin<RolIntegrante>;
-  setCodigoPropuestaRolIntegrantes!: Sequelize.HasManySetAssociationsMixin<RolIntegrante, RolIntegranteId>;
-  addCodigoPropuestaRolIntegrante!: Sequelize.HasManyAddAssociationMixin<RolIntegrante, RolIntegranteId>;
-  addCodigoPropuestaRolIntegrantes!: Sequelize.HasManyAddAssociationsMixin<RolIntegrante, RolIntegranteId>;
-  createCodigoPropuestaRolIntegrante!: Sequelize.HasManyCreateAssociationMixin<RolIntegrante>;
-  removeCodigoPropuestaRolIntegrante!: Sequelize.HasManyRemoveAssociationMixin<RolIntegrante, RolIntegranteId>;
-  removeCodigoPropuestaRolIntegrantes!: Sequelize.HasManyRemoveAssociationsMixin<RolIntegrante, RolIntegranteId>;
-  hasCodigoPropuestaRolIntegrante!: Sequelize.HasManyHasAssociationMixin<RolIntegrante, RolIntegranteId>;
-  hasCodigoPropuestaRolIntegrantes!: Sequelize.HasManyHasAssociationsMixin<RolIntegrante, RolIntegranteId>;
-  countCodigoPropuestaRolIntegrantes!: Sequelize.HasManyCountAssociationsMixin;
+ 
   // Integrante belongsTo Persona via nroDoc
   nroDocPersona!: Persona;
   getNroDocPersona!: Sequelize.BelongsToGetAssociationMixin<Persona>;
   setNroDocPersona!: Sequelize.BelongsToSetAssociationMixin<Persona, PersonaId>;
   createNroDocPersona!: Sequelize.BelongsToCreateAssociationMixin<Persona>;
+  
   // Integrante belongsTo Propuesta via codigoPropuesta
-  codigoPropuestaPropuestum!: Propuesta;
-  getCodigoPropuestaPropuestum!: Sequelize.BelongsToGetAssociationMixin<Propuesta>;
-  setCodigoPropuestaPropuestum!: Sequelize.BelongsToSetAssociationMixin<Propuesta, PropuestaId>;
-  createCodigoPropuestaPropuestum!: Sequelize.BelongsToCreateAssociationMixin<Propuesta>;
+  propuesta !: Propuesta;
+  getPropuesta!: Sequelize.BelongsToGetAssociationMixin<Propuesta>;
+  setPropuesta!: Sequelize.BelongsToSetAssociationMixin<Propuesta, PropuestaId>;
+  createPropuesta!: Sequelize.BelongsToCreateAssociationMixin<Propuesta>;
+  
   // Integrante belongsTo Relacion via idAreaUnl
   idAreaUnlRelacion!: Relacion;
   getIdAreaUnlRelacion!: Sequelize.BelongsToGetAssociationMixin<Relacion>;

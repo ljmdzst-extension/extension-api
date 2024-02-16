@@ -22,10 +22,10 @@ export class PropuestaInstitucion extends Model<PropuestaInstitucionAttributes, 
   valoracion?: number;
 
   // PropuestaInstitucion belongsTo Institucion via idInstitucion
-  idInstitucionInstitucion!: Institucion;
-  getIdInstitucionInstitucion!: Sequelize.BelongsToGetAssociationMixin<Institucion>;
-  setIdInstitucionInstitucion!: Sequelize.BelongsToSetAssociationMixin<Institucion, InstitucionId>;
-  createIdInstitucionInstitucion!: Sequelize.BelongsToCreateAssociationMixin<Institucion>;
+  institucion!: Institucion;
+  getInstitucion!: Sequelize.BelongsToGetAssociationMixin<Institucion>;
+  setInstitucion!: Sequelize.BelongsToSetAssociationMixin<Institucion, InstitucionId>;
+  createInstitucion!: Sequelize.BelongsToCreateAssociationMixin<Institucion>;
   // PropuestaInstitucion belongsTo Propuesta via codigoPropuesta
   codigoPropuestaPropuestum!: Propuesta;
   getCodigoPropuestaPropuestum!: Sequelize.BelongsToGetAssociationMixin<Propuesta>;

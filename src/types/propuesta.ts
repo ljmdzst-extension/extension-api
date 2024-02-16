@@ -1,63 +1,34 @@
-import { ActividadObjetivoEspecificoAttributes, ActividadObjetivoEspecificoCreationAttributes } from "../models/ActividadObjetivoEspecifico";
-import { IntegranteAttributes, IntegranteCreationAttributes } from "../models/Integrante";
-import { ObjetivoEspecificoAttributes, ObjetivoEspecificoCreationAttributes } from "../models/ObjetivoEspecifico";
-import { PropuestaAttributes, PropuestaCreationAttributes, PropuestaId } from "../models/Propuesta";
-import { PropuestaInstitucionCreationAttributes } from "../models/PropuestaInstitucion";
-import { PropuestaPreviaAttributes } from "../models/PropuestaPrevia";
+import { IntegranteAttributes } from "../models/Integrante";
+import { ObjetivoEspecificoAttributes } from "../models/ObjetivoEspecifico";
+import { PropuestaAttributes } from "../models/Propuesta";
 import { PropuestaRelacionadaAttributes } from "../models/PropuestaRelacionada";
-import { PersonaAttributes, PersonaCreationAttributes } from "../models/Persona";
-import { PalabraClaveAttributes, PalabraClaveCreationAttributes } from "../models/PalabraClave";
-import { ProgramaSippeId } from "../models/ProgramaSippe";
-import { UbicacionAttributes, UbicacionId } from "../models/Ubicacion";
-import { LineaTematicaId } from "../models/LineaTematica";
-import { InstitucionCreationAttributes } from "../models/Institucion";
+import { PersonaAttributes } from "../models/Persona";
 import { RolId } from "../models/Rol";
-import { CronogramaActividadAttributes, CronogramaActividadCreationAttributes } from "../models/CronogramaActividad";
-import { ResponsableCreationAttributes } from "../models/Responsable";
-import { TInstitucion } from "./institucion";
+import { PropuestaInstitucionAttributes } from "../models/PropuestaInstitucion";
+import { UbicacionProblematicaAttributes } from "../models/UbicacionProblematica";
+import { PropuestaProgramaExtensionAttributes } from "../models/PropuestaProgramaExtension";
+import { PropuestaCapacitacionAttributes } from "../models/PropuestaCapacitacion";
+import { PropuestaLineaTematicaAttributes } from "../models/PropuestaLineaTematica";
+import { PropuestaPalabraClaveAttributes } from "../models/PropuestaPalabraClave";
+import { PropuestaPreviaAttributes } from "../models/PropuestaPrevia";
+import { ParticipanteSocialAttributes } from "../models/ParticipanteSocial";
 
 export type TIntegrante = (IntegranteAttributes & PersonaAttributes & { 
     lRoles : RolId[]
 })
 
 export type TPropuesta = PropuestaAttributes & {
-    lInstituciones : TInstitucion[],
+    lPropuestaInstituciones : PropuestaInstitucionAttributes[],
     lPropuestasRelacionadas : PropuestaRelacionadaAttributes[],
-    lGeolocalizaciones : UbicacionAttributes[],
-    lProgramasExtension : ProgramaSippeId[],
-    lCapacitaciones : UbicacionId[],
-    lLineasTematicas : LineaTematicaId[],
-    lPalabrasClave  : PalabraClaveAttributes[],
-    equipoExtension : {
-        lIntegrantes : TIntegrante[],
-        lPropuestasPrevias : PropuestaId[]
-    },
-    planificacion : {
-        lObjetivosEspecificos : (ObjetivoEspecificoAttributes & {
-            lActividades : (ActividadObjetivoEspecificoAttributes & {
-                cronograma ?: CronogramaActividadAttributes[]
-            })[]
-        })[]
-    },
-}
-
-export type TPutPropuesta = PropuestaCreationAttributes & {
-    lInstituciones ?: (PropuestaInstitucionCreationAttributes & InstitucionCreationAttributes & {
-        responsable ?: ResponsableCreationAttributes & PersonaCreationAttributes
-    })[],
-    lIntegrantes ?: (IntegranteCreationAttributes & {lRoles : RolId[]} & PersonaCreationAttributes)[],
-    lObjetivosEspecificos ?: (ObjetivoEspecificoCreationAttributes & {
-        lActividades : (ActividadObjetivoEspecificoCreationAttributes & {
-            cronograma : CronogramaActividadCreationAttributes[]
-        })[]
-    })[],
-    lPropuestasPrevias ?: PropuestaPreviaAttributes[],
-    lPropuestasRelacionadas ?: PropuestaRelacionadaAttributes[],
-    lGeolocalizaciones ?: UbicacionAttributes[],
-    lProgramasExtension ?: ProgramaSippeId[],
-    lCapacitaciones ?: UbicacionId[],
-    lLineasTematicas ?: LineaTematicaId[],
-    lPalabrasClave ? : PalabraClaveCreationAttributes[]
+    lUbicacionesProblematica : UbicacionProblematicaAttributes[],
+    lPropuestaProgramasExtension : PropuestaProgramaExtensionAttributes[],
+    lPropuestaCapacitaciones : PropuestaCapacitacionAttributes[],
+    lPropuestaLineasTematicas : PropuestaLineaTematicaAttributes[],
+    lPropuestaPalabraClaves  : PropuestaPalabraClaveAttributes[],
+    lIntegrantes : IntegranteAttributes[],
+    lPropuestasPrevias : PropuestaPreviaAttributes[],
+    lObjetivosEspecificos : ObjetivoEspecificoAttributes[],
+    lParticipantesSociales : ParticipanteSocialAttributes[]
 }
 
 export const PROPUESTA_VACIA : TPropuesta = {
@@ -65,18 +36,15 @@ export const PROPUESTA_VACIA : TPropuesta = {
     modalidad : '',
     titulo : '',
     idUsuario : '',
-    lInstituciones : [],
+    lPropuestaInstituciones : [],
     lPropuestasRelacionadas : [],
-    lGeolocalizaciones : [],
-    lProgramasExtension : [],
-    lCapacitaciones : [],
-    lLineasTematicas : [],
-    lPalabrasClave : [],
-    equipoExtension : {
-        lIntegrantes : [],
-        lPropuestasPrevias : [],
-    },
-    planificacion : {
-        lObjetivosEspecificos : []
-    }
+    lUbicacionesProblematica : [],
+    lPropuestaProgramasExtension : [],
+    lPropuestaCapacitaciones : [],
+    lPropuestaLineasTematicas : [],
+    lPropuestaPalabraClaves : [],
+    lIntegrantes : [],
+    lPropuestasPrevias : [],
+    lObjetivosEspecificos : [],
+    lParticipantesSociales : []
 }
