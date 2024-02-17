@@ -29,28 +29,28 @@ export default class ServiciosPropuesta {
     ): Promise<void> {
 
         if(data.propuestaCapacitaciones) {
-            iPropuesta.propuestaCapacitaciones = data.propuestaCapacitaciones.map( idata => PropuestaCapacitacion.build(idata));
+            iPropuesta.propuestaCapacitaciones = PropuestaCapacitacion.bulkBuild(data.propuestaCapacitaciones);
         }
         if(data.propuestaLineaTematicas){
-            iPropuesta.propuestaLineaTematicas = data.propuestaLineaTematicas.map( idata => PropuestaLineaTematica.build(idata));
+            iPropuesta.propuestaLineaTematicas = PropuestaLineaTematica.bulkBuild(data.propuestaLineaTematicas);
         }
         if(data.propuestaProgramaExtensions){
-            iPropuesta.propuestaProgramaExtensions = data.propuestaProgramaExtensions.map( idata => PropuestaProgramaExtension.build(idata));
+            iPropuesta.propuestaProgramaExtensions = PropuestaProgramaExtension.bulkBuild(data.propuestaProgramaExtensions);
         }
         if( data.propuestaPalabraClaves){
-            iPropuesta.propuestaPalabraClaves = data.propuestaPalabraClaves.map( idata => PropuestaPalabraClave.build(idata));
+            iPropuesta.propuestaPalabraClaves = PropuestaPalabraClave.bulkBuild(data.propuestaPalabraClaves);
         }
         if(data.propuestaInstituciones){
-            iPropuesta.propuestaInstituciones = data.propuestaInstituciones.map( idata => PropuestaInstitucion.build(idata));
+            iPropuesta.propuestaInstituciones = PropuestaInstitucion.bulkBuild(data.propuestaInstituciones);
         }
         if(data.integrantes){
-            iPropuesta.integrantes = data.integrantes.map( idata => Integrante.build(idata));
+            iPropuesta.integrantes = Integrante.bulkBuild(data.integrantes);
         }
         if(data.objetivoEspecificos){
-            iPropuesta.objetivoEspecificos = data.objetivoEspecificos.map( idata => ObjetivoEspecifico.build(idata));
+            iPropuesta.objetivoEspecificos = ObjetivoEspecifico.bulkBuild(data.objetivoEspecificos);
         }
         if(data.ubicacionProblematicas){
-            iPropuesta.ubicacionProblematicas = data.ubicacionProblematicas.map( idata => UbicacionProblematica.build(idata));
+            iPropuesta.ubicacionProblematicas = UbicacionProblematica.bulkBuild(data.ubicacionProblematicas);
         }
         
     }
@@ -128,36 +128,25 @@ export default class ServiciosPropuesta {
             iPropuesta.propuestaRelacionadas = await iPropuesta.getPropuestaRelacionadas({transaction});
             iPropuesta.ubicacionProblematicas = await iPropuesta.getUbicacionProblematicas({transaction});
         });
+        if(iPropuesta.integrantes.length){
+            await ServiciosIntegrantes.leerIntegrantesPorPropuesta(iPropuesta);
+        }
+        if(iPropuesta.objetivoEspecificos.length){
+            
+            await ServiciosPlanificacion.leerPlanificacionPorPropuesta(iPropuesta);
+            
+        }
+        if(iPropuesta.propuestaInstituciones.length){
+            await ServiciosInstitucion.leerInstitucionesPorPropuesta(iPropuesta);
+        }
 
-        await iPropuesta.sequelize.transaction(async transaction => {
-            await Promise.all(iPropuesta.integrantes.map( integ => ServiciosIntegrantes.leerDatos(integ,transaction) ))
-        })
-        await iPropuesta.sequelize.transaction(async transaction => {
-            await Promise.all(iPropuesta.objetivoEspecificos.map( obj => ServiciosPlanificacion.leerDatosObjetivo(obj,transaction) ))
-        })
-
-        await iPropuesta.sequelize.transaction(async transaction => {
-
-            await Promise.all(
-                iPropuesta.objetivoEspecificos.map(obj => 
-                    ServiciosPlanificacion.leerDatosActividades(obj.actividadObjetivoEspecificos,transaction)
-                )
-            );
-        });
-
-        await iPropuesta.sequelize.transaction(async transaction => {
-            await Promise.all(iPropuesta.propuestaInstituciones.map( propInst => propInst.getInstitucion({transaction}).then( inst => propInst.institucion = inst ) ));
-        })
-        await iPropuesta.sequelize.transaction(async transaction => {
-            await Promise.all(iPropuesta.propuestaInstituciones.map( propInst => ServiciosInstitucion.leerDatos(propInst.institucion, transaction)));
-        })
-        await iPropuesta.sequelize.transaction(async transaction => {
-            await Promise.all(iPropuesta.propuestaInstituciones.map( propInst => ServiciosInstitucion.leerDatosResponsable(propInst.institucion, transaction)));
-        })
-
-        await iPropuesta.sequelize.transaction(async transaction =>{
-            await Promise.all(iPropuesta.ubicacionProblematicas.map( ubicProp => ubicProp.getUbicacion({transaction}).then( ubic => ubicProp.ubicacion = ubic) ));
-        })
+        if(iPropuesta.ubicacionProblematicas.length){
+            await iPropuesta.sequelize.transaction(async transaction =>{
+                await Promise.all(iPropuesta.ubicacionProblematicas.map( ubicProp => ubicProp.getUbicacion({transaction}).then( ubic => ubicProp.ubicacion = ubic) ));
+            })
+        }
+       
+        
     }
 
     static async guardarDatos (iPropuesta : Propuesta ) : Promise<void> {
