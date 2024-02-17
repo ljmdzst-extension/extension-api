@@ -10,6 +10,7 @@ import { UbicacionProblematica, UbicacionProblematicaCreationAttributes } from "
 import ServiciosIntegrantes from "./integrante";
 import ServiciosPlanificacion from "./planificacion";
 import ServiciosInstitucion from "./institucion";
+import { SeriviciosUbicacion } from "./ubicacion";
 
 
 export default class ServiciosPropuesta {
@@ -115,18 +116,19 @@ export default class ServiciosPropuesta {
     static async leerDatos (iPropuesta : Propuesta) : Promise<void>{
 
         await iPropuesta.sequelize.transaction( async transaction => {
-            
-            iPropuesta.propuestaCapacitaciones = await iPropuesta.getPropuestaCapacitaciones({transaction});
-            iPropuesta.integrantes = await iPropuesta.getIntegrantes({transaction});
-            iPropuesta.objetivoEspecificos = await iPropuesta.getObjetivoEspecificos({transaction});
-            iPropuesta.participanteSociales = await iPropuesta.getParticipanteSociales({transaction});
-            iPropuesta.propuestaCapacitaciones = await iPropuesta.getPropuestaCapacitaciones({transaction});
-            iPropuesta.propuestaInstituciones = await iPropuesta.getPropuestaInstituciones({transaction});
-            iPropuesta.propuestaLineaTematicas = await iPropuesta.getPropuestaLineaTematicas({transaction});
-            iPropuesta.propuestaPalabraClaves = await iPropuesta.getPropuestaPalabraClaves({transaction});
-            iPropuesta.propuestaProgramaExtensions = await iPropuesta.getPropuestaProgramaExtensions({transaction});
-            iPropuesta.propuestaRelacionadas = await iPropuesta.getPropuestaRelacionadas({transaction});
-            iPropuesta.ubicacionProblematicas = await iPropuesta.getUbicacionProblematicas({transaction});
+            await Promise.all([
+                iPropuesta.getPropuestaCapacitaciones({transaction}).then( resp => iPropuesta.propuestaCapacitaciones = resp ),
+                iPropuesta.getIntegrantes({transaction}).then( resp => iPropuesta.integrantes = resp ),
+                iPropuesta.getObjetivoEspecificos({transaction}).then( resp => iPropuesta.objetivoEspecificos = resp ),
+                iPropuesta.getParticipanteSociales({transaction}).then( resp => iPropuesta.participanteSociales = resp ),
+                iPropuesta.getPropuestaCapacitaciones({transaction}).then( resp => iPropuesta.propuestaCapacitaciones = resp ),
+                iPropuesta.getPropuestaInstituciones({transaction}).then( resp => iPropuesta.propuestaInstituciones = resp ),
+                iPropuesta.getPropuestaLineaTematicas({transaction}).then( resp => iPropuesta.propuestaLineaTematicas = resp ),
+                iPropuesta.getPropuestaPalabraClaves({transaction}).then( resp => iPropuesta.propuestaPalabraClaves = resp ),
+                iPropuesta.getPropuestaProgramaExtensions({transaction}).then( resp => iPropuesta.propuestaProgramaExtensions = resp ),
+                iPropuesta.getPropuestaRelacionadas({transaction}).then( resp => iPropuesta.propuestaRelacionadas = resp ),
+                iPropuesta.getUbicacionProblematicas({transaction}).then( resp => iPropuesta.ubicacionProblematicas = resp )
+            ]);
         });
         if(iPropuesta.integrantes.length){
             await ServiciosIntegrantes.leerIntegrantesPorPropuesta(iPropuesta);
@@ -141,9 +143,7 @@ export default class ServiciosPropuesta {
         }
 
         if(iPropuesta.ubicacionProblematicas.length){
-            await iPropuesta.sequelize.transaction(async transaction =>{
-                await Promise.all(iPropuesta.ubicacionProblematicas.map( ubicProp => ubicProp.getUbicacion({transaction}).then( ubic => ubicProp.ubicacion = ubic) ));
-            })
+           await SeriviciosUbicacion.leerUbicacionesPorPropuesta(iPropuesta);
         }
        
         
@@ -152,6 +152,27 @@ export default class ServiciosPropuesta {
     static async guardarDatos (iPropuesta : Propuesta ) : Promise<void> {
 
         await iPropuesta.save();
+
+        await iPropuesta.sequelize.transaction( async transaction =>{
+            let transacciones = [];
+            if(iPropuesta.integrantes.length){
+                transacciones.push(
+                    ...iPropuesta.integrantes.map(integrante => ServiciosIntegrantes.guardarDatos(integrante,transaction))
+                )
+            }
+            if(iPropuesta.propuestaInstituciones.length){
+                transacciones.push(
+                    ...iPropuesta.propuestaInstituciones.map( institucion => ServiciosInstitucion.guardarDatos(institucion,transaction))
+                )
+            }
+            if(iPropuesta.objetivoEspecificos.length){
+                transacciones.push(
+                    ...iPropuesta.objetivoEspecificos.map( objEsp => ServiciosPlanificacion.guardarDatosObjEsp( objEsp,transaction))
+                )
+            }
+           
+       } )
+       
         
         await iPropuesta.sequelize.transaction( async transaction => {
 
