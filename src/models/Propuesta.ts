@@ -209,8 +209,8 @@ export class Propuesta extends Model<PropuestaAttributes, PropuestaCreationAttri
 
   // Propuesta hasMany PropuestaRelacionada via codigoPropuesta
   propuestasPrevias!: PropuestaPrevia[];
-  getpropuestasPrevias!: Sequelize.HasManyGetAssociationsMixin<PropuestaPrevia>;
-  setpropuestasPrevias!: Sequelize.HasManySetAssociationsMixin<PropuestaPrevia, PropuestaPreviaId>;
+  getPropuestasPrevias!: Sequelize.HasManyGetAssociationsMixin<PropuestaPrevia>;
+  setPropuestasPrevias!: Sequelize.HasManySetAssociationsMixin<PropuestaPrevia, PropuestaPreviaId>;
   addPropuestasPrevias!: Sequelize.HasManyAddAssociationMixin<PropuestaPrevia, PropuestaPreviaId>;
   createPropuestasPrevias!: Sequelize.HasManyCreateAssociationMixin<PropuestaPrevia>;
   removePropuestasPrevias!: Sequelize.HasManyRemoveAssociationMixin<PropuestaPrevia, PropuestaPreviaId>;

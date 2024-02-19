@@ -378,7 +378,7 @@ export function initModels(sequelize: Sequelize) {
   InstitucionActividad.belongsTo(Institucion, { foreignKey: "idInstitucion"});
   Instancia.hasMany( RegistroPropuestaInstancia, {foreignKey : 'idInstancia'});
   Integrante.belongsTo(Carrera, { foreignKey: "idCarrera"});
-  Integrante.hasMany(RolIntegrante, {as :'roles' ,foreignKey: "codigoPropuesta"});
+  Integrante.hasMany(RolIntegrante, {as :'roles' ,foreignKey: "nroDoc"});
   Integrante.belongsTo(Persona, { as : 'persona', foreignKey: "nroDoc"});
   Integrante.belongsTo(Propuesta, { foreignKey: "codigoPropuesta"});
   Integrante.belongsTo(Relacion, { foreignKey: "idAreaUnl"});

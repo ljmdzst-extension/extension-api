@@ -3,6 +3,7 @@ import { DataTypes, Model, Optional } from 'sequelize';
 import type { ActividadObjetivoEspecifico, ActividadObjetivoEspecificoId } from './ActividadObjetivoEspecifico';
 
 export interface CronogramaActividadAttributes {
+  idCronograma : number;
   idActividadObjetivoEspecifico: number;
   mes: number;
   anio: number;
@@ -14,6 +15,7 @@ export type CronogramaActividadOptionalAttributes = "anio";
 export type CronogramaActividadCreationAttributes = Optional<CronogramaActividadAttributes, CronogramaActividadOptionalAttributes>;
 
 export class CronogramaActividad extends Model<CronogramaActividadAttributes, CronogramaActividadCreationAttributes> implements CronogramaActividadAttributes {
+  idCronograma !: number;
   idActividadObjetivoEspecifico!: number;
   mes!: number;
   anio!: number;
@@ -26,6 +28,12 @@ export class CronogramaActividad extends Model<CronogramaActividadAttributes, Cr
 
   static initModel(sequelize: Sequelize.Sequelize): typeof CronogramaActividad {
     return CronogramaActividad.init({
+    idCronograma: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      primaryKey: true,
+      autoIncrement : true
+    },
     idActividadObjetivoEspecifico: {
       type: DataTypes.INTEGER,
       allowNull: false,
@@ -48,7 +56,7 @@ export class CronogramaActividad extends Model<CronogramaActividadAttributes, Cr
     }
   }, {
     sequelize,
-    tableName: 'CronogramaActividad',
+    tableName: 'Cronograma',
     timestamps: false
   });
   }

@@ -8,10 +8,9 @@ import { RolIntegrante } from "../models/RolIntegrante";
 export default class ServiciosIntegrantes implements IServiciosModelo {
 
     async leerDatos(iIntegrante : Integrante, transaction ?: Transaction ) {
-        
-        iIntegrante.roles = [];
-        await iIntegrante.getPersona({transaction}).then( resp => iIntegrante.setPersona(resp))
-        await iIntegrante.getRoles({transaction}).then( resp => iIntegrante.setRoles(resp))
+        console.log('ServiciosIntegrante.leerDatos')
+        await iIntegrante.getPersona({transaction}).then( resp =>iIntegrante.persona = resp)
+        await iIntegrante.getRoles({transaction,where : {codigoPropuesta : iIntegrante.codigoPropuesta}}).then( resp => iIntegrante.roles = resp)
 
     }
    
@@ -27,16 +26,27 @@ export default class ServiciosIntegrantes implements IServiciosModelo {
     }
 
     verDatos ( iIntegrante : Integrante){
-        
+        const {
+            codigoPropuesta,
+            nroDoc,
+            ...restData
+        } = iIntegrante.dataValues
         let salida = {
-            ...iIntegrante.dataValues,
+            ...restData,
             lRoles : <any>[]
         }
 
         if(iIntegrante.persona) {
+            const {
+                ciudad,
+                provincia,
+                pais,
+                tipoDoc,
+                ...restData
+            } = iIntegrante.persona.dataValues;
             salida = {
                 ...salida,
-                ...iIntegrante.persona.dataValues
+                ...restData
             }
         }
 

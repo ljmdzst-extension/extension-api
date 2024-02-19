@@ -16,7 +16,8 @@ export  class ServiciosObjetivoEspecifico implements IServiciosModelo {
     
     async leerDatos(iObjetivoEsp : ObjetivoEspecifico, transaction ?: Transaction){
 
-        iObjetivoEsp.actividadObjetivoEspecificos = await iObjetivoEsp.getActividadObjetivoEspecificos({transaction});
+       await iObjetivoEsp.getActividadObjetivoEspecificos({transaction})
+        .then(resp => iObjetivoEsp.actividadObjetivoEspecificos = resp);
     
     }
   
@@ -26,7 +27,19 @@ export  class ServiciosObjetivoEspecifico implements IServiciosModelo {
     }
 
     verDatos( iObjetivoEsp : ObjetivoEspecifico){
-        return iObjetivoEsp.dataValues;
+
+        let salida = {
+            ...iObjetivoEsp.dataValues,
+            lActividades : <any>[]
+        }
+        if(iObjetivoEsp.actividadObjetivoEspecificos.length){
+         
+            salida = {
+                ...salida,
+                lActividades : iObjetivoEsp.actividadObjetivoEspecificos.map( act => this.iServiciosActividadObjetivoEsp.verDatos(act) )
+            }
+        }
+        return salida;
     }
 
     async guardarCronogramasActividades( iObjetivoEsp : ObjetivoEspecifico){
@@ -49,7 +62,8 @@ export  class ServiciosActividadObjetivoEspecifico implements IServiciosModelo {
     
     async leerDatos(iActObjEsp : ActividadObjetivoEspecifico, transaction ?: Transaction){
 
-        iActObjEsp.cronogramaActividads = await iActObjEsp.getCronogramaActividads({transaction});
+        await iActObjEsp.getCronogramaActividads({transaction})
+            .then(resp => iActObjEsp.cronogramaActividads = resp);
     
     }
   
@@ -59,7 +73,14 @@ export  class ServiciosActividadObjetivoEspecifico implements IServiciosModelo {
     }
 
     verDatos( iActObjEsp : ActividadObjetivoEspecifico){
-        return iActObjEsp.dataValues;
+        let salida = { ...iActObjEsp.dataValues , cronograma : <any>[]};
+        if(iActObjEsp.cronogramaActividads.length) {
+            salida = {
+                ...salida,
+                cronograma : iActObjEsp.cronogramaActividads.map( cronograma => cronograma.dataValues)
+            }
+        }
+        return salida;
     }
 
 

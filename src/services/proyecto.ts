@@ -4,9 +4,9 @@ import { Propuesta } from "../models/Propuesta";
 import { Usuario } from "../models/Usuario";
 import { TDataPostProyecto } from "../types/proyecto";
 import { IServiciosModelo } from "./IServiciosModelo";
-import ServiciosInstitucion from "./institucion";
+import ServiciosInstitucion, { IServiciosInstitucion, ServiciosResponsable } from "./institucion";
 import ServiciosIntegrantes from "./integrante";
-import { ServiciosObjetivoEspecifico } from "./planificacion";
+import { ServiciosActividadObjetivoEspecifico, ServiciosObjetivoEspecifico } from "./planificacion";
 import ServiciosPropuesta from "./propuesta";
 
 type TipoServicio = string; 
@@ -20,7 +20,9 @@ export default class ServiciosProyecto implements IServiciosModelo {
         this.lServiciosModelo.set('Propuesta',new ServiciosPropuesta());
         this.lServiciosModelo.set('Integrantes',new ServiciosIntegrantes());
         this.lServiciosModelo.set('ObjEsp',new ServiciosObjetivoEspecifico());
+        this.lServiciosModelo.set('ActObjEsp',new ServiciosActividadObjetivoEspecifico());
         this.lServiciosModelo.set('Instituciones',new ServiciosInstitucion());
+        
     }
     async leerDatos(iProyecto: Propuesta): Promise<void> {
         const iServiciosPropuesta = this.lServiciosModelo.get('Propuesta');
@@ -29,8 +31,8 @@ export default class ServiciosProyecto implements IServiciosModelo {
         await iServiciosPropuesta.leerDatos(iProyecto);
 
         await this.leerDatosEquipoExtension(iProyecto);
-        
-
+        await this.leerDatosPlanificacion(iProyecto);
+        await this.leerDatosInstituciones(iProyecto);
     }
     async guardarDatos(iProyecto: Propuesta, transaction?: Transaction | undefined): Promise<void> {
         throw new Error("Method not implemented.");
@@ -80,8 +82,8 @@ export default class ServiciosProyecto implements IServiciosModelo {
         return {
             ...restData,
             ...this.verDatosEquipoExtension(iProyecto),
-            // ...this.verDatosPlanificacion(iProyecto),
-            // ...this.verDatosInstituciones(iProyecto)
+            ...this.verDatosPlanificacion(iProyecto),
+            ...this.verDatosInstituciones(iProyecto)
         }
     }
     verDatosEquipoExtension( iProyecto : Propuesta) {
@@ -97,9 +99,9 @@ export default class ServiciosProyecto implements IServiciosModelo {
            
             equipoExtension.lIntegrantes = iProyecto.integrantes.map( integ => iServiciosIntegrantes.verDatos(integ) );
         }
-        console.log('verDatosEquipoExtension()')
+       
         if(iProyecto.propuestasPrevias.length){
-            
+            console.log('verDatosEquipoExtension()')
             equipoExtension.lProyectosPrevios = iProyecto.propuestasPrevias.map( propPrev => propPrev.codigoPropuestaPrevia);
         } 
         
@@ -113,6 +115,8 @@ export default class ServiciosProyecto implements IServiciosModelo {
         const iServiciosObjetivoEspecifico = this.lServiciosModelo.get('ObjEsp');
         
         if(!iServiciosObjetivoEspecifico) throw { status : 500 , message : 'No se cargó ServicioObjetivoEspecifco en ServiciosProyecto'}
+        
+        
         let planificacion = {
             finalidad : iProyecto.planificacionFinalidad || '',
             objetivoGeneral : iProyecto.planificacionObjetivoGeneral|| '',
@@ -120,20 +124,23 @@ export default class ServiciosProyecto implements IServiciosModelo {
         };
         if( iProyecto.objetivoEspecificos.length ) {
             planificacion.lObjetivosEspecificos = iProyecto.objetivoEspecificos.map( objEsp => iServiciosObjetivoEspecifico.verDatos(objEsp));
+            
         }
         return {
             planificacion
         }
     }
     verDatosInstituciones( iProyecto : Propuesta ) {
+         // refactorizar para mostrar datos personales del responsable usando serivicos del responsable
         const iServiciosInstitucion = this.lServiciosModelo.get('Instituciones');
         if(!iServiciosInstitucion)throw { status : 500 , message : 'No se cargó ServiciosInstitucion en ServiciosProyecto'}
         
         let instituciones = [];
 
         if(iProyecto.propuestaInstituciones.length) {
-            instituciones = iProyecto.propuestaInstituciones.map( propInst => iServiciosInstitucion.verDatos(propInst.institucion))
+            instituciones = iProyecto.propuestaInstituciones.map( propInst => iServiciosInstitucion.verDatos(propInst))
         }
+       
         return {
            instituciones
         }
@@ -150,4 +157,41 @@ export default class ServiciosProyecto implements IServiciosModelo {
         }
     }
 
+    async leerDatosPlanificacion ( iProyecto : Propuesta){
+        const iServiciosObjetivoEspecifico = this.lServiciosModelo.get('ObjEsp');
+        if(!iServiciosObjetivoEspecifico) throw { status : 500 , message : 'No se cargó ServicioObjetivoEspecifco en ServiciosProyecto'}
+        const iServiciosActividadObjetivoEspecifico = this.lServiciosModelo.get('ActObjEsp');
+        if(!iServiciosActividadObjetivoEspecifico) throw { status : 500 , message : 'No se cargó ServiciosActividadObjetivoEspecifico en ServiciosProyecto'}
+
+        if(iProyecto.objetivoEspecificos.length) {
+            await iProyecto.sequelize.transaction( async transaction => {
+                await Promise.all(iProyecto.objetivoEspecificos.map( objEsp => iServiciosObjetivoEspecifico.leerDatos(objEsp,transaction)) )
+            })
+            await iProyecto.sequelize.transaction(async transaction => {
+                await Promise.all(
+                    iProyecto.objetivoEspecificos
+                        .map( objEsp => objEsp.actividadObjetivoEspecificos.map( actObjEsp => iServiciosActividadObjetivoEspecifico.leerDatos(actObjEsp,transaction)))
+                        .reduce( (salida,promsesas) => ([...salida,...promsesas]) ,[]) 
+                    );
+            })
+        }
+
+    }
+
+    async leerDatosInstituciones( iProyecto : Propuesta) {
+        const iServiciosInstituciones = this.lServiciosModelo.get('Instituciones') as IServiciosInstitucion;
+        if(!iServiciosInstituciones) throw { status : 500 , message : 'No se cargó iServiciosInstituciones en ServiciosProyecto'}
+        
+        if(iProyecto.propuestaInstituciones.length){ 
+            await iProyecto.sequelize.transaction( async transaction => {
+                await Promise.all(iProyecto.propuestaInstituciones.map( propInst => iServiciosInstituciones.leerDatos(propInst,transaction)) )
+            });
+            await iProyecto.sequelize.transaction( async transaction => {
+                await Promise.all(iProyecto.propuestaInstituciones.map( propInst => iServiciosInstituciones.leerDatosResponsable(propInst.institucion,transaction)) )
+            });
+            await iProyecto.sequelize.transaction( async transaction => {
+                await Promise.all(iProyecto.propuestaInstituciones.map( propInst => iServiciosInstituciones.leerDatosPersonalesResponsable(propInst.institucion,transaction)) )
+            });
+        }
+    }
 }
