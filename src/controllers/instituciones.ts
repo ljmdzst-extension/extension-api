@@ -4,7 +4,7 @@ import sequelizeExtension from "../config/dbConfig";
 import { Propuesta } from "../models/Propuesta";
 import { Institucion } from "../models/Institucion";
 import { PropuestaInstitucion } from "../models/PropuestaInstitucion";
-import { TPutPropuesta } from "../types/propuesta";
+
 
 
 export const verInstituciones = async (req : typeof request , res : typeof response)=>{

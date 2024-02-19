@@ -17,8 +17,10 @@ export const getPropuesta = async(req : typeof request , res : typeof response)=
         const iPropuesta = await Propuesta.findByPk(codigoPropuesta);
         
         if(!iPropuesta) throw { status : 400 , message : 'propuesta no encontrada'}
-    
-        await ServiciosPropuesta.leerDatos(iPropuesta);
+        
+        const iServiciosPropuesta = new ServiciosPropuesta();
+        
+        await iServiciosPropuesta.leerDatos(iPropuesta);
         
         // salida = { ...salida , ...await iServiciosPropuesta.verDatosGrales(iPropuesta)}
         
@@ -30,7 +32,7 @@ export const getPropuesta = async(req : typeof request , res : typeof response)=
 
         res.status(200).json({
             ok : true,
-            data :  ServiciosPropuesta.verDatos(iPropuesta),
+            data :  iServiciosPropuesta.verDatos(iPropuesta),
             error : null
         })
         

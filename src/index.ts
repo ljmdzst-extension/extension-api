@@ -21,6 +21,7 @@ import routerPrograma from './routes/programa';
 import routerArea from './routes/area';
 import routerActividad from './routes/actividad';
 import usuarioRouter from './routes/usuario';
+import RouterProyecto from './routes/proyecto';
 
 
 
@@ -33,6 +34,7 @@ app.use(morgan('combined',{stream : combinedLogStream}));
 app.use(express.json());
 app.use(express.static(path.join(__dirname,'public')));
 
+app.use('/api/v2/proy',RouterProyecto);
 app.use('/api/v2/propuesta',RouterPropuesta);
 app.use('/api/v2/propuestas',RouterPropuestas);
 app.use('/api/v2/evaluacion',RouterEvaluacion);

@@ -1,22 +1,21 @@
-import { Transaction } from "sequelize"
+import { Model, Transaction } from "sequelize"
 import { Integrante } from "../models/Integrante"
 import { Propuesta } from "../models/Propuesta";
+import { IServiciosModelo } from "./IServiciosModelo";
+import { RolIntegrante } from "../models/RolIntegrante";
 
 
-export default class ServiciosIntegrantes {
+export default class ServiciosIntegrantes implements IServiciosModelo {
 
-    static async leerDatos(iIntegrante : Integrante, transaction ?: Transaction ) {
+    async leerDatos(iIntegrante : Integrante, transaction ?: Transaction ) {
         
+        iIntegrante.roles = [];
+        await iIntegrante.getPersona({transaction}).then( resp => iIntegrante.setPersona(resp))
+        await iIntegrante.getRoles({transaction}).then( resp => iIntegrante.setRoles(resp))
 
-        iIntegrante.persona = await iIntegrante.getPersona({transaction});
-        iIntegrante.roles = await iIntegrante.getRoles({transaction});
     }
-    static async leerIntegrantesPorPropuesta(iPropuesta : Propuesta)  {
-        return iPropuesta.sequelize.transaction(async transaction => {
-            await Promise.all(iPropuesta.integrantes.map( integ => ServiciosIntegrantes.leerDatos(integ,transaction) ))
-        })
-    }
-    static async guardarDatos(iIntegrante : Integrante, transaction ?: Transaction ) {
+   
+    async guardarDatos(iIntegrante : Integrante, transaction ?: Transaction ) {
         if(iIntegrante.roles.length) {
             await Promise.all(iIntegrante.roles.map( rol => rol.save({transaction}) ));
         }
@@ -27,13 +26,33 @@ export default class ServiciosIntegrantes {
         await iIntegrante.save({transaction});
     }
 
-    static  verDatos ( iIntegrante : Integrante){
-    
-        return iIntegrante.dataValues;
+    verDatos ( iIntegrante : Integrante){
+        
+        let salida = {
+            ...iIntegrante.dataValues,
+            lRoles : <any>[]
+        }
+
+        if(iIntegrante.persona) {
+            salida = {
+                ...salida,
+                ...iIntegrante.persona.dataValues
+            }
+        }
+
+        if(iIntegrante.roles && iIntegrante.roles.length) {
+           salida.lRoles = iIntegrante.roles.map( rol => rol.idRolIntegrante)
+        }
+
+        return salida;
     }
 
-    
-    
+    asociarRoles ( iIntegrante : Integrante , roles : RolIntegrante[] ) {
+       if(roles.length ) {
+            iIntegrante.setRoles( roles );
+       }
+    }
+
 }
 
 

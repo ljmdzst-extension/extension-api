@@ -18,21 +18,16 @@ export class RolIntegrante extends Model<RolIntegranteAttributes, RolIntegranteC
   nroDoc!: string;
   codigoPropuesta!: string;
 
-  // RolIntegrante belongsTo Integrante via nroDoc
-  nroDocIntegrante!: Integrante;
-  getNroDocIntegrante!: Sequelize.BelongsToGetAssociationMixin<Integrante>;
-  setNroDocIntegrante!: Sequelize.BelongsToSetAssociationMixin<Integrante, IntegranteId>;
-  createNroDocIntegrante!: Sequelize.BelongsToCreateAssociationMixin<Integrante>;
   // RolIntegrante belongsTo Integrante via codigoPropuesta
-  codigoPropuestaIntegrante!: Integrante;
-  getCodigoPropuestaIntegrante!: Sequelize.BelongsToGetAssociationMixin<Integrante>;
-  setCodigoPropuestaIntegrante!: Sequelize.BelongsToSetAssociationMixin<Integrante, IntegranteId>;
-  createCodigoPropuestaIntegrante!: Sequelize.BelongsToCreateAssociationMixin<Integrante>;
+  integrante!: Integrante;
+  getIntegrante!: Sequelize.BelongsToGetAssociationMixin<Integrante>;
+  setIntegrante!: Sequelize.BelongsToSetAssociationMixin<Integrante, IntegranteId>;
+  createIntegrante!: Sequelize.BelongsToCreateAssociationMixin<Integrante>;
   // RolIntegrante belongsTo Rol via idRolIntegrante
-  idRolIntegranteRol!: Rol;
-  getIdRolIntegranteRol!: Sequelize.BelongsToGetAssociationMixin<Rol>;
-  setIdRolIntegranteRol!: Sequelize.BelongsToSetAssociationMixin<Rol, RolId>;
-  createIdRolIntegranteRol!: Sequelize.BelongsToCreateAssociationMixin<Rol>;
+  rol!: Rol;
+  getRol!: Sequelize.BelongsToGetAssociationMixin<Rol>;
+  setRol!: Sequelize.BelongsToSetAssociationMixin<Rol, RolId>;
+  createRol!: Sequelize.BelongsToCreateAssociationMixin<Rol>;
 
   static initModel(sequelize: Sequelize.Sequelize): typeof RolIntegrante {
     return RolIntegrante.init({

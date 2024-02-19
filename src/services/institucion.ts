@@ -1,32 +1,45 @@
-import { Transaction } from "sequelize";
-import { Institucion } from "../models/Institucion";
+import { Model, Transaction } from "sequelize";
+import { Institucion, InstitucionAttributes } from "../models/Institucion";
 import { Propuesta } from "../models/Propuesta";
+import { PropuestaInstitucion } from "../models/PropuestaInstitucion";
+import { IServiciosModelo } from "./IServiciosModelo";
 
 
+export default class ServiciosInstitucion implements IServiciosModelo {
+    
+    static asociarInstitucion( iPropuesta : Propuesta, iInstitucion : Institucion, dataAsoc : {antecedentes : string}  )  
+    {
+        const iPropuestaInstitucion = PropuestaInstitucion.build( {
+            idInstitucion : iInstitucion.idInstitucion,
+            codigoPropuesta : iPropuesta.codigoPropuesta,
+            antecedentes : dataAsoc.antecedentes
+        } );
+        iPropuestaInstitucion.setInstitucion( iInstitucion );
+        iPropuesta.addPropuestaInstitucioen(iPropuestaInstitucion);
+    } 
+    async guardarDatos( iInstitucion : Institucion ,transaction : Transaction ) {
+        
+        iInstitucion.set(await iInstitucion.save({transaction}));
 
-export default class ServiciosInstitucion {
-    static async leerDatos ( iInstitucion : Institucion , transaction ?: Transaction )  {
+        const ultimoResponsable = iInstitucion.responsables[iInstitucion.responsables.length -1];
+
+        ultimoResponsable.persona.set(await ultimoResponsable.persona.save({transaction}));
+
+        ultimoResponsable.set( await ultimoResponsable.save({transaction}));
+       
+      
+    }
+   
+    async leerDatos ( iInstitucion : Institucion , transaction ?: Transaction )  {
         iInstitucion.responsables = await iInstitucion.getResponsables({transaction});
         
     }
+    verDatos(iModelo: Institucion ) : InstitucionAttributes {
+        return iModelo.dataValues ;
+    }
 
-    static async leerDatosResponsable( iInstitucion : Institucion, transaction ?: Transaction ) {
-        if(iInstitucion.responsables.length) {
-            const ultimoResponsable = iInstitucion.responsables[iInstitucion.responsables.length -1];
-            ultimoResponsable.persona = await ultimoResponsable.getPersona({transaction});
-        }
-    }
-    static async leerInstitucionesPorPropuesta ( iPropuesta :  Propuesta){
-        await iPropuesta.sequelize.transaction(async transaction => {
-            await Promise.all(iPropuesta.propuestaInstituciones.map( propInst => propInst.getInstitucion({transaction}).then( inst => propInst.institucion = inst ) ));
-        })
-        await iPropuesta.sequelize.transaction(async transaction => {
-            await Promise.all(iPropuesta.propuestaInstituciones.map( propInst => ServiciosInstitucion.leerDatos(propInst.institucion, transaction)));
-        })
-        await iPropuesta.sequelize.transaction(async transaction => {
-            await Promise.all(iPropuesta.propuestaInstituciones.map( propInst => ServiciosInstitucion.leerDatosResponsable(propInst.institucion, transaction)));
-        })
-    }
-}
+ 
+  
+}   
 
 

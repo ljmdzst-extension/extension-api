@@ -1,39 +1,77 @@
 import { Transaction } from "sequelize";
 import { ObjetivoEspecifico } from "../models/ObjetivoEspecifico";
+import { IServiciosModelo } from "./IServiciosModelo";
 import { ActividadObjetivoEspecifico } from "../models/ActividadObjetivoEspecifico";
-import { Propuesta } from "../models/Propuesta";
+import { CronogramaActividad } from "../models/CronogramaActividad";
 
 
-export default class ServiciosPlanificacion {
-    static async leerPlanificacionPorPropuesta( iPropuesta : Propuesta)  {
-        await iPropuesta.sequelize.transaction(async transaction => {
-            await Promise.all(iPropuesta.objetivoEspecificos.map( obj => ServiciosPlanificacion.leerDatosObjetivo(obj,transaction) ))
-        });
-        await iPropuesta.sequelize.transaction(async transaction => {
 
-            await Promise.all(
-                iPropuesta.objetivoEspecificos.map(obj => 
-                    ServiciosPlanificacion.leerDatosActividades(obj.actividadObjetivoEspecificos,transaction)
-                )
-            );
-        });
+export  class ServiciosObjetivoEspecifico implements IServiciosModelo {
+
+    private iServiciosActividadObjetivoEsp !: ServiciosActividadObjetivoEspecifico;
+    
+    constructor(){
+        this.iServiciosActividadObjetivoEsp = new ServiciosActividadObjetivoEspecifico();
     }
-    static async leerDatosObjetivo(iObjetivoEsp : ObjetivoEspecifico, transaction ?: Transaction){
+    
+    async leerDatos(iObjetivoEsp : ObjetivoEspecifico, transaction ?: Transaction){
 
         iObjetivoEsp.actividadObjetivoEspecificos = await iObjetivoEsp.getActividadObjetivoEspecificos({transaction});
     
     }
-    static async leerDatosActividades( actividades : ActividadObjetivoEspecifico[] , transaction ?: Transaction ){
-       await Promise.all(
-         actividades.map(
-                act => act.getCronogramaActividads({transaction})
-                    .then( cronogramas => act.cronogramaActividads = cronogramas )
-            )
-       );
+  
+    async guardarDatos( iObjetivoEsp : ObjetivoEspecifico, transaction ?: Transaction ){
+        await iObjetivoEsp.save({transaction});
+
     }
-     
-    static verDatos( iObjetivoEsp : ObjetivoEspecifico){
+
+    verDatos( iObjetivoEsp : ObjetivoEspecifico){
         return iObjetivoEsp.dataValues;
+    }
+
+    async guardarCronogramasActividades( iObjetivoEsp : ObjetivoEspecifico){
+        if(iObjetivoEsp.actividadObjetivoEspecificos.length ) {
+            await iObjetivoEsp.sequelize.transaction( async transaction => {
+                await Promise.all(
+                    iObjetivoEsp.actividadObjetivoEspecificos
+                        .map(actObjEsp => this.iServiciosActividadObjetivoEsp.guardarCronogramas(actObjEsp,transaction))
+                        .reduce( (salida , iguardarCronogramas)=> ([...salida,...iguardarCronogramas]),[] )
+                    
+                )
+            })
+        }
+    }
+} 
+
+export  class ServiciosActividadObjetivoEspecifico implements IServiciosModelo {
+
+
+    
+    async leerDatos(iActObjEsp : ActividadObjetivoEspecifico, transaction ?: Transaction){
+
+        iActObjEsp.cronogramaActividads = await iActObjEsp.getCronogramaActividads({transaction});
+    
+    }
+  
+    async guardarDatos( iActObjEsp : ActividadObjetivoEspecifico, transaction ?: Transaction ){
+        await iActObjEsp.save({transaction});
+
+    }
+
+    verDatos( iActObjEsp : ActividadObjetivoEspecifico){
+        return iActObjEsp.dataValues;
+    }
+
+
+    asociarCronogramas( iActObjEsp : ActividadObjetivoEspecifico, cronogramas : CronogramaActividad[] ){
+        iActObjEsp.setCronogramaActividads( cronogramas );
+    }
+    
+    guardarCronogramas(iActObjEsp : ActividadObjetivoEspecifico, transaction ?: Transaction){
+        if(iActObjEsp.cronogramaActividads.length) {
+           return iActObjEsp.cronogramaActividads.map( cronograma => cronograma.save({transaction}));
+        }
+        return [];
     }
 
 } 

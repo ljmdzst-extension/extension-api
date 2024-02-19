@@ -92,8 +92,16 @@ export type TProyecto =  {
     },
     instituciones : TInstitucionInterviniente[],
     planificacion : {
-        objGral : string,
+        objetivoGeneral : string,
         finalidad : string,
         lObjetivosEspecificos : TObjetivoEspecifico[]
     }
+}
+
+export type TDataPostProyecto = {
+    codigoPropuesta: string;
+    titulo: string;
+    modalidad: string;
+    duracion : string;
+    unidadAcademica : string;
 }
