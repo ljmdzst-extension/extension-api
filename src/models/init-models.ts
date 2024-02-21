@@ -426,7 +426,8 @@ export function initModels(sequelize: Sequelize) {
   Propuesta.hasMany(UbicacionProblematica, {as : 'ubicacionProblematicas', foreignKey: "codigoPropuesta"});
   PropuestaLineaTematica.belongsTo(LineaTematica, { foreignKey: "idLineaTematica"});
   PropuestaCapacitacion.belongsTo(Propuesta, { foreignKey: "codigoPropuesta"});
-  PropuestaInstitucion.belongsTo(Propuesta, { foreignKey: "codigoPropuesta"});
+  PropuestaInstitucion.belongsTo(Propuesta, { as : 'propuesta', foreignKey: "codigoPropuesta"});
+  PropuestaInstitucion.belongsTo(Institucion, { as : 'institucion', foreignKey: "idInstitucion", targetKey : 'idInstitucion'});
   PropuestaLineaTematica.belongsTo(Propuesta, { foreignKey: "codigoPropuesta"});
   PropuestaPalabraClave.belongsTo(Propuesta, { foreignKey: "codigoPropuesta"});
   PropuestaPrevia.belongsTo(Propuesta, { foreignKey: "codigoPropuestaPrevia"});
@@ -437,7 +438,6 @@ export function initModels(sequelize: Sequelize) {
   
   PropuestaCapacitacion.belongsTo(Capacitacion, { foreignKey: "idCapacitacion"});
 
-  PropuestaInstitucion.belongsTo(Institucion, { foreignKey: "idInstitucion"});
   PalabraClave.hasMany(PropuestaPalabraClave, { foreignKey: "idPalabraClave"});
   ParticipanteSocial.hasMany(ActividadParticipanteSocial, { foreignKey: "idParticipanteSocial"});
   ParticipanteSocial.belongsTo(Propuesta, { foreignKey: "codigoPropuesta"});

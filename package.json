@@ -3,7 +3,8 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "dev": "nodemon dist\\index.js",
+    "dev": "nodemon -L src/index.js",
+    "debug": "node inspect dist\\index.js",
     "watch": "node_modules\\.bin\\tsc -w"
   },
   "dependencies": {

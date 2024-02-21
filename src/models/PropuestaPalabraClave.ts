@@ -17,10 +17,10 @@ export class PropuestaPalabraClave extends Model<PropuestaPalabraClaveAttributes
   idPalabraClave!: number;
 
   // PropuestaPalabraClave belongsTo PalabraClave via idPalabraClave
-  idPalabraClavePalabraClave!: PalabraClave;
-  getIdPalabraClavePalabraClave!: Sequelize.BelongsToGetAssociationMixin<PalabraClave>;
-  setIdPalabraClavePalabraClave!: Sequelize.BelongsToSetAssociationMixin<PalabraClave, PalabraClaveId>;
-  createIdPalabraClavePalabraClave!: Sequelize.BelongsToCreateAssociationMixin<PalabraClave>;
+  palabraClave!: PalabraClave;
+  getPalabraClave!: Sequelize.BelongsToGetAssociationMixin<PalabraClave>;
+  setPalabraClave!: Sequelize.BelongsToSetAssociationMixin<PalabraClave, PalabraClaveId>;
+  createPalabraClave!: Sequelize.BelongsToCreateAssociationMixin<PalabraClave>;
   // PropuestaPalabraClave belongsTo Propuesta via codigoPropuesta
   codigoPropuestaPropuestum!: Propuesta;
   getCodigoPropuestaPropuestum!: Sequelize.BelongsToGetAssociationMixin<Propuesta>;

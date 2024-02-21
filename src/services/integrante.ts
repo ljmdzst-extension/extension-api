@@ -1,19 +1,26 @@
 import { Model, Transaction } from "sequelize"
-import { Integrante } from "../models/Integrante"
+import { Integrante, IntegranteCreationAttributes } from "../models/Integrante"
 import { Propuesta } from "../models/Propuesta";
 import { IServiciosModelo } from "./IServiciosModelo";
-import { RolIntegrante } from "../models/RolIntegrante";
+import { RolIntegrante, RolIntegranteCreationAttributes } from "../models/RolIntegrante";
+import { Persona, PersonaCreationAttributes } from "../models/Persona";
 
 
 export default class ServiciosIntegrantes implements IServiciosModelo {
 
     async leerDatos(iIntegrante : Integrante, transaction ?: Transaction ) {
-        console.log('ServiciosIntegrante.leerDatos')
+       
         await iIntegrante.getPersona({transaction}).then( resp =>iIntegrante.persona = resp)
-        await iIntegrante.getRoles({transaction,where : {codigoPropuesta : iIntegrante.codigoPropuesta}}).then( resp => iIntegrante.roles = resp)
+        
+    }
+    async leerDatosRoles(iIntegrante: Integrante, transaction ?: Transaction){
+        await iIntegrante.getRoles({
+            transaction,
+            where : {codigoPropuesta : iIntegrante.codigoPropuesta}
+        })
+        .then( resp => iIntegrante.roles = resp)
 
     }
-   
     async guardarDatos(iIntegrante : Integrante, transaction ?: Transaction ) {
         if(iIntegrante.roles.length) {
             await Promise.all(iIntegrante.roles.map( rol => rol.save({transaction}) ));
@@ -26,43 +33,47 @@ export default class ServiciosIntegrantes implements IServiciosModelo {
     }
 
     verDatos ( iIntegrante : Integrante){
-        const {
-            codigoPropuesta,
-            nroDoc,
-            ...restData
-        } = iIntegrante.dataValues
-        let salida = {
-            ...restData,
-            lRoles : <any>[]
-        }
+        return {
+            ...iIntegrante.dataValues,
+            persona : iIntegrante.persona?.dataValues,
+            roles : iIntegrante.roles?.map(rol => rol.dataValues)
+        };
+    }
 
-        if(iIntegrante.persona) {
-            const {
-                ciudad,
-                provincia,
-                pais,
-                tipoDoc,
-                ...restData
-            } = iIntegrante.persona.dataValues;
-            salida = {
-                ...salida,
-                ...restData
-            }
-        }
-
-        if(iIntegrante.roles && iIntegrante.roles.length) {
-           salida.lRoles = iIntegrante.roles.map( rol => rol.idRolIntegrante)
-        }
-
-        return salida;
+    asociarPersona( iIntegrante : Integrante , iPersona : Persona) {
+        iIntegrante.persona = iPersona;
     }
 
     asociarRoles ( iIntegrante : Integrante , roles : RolIntegrante[] ) {
-       if(roles.length ) {
-            iIntegrante.setRoles( roles );
+        iIntegrante.roles = [];
+        
+        if(roles.length ) {
+            iIntegrante.roles.push(...roles);
        }
     }
 
+    crearIntegrante( 
+        data : IntegranteCreationAttributes & { 
+            persona : PersonaCreationAttributes , 
+            roles : RolIntegranteCreationAttributes[]
+        } ) {
+
+
+            const nuevoIntegrante = Integrante.build(data);
+
+            const persona = Persona.build(data.persona);
+            this.asociarPersona(nuevoIntegrante,persona);
+
+            if(data.roles.length) {
+                const roles = RolIntegrante.bulkBuild(data.roles);
+                this.asociarRoles(nuevoIntegrante,roles);
+            }
+          
+            console.log(nuevoIntegrante);
+       
+      
+            return nuevoIntegrante;
+        }
 }
 
 
