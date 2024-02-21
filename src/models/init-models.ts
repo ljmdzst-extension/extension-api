@@ -373,7 +373,7 @@ export function initModels(sequelize: Sequelize) {
   Institucion.belongsToMany(Propuesta, { as: 'codigoPropuestaPropuestaPropuestaInstitucions', through: PropuestaInstitucion, foreignKey: "idInstitucion", otherKey: "codigoPropuesta" });
   Institucion.hasMany(InstitucionActividad, { foreignKey: "idInstitucion"});
   Institucion.hasMany(PropuestaInstitucion, { foreignKey: "idInstitucion"});
-  Institucion.hasMany(Responsable, { foreignKey: "idInstitucion"});
+  Institucion.hasMany(Responsable, { as : 'responsables', foreignKey: "idInstitucion"});
   InstitucionActividad.belongsTo(Actividad, { foreignKey: "idActividad"});
   InstitucionActividad.belongsTo(Institucion, { foreignKey: "idInstitucion"});
   Instancia.hasMany( RegistroPropuestaInstancia, {foreignKey : 'idInstancia'});
@@ -434,7 +434,7 @@ export function initModels(sequelize: Sequelize) {
   PropuestaProgramaExtension.belongsTo(Propuesta, { foreignKey: "codigoPropuesta"});
   PropuestaRelacionada.belongsTo(Propuesta, { foreignKey: "codigoPropuesta"});
   PropuestaRelacionada.belongsTo(Propuesta, { foreignKey: "codigoPropuestaRelacionada"});
-  PropuestaPalabraClave.belongsTo(PalabraClave, { foreignKey: "idPalabraClave"});
+  PropuestaPalabraClave.belongsTo(PalabraClave, { as : 'palabraClave', foreignKey: "idPalabraClave"});
   
   PropuestaCapacitacion.belongsTo(Capacitacion, { foreignKey: "idCapacitacion"});
 
@@ -488,7 +488,7 @@ export function initModels(sequelize: Sequelize) {
   Usuario.belongsToMany(Evaluacion, { as: 'idEvaluacionEvaluacions', through: EvaluacionItem, foreignKey: "idUsuario", otherKey: "idEvaluacion" });
   Usuario.hasMany(Actividad, { foreignKey: "idUsuario"});
   Usuario.hasMany(EvaluacionItem, { foreignKey: "idUsuario"});
-  Usuario.hasMany(Propuesta, { foreignKey: "idUsuario"});
+  Usuario.hasMany(Propuesta, { as : 'propuestas', foreignKey: "idUsuario"});
   Usuario.hasMany(UsuarioCategoria, { foreignKey: "idUsuario"});
   UsuarioCategoria.belongsTo(Categoria, { foreignKey: "idCategoria"});
   UsuarioCategoria.belongsTo(Usuario, { foreignKey: "idUsuario"});

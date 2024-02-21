@@ -1,12 +1,19 @@
 import { Model, Transaction } from "sequelize";
 import { Institucion, InstitucionAttributes, InstitucionCreationAttributes } from "../models/Institucion";
 import { Propuesta } from "../models/Propuesta";
-import { PropuestaInstitucion } from "../models/PropuestaInstitucion";
+import { PropuestaInstitucion, PropuestaInstitucionCreationAttributes } from "../models/PropuestaInstitucion";
 import { IServiciosModelo } from "./IServiciosModelo";
 import { Responsable, ResponsableCreationAttributes } from "../models/Responsable";
 import { Persona, PersonaCreationAttributes } from "../models/init-models";
 
 export interface IServiciosInstitucion extends IServiciosModelo {
+    crearInstitucion( data :  PropuestaInstitucionCreationAttributes & {
+        institucion : InstitucionCreationAttributes & {
+            responsable : ResponsableCreationAttributes & {
+                persona : PersonaCreationAttributes
+            }
+        }
+    }) : PropuestaInstitucion;
     leerDatosResponsable(iInstitucion : Institucion  , transaction ?: Transaction) : Promise<void>;
     leerDatosPersonalesResponsable(iInstitucion : Institucion, transaction ?: Transaction) : Promise<void>;
     guardarDatosResponsable(iInstitucion : Institucion  , transaction ?: Transaction) : Promise<void>;
@@ -19,18 +26,25 @@ export default class ServiciosInstitucion implements IServiciosInstitucion {
         this.iServiciosResponsable = new ServiciosResponsable();
     }
 
-    crearInstitucion( data : InstitucionCreationAttributes &
-        { responsable ?: ResponsableCreationAttributes & { persona : PersonaCreationAttributes}}){
-
-            const nuevaInstitucion = Institucion.build(data);
+    crearInstitucion( data : PropuestaInstitucionCreationAttributes & {
+        institucion : InstitucionCreationAttributes & {
+            responsable : ResponsableCreationAttributes & {
+                persona : PersonaCreationAttributes
+            }
+        }
+    }){
+        
+            const nuevaInstitucion = Institucion.build(data.institucion);
             
             nuevaInstitucion.responsables = [];
-            if(data.responsable){
-                const responsable = this.iServiciosResponsable.crearResponsable(data.responsable);
+            if(data.institucion.responsable){
+                const responsable = this.iServiciosResponsable.crearResponsable(data.institucion.responsable);
                 nuevaInstitucion.responsables.push(responsable);
                 
             }
-            return nuevaInstitucion;
+            const iPropInst = PropuestaInstitucion.build(data);
+            iPropInst.institucion = nuevaInstitucion;
+            return iPropInst;
         }
 
     static asociarInstitucion( iPropuesta : Propuesta, iInstitucion : Institucion, dataAsoc : {antecedentes : string}  )  
@@ -51,17 +65,16 @@ export default class ServiciosInstitucion implements IServiciosInstitucion {
         await this.guardarDatosPersonalesResponsable(iInstitucion,transaction);
         await this.guardarDatosResponsable(iInstitucion,transaction);
         
-        await iInstitucion.setResponsables(iInstitucion.responsables,{transaction});
       
     }
     async guardarDatosResponsable(iInstitucion : Institucion  , transaction ?: Transaction){
-        if(iInstitucion.responsables.length){
+        if(iInstitucion.responsables && iInstitucion.responsables.length){
             await this.iServiciosResponsable.guardarDatos(iInstitucion.responsables[iInstitucion.responsables.length -1],transaction);
         }
        
     }
     async guardarDatosPersonalesResponsable(iInstitucion : Institucion, transaction?: Transaction | undefined): Promise<void> {
-        if(iInstitucion.responsables.length){
+        if(iInstitucion.responsables &&  iInstitucion.responsables.length){
             await this.iServiciosResponsable.guardarDatosPersonales(iInstitucion.responsables[iInstitucion.responsables.length -1],transaction);
         }
     }
@@ -74,7 +87,7 @@ export default class ServiciosInstitucion implements IServiciosInstitucion {
         await this.iServiciosResponsable.leerDatos(iInstitucion,transaction);
     }
     async leerDatosPersonalesResponsable(iInstitucion : Institucion, transaction?: Transaction | undefined): Promise<void> {
-        if(iInstitucion.responsables.length){
+        if(iInstitucion.responsables && iInstitucion.responsables.length){
             await this.iServiciosResponsable.leerDatosPersonales(iInstitucion.responsables[iInstitucion.responsables.length -1],transaction);
         }
     }
@@ -127,8 +140,12 @@ export  class ServiciosResponsable implements IServiciosResponsable {
     }
     async guardarDatosPersonales( iResponsable : Responsable ,transaction ?: Transaction ) {
         
-        await iResponsable.persona.save({transaction}).then( resp => {
-            iResponsable.persona = resp;
+        await Persona.findOrCreate({
+            defaults : iResponsable.persona,
+            where : {nroDoc : iResponsable.persona.nroDoc}, 
+            transaction
+        }).then( ([persona,creado]) => {
+            iResponsable.persona = persona;
             iResponsable.set('nroDoc',iResponsable.persona.nroDoc); 
         } );
              

@@ -1,10 +1,18 @@
 import { Transaction } from "sequelize";
-import { ObjetivoEspecifico } from "../models/ObjetivoEspecifico";
+import { ObjetivoEspecifico, ObjetivoEspecificoCreationAttributes } from "../models/ObjetivoEspecifico";
 import { IServiciosModelo } from "./IServiciosModelo";
-import { ActividadObjetivoEspecifico } from "../models/ActividadObjetivoEspecifico";
-import { CronogramaActividad } from "../models/CronogramaActividad";
+import { ActividadObjetivoEspecifico, ActividadObjetivoEspecificoCreationAttributes } from "../models/ActividadObjetivoEspecifico";
+import { CronogramaActividad, CronogramaActividadCreationAttributes } from "../models/CronogramaActividad";
 
-
+export interface iServiciosObjetivoEspecifico extends IServiciosModelo {
+    crearObjetivoEspecifico(data : ObjetivoEspecificoCreationAttributes & {
+        actividadObjetivoEspecificos : (ActividadObjetivoEspecificoCreationAttributes & {
+            cronogramas : CronogramaActividadCreationAttributes[]
+        })[]}
+    ) : ObjetivoEspecifico;
+    guardarDatosActividad( iActObjEsp : ActividadObjetivoEspecifico, transaction ?: Transaction  ) : Promise<void>;
+    guardarCronogramasActividades( iObjetivoEsp : ObjetivoEspecifico) : Promise<void>;
+}
 
 export  class ServiciosObjetivoEspecifico implements IServiciosModelo {
 
@@ -15,9 +23,9 @@ export  class ServiciosObjetivoEspecifico implements IServiciosModelo {
     }
     
     async leerDatos(iObjetivoEsp : ObjetivoEspecifico, transaction ?: Transaction){
-
+        iObjetivoEsp.actividadObjetivoEspecificos = [];
        await iObjetivoEsp.getActividadObjetivoEspecificos({transaction})
-        .then(resp => iObjetivoEsp.actividadObjetivoEspecificos = resp);
+        .then(resp => iObjetivoEsp.actividadObjetivoEspecificos.push(...resp));
     
     }
   
@@ -26,24 +34,11 @@ export  class ServiciosObjetivoEspecifico implements IServiciosModelo {
 
     }
 
-    verDatos( iObjetivoEsp : ObjetivoEspecifico){
-
-        let salida = {
-            ...iObjetivoEsp.dataValues,
-            lActividades : <any>[]
-        }
-        if(iObjetivoEsp.actividadObjetivoEspecificos.length){
-         
-            salida = {
-                ...salida,
-                lActividades : iObjetivoEsp.actividadObjetivoEspecificos.map( act => this.iServiciosActividadObjetivoEsp.verDatos(act) )
-            }
-        }
-        return salida;
+    async guardarDatosActividad( iActObjEsp : ActividadObjetivoEspecifico, transaction ?: Transaction  ){
+       await this.iServiciosActividadObjetivoEsp.guardarDatos(iActObjEsp,transaction);
     }
-
     async guardarCronogramasActividades( iObjetivoEsp : ObjetivoEspecifico){
-        if(iObjetivoEsp.actividadObjetivoEspecificos.length ) {
+        if(iObjetivoEsp.actividadObjetivoEspecificos ) {
             await iObjetivoEsp.sequelize.transaction( async transaction => {
                 await Promise.all(
                     iObjetivoEsp.actividadObjetivoEspecificos
@@ -54,16 +49,54 @@ export  class ServiciosObjetivoEspecifico implements IServiciosModelo {
             })
         }
     }
+
+    verDatos( iObjetivoEsp : ObjetivoEspecifico){
+
+        let salida = {
+            ...iObjetivoEsp.dataValues,
+            actividadObjetivoEspecificos : <any>[]
+        }
+        if(iObjetivoEsp.actividadObjetivoEspecificos.length){
+         
+            salida = {
+                ...salida,
+                actividadObjetivoEspecificos : iObjetivoEsp.actividadObjetivoEspecificos.map( act => this.iServiciosActividadObjetivoEsp.verDatos(act) )
+            }
+        }
+        return salida;
+    }
+
+  
+
+    crearObjetivoEspecifico(data : ObjetivoEspecificoCreationAttributes & {
+        actividadObjetivoEspecificos : (ActividadObjetivoEspecificoCreationAttributes & {
+            cronogramas : CronogramaActividadCreationAttributes[]
+        })[]}
+    ){
+        const objEsp = ObjetivoEspecifico.build(data);
+
+        const actividadesObjEsp = data.actividadObjetivoEspecificos.map( dataAct => this.iServiciosActividadObjetivoEsp.crearActObjEsp(dataAct));
+
+        objEsp.actividadObjetivoEspecificos = [];
+
+        objEsp.actividadObjetivoEspecificos.push(...actividadesObjEsp);
+    }
 } 
+
+export interface iServiciosActividadObjetivoEspecifico extends IServiciosModelo {
+    crearActObjEsp ( data : ActividadObjetivoEspecificoCreationAttributes & {
+        cronogramas : CronogramaActividadCreationAttributes[]
+    }) : ActividadObjetivoEspecifico;
+}
 
 export  class ServiciosActividadObjetivoEspecifico implements IServiciosModelo {
 
 
     
     async leerDatos(iActObjEsp : ActividadObjetivoEspecifico, transaction ?: Transaction){
-
+        iActObjEsp.cronogramaActividads = [];
         await iActObjEsp.getCronogramaActividads({transaction})
-            .then(resp => iActObjEsp.cronogramaActividads = resp);
+            .then(resp => iActObjEsp.cronogramaActividads.push(...resp));
     
     }
   
@@ -93,6 +126,16 @@ export  class ServiciosActividadObjetivoEspecifico implements IServiciosModelo {
            return iActObjEsp.cronogramaActividads.map( cronograma => cronograma.save({transaction}));
         }
         return [];
+    }
+
+    crearActObjEsp ( data : ActividadObjetivoEspecificoCreationAttributes & {
+        cronogramas : CronogramaActividadCreationAttributes[]
+    }) {
+        const cronogramas = CronogramaActividad.bulkBuild(data.cronogramas);
+        const actividad = ActividadObjetivoEspecifico.build(data);
+        actividad.cronogramaActividads = [];
+        actividad.cronogramaActividads.push( ...cronogramas );
+        return actividad;
     }
 
 } 

@@ -6,6 +6,7 @@ import ServiciosPropuesta from '../services/propuesta';
 import sequelizeExtension from "../config/dbConfig";
 import ServiciosInstitucion from "../services/institucion";
 import ServiciosIntegrantes from "../services/integrante";
+import { ValidationError } from "sequelize";
 
 export const getPropuesta = async(req : typeof request , res : typeof response)=>{
     
@@ -74,11 +75,7 @@ export const putPropuesta = async(req : typeof request , res : typeof response)=
         /**... */
 
        const {codigoPropuesta} = req.params;
-       const {integrantes,instituciones,...restData} : 
-        PropuestaCreationAttributes & { 
-            integrantes : (IntegranteCreationAttributes & {persona : PersonaCreationAttributes , roles : RolIntegranteCreationAttributes})[],
-            instituciones : (InstitucionCreationAttributes & {responsable : ResponsableCreationAttributes  & { persona : PersonaCreationAttributes}})[]
-        }  = req.body;
+       const {integrantes,instituciones,...restData}  = req.body;
 
 
        const {Propuesta} = initModels(sequelizeExtension);
@@ -88,24 +85,24 @@ export const putPropuesta = async(req : typeof request , res : typeof response)=
        if(!iPropuesta) throw { status : 400 , message : 'propuesta no encontrada'}
        
        const iServiciosPropuesta = new ServiciosPropuesta();
-       const SInstitucion = new ServiciosInstitucion();
-       const SIntegrante = new ServiciosIntegrantes();
+
+        await iServiciosPropuesta.leerDatos(iPropuesta)
+            .then(()=>iServiciosPropuesta.leerDatosIntegrantes(iPropuesta))
+            .then(()=>iServiciosPropuesta.leerDatosInstituciones(iPropuesta))
+            .then(()=>iServiciosPropuesta.leerDatosObjetivos(iPropuesta))
+            .then(()=>iServiciosPropuesta.leerDatosPalabrasClave(iPropuesta));
 
        iServiciosPropuesta.editarDatos(iPropuesta,restData);
 
       
-       if(integrantes.length){
-            const lIntegrantes = integrantes.map( (integ : any) =>SIntegrante.crearIntegrante(integ) );
-          
-           iServiciosPropuesta.cargarIntegrantes(iPropuesta,lIntegrantes);
-       
+        if(integrantes.length){
+           iServiciosPropuesta.cargarIntegrantes(iPropuesta,integrantes);
         }
         if(instituciones.length) {
-            const lInstituciones = instituciones.map( (inst : any) =>SInstitucion.crearInstitucion(inst) );
-            iServiciosPropuesta.cargarInstituciones(iPropuesta,lInstituciones);
+            iServiciosPropuesta.cargarInstituciones(iPropuesta,instituciones);
         }
-       
-
+        
+        
 
        await iServiciosPropuesta.guardarDatos(iPropuesta);
 
@@ -113,18 +110,39 @@ export const putPropuesta = async(req : typeof request , res : typeof response)=
 
        res.status(200).json({
         ok : true,
-        data : iServiciosPropuesta.verDatos(iPropuesta),
+        data : {
+            ...iServiciosPropuesta.verDatos(iPropuesta),
+        integrantes: iServiciosPropuesta.verIntegrantes(iPropuesta),
+        instituciones : iServiciosPropuesta.verInstituciones(iPropuesta),
+        objetivosEspecificos : iServiciosPropuesta.verObjetivosEspecificos(iPropuesta),
+        palabrasClave : iServiciosPropuesta.verPalabrasClave(iPropuesta),
+        propuestaObjetivos : iServiciosPropuesta.verObjetivosEspecificos(iPropuesta),
+        propuestaLineasTematicas : iServiciosPropuesta.verLineasTematicas(iPropuesta),
+        propuestaCapacitaciones : iServiciosPropuesta.verCapacitaciones(iPropuesta),
+        propuestaProgramasExtension : iServiciosPropuesta.verProgramasSippe(iPropuesta)
+    },
         error : null
        })
 
 
     } catch (error : any) {
         logger.log('error',error.status,' - ',error.message);
-        res.status(error.status || 500).json({
-            ok : false,
-            data : null,
-            error : error.message
-        })
+        if(error instanceof ValidationError){
+            console.log(error.stack)
+            res.status(400).json({
+                ok : false,
+                data : null,
+                error : error.errors
+            })
+        } else {
+            console.log(error)
+            res.status(500).json({
+                ok : false,
+                data : null,
+                error : 'Error de servidor'
+            })
+        }
+       
     }
 }
 export const deletePropuesta = async(req : typeof request , res : typeof response)=>{

@@ -5,8 +5,15 @@ import { IServiciosModelo } from "./IServiciosModelo";
 import { RolIntegrante, RolIntegranteCreationAttributes } from "../models/RolIntegrante";
 import { Persona, PersonaCreationAttributes } from "../models/Persona";
 
-
-export default class ServiciosIntegrantes implements IServiciosModelo {
+export interface IServiciosIntegrantes extends IServiciosModelo {
+    crearIntegrante( 
+        data : IntegranteCreationAttributes & { 
+            persona : PersonaCreationAttributes , 
+            roles : RolIntegranteCreationAttributes[]
+        } ) : Integrante
+        leerDatosRoles(iIntegrante: Integrante, transaction ?: Transaction) : Promise<void>
+}
+export default class ServiciosIntegrantes implements IServiciosIntegrantes {
 
     async leerDatos(iIntegrante : Integrante, transaction ?: Transaction ) {
        
@@ -22,7 +29,7 @@ export default class ServiciosIntegrantes implements IServiciosModelo {
 
     }
     async guardarDatos(iIntegrante : Integrante, transaction ?: Transaction ) {
-        if(iIntegrante.roles.length) {
+        if(iIntegrante.roles && iIntegrante.roles.length) {
             await Promise.all(iIntegrante.roles.map( rol => rol.save({transaction}) ));
         }
 
@@ -36,7 +43,7 @@ export default class ServiciosIntegrantes implements IServiciosModelo {
         return {
             ...iIntegrante.dataValues,
             persona : iIntegrante.persona?.dataValues,
-            roles : iIntegrante.roles?.map(rol => rol.dataValues)
+            roles : iIntegrante.roles?.map(rol => rol.dataValues) || []
         };
     }
 
@@ -63,13 +70,13 @@ export default class ServiciosIntegrantes implements IServiciosModelo {
 
             const persona = Persona.build(data.persona);
             this.asociarPersona(nuevoIntegrante,persona);
-
+            
+            nuevoIntegrante.roles = [];
             if(data.roles.length) {
                 const roles = RolIntegrante.bulkBuild(data.roles);
                 this.asociarRoles(nuevoIntegrante,roles);
             }
           
-            console.log(nuevoIntegrante);
        
       
             return nuevoIntegrante;
