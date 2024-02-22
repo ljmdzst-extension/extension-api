@@ -1,27 +1,17 @@
-import { Propuesta, PropuestaAttributes, PropuestaId } from "../models/Propuesta";
+import { Propuesta, PropuestaAttributes } from "../models/Propuesta";
 import { PropuestaCapacitacion } from "../models/PropuestaCapacitacion";
 import { PropuestaLineaTematica } from "../models/PropuestaLineaTematica";
 import { PropuestaProgramaExtension } from "../models/PropuestaProgramaExtension";
 import { PropuestaPalabraClave } from "../models/PropuestaPalabraClave";
-import { PropuestaInstitucion, PropuestaInstitucionCreationAttributes } from "../models/PropuestaInstitucion";
-import { Integrante, IntegranteCreationAttributes } from "../models/Integrante";
-import { ObjetivoEspecifico, ObjetivoEspecificoCreationAttributes } from "../models/ObjetivoEspecifico";
+import { PropuestaInstitucion } from "../models/PropuestaInstitucion";
+import { Integrante } from "../models/Integrante";
+import { ObjetivoEspecifico } from "../models/ObjetivoEspecifico";
 import { IServiciosModelo } from "./IServiciosModelo";
-import {Institucion, InstitucionCreationAttributes} from "../models/Institucion";
 import { PropuestaRelacionada } from "../models/PropuestaRelacionada";
 import { PropuestaPrevia } from "../models/PropuestaPrevia";
-import { CapacitacionId } from "../models/Capacitacion";
-import { LineaTematicaId } from "../models/LineaTematica";
-import { ProgramaSippeId } from "../models/ProgramaSippe";
-import { PalabraClave, PalabraClaveCreationAttributes } from "../models/PalabraClave";
 import ServiciosIntegrantes, { IServiciosIntegrantes } from "./integrante";
 import { ServiciosActividadObjetivoEspecifico, ServiciosObjetivoEspecifico, iServiciosObjetivoEspecifico } from "./planificacion";
 import ServiciosInstitucion, { IServiciosInstitucion } from "./institucion";
-import { PersonaCreationAttributes } from "../models/Persona";
-import { RolIntegranteCreationAttributes } from "../models/RolIntegrante";
-import { ActividadObjetivoEspecificoCreationAttributes } from "../models/ActividadObjetivoEspecifico";
-import { CronogramaActividadCreationAttributes } from "../models/CronogramaActividad";
-import { ResponsableCreationAttributes } from "../models/Responsable";
 
 
 type TServicio = string;
@@ -48,142 +38,117 @@ export default class ServiciosPropuesta implements IServiciosModelo {
     }
 
    
-    cargarIntegrantes( 
-        iPropuesta : Propuesta, 
-        data : (IntegranteCreationAttributes& { 
-            persona : PersonaCreationAttributes , 
-            roles : RolIntegranteCreationAttributes[]
-            })[] ) {
+    cargarIntegrantes( iPropuesta : Propuesta, integrantes : Integrante[] ) {
         console.log('carga integrantes')
-        if(data.length ){
-           data.forEach( dataInteg => {
-             if(
-                iPropuesta.integrantes.every( integ => integ.nroDoc !== dataInteg.nroDoc)
-             ){
-                const SIntegrantes = this.lServiciosModelo.get('INTEG') as IServiciosIntegrantes
-                const integrantes = data.map( dataInteg => SIntegrantes.crearIntegrante(dataInteg) )
-                iPropuesta.integrantes = integrantes;
+        if(integrantes.length ){
+            integrantes.forEach( integrante => {
+             const integranteCargado =  iPropuesta.integrantes.find( integ => integ.nroDoc === integrante.nroDoc)
+             if(integranteCargado){
+                const nuevaData = this.lServiciosModelo.get('INTEG')?.verDatos(integrante);
+
+                this.lServiciosModelo.get('INTEG')?.editarDatos( integranteCargado, nuevaData ); 
+             } else {
+                iPropuesta.integrantes.push(integrante);
              }
            })
         }
     }
 
-    cargarObjetivosEspecificos( iPropuesta : Propuesta, data : (ObjetivoEspecificoCreationAttributes & {
-        actividadObjetivoEspecificos : (ActividadObjetivoEspecificoCreationAttributes & {
-            cronogramas : CronogramaActividadCreationAttributes[]
-          })[]})[]) {
-        if(data.length ){
-           data.forEach ( dataObjEsp => {
-             if(dataObjEsp.idObjetivoEspecifico === 0) {
-                const SObjetivos = this.lServiciosModelo.get('OBJESP') as iServiciosObjetivoEspecifico;
-                iPropuesta.objetivoEspecificos = data.map( dataObjEsp => SObjetivos.crearObjetivoEspecifico(dataObjEsp));
-             }
-           })
-        }
-    }
-    cargarInstituciones( iPropuesta : Propuesta, data : (
-        PropuestaInstitucionCreationAttributes & {
-            institucion : InstitucionCreationAttributes & {
-                responsable : ResponsableCreationAttributes & {
-                    persona : PersonaCreationAttributes
+    cargarObjetivosEspecificos( iPropuesta : Propuesta, objetivos : ObjetivoEspecifico[]) {
+        if(objetivos.length ){
+            objetivos.forEach ( objetivo => {
+                const objetivoCargado = iPropuesta.objetivoEspecificos.find( obj => obj.idObjetivoEspecifico === objetivo.idObjetivoEspecifico );
+                if(objetivoCargado) {
+                    this.lServiciosModelo.get('OBJESP')?.editarDatos( objetivoCargado, objetivo );
+                }else {
+                    iPropuesta.objetivoEspecificos.push( objetivo );
                 }
-            }
+           })
         }
-    )[]) {
-        if(data.length ){
-           data.forEach( dataInst => {
-             if(dataInst.idInstitucion === 0){
-                const SInstituciones = this.lServiciosModelo.get('INST') as IServiciosInstitucion;
-                iPropuesta.propuestaInstituciones.push( ...data.map( dataInst => SInstituciones.crearInstitucion(dataInst)));
+    }
+
+    cargarInstituciones( iPropuesta : Propuesta, propuestaInstituciones : PropuestaInstitucion[]) {
+        if(propuestaInstituciones.length ){
+            propuestaInstituciones.forEach( propInst => {
+             const instCargada = iPropuesta.propuestaInstituciones.find( propIsnt => propIsnt.idInstitucion === propInst.idInstitucion );
+             if(instCargada){
+                const nuevaData = this.lServiciosModelo.get('INST')?.verDatos(propInst); 
+               this.lServiciosModelo.get('INST')?.editarDatos(instCargada, nuevaData);
+             } else {
+                iPropuesta.propuestaInstituciones.push( propInst );
              }
            })
         }
     }
-    cargarPropRelacionadas( iPropuesta : Propuesta, propuestasRelacionadas : PropuestaId[]) {
+
+    cargarPropRelacionadas( iPropuesta : Propuesta, propuestasRelacionadas : PropuestaRelacionada[]) {
         if(propuestasRelacionadas.length ){
              propuestasRelacionadas.forEach( propRel => {
                 if(
-                    iPropuesta.propuestaRelacionadas.every( item => item.codigoPropuestaRelacionada !== propRel)
+                    iPropuesta.propuestaRelacionadas.every( item => item.codigoPropuestaRelacionada !== propRel.codigoPropuestaRelacionada)
                 ){
-                    iPropuesta.propuestaRelacionadas.push( PropuestaRelacionada.build({
-                        codigoPropuesta : iPropuesta.codigoPropuesta,
-                        codigoPropuestaRelacionada : propRel
-                    }) )
+                    iPropuesta.propuestaRelacionadas.push( propRel )
                 }
              })
             
             
         }
     }
-    cargarPropPrevias( iPropuesta : Propuesta, propuestasPrevias : PropuestaId[]) {
+
+    cargarPropPrevias( iPropuesta : Propuesta, propuestasPrevias : PropuestaPrevia[]) {
         if(propuestasPrevias.length ){
             propuestasPrevias.forEach( propPrev => {
-                if(
-                    iPropuesta.propuestasPrevias.every( item => item.codigoPropuestaPrevia !== propPrev)
-                ){
-                    iPropuesta.propuestasPrevias.push( PropuestaPrevia.build({
-                        codigoPropuesta : iPropuesta.codigoPropuesta,
-                        codigoPropuestaPrevia : propPrev
-                    }) )
-                }
-             })
-            
-        }
+               if(
+                   iPropuesta.propuestasPrevias.every( item => item.codigoPropuestaPrevia !== propPrev.codigoPropuestaPrevia)
+               ){
+                   iPropuesta.propuestasPrevias.push( propPrev )
+               }
+            })
+           
+           
+       }
     }
-    cargarCapacitaciones( iPropuesta : Propuesta, capacitaciones : CapacitacionId[]) {
+    
+    cargarCapacitaciones( iPropuesta : Propuesta, capacitaciones : PropuestaCapacitacion[]) {
         if(capacitaciones.length ){
             capacitaciones.forEach( capacitacion => {
                 if(
-                    iPropuesta.propuestaCapacitaciones.every( item => item.idCapacitacion !== capacitacion)
+                    iPropuesta.propuestaCapacitaciones.every( item => item.idCapacitacion !== capacitacion.idCapacitacion)
                 ){
-                    iPropuesta.propuestaCapacitaciones.push( PropuestaCapacitacion.build({
-                        codigoPropuesta : iPropuesta.codigoPropuesta,
-                        idCapacitacion : capacitacion
-                    }) )
+                    iPropuesta.propuestaCapacitaciones.push( capacitacion )
                 }
              })
         }
     }
-    cargarLineasTematicas( iPropuesta : Propuesta, lineasTematicas : LineaTematicaId[]) {
+    cargarLineasTematicas( iPropuesta : Propuesta, lineasTematicas : PropuestaLineaTematica[]) {
         if(lineasTematicas.length ){
             lineasTematicas.forEach( lineaTematica => {
                 if(
-                    iPropuesta.propuestaLineaTematicas.every( item => item.idLineaTematica !== lineaTematica)
+                    iPropuesta.propuestaLineaTematicas.every( item => item.idLineaTematica !== lineaTematica.idLineaTematica)
                 ) {
-                    iPropuesta.propuestaLineaTematicas.push( PropuestaLineaTematica.build({
-                        codigoPropuesta : iPropuesta.codigoPropuesta,
-                        idLineaTematica : lineaTematica
-                    }) )
+                    iPropuesta.propuestaLineaTematicas.push( lineaTematica )
                 }
              })
         }
     }
-    cargarProgramasSippe( iPropuesta : Propuesta, progSippe : ProgramaSippeId[]) {
+    cargarProgramasSippe( iPropuesta : Propuesta, progSippe : PropuestaProgramaExtension[]) {
         if(progSippe.length ){
             progSippe.forEach( progSippe => {
                 if(
-                    iPropuesta.propuestaProgramaExtensions.every( item => item.idProgramaExtension !== progSippe)
+                    iPropuesta.propuestaProgramaExtensions.every( item => item.idProgramaExtension !== progSippe.idProgramaExtension)
                 ) {
-                    iPropuesta.propuestaProgramaExtensions.push( PropuestaProgramaExtension.build({
-                        codigoPropuesta : iPropuesta.codigoPropuesta,
-                        idProgramaExtension : progSippe
-                    }) )
+                    iPropuesta.propuestaProgramaExtensions.push( progSippe )
                 }
              })
         }
     }
-    cargarPalabrasClave( iPropuesta : Propuesta, palabrasClave : PalabraClaveCreationAttributes[]) {
+    cargarPalabrasClave( iPropuesta : Propuesta, palabrasClave : PropuestaPalabraClave[]) {
         if(palabrasClave.length ){
             palabrasClave.forEach( palabra => {
                 if(
                     iPropuesta.propuestaPalabraClaves.every( item => item.idPalabraClave !== palabra.idPalabraClave)
                 ){
-                    const iPalabraAsociada = new PropuestaPalabraClave({
-                        idPalabraClave : palabra.idPalabraClave,
-                        codigoPropuesta : iPropuesta.codigoPropuesta
-                    });
-                    iPalabraAsociada.palabraClave = PalabraClave.build(palabra);
-                    iPropuesta.propuestaPalabraClaves.push( iPalabraAsociada );
+                    iPropuesta.propuestaPalabraClaves.push( palabra );
                 }
             })
         }
@@ -270,8 +235,9 @@ export default class ServiciosPropuesta implements IServiciosModelo {
     }
 
     async leerDatosIntegrantes (iPropuesta : Propuesta) : Promise<void> {
-        const SIntegrantes  = this.lServiciosModelo.get('INTEG') as IServiciosIntegrantes;
+       
         if(iPropuesta.integrantes.length) {
+            const SIntegrantes  = this.lServiciosModelo.get('INTEG') as IServiciosIntegrantes;
             await iPropuesta.sequelize.transaction( async transaction => {
                 await Promise.all(iPropuesta.integrantes.map( integrante => SIntegrantes?.leerDatos(integrante,transaction)));
             })
@@ -282,8 +248,9 @@ export default class ServiciosPropuesta implements IServiciosModelo {
     }
 
     async leerDatosObjetivos(iPropuesta : Propuesta) : Promise<void> {
-        const iServiciosObjetivoEspecifico = this.lServiciosModelo.get('OBJESP');
+       
         if(iPropuesta.objetivoEspecificos.length) {
+            const iServiciosObjetivoEspecifico = this.lServiciosModelo.get('OBJESP');
             await iPropuesta.sequelize.transaction( async transaction => {
                 await Promise.all(iPropuesta.objetivoEspecificos.map( objEsp => iServiciosObjetivoEspecifico?.leerDatos(objEsp,transaction)) )
             })
@@ -301,9 +268,10 @@ export default class ServiciosPropuesta implements IServiciosModelo {
         }
     }
     async leerDatosInstituciones(iPropuesta : Propuesta) : Promise<void> {
-        const SInstituciones = this.lServiciosModelo.get('INST') as IServiciosInstitucion;
+
        
         if(iPropuesta.propuestaInstituciones.length){ 
+            const SInstituciones = this.lServiciosModelo.get('INST') as IServiciosInstitucion;
     
             await iPropuesta.sequelize.transaction( async transaction => {
                 await Promise.all(iPropuesta.propuestaInstituciones.map( propInst => SInstituciones?.leerDatos(propInst,transaction)) )
@@ -324,20 +292,35 @@ export default class ServiciosPropuesta implements IServiciosModelo {
             });
         }
     }
-    async guardarDatos (iPropuesta : Propuesta ) : Promise<void> {
 
-        await iPropuesta.save();
-        
-        const SIntegrantes  = this.lServiciosModelo.get('INTEG');
-        if(iPropuesta.integrantes.length) {
+    async guardarDatosPalabrasClave( iPropuesta : Propuesta) : Promise<void> {
+            if(process.env.NODE_ENV==='development') console.log( 'ServiciosPropuesta.guardarDatosPalabrasClave()..' );
+        if(iPropuesta.propuestaPalabraClaves.length) {
             await iPropuesta.sequelize.transaction( async transaction => {
-                await Promise.all(iPropuesta.integrantes.map( integrante => SIntegrantes?.guardarDatos(integrante,transaction)));
+                await Promise.all( iPropuesta.propuestaPalabraClaves.map( propPalabra => propPalabra.save({transaction})) )
             })
         }
-
-        const SObjEsp = this.lServiciosModelo.get('OBJESP') as iServiciosObjetivoEspecifico;
-    
+    }
+    async guardarDatosIntegrantes( iPropuesta : Propuesta ) : Promise<void> {
+        if(process.env.NODE_ENV==='development') console.log( 'ServiciosPropuesta.guardarDatosIntegrantes()..' );
+        if( iPropuesta.integrantes.length ) {
+            
+            const SIntegrantes  = this.lServiciosModelo.get('INTEG') as IServiciosIntegrantes;
+            await iPropuesta.sequelize.transaction( async transaction => {
+                await Promise.all(  iPropuesta.integrantes.map( integrante => SIntegrantes.guardarDatos(integrante,transaction) ) )
+            })
+            await iPropuesta.sequelize.transaction( async transaction => {
+                await Promise.all(  iPropuesta.integrantes.map( integrante => SIntegrantes.guardarDatosRoles(integrante,transaction) ) )
+            })
+            await iPropuesta.sequelize.transaction( async transaction => {
+                await Promise.all(  iPropuesta.integrantes.map( integrante => SIntegrantes.guardarDatosPersonales(integrante,transaction) ) )
+            })
+        }
+    }
+    async guardarDatosObjetivos( iPropuesta : Propuesta) : Promise<void> {
+        if(process.env.NODE_ENV==='development') console.log( 'ServiciosPropuesta.guardarDatosObjetivos()..' );
         if(iPropuesta.objetivoEspecificos.length) {
+            const SObjEsp = this.lServiciosModelo.get('OBJESP') as iServiciosObjetivoEspecifico;
             await iPropuesta.sequelize.transaction( async transaction => {
                 await Promise.all(iPropuesta.objetivoEspecificos.map( objEsp => SObjEsp?.guardarDatos(objEsp,transaction)) )
             })
@@ -345,9 +328,7 @@ export default class ServiciosPropuesta implements IServiciosModelo {
                 const promesas : any[] = []
                 iPropuesta.objetivoEspecificos.map(objEsp =>{
                     if(objEsp.actividadObjetivoEspecificos) {
-                        promesas.push( ...objEsp.actividadObjetivoEspecificos.map( 
-                                actObjEsp => SObjEsp?.guardarDatosActividad(actObjEsp,transaction)
-                            ));
+                        promesas.push( ...objEsp.actividadObjetivoEspecificos.map( actObjEsp => SObjEsp?.guardarDatosActividad(actObjEsp,transaction)));
                     }
                 })
                 await Promise.all(promesas);
@@ -356,28 +337,30 @@ export default class ServiciosPropuesta implements IServiciosModelo {
 
             await Promise.all(iPropuesta.objetivoEspecificos.map( objEsp => SObjEsp?.guardarCronogramasActividades(objEsp)) )
         }
+    }
 
-        const SInstituciones = this.lServiciosModelo.get('INST') as IServiciosInstitucion;
-      
+    async guardarDatosInstituciones ( iPropuesta : Propuesta ) : Promise<void> {
+        if(process.env.NODE_ENV==='development') console.log( 'ServiciosPropuesta.guardarDatosInstituciones()..' );
         if(iPropuesta.propuestaInstituciones.length){ 
+            const SInstituciones = this.lServiciosModelo.get('INST') as IServiciosInstitucion;
+
             await iPropuesta.sequelize.transaction( async transaction => {
                 await Promise.all(iPropuesta.propuestaInstituciones.map( propInst => SInstituciones?.guardarDatos(propInst,transaction)) )
             });
             await iPropuesta.sequelize.transaction( async transaction => {
-                await Promise.all(iPropuesta.propuestaInstituciones.map( propInst => SInstituciones?.guardarDatosResponsable(propInst.institucion,transaction)) )
+                await Promise.all(iPropuesta.propuestaInstituciones.map( propInst => SInstituciones?.guardarDatosPersonalesResponsable(propInst.institucion,transaction)) )
             });
             await iPropuesta.sequelize.transaction( async transaction => {
                 await Promise.all(iPropuesta.propuestaInstituciones.map( propInst => SInstituciones?.guardarDatosResponsable(propInst.institucion,transaction)) )
             });
             
         }
+    }
 
-        if(iPropuesta.propuestaPalabraClaves.length) {
-            await iPropuesta.sequelize.transaction( async transaction => {
-                await Promise.all( iPropuesta.propuestaPalabraClaves.map(  propPalabra => propPalabra.palabraClave.save({transaction}).then( resp => propPalabra.set('idPalabraClave',resp.idPalabraClave))));
-            });
-        }
+    async guardarDatos (iPropuesta : Propuesta ) : Promise<void> {
 
+        await iPropuesta.save();
+        
         await iPropuesta.sequelize.transaction( async transaction => {
 
             await Promise.all([

@@ -7,6 +7,7 @@ import sequelizeExtension from "../config/dbConfig";
 import ServiciosInstitucion from "../services/institucion";
 import ServiciosIntegrantes from "../services/integrante";
 import { ValidationError } from "sequelize";
+import { ServiciosObjetivoEspecifico } from "../services/planificacion";
 
 export const getPropuesta = async(req : typeof request , res : typeof response)=>{
     
@@ -75,7 +76,7 @@ export const putPropuesta = async(req : typeof request , res : typeof response)=
         /**... */
 
        const {codigoPropuesta} = req.params;
-       const {integrantes,instituciones,...restData}  = req.body;
+       const {integrantes,instituciones,objetivos,...restData}  = req.body;
 
 
        const {Propuesta} = initModels(sequelizeExtension);
@@ -86,25 +87,38 @@ export const putPropuesta = async(req : typeof request , res : typeof response)=
        
        const iServiciosPropuesta = new ServiciosPropuesta();
 
-        await iServiciosPropuesta.leerDatos(iPropuesta)
-            .then(()=>iServiciosPropuesta.leerDatosIntegrantes(iPropuesta))
-            .then(()=>iServiciosPropuesta.leerDatosInstituciones(iPropuesta))
-            .then(()=>iServiciosPropuesta.leerDatosObjetivos(iPropuesta))
-            .then(()=>iServiciosPropuesta.leerDatosPalabrasClave(iPropuesta));
+       await iServiciosPropuesta.leerDatos(iPropuesta);
+       await iServiciosPropuesta.leerDatosIntegrantes(iPropuesta);
+       await iServiciosPropuesta.leerDatosInstituciones(iPropuesta);
+       await iServiciosPropuesta.leerDatosObjetivos(iPropuesta);
+       await iServiciosPropuesta.leerDatosPalabrasClave(iPropuesta);
+
 
        iServiciosPropuesta.editarDatos(iPropuesta,restData);
 
-      
-        if(integrantes.length){
-           iServiciosPropuesta.cargarIntegrantes(iPropuesta,integrantes);
+        console.log('inicio cargas')
+        if(integrantes && integrantes.length){
+           const SIntegrantes = new ServiciosIntegrantes();
+           const lIntegrantes = integrantes.map( (integ : any) => SIntegrantes.crearIntegrante( integ))
+           iServiciosPropuesta.cargarIntegrantes(iPropuesta,lIntegrantes);
         }
-        if(instituciones.length) {
-            iServiciosPropuesta.cargarInstituciones(iPropuesta,instituciones);
+        if(instituciones && instituciones.length) {
+            const SIntituciones = new ServiciosInstitucion();
+            const lInstituciones = instituciones.map( (inst : any)=> SIntituciones.crearInstitucion(inst))
+            iServiciosPropuesta.cargarInstituciones(iPropuesta,lInstituciones);
         }
-        
-        
+        if(objetivos && objetivos.length) {
+            const SObjetivos = new ServiciosObjetivoEspecifico();
 
-       await iServiciosPropuesta.guardarDatos(iPropuesta);
+            const lObjetivos = objetivos.map(  (obj : any) => SObjetivos.crearObjetivoEspecifico(obj) );
+            iServiciosPropuesta.cargarObjetivosEspecificos(iPropuesta,lObjetivos);
+        }
+        
+        await iServiciosPropuesta.guardarDatosIntegrantes(iPropuesta);
+        await iServiciosPropuesta.guardarDatosInstituciones(iPropuesta);
+        await iServiciosPropuesta.guardarDatosObjetivos(iPropuesta);
+        await iServiciosPropuesta.guardarDatosPalabrasClave(iPropuesta);
+        await iServiciosPropuesta.guardarDatos(iPropuesta);
 
 
 
@@ -112,15 +126,15 @@ export const putPropuesta = async(req : typeof request , res : typeof response)=
         ok : true,
         data : {
             ...iServiciosPropuesta.verDatos(iPropuesta),
-        integrantes: iServiciosPropuesta.verIntegrantes(iPropuesta),
-        instituciones : iServiciosPropuesta.verInstituciones(iPropuesta),
-        objetivosEspecificos : iServiciosPropuesta.verObjetivosEspecificos(iPropuesta),
-        palabrasClave : iServiciosPropuesta.verPalabrasClave(iPropuesta),
-        propuestaObjetivos : iServiciosPropuesta.verObjetivosEspecificos(iPropuesta),
-        propuestaLineasTematicas : iServiciosPropuesta.verLineasTematicas(iPropuesta),
-        propuestaCapacitaciones : iServiciosPropuesta.verCapacitaciones(iPropuesta),
-        propuestaProgramasExtension : iServiciosPropuesta.verProgramasSippe(iPropuesta)
-    },
+            integrantes: iServiciosPropuesta.verIntegrantes(iPropuesta),
+            instituciones : iServiciosPropuesta.verInstituciones(iPropuesta),
+            objetivosEspecificos : iServiciosPropuesta.verObjetivosEspecificos(iPropuesta),
+            palabrasClave : iServiciosPropuesta.verPalabrasClave(iPropuesta),
+            propuestaObjetivos : iServiciosPropuesta.verObjetivosEspecificos(iPropuesta),
+            propuestaLineasTematicas : iServiciosPropuesta.verLineasTematicas(iPropuesta),
+            propuestaCapacitaciones : iServiciosPropuesta.verCapacitaciones(iPropuesta),
+            propuestaProgramasExtension : iServiciosPropuesta.verProgramasSippe(iPropuesta)
+        },
         error : null
        })
 

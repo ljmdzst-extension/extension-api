@@ -1,4 +1,4 @@
-import { Transaction } from "sequelize";
+import { Model, Transaction } from "sequelize";
 import { ObjetivoEspecifico, ObjetivoEspecificoCreationAttributes } from "../models/ObjetivoEspecifico";
 import { IServiciosModelo } from "./IServiciosModelo";
 import { ActividadObjetivoEspecifico, ActividadObjetivoEspecificoCreationAttributes } from "../models/ActividadObjetivoEspecifico";
@@ -20,6 +20,9 @@ export  class ServiciosObjetivoEspecifico implements IServiciosModelo {
     
     constructor(){
         this.iServiciosActividadObjetivoEsp = new ServiciosActividadObjetivoEspecifico();
+    }
+    editarDatos(iModelo: Model<any, any>) {
+        throw new Error("Method not implemented.");
     }
     
     async leerDatos(iObjetivoEsp : ObjetivoEspecifico, transaction ?: Transaction){
@@ -90,6 +93,9 @@ export interface iServiciosActividadObjetivoEspecifico extends IServiciosModelo 
 }
 
 export  class ServiciosActividadObjetivoEspecifico implements IServiciosModelo {
+    editarDatos(iModelo: Model<any, any>) {
+        throw new Error("Method not implemented.");
+    }
 
 
     

@@ -11,9 +11,33 @@ export interface IServiciosIntegrantes extends IServiciosModelo {
             persona : PersonaCreationAttributes , 
             roles : RolIntegranteCreationAttributes[]
         } ) : Integrante
-        leerDatosRoles(iIntegrante: Integrante, transaction ?: Transaction) : Promise<void>
+    leerDatosRoles(iIntegrante: Integrante, transaction ?: Transaction) : Promise<void>
+    guardarDatosRoles (iIntegrante : Integrante, transaction ?: Transaction ): Promise<void>
+    guardarDatosPersonales(iIntegrante : Integrante, transaction ?: Transaction ): Promise<void>
 }
 export default class ServiciosIntegrantes implements IServiciosIntegrantes {
+
+
+    editarDatos(iIntegrante: Integrante , data :  IntegranteCreationAttributes & { 
+        persona : PersonaCreationAttributes , 
+        roles : RolIntegranteCreationAttributes[]
+    }) {
+        iIntegrante.set(data);
+
+
+        if(iIntegrante.persona){
+            iIntegrante.persona.set(data.persona);
+        } else {
+            iIntegrante.persona = Persona.build(data.persona);
+        }
+
+        if(data.roles.length) {
+            console.log(data.roles)
+            iIntegrante.roles = RolIntegrante.bulkBuild(data.roles);
+        } else {
+            iIntegrante.roles = [];
+        }
+    }
 
     async leerDatos(iIntegrante : Integrante, transaction ?: Transaction ) {
        
@@ -21,24 +45,37 @@ export default class ServiciosIntegrantes implements IServiciosIntegrantes {
         
     }
     async leerDatosRoles(iIntegrante: Integrante, transaction ?: Transaction){
+        iIntegrante.roles = [];
         await iIntegrante.getRoles({
             transaction,
             where : {codigoPropuesta : iIntegrante.codigoPropuesta}
         })
-        .then( resp => iIntegrante.roles = resp)
+        .then( resp => iIntegrante.roles.push(...resp))
 
     }
     async guardarDatos(iIntegrante : Integrante, transaction ?: Transaction ) {
-        if(iIntegrante.roles && iIntegrante.roles.length) {
-            await Promise.all(iIntegrante.roles.map( rol => rol.save({transaction}) ));
-        }
+        iIntegrante.isNewRecord = await Integrante.findByPk(iIntegrante.nroDoc,{attributes : ['nroDoc'], transaction}) === null;
 
-        if(iIntegrante.persona){
-            await iIntegrante.persona.save({transaction});
-        }
         await iIntegrante.save({transaction});
+     
     }
-
+    async guardarDatosRoles (iIntegrante : Integrante, transaction ?: Transaction ){
+        console.log('guardarDatosRoles()')
+        if(iIntegrante.roles && iIntegrante.roles.length) {
+            await RolIntegrante.bulkCreate(iIntegrante.roles,{ignoreDuplicates : true,transaction});
+            
+        }
+    }
+    async guardarDatosPersonales(iIntegrante : Integrante, transaction ?: Transaction ){
+        
+        if(iIntegrante.persona){
+            iIntegrante.persona.isNewRecord = Persona.findByPk(iIntegrante.persona.nroDoc,{transaction, attributes : ['nroDoc']}) === null; 
+            
+            await iIntegrante.persona.save({transaction});
+            
+            await iIntegrante.setPersona( iIntegrante.persona,{transaction} );
+        }
+    }
     verDatos ( iIntegrante : Integrante){
         return {
             ...iIntegrante.dataValues,
@@ -47,17 +84,6 @@ export default class ServiciosIntegrantes implements IServiciosIntegrantes {
         };
     }
 
-    asociarPersona( iIntegrante : Integrante , iPersona : Persona) {
-        iIntegrante.persona = iPersona;
-    }
-
-    asociarRoles ( iIntegrante : Integrante , roles : RolIntegrante[] ) {
-        iIntegrante.roles = [];
-        
-        if(roles.length ) {
-            iIntegrante.roles.push(...roles);
-       }
-    }
 
     crearIntegrante( 
         data : IntegranteCreationAttributes & { 
@@ -68,16 +94,17 @@ export default class ServiciosIntegrantes implements IServiciosIntegrantes {
 
             const nuevoIntegrante = Integrante.build(data);
 
-            const persona = Persona.build(data.persona);
-            this.asociarPersona(nuevoIntegrante,persona);
+            nuevoIntegrante.persona = Persona.build(data.persona);
+            
             
             nuevoIntegrante.roles = [];
+
             if(data.roles.length) {
                 const roles = RolIntegrante.bulkBuild(data.roles);
-                this.asociarRoles(nuevoIntegrante,roles);
+                roles.map( rol => rol.validate())
+                nuevoIntegrante.roles.push( ...roles);
             }
           
-       
       
             return nuevoIntegrante;
         }

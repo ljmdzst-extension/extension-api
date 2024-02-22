@@ -25,6 +25,28 @@ export default class ServiciosInstitucion implements IServiciosInstitucion {
     constructor(){
         this.iServiciosResponsable = new ServiciosResponsable();
     }
+    editarDatos(
+        iInstitucion : PropuestaInstitucion, 
+        data :PropuestaInstitucionCreationAttributes & {
+        institucion : InstitucionCreationAttributes & {
+            responsable : ResponsableCreationAttributes & {
+                persona : PersonaCreationAttributes
+            }
+        }
+    } ) {
+        iInstitucion.set(data);
+        iInstitucion.institucion.set(data.institucion);
+
+        if(data.institucion.responsable) {
+            const ultimoResponsable = iInstitucion.institucion.responsables[iInstitucion.institucion.responsables.length -1];
+            if(ultimoResponsable){
+                this.iServiciosResponsable.editarDatos(ultimoResponsable,data.institucion.responsable);
+
+            }
+        }
+
+
+    }
 
     crearInstitucion( data : PropuestaInstitucionCreationAttributes & {
         institucion : InstitucionCreationAttributes & {
@@ -34,18 +56,18 @@ export default class ServiciosInstitucion implements IServiciosInstitucion {
         }
     }){
         
-            const nuevaInstitucion = Institucion.build(data.institucion);
+        const nuevaInstitucion = Institucion.build(data.institucion);
             
-            nuevaInstitucion.responsables = [];
-            if(data.institucion.responsable){
-                const responsable = this.iServiciosResponsable.crearResponsable(data.institucion.responsable);
-                nuevaInstitucion.responsables.push(responsable);
-                
-            }
-            const iPropInst = PropuestaInstitucion.build(data);
-            iPropInst.institucion = nuevaInstitucion;
-            return iPropInst;
+        nuevaInstitucion.responsables = [];
+
+        if(data.institucion.responsable){
+            const responsable = this.iServiciosResponsable.crearResponsable(data.institucion.responsable);
+            nuevaInstitucion.responsables.push(responsable);    
         }
+        const iPropInst = PropuestaInstitucion.build(data);
+        iPropInst.institucion = nuevaInstitucion;
+        return iPropInst;
+    }
 
     static asociarInstitucion( iPropuesta : Propuesta, iInstitucion : Institucion, dataAsoc : {antecedentes : string}  )  
     {
@@ -58,14 +80,13 @@ export default class ServiciosInstitucion implements IServiciosInstitucion {
         iPropuesta.addPropuestaInstitucioen(iPropuestaInstitucion);
     } 
 
-    async guardarDatos( iInstitucion : Institucion ,transaction : Transaction ) {
+    async guardarDatos( propInst : PropuestaInstitucion ,transaction : Transaction ) {
+        propInst.isNewRecord = await PropuestaInstitucion.findByPk(propInst.idInstitucion,{attributes : ['idInstitucion'],transaction}) === null;
         
-        iInstitucion.set(await iInstitucion.save({transaction}));
-
-        await this.guardarDatosPersonalesResponsable(iInstitucion,transaction);
-        await this.guardarDatosResponsable(iInstitucion,transaction);
+        propInst.institucion.isNewRecord = await Institucion.findByPk(propInst.idInstitucion,{attributes : ['idInstitucion'],transaction}) === null;
         
-      
+        await propInst.institucion.save({transaction});
+        await propInst.save({transaction});
     }
     async guardarDatosResponsable(iInstitucion : Institucion  , transaction ?: Transaction){
         if(iInstitucion.responsables && iInstitucion.responsables.length){
@@ -93,18 +114,22 @@ export default class ServiciosInstitucion implements IServiciosInstitucion {
     }
     verDatos(iPropuestaInstitucion: PropuestaInstitucion )  {
         let salida : any =  {
-            ...iPropuestaInstitucion.institucion.dataValues,
-            antecedentes : iPropuestaInstitucion.antecedentes,
+            ...iPropuestaInstitucion.dataValues,
+            institucion : iPropuestaInstitucion.institucion.dataValues
+           
         } ;
 
         if(iPropuestaInstitucion.institucion.responsables.length){
             const vigente = iPropuestaInstitucion.institucion.responsables[iPropuestaInstitucion.institucion.responsables.length -1];
             salida = {
                 ...salida,
+               institucion : {
+                ...salida.institucion,
                 responsable : {
                     ...vigente.dataValues,
                     persona : vigente.persona.dataValues
-                },
+                }
+               },
             }
         }
 
@@ -119,6 +144,10 @@ interface IServiciosResponsable extends IServiciosModelo {
 }
 
 export  class ServiciosResponsable implements IServiciosResponsable {
+    editarDatos(iResponsable :Responsable, data : ResponsableCreationAttributes & { persona : PersonaCreationAttributes}) {
+        iResponsable.set(data);
+        iResponsable.persona.set(data.persona);
+    }
     
 
     crearResponsable( data :  ResponsableCreationAttributes & { persona : PersonaCreationAttributes}) {
@@ -135,19 +164,15 @@ export  class ServiciosResponsable implements IServiciosResponsable {
     } 
 
     async guardarDatos( iResponsable : Responsable ,transaction ?: Transaction ) {
-        
+        iResponsable.isNewRecord = await Responsable.findOne({where : {idInstitucion : iResponsable.idInstitucion, nroDoc : iResponsable.nroDoc },transaction}) === null;
         await iResponsable.save({transaction});
     }
     async guardarDatosPersonales( iResponsable : Responsable ,transaction ?: Transaction ) {
         
-        await Persona.findOrCreate({
-            defaults : iResponsable.persona,
-            where : {nroDoc : iResponsable.persona.nroDoc}, 
-            transaction
-        }).then( ([persona,creado]) => {
-            iResponsable.persona = persona;
-            iResponsable.set('nroDoc',iResponsable.persona.nroDoc); 
-        } );
+        iResponsable.persona.isNewRecord = await Persona.findByPk(iResponsable.persona.nroDoc, { attributes : ['nroDoc'],transaction}) === null;
+
+        await iResponsable.persona.save({transaction});
+
              
     }
     async leerDatos ( iInstitucion : Institucion , transaction ?: Transaction ) {
