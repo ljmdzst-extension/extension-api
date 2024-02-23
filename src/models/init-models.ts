@@ -429,7 +429,7 @@ export function initModels(sequelize: Sequelize) {
   PropuestaInstitucion.belongsTo(Propuesta, { as : 'propuesta', foreignKey: "codigoPropuesta"});
   PropuestaInstitucion.belongsTo(Institucion, { as : 'institucion', foreignKey: "idInstitucion", targetKey : 'idInstitucion'});
   PropuestaLineaTematica.belongsTo(Propuesta, { foreignKey: "codigoPropuesta"});
-  PropuestaPalabraClave.belongsTo(Propuesta, { foreignKey: "codigoPropuesta"});
+  PropuestaPalabraClave.belongsTo(Propuesta, {  foreignKey: "codigoPropuesta"});
   PropuestaPrevia.belongsTo(Propuesta, { foreignKey: "codigoPropuestaPrevia"});
   PropuestaProgramaExtension.belongsTo(Propuesta, { foreignKey: "codigoPropuesta"});
   PropuestaRelacionada.belongsTo(Propuesta, { foreignKey: "codigoPropuesta"});

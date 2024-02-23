@@ -12,6 +12,7 @@ import { PropuestaPrevia } from "../models/PropuestaPrevia";
 import ServiciosIntegrantes, { IServiciosIntegrantes } from "./integrante";
 import { ServiciosActividadObjetivoEspecifico, ServiciosObjetivoEspecifico, iServiciosObjetivoEspecifico } from "./planificacion";
 import ServiciosInstitucion, { IServiciosInstitucion } from "./institucion";
+import { PalabraClave } from "../models/PalabraClave";
 
 
 type TServicio = string;
@@ -59,7 +60,9 @@ export default class ServiciosPropuesta implements IServiciosModelo {
             objetivos.forEach ( objetivo => {
                 const objetivoCargado = iPropuesta.objetivoEspecificos.find( obj => obj.idObjetivoEspecifico === objetivo.idObjetivoEspecifico );
                 if(objetivoCargado) {
-                    this.lServiciosModelo.get('OBJESP')?.editarDatos( objetivoCargado, objetivo );
+                    const nuevData = this.lServiciosModelo.get('OBJESP')?.verDatos(objetivo);
+                  
+                    this.lServiciosModelo.get('OBJESP')?.editarDatos( objetivoCargado,nuevData);
                 }else {
                     iPropuesta.objetivoEspecificos.push( objetivo );
                 }
@@ -83,74 +86,46 @@ export default class ServiciosPropuesta implements IServiciosModelo {
 
     cargarPropRelacionadas( iPropuesta : Propuesta, propuestasRelacionadas : PropuestaRelacionada[]) {
         if(propuestasRelacionadas.length ){
-             propuestasRelacionadas.forEach( propRel => {
-                if(
-                    iPropuesta.propuestaRelacionadas.every( item => item.codigoPropuestaRelacionada !== propRel.codigoPropuestaRelacionada)
-                ){
-                    iPropuesta.propuestaRelacionadas.push( propRel )
-                }
-             })
             
-            
+            iPropuesta.propuestaRelacionadas = [];
+            iPropuesta.propuestaRelacionadas.push( ...propuestasRelacionadas )
         }
     }
 
     cargarPropPrevias( iPropuesta : Propuesta, propuestasPrevias : PropuestaPrevia[]) {
         if(propuestasPrevias.length ){
-            propuestasPrevias.forEach( propPrev => {
-               if(
-                   iPropuesta.propuestasPrevias.every( item => item.codigoPropuestaPrevia !== propPrev.codigoPropuestaPrevia)
-               ){
-                   iPropuesta.propuestasPrevias.push( propPrev )
-               }
-            })
-           
-           
-       }
+            
+            iPropuesta.propuestasPrevias = [];
+            iPropuesta.propuestasPrevias.push( ...propuestasPrevias );
+        }
     }
     
     cargarCapacitaciones( iPropuesta : Propuesta, capacitaciones : PropuestaCapacitacion[]) {
         if(capacitaciones.length ){
-            capacitaciones.forEach( capacitacion => {
-                if(
-                    iPropuesta.propuestaCapacitaciones.every( item => item.idCapacitacion !== capacitacion.idCapacitacion)
-                ){
-                    iPropuesta.propuestaCapacitaciones.push( capacitacion )
-                }
-             })
+            
+            iPropuesta.propuestaCapacitaciones = [];
+            iPropuesta.propuestaCapacitaciones.push( ...capacitaciones )
         }
     }
     cargarLineasTematicas( iPropuesta : Propuesta, lineasTematicas : PropuestaLineaTematica[]) {
         if(lineasTematicas.length ){
-            lineasTematicas.forEach( lineaTematica => {
-                if(
-                    iPropuesta.propuestaLineaTematicas.every( item => item.idLineaTematica !== lineaTematica.idLineaTematica)
-                ) {
-                    iPropuesta.propuestaLineaTematicas.push( lineaTematica )
-                }
-             })
+            
+            iPropuesta.propuestaLineaTematicas = [];
+            iPropuesta.propuestaLineaTematicas.push( ...lineasTematicas )
         }
     }
     cargarProgramasSippe( iPropuesta : Propuesta, progSippe : PropuestaProgramaExtension[]) {
         if(progSippe.length ){
-            progSippe.forEach( progSippe => {
-                if(
-                    iPropuesta.propuestaProgramaExtensions.every( item => item.idProgramaExtension !== progSippe.idProgramaExtension)
-                ) {
-                    iPropuesta.propuestaProgramaExtensions.push( progSippe )
-                }
-             })
+            
+            iPropuesta.propuestaProgramaExtensions = [];
+            iPropuesta.propuestaProgramaExtensions.push( ...progSippe )
         }
     }
     cargarPalabrasClave( iPropuesta : Propuesta, palabrasClave : PropuestaPalabraClave[]) {
         if(palabrasClave.length ){
-            palabrasClave.forEach( palabra => {
-                if(
-                    iPropuesta.propuestaPalabraClaves.every( item => item.idPalabraClave !== palabra.idPalabraClave)
-                ){
-                    iPropuesta.propuestaPalabraClaves.push( palabra );
-                }
-            })
+            
+            iPropuesta.propuestaPalabraClaves = [];
+            iPropuesta.propuestaPalabraClaves.push( ...palabrasClave )
         }
     }
    
@@ -209,7 +184,10 @@ export default class ServiciosPropuesta implements IServiciosModelo {
     }
     verPalabrasClave( iPropuesta : Propuesta) {
         if(iPropuesta.propuestaPalabraClaves.length ){
-            return iPropuesta.propuestaPalabraClaves.map( propPalabra => propPalabra.palabraClave.dataValues );
+            return iPropuesta.propuestaPalabraClaves.map( propPalabra => ({
+                ...propPalabra.dataValues ,
+                palabraClave : propPalabra.palabraClave.dataValues
+            }));
         }
         return [];
     }
@@ -296,9 +274,14 @@ export default class ServiciosPropuesta implements IServiciosModelo {
     async guardarDatosPalabrasClave( iPropuesta : Propuesta) : Promise<void> {
             if(process.env.NODE_ENV==='development') console.log( 'ServiciosPropuesta.guardarDatosPalabrasClave()..' );
         if(iPropuesta.propuestaPalabraClaves.length) {
+            iPropuesta.propuestaPalabraClaves.forEach( propPalabra => {propPalabra.palabraClave.isNewRecord = propPalabra.palabraClave.idPalabraClave === 0} );
             await iPropuesta.sequelize.transaction( async transaction => {
-                await Promise.all( iPropuesta.propuestaPalabraClaves.map( propPalabra => propPalabra.save({transaction})) )
-            })
+                await Promise.all( iPropuesta.propuestaPalabraClaves.map( async ({palabraClave}) => palabraClave.set( await palabraClave.save({transaction}) )) );
+            });
+            iPropuesta.propuestaPalabraClaves
+            .filter( propPalabra =>  propPalabra.idPalabraClave === 0)
+            .forEach( propPalabra => propPalabra.set(propPalabra.palabraClave.dataValues))
+            
         }
     }
     async guardarDatosIntegrantes( iPropuesta : Propuesta ) : Promise<void> {
@@ -321,21 +304,31 @@ export default class ServiciosPropuesta implements IServiciosModelo {
         if(process.env.NODE_ENV==='development') console.log( 'ServiciosPropuesta.guardarDatosObjetivos()..' );
         if(iPropuesta.objetivoEspecificos.length) {
             const SObjEsp = this.lServiciosModelo.get('OBJESP') as iServiciosObjetivoEspecifico;
+            
             await iPropuesta.sequelize.transaction( async transaction => {
                 await Promise.all(iPropuesta.objetivoEspecificos.map( objEsp => SObjEsp?.guardarDatos(objEsp,transaction)) )
             })
+           
             await iPropuesta.sequelize.transaction(async transaction => {
-                const promesas : any[] = []
-                iPropuesta.objetivoEspecificos.map(objEsp =>{
-                    if(objEsp.actividadObjetivoEspecificos) {
-                        promesas.push( ...objEsp.actividadObjetivoEspecificos.map( actObjEsp => SObjEsp?.guardarDatosActividad(actObjEsp,transaction)));
-                    }
-                })
-                await Promise.all(promesas);
+                await Promise.all(
+                    iPropuesta.objetivoEspecificos.map( objEsp => objEsp.actividadObjetivoEspecificos) 
+                                                .reduce((salida, actividades) => ([
+                                                    ...salida,
+                                                    ...actividades.map( act => SObjEsp.guardarDatosActividades(act,transaction))
+                                                ]), <any>[])
+                    );
               
             })
 
-            await Promise.all(iPropuesta.objetivoEspecificos.map( objEsp => SObjEsp?.guardarCronogramasActividades(objEsp)) )
+            await iPropuesta.sequelize.transaction(async transaction=> {
+                await Promise.all(
+                    iPropuesta.objetivoEspecificos.map( objEsp => objEsp.actividadObjetivoEspecificos) 
+                                                .reduce((salida, actividades) => ([
+                                                    ...salida,
+                                                    ...actividades.map( act => SObjEsp.guardarCronogramasActividades(act,transaction))
+                                                ]), <any>[])
+                    )
+            })
         }
     }
 
@@ -360,6 +353,18 @@ export default class ServiciosPropuesta implements IServiciosModelo {
     async guardarDatos (iPropuesta : Propuesta ) : Promise<void> {
 
         await iPropuesta.save();
+        await iPropuesta.sequelize.transaction( async transaction => {
+            await Promise.all([
+            PropuestaRelacionada.bulkCreate(iPropuesta.propuestaRelacionadas.map( item => item.dataValues),{transaction, ignoreDuplicates : true}),
+            PropuestaCapacitacion.bulkCreate(iPropuesta.propuestaCapacitaciones.map( item => item.dataValues),{transaction, ignoreDuplicates : true}),
+            PropuestaLineaTematica.bulkCreate(iPropuesta.propuestaLineaTematicas.map( item => item.dataValues),{transaction, ignoreDuplicates : true}),
+            PropuestaProgramaExtension.bulkCreate(iPropuesta.propuestaProgramaExtensions.map( item => item.dataValues),{transaction, ignoreDuplicates : true}),
+            PropuestaPalabraClave.bulkCreate(iPropuesta.propuestaPalabraClaves.map( item => item.dataValues),{transaction, ignoreDuplicates : true}),
+            PropuestaInstitucion.bulkCreate(iPropuesta.propuestaInstituciones.map( item => item.dataValues),{transaction, ignoreDuplicates : true}),
+            PropuestaPrevia.bulkCreate(iPropuesta.propuestasPrevias.map( item => item.dataValues),{transaction, ignoreDuplicates : true}),
+            PropuestaRelacionada.bulkCreate(iPropuesta.propuestaRelacionadas.map( item => item.dataValues),{transaction, ignoreDuplicates : true}),
+            ]);
+        });
         
         await iPropuesta.sequelize.transaction( async transaction => {
 
@@ -371,7 +376,9 @@ export default class ServiciosPropuesta implements IServiciosModelo {
                 iPropuesta.setPropuestaInstituciones(iPropuesta.propuestaInstituciones,{transaction}),
                 iPropuesta.setIntegrantes(iPropuesta.integrantes,{transaction}),
                 iPropuesta.setObjetivoEspecificos(iPropuesta.objetivoEspecificos,{transaction}),
-                iPropuesta.setUbicacionProblematicas(iPropuesta.ubicacionProblematicas,{transaction})
+                iPropuesta.setUbicacionProblematicas(iPropuesta.ubicacionProblematicas,{transaction}),
+                iPropuesta.setPropuestasPrevias(iPropuesta.propuestasPrevias,{transaction}),
+                iPropuesta.setPropuestaRelacionadas(iPropuesta.propuestaRelacionadas,{transaction})
             ]);
         });
     }

@@ -46,7 +46,8 @@ export class PalabraClave extends Model<PalabraClaveAttributes, PalabraClaveCrea
     idPalabraClave: {
       type: DataTypes.INTEGER,
       allowNull: false,
-      primaryKey: true
+      primaryKey: true,
+      autoIncrement : true
     },
     nom: {
       type: DataTypes.STRING(255),

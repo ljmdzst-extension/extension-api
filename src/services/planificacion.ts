@@ -10,8 +10,8 @@ export interface iServiciosObjetivoEspecifico extends IServiciosModelo {
             cronogramas : CronogramaActividadCreationAttributes[]
         })[]}
     ) : ObjetivoEspecifico;
-    guardarDatosActividad( iActObjEsp : ActividadObjetivoEspecifico, transaction ?: Transaction  ) : Promise<void>;
-    guardarCronogramasActividades( iObjetivoEsp : ObjetivoEspecifico) : Promise<void>;
+    guardarDatosActividades( iActObjEsp : ActividadObjetivoEspecifico, transaction ?: Transaction  ) : Promise<void>[];
+    guardarCronogramasActividades( iActObjEsp : ActividadObjetivoEspecifico, transaction ?: Transaction ) : Promise<void>;
 }
 export interface iServiciosActividadObjetivoEspecifico extends IServiciosModelo {
     crearActObjEsp ( data : ActividadObjetivoEspecificoCreationAttributes & {
@@ -33,11 +33,13 @@ export  class ServiciosObjetivoEspecifico implements IServiciosModelo {
     ){
         const objEsp = ObjetivoEspecifico.build(data);
 
-        const actividadesObjEsp = data.actividadObjetivoEspecificos.map( dataAct => this.iServiciosActividadObjetivoEsp.crearActObjEsp(dataAct));
+        const actividadesObjEsp = data.actividadObjetivoEspecificos.map( dataAct => 
+            this.iServiciosActividadObjetivoEsp.crearActObjEsp(dataAct));
 
         objEsp.actividadObjetivoEspecificos = [];
 
         objEsp.actividadObjetivoEspecificos.push(...actividadesObjEsp);
+        return objEsp;
     }
     editarDatos(iObjetivo: ObjetivoEspecifico, data : ObjetivoEspecificoCreationAttributes & {
         actividadObjetivoEspecificos : (ActividadObjetivoEspecificoCreationAttributes & {
@@ -70,20 +72,12 @@ export  class ServiciosObjetivoEspecifico implements IServiciosModelo {
 
     }
 
-    async guardarDatosActividad( iActObjEsp : ActividadObjetivoEspecifico, transaction ?: Transaction  ){
-       await this.iServiciosActividadObjetivoEsp.guardarDatos(iActObjEsp,transaction);
+    async guardarDatosActividades( iActObjEsp : ActividadObjetivoEspecifico, transaction ?: Transaction  ){
+       await  this.iServiciosActividadObjetivoEsp.guardarDatos(iActObjEsp,transaction)
+     
     }
-    async guardarCronogramasActividades( iObjetivoEsp : ObjetivoEspecifico){
-        if(iObjetivoEsp.actividadObjetivoEspecificos ) {
-            await iObjetivoEsp.sequelize.transaction( async transaction => {
-                await Promise.all(
-                    iObjetivoEsp.actividadObjetivoEspecificos
-                        .map(actObjEsp => this.iServiciosActividadObjetivoEsp.guardarCronogramas(actObjEsp,transaction))
-                        .reduce( (salida , iguardarCronogramas)=> ([...salida,...iguardarCronogramas]),[] )
-                    
-                )
-            })
-        }
+    async guardarCronogramasActividades( iActObjEsp : ActividadObjetivoEspecifico,transaction ?: Transaction){
+        await this.iServiciosActividadObjetivoEsp.guardarCronogramas(iActObjEsp,transaction);
     }
 
     verDatos( iObjetivoEsp : ObjetivoEspecifico){
@@ -132,18 +126,14 @@ export  class ServiciosActividadObjetivoEspecifico implements IServiciosModelo {
         iActObjEsp.isNewRecord = await ActividadObjetivoEspecifico.findByPk(iActObjEsp.idActividadObjetivoEspecifico,{transaction, attributes : ['idActividadObjetivoEspecifico']}) === null;
         await iActObjEsp.save({transaction});
 
-        if(iActObjEsp.cronogramaActividads.length) {
-            await Promise.all( iActObjEsp.cronogramaActividads.map( cronograma => CronogramaActividad.findOne({where : {...cronograma}, transaction}).then( resp => cronograma.isNewRecord = resp === null) ) )    
-            await Promise.all( iActObjEsp.cronogramaActividads.map( cronograma => cronograma.save({transaction})) )
-        }
     }
 
     verDatos( iActObjEsp : ActividadObjetivoEspecifico){
-        let salida = { ...iActObjEsp.dataValues , cronograma : <any>[]};
+        let salida = { ...iActObjEsp.dataValues , cronogramas : <any>[]};
         if(iActObjEsp.cronogramaActividads.length) {
             salida = {
                 ...salida,
-                cronograma : iActObjEsp.cronogramaActividads.map( cronograma => cronograma.dataValues)
+                cronogramas : iActObjEsp.cronogramaActividads.map( cronograma => cronograma.dataValues)
             }
         }
         return salida;
@@ -154,11 +144,18 @@ export  class ServiciosActividadObjetivoEspecifico implements IServiciosModelo {
         iActObjEsp.setCronogramaActividads( cronogramas );
     }
     
-    guardarCronogramas(iActObjEsp : ActividadObjetivoEspecifico, transaction ?: Transaction){
+    async guardarCronogramas(iActObjEsp : ActividadObjetivoEspecifico, transaction ?: Transaction){
         if(iActObjEsp.cronogramaActividads.length) {
-           return iActObjEsp.cronogramaActividads.map( cronograma => cronograma.save({transaction}));
+           await Promise.all( iActObjEsp.cronogramaActividads.map( cronograma => 
+                CronogramaActividad.findOne({
+                    where : {idCronograma : cronograma.idCronograma, idActividadObjetivoEspecifico : cronograma.idActividadObjetivoEspecifico}, 
+                    transaction
+                }).then( 
+                    resp => cronograma.isNewRecord = resp === null
+                    ) 
+                ) );    
+           await Promise.all( iActObjEsp.cronogramaActividads.map( cronograma => cronograma.save({transaction})));
         }
-        return [];
     }
 
     crearActObjEsp ( data : ActividadObjetivoEspecificoCreationAttributes & {
