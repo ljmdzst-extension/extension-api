@@ -13,6 +13,11 @@ export interface iServiciosObjetivoEspecifico extends IServiciosModelo {
     guardarDatosActividad( iActObjEsp : ActividadObjetivoEspecifico, transaction ?: Transaction  ) : Promise<void>;
     guardarCronogramasActividades( iObjetivoEsp : ObjetivoEspecifico) : Promise<void>;
 }
+export interface iServiciosActividadObjetivoEspecifico extends IServiciosModelo {
+    crearActObjEsp ( data : ActividadObjetivoEspecificoCreationAttributes & {
+        cronogramas : CronogramaActividadCreationAttributes[]
+    }) : ActividadObjetivoEspecifico;
+}
 
 export  class ServiciosObjetivoEspecifico implements IServiciosModelo {
 
@@ -21,8 +26,34 @@ export  class ServiciosObjetivoEspecifico implements IServiciosModelo {
     constructor(){
         this.iServiciosActividadObjetivoEsp = new ServiciosActividadObjetivoEspecifico();
     }
-    editarDatos(iModelo: Model<any, any>) {
-        throw new Error("Method not implemented.");
+    crearObjetivoEspecifico(data : ObjetivoEspecificoCreationAttributes & {
+        actividadObjetivoEspecificos : (ActividadObjetivoEspecificoCreationAttributes & {
+            cronogramas : CronogramaActividadCreationAttributes[]
+        })[]}
+    ){
+        const objEsp = ObjetivoEspecifico.build(data);
+
+        const actividadesObjEsp = data.actividadObjetivoEspecificos.map( dataAct => this.iServiciosActividadObjetivoEsp.crearActObjEsp(dataAct));
+
+        objEsp.actividadObjetivoEspecificos = [];
+
+        objEsp.actividadObjetivoEspecificos.push(...actividadesObjEsp);
+    }
+    editarDatos(iObjetivo: ObjetivoEspecifico, data : ObjetivoEspecificoCreationAttributes & {
+        actividadObjetivoEspecificos : (ActividadObjetivoEspecificoCreationAttributes & {
+            cronogramas : CronogramaActividadCreationAttributes[]
+        })[]} ) {
+        
+        iObjetivo.set(data);
+
+        if(data.actividadObjetivoEspecificos.length) {
+            data.actividadObjetivoEspecificos.forEach( dataAct => {
+                const iActObjEsp = iObjetivo.actividadObjetivoEspecificos.find( act => act.idActividadObjetivoEspecifico === dataAct.idActividadObjetivoEspecifico);
+                if( iActObjEsp ){
+                    this.iServiciosActividadObjetivoEsp.editarDatos(iActObjEsp,dataAct);
+                }
+            })
+        }
     }
     
     async leerDatos(iObjetivoEsp : ObjetivoEspecifico, transaction ?: Transaction){
@@ -33,6 +64,8 @@ export  class ServiciosObjetivoEspecifico implements IServiciosModelo {
     }
   
     async guardarDatos( iObjetivoEsp : ObjetivoEspecifico, transaction ?: Transaction ){
+        iObjetivoEsp.isNewRecord = await ObjetivoEspecifico.findByPk(iObjetivoEsp.idObjetivoEspecifico,{attributes : ['idObjetivoEspecifico'],transaction}) === null;
+
         await iObjetivoEsp.save({transaction});
 
     }
@@ -71,30 +104,19 @@ export  class ServiciosObjetivoEspecifico implements IServiciosModelo {
 
   
 
-    crearObjetivoEspecifico(data : ObjetivoEspecificoCreationAttributes & {
-        actividadObjetivoEspecificos : (ActividadObjetivoEspecificoCreationAttributes & {
-            cronogramas : CronogramaActividadCreationAttributes[]
-        })[]}
-    ){
-        const objEsp = ObjetivoEspecifico.build(data);
-
-        const actividadesObjEsp = data.actividadObjetivoEspecificos.map( dataAct => this.iServiciosActividadObjetivoEsp.crearActObjEsp(dataAct));
-
-        objEsp.actividadObjetivoEspecificos = [];
-
-        objEsp.actividadObjetivoEspecificos.push(...actividadesObjEsp);
-    }
+    
 } 
 
-export interface iServiciosActividadObjetivoEspecifico extends IServiciosModelo {
-    crearActObjEsp ( data : ActividadObjetivoEspecificoCreationAttributes & {
-        cronogramas : CronogramaActividadCreationAttributes[]
-    }) : ActividadObjetivoEspecifico;
-}
+
 
 export  class ServiciosActividadObjetivoEspecifico implements IServiciosModelo {
-    editarDatos(iModelo: Model<any, any>) {
-        throw new Error("Method not implemented.");
+    editarDatos(iActObjEsp: ActividadObjetivoEspecifico, data : ActividadObjetivoEspecificoCreationAttributes & {
+        cronogramas : CronogramaActividadCreationAttributes[]
+    }) {
+        iActObjEsp.set(data);
+        if(data.cronogramas) {
+            iActObjEsp.cronogramaActividads = CronogramaActividad.bulkBuild(data.cronogramas);
+        }
     }
 
 
@@ -107,8 +129,13 @@ export  class ServiciosActividadObjetivoEspecifico implements IServiciosModelo {
     }
   
     async guardarDatos( iActObjEsp : ActividadObjetivoEspecifico, transaction ?: Transaction ){
+        iActObjEsp.isNewRecord = await ActividadObjetivoEspecifico.findByPk(iActObjEsp.idActividadObjetivoEspecifico,{transaction, attributes : ['idActividadObjetivoEspecifico']}) === null;
         await iActObjEsp.save({transaction});
 
+        if(iActObjEsp.cronogramaActividads.length) {
+            await Promise.all( iActObjEsp.cronogramaActividads.map( cronograma => CronogramaActividad.findOne({where : {...cronograma}, transaction}).then( resp => cronograma.isNewRecord = resp === null) ) )    
+            await Promise.all( iActObjEsp.cronogramaActividads.map( cronograma => cronograma.save({transaction})) )
+        }
     }
 
     verDatos( iActObjEsp : ActividadObjetivoEspecifico){
