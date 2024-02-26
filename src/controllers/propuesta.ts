@@ -89,7 +89,6 @@ export const putPropuesta = async(req : typeof request , res : typeof response)=
         propuestasRelacionadas,
         ...restData}  = req.body;
 
-
        const {Propuesta} = initModels(sequelizeExtension);
 
        const iPropuesta = await Propuesta.findByPk(codigoPropuesta);

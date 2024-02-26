@@ -16,7 +16,10 @@ export const verPropuestas = async( db : Sequelize , idUsuario : UsuarioId )=>{
 
     const iUsuario = await Usuario.findByPk(idUsuario);
 
-    if( ! iUsuario ) throw { status : 500 , message : `No existe el usuario : ${idUsuario}`}
+    if( ! iUsuario ) throw { 
+        status : 500 , 
+        message : `No existe el usuario : ${idUsuario}`
+    }
     
     const lPropuestas :  Propuesta[] = [];
     
@@ -24,7 +27,11 @@ export const verPropuestas = async( db : Sequelize , idUsuario : UsuarioId )=>{
 
     await db.transaction(
 
-        {logging : process.env.NODE_ENV==='development' ? sql => console.log(sql) : undefined},
+        {
+            logging : process.env.NODE_ENV==='development' 
+            ? sql => console.log(sql) 
+            : undefined
+        },
 
         async transaction =>{
         
@@ -37,6 +44,7 @@ export const verPropuestas = async( db : Sequelize , idUsuario : UsuarioId )=>{
             transaction.afterCommit(()=>{
                 if(lPropuestas.length) {
         
+
                     salida = lPropuestas.map( propuesta => ({ 
                         ...propuesta.dataValues,
                         responsable : `${iPersona.ape}, ${iPersona.nom}`,
