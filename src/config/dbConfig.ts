@@ -1,6 +1,5 @@
-import sequelize, { Transaction } from 'sequelize';
+import sequelize from 'sequelize';
 import { initModels } from '../models/init-models';
-import {data_inicial} from './data_inicial.json';
 
 const sequelizeExtension = new sequelize.Sequelize({
     host : process.env.DB_HOST,
@@ -9,7 +8,8 @@ const sequelizeExtension = new sequelize.Sequelize({
     port : Number(process.env.DB_PORT) || 3306,
     database : process.env.DB_NAME,
     dialect : 'mysql',
-    logging : process.env.NODE_ENV === 'development' ? console.log : undefined,
+    logging : false,
+    // logging : process.env.NODE_ENV === 'development' ? console.log : undefined,
     timezone : '-03:00'
 });
 

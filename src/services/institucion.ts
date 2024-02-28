@@ -17,7 +17,9 @@ export interface IServiciosInstitucion extends IServiciosModelo {
     leerDatosResponsable(iInstitucion : Institucion  , transaction ?: Transaction) : Promise<void>;
     leerDatosPersonalesResponsable(iInstitucion : Institucion, transaction ?: Transaction) : Promise<void>;
     guardarDatosResponsable(iInstitucion : Institucion  , transaction ?: Transaction) : Promise<void>;
-    guardarDatosPersonalesResponsable(iInstitucion : Institucion, transaction?: Transaction | undefined): Promise<void>
+    guardarDatosPersonalesResponsable(iInstitucion : Institucion, transaction?: Transaction | undefined): Promise<void>;
+    definirPersistenciaResponsable(iPropInst : PropuestaInstitucion, transaction?: Transaction | undefined) : Promise<void> ;
+    definirPersistenciaPersonaResp(iPropInst : PropuestaInstitucion, transaction?: Transaction | undefined) : Promise<void>;
 }
 export default class ServiciosInstitucion implements IServiciosInstitucion {
     private iServiciosResponsable !: ServiciosResponsable;
@@ -25,8 +27,22 @@ export default class ServiciosInstitucion implements IServiciosInstitucion {
     constructor(){
         this.iServiciosResponsable = new ServiciosResponsable();
     }
+    async definirPersistencia(iPropInst : PropuestaInstitucion, transaction?: Transaction | undefined): Promise<void> {
+        if(process.env.NODE_ENV === 'development') console.log(this.definirPersistencia.name)
+         await Institucion.findByPk(iPropInst.institucion.idInstitucion,{transaction}).then( resp => iPropInst.institucion.isNewRecord = resp === null)
+    }
+    async definirPersistenciaResponsable(iPropInst : PropuestaInstitucion, transaction?: Transaction | undefined) : Promise<void> {
+        if(process.env.NODE_ENV === 'development') console.log(this.definirPersistenciaResponsable.name)
+         await this.iServiciosResponsable.definirPersistencia(iPropInst.institucion.responsables[0],transaction);
+
+    }
+    async definirPersistenciaPersonaResp(iPropInst : PropuestaInstitucion, transaction?: Transaction | undefined) : Promise<void>{
+        if(process.env.NODE_ENV === 'development') console.log(this.definirPersistenciaPersonaResp.name)
+        const responsable = iPropInst.institucion.responsables[0];
+        await this.iServiciosResponsable.definirPersistenciaPersona(responsable,transaction);
+    }
     editarDatos(
-        iInstitucion : PropuestaInstitucion, 
+        iPropInst : PropuestaInstitucion, 
         data :PropuestaInstitucionCreationAttributes & {
         institucion : InstitucionCreationAttributes & {
             responsable : ResponsableCreationAttributes & {
@@ -34,11 +50,11 @@ export default class ServiciosInstitucion implements IServiciosInstitucion {
             }
         }
     } ) {
-        iInstitucion.set(data);
-        iInstitucion.institucion.set(data.institucion);
+        iPropInst.set(data);
+        iPropInst.institucion.set(data.institucion);
 
         if(data.institucion.responsable) {
-            const ultimoResponsable = iInstitucion.institucion.responsables[iInstitucion.institucion.responsables.length -1];
+            const ultimoResponsable = iPropInst.institucion.responsables[iPropInst.institucion.responsables.length -1];
             if(ultimoResponsable){
                 this.iServiciosResponsable.editarDatos(ultimoResponsable,data.institucion.responsable);
 
@@ -80,17 +96,19 @@ export default class ServiciosInstitucion implements IServiciosInstitucion {
         iPropuesta.addPropuestaInstitucioen(iPropuestaInstitucion);
     } 
 
-    async guardarDatos( propInst : PropuestaInstitucion ,transaction : Transaction ) {
-        propInst.isNewRecord = await PropuestaInstitucion.findByPk(propInst.idInstitucion,{attributes : ['idInstitucion'],transaction}) === null;
+    async guardarDatosEnBD( propInst : PropuestaInstitucion ,transaction : Transaction ) {
         
-        propInst.institucion.isNewRecord = await Institucion.findByPk(propInst.idInstitucion,{attributes : ['idInstitucion'],transaction}) === null;
-        
-        await propInst.institucion.save({transaction});
-        await propInst.save({transaction});
+        await propInst.institucion.save({transaction}).then( resp => {
+            propInst.idInstitucion = resp.idInstitucion;
+            if(propInst.institucion.responsables.length) {
+                propInst.institucion.responsables[0].idInstitucion = resp.idInstitucion;
+                
+            }
+        } );
     }
     async guardarDatosResponsable(iInstitucion : Institucion  , transaction ?: Transaction){
         if(iInstitucion.responsables && iInstitucion.responsables.length){
-            await this.iServiciosResponsable.guardarDatos(iInstitucion.responsables[iInstitucion.responsables.length -1],transaction);
+            await this.iServiciosResponsable.guardarDatosEnBD(iInstitucion.responsables[iInstitucion.responsables.length -1],transaction);
         }
        
     }
@@ -100,12 +118,12 @@ export default class ServiciosInstitucion implements IServiciosInstitucion {
         }
     }
    
-    async leerDatos ( iPropuestaInstitucion : PropuestaInstitucion , transaction ?: Transaction ) {
+    async leerDatosDeBD ( iPropuestaInstitucion : PropuestaInstitucion , transaction ?: Transaction ) {
         await iPropuestaInstitucion.getInstitucion({transaction}).then(resp => iPropuestaInstitucion.institucion = resp );
     } 
     async leerDatosResponsable(iInstitucion : Institucion  , transaction ?: Transaction){
         iInstitucion.responsables = [];
-        await this.iServiciosResponsable.leerDatos(iInstitucion,transaction);
+        await this.iServiciosResponsable.leerDatosDeBD(iInstitucion,transaction);
     }
     async leerDatosPersonalesResponsable(iInstitucion : Institucion, transaction?: Transaction | undefined): Promise<void> {
         if(iInstitucion.responsables && iInstitucion.responsables.length){
@@ -141,9 +159,19 @@ export default class ServiciosInstitucion implements IServiciosInstitucion {
 
 interface IServiciosResponsable extends IServiciosModelo {
     leerDatosPersonales(iResponsable : Responsable , transaction ?: Transaction) : Promise<Persona>;
+    definirPersistencia(iResponsable :Responsable, transaction?: Transaction | undefined): Promise<void>;
+    definirPersistenciaPersona(iResponsable :Responsable, transaction?: Transaction | undefined) : Promise<void>;
 }
 
 export  class ServiciosResponsable implements IServiciosResponsable {
+   
+    async definirPersistencia(iResponsable :Responsable, transaction?: Transaction | undefined): Promise<void> {
+        const {desde,hasta,...claves} = iResponsable.dataValues;
+        await Responsable.findOne({where : {...claves},transaction}).then( resp => iResponsable.isNewRecord = resp === null)
+    }
+    async definirPersistenciaPersona(iResponsable :Responsable, transaction?: Transaction | undefined) : Promise<void>{
+        await Persona.findByPk(iResponsable.persona.nroDoc,{transaction}).then( resp => iResponsable.persona.isNewRecord = resp === null)
+    }
     editarDatos(iResponsable :Responsable, data : ResponsableCreationAttributes & { persona : PersonaCreationAttributes}) {
         iResponsable.set(data);
         iResponsable.persona.set(data.persona);
@@ -163,7 +191,7 @@ export  class ServiciosResponsable implements IServiciosResponsable {
         iResponsable.persona = iPersona;
     } 
 
-    async guardarDatos( iResponsable : Responsable ,transaction ?: Transaction ) {
+    async guardarDatosEnBD( iResponsable : Responsable ,transaction ?: Transaction ) {
         iResponsable.isNewRecord = await Responsable.findOne({where : {idInstitucion : iResponsable.idInstitucion, nroDoc : iResponsable.nroDoc },transaction}) === null;
         await iResponsable.save({transaction});
     }
@@ -175,7 +203,7 @@ export  class ServiciosResponsable implements IServiciosResponsable {
 
              
     }
-    async leerDatos ( iInstitucion : Institucion , transaction ?: Transaction ) {
+    async leerDatosDeBD ( iInstitucion : Institucion , transaction ?: Transaction ) {
         await iInstitucion.getResponsables({transaction}).then(resp => iInstitucion.responsables = resp );
     }
 

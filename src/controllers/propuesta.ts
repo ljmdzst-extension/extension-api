@@ -22,11 +22,7 @@ export const getPropuesta = async(req : typeof request , res : typeof response)=
         
         const iServiciosPropuesta = new ServiciosPropuesta();
         
-        await iServiciosPropuesta.leerDatos(iPropuesta)
-            .then(()=>iServiciosPropuesta.leerDatosIntegrantes(iPropuesta))
-            .then(()=>iServiciosPropuesta.leerDatosInstituciones(iPropuesta))
-            .then(()=>iServiciosPropuesta.leerDatosObjetivos(iPropuesta))
-            .then(()=>iServiciosPropuesta.leerDatosPalabrasClave(iPropuesta));
+        await iServiciosPropuesta.leerDatosDeBD(iPropuesta);
     
    
         res.status(200).json({
@@ -97,11 +93,7 @@ export const putPropuesta = async(req : typeof request , res : typeof response)=
        
        const iServiciosPropuesta = new ServiciosPropuesta();
 
-       await iServiciosPropuesta.leerDatos(iPropuesta);
-       await iServiciosPropuesta.leerDatosIntegrantes(iPropuesta);
-       await iServiciosPropuesta.leerDatosInstituciones(iPropuesta);
-       await iServiciosPropuesta.leerDatosObjetivos(iPropuesta);
-       await iServiciosPropuesta.leerDatosPalabrasClave(iPropuesta);
+    //    await iServiciosPropuesta.leerDatosDeBD(iPropuesta);
 
 
        iServiciosPropuesta.editarDatos(iPropuesta,restData);
@@ -147,11 +139,7 @@ export const putPropuesta = async(req : typeof request , res : typeof response)=
             iServiciosPropuesta.cargarPropRelacionadas(iPropuesta,PropuestaRelacionada.bulkBuild(propuestasRelacionadas))
         }
         
-        await iServiciosPropuesta.guardarDatosIntegrantes(iPropuesta);
-        await iServiciosPropuesta.guardarDatosInstituciones(iPropuesta);
-        await iServiciosPropuesta.guardarDatosObjetivos(iPropuesta);
-        await iServiciosPropuesta.guardarDatosPalabrasClave(iPropuesta);
-        await iServiciosPropuesta.guardarDatos(iPropuesta);
+        await iServiciosPropuesta.guardarDatosEnBD(iPropuesta);
 
 
 
@@ -176,7 +164,7 @@ export const putPropuesta = async(req : typeof request , res : typeof response)=
     } catch (error : any) {
         logger.log('error',error.status,' - ',error.message);
         if(error instanceof ValidationError){
-            console.log(error.stack)
+            console.log(error)
             res.status(400).json({
                 ok : false,
                 data : null,

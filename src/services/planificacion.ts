@@ -12,11 +12,21 @@ export interface iServiciosObjetivoEspecifico extends IServiciosModelo {
     ) : ObjetivoEspecifico;
     guardarDatosActividades( iActObjEsp : ActividadObjetivoEspecifico, transaction ?: Transaction  ) : Promise<void>[];
     guardarCronogramasActividades( iActObjEsp : ActividadObjetivoEspecifico, transaction ?: Transaction ) : Promise<void>;
+    definirPersistenciaAct(iObjetivo: ObjetivoEspecifico, transaction?: Transaction | undefined): Promise<void>[];
 }
+
 export interface iServiciosActividadObjetivoEspecifico extends IServiciosModelo {
     crearActObjEsp ( data : ActividadObjetivoEspecificoCreationAttributes & {
         cronogramas : CronogramaActividadCreationAttributes[]
     }) : ActividadObjetivoEspecifico;
+}
+
+type TActObjIn = ActividadObjetivoEspecificoCreationAttributes & {
+    cronogramas : CronogramaActividadCreationAttributes[]
+}
+
+type TObjEspIn = ObjetivoEspecificoCreationAttributes & {
+    actividadObjetivoEspecificos : TActObjIn[] 
 }
 
 export  class ServiciosObjetivoEspecifico implements IServiciosModelo {
@@ -26,11 +36,21 @@ export  class ServiciosObjetivoEspecifico implements IServiciosModelo {
     constructor(){
         this.iServiciosActividadObjetivoEsp = new ServiciosActividadObjetivoEspecifico();
     }
-    crearObjetivoEspecifico(data : ObjetivoEspecificoCreationAttributes & {
-        actividadObjetivoEspecificos : (ActividadObjetivoEspecificoCreationAttributes & {
-            cronogramas : CronogramaActividadCreationAttributes[]
-        })[]}
-    ){
+
+   async definirPersistencia(iObjetivo: ObjetivoEspecifico, transaction?: Transaction | undefined): Promise<void> {
+        if(process.env.NODE_ENV === 'development') console.log('ObjEsp - ',this.definirPersistencia.name)
+        const opciones = {attributes : ['idObjetivoEspecifico'],transaction};
+        await ObjetivoEspecifico.findByPk(iObjetivo.idObjetivoEspecifico,opciones).then( resp => iObjetivo.isNewRecord = resp === null );
+
+    }
+    definirPersistenciaAct(iObjetivo: ObjetivoEspecifico, transaction?: Transaction | undefined):Promise<void>[] {
+        if(process.env.NODE_ENV === 'development') console.log('ObjEsp - ',this.definirPersistenciaAct.name)
+        const opciones = {attributes : ['idObjetivoEspecifico'],transaction};
+        return iObjetivo.actividadObjetivoEspecificos.map( act => this.iServiciosActividadObjetivoEsp.definirPersistencia(act,transaction) )
+
+    }
+    crearObjetivoEspecifico(data : TObjEspIn)
+    {
         const objEsp = ObjetivoEspecifico.build(data);
 
         const actividadesObjEsp = data.actividadObjetivoEspecificos.map( dataAct => 
@@ -41,10 +61,7 @@ export  class ServiciosObjetivoEspecifico implements IServiciosModelo {
         objEsp.actividadObjetivoEspecificos.push(...actividadesObjEsp);
         return objEsp;
     }
-    editarDatos(iObjetivo: ObjetivoEspecifico, data : ObjetivoEspecificoCreationAttributes & {
-        actividadObjetivoEspecificos : (ActividadObjetivoEspecificoCreationAttributes & {
-            cronogramas : CronogramaActividadCreationAttributes[]
-        })[]} ) {
+    editarDatos(iObjetivo: ObjetivoEspecifico, data : TObjEspIn ) {
         
         iObjetivo.set(data);
 
@@ -58,22 +75,21 @@ export  class ServiciosObjetivoEspecifico implements IServiciosModelo {
         }
     }
     
-    async leerDatos(iObjetivoEsp : ObjetivoEspecifico, transaction ?: Transaction){
+    async leerDatosDeBD(iObjetivoEsp : ObjetivoEspecifico, transaction ?: Transaction){
         iObjetivoEsp.actividadObjetivoEspecificos = [];
        await iObjetivoEsp.getActividadObjetivoEspecificos({transaction})
         .then(resp => iObjetivoEsp.actividadObjetivoEspecificos.push(...resp));
     
     }
   
-    async guardarDatos( iObjetivoEsp : ObjetivoEspecifico, transaction ?: Transaction ){
-        iObjetivoEsp.isNewRecord = await ObjetivoEspecifico.findByPk(iObjetivoEsp.idObjetivoEspecifico,{attributes : ['idObjetivoEspecifico'],transaction}) === null;
-
+    async guardarDatosEnBD( iObjetivoEsp : ObjetivoEspecifico, transaction ?: Transaction ){
+    
         await iObjetivoEsp.save({transaction});
 
     }
 
     async guardarDatosActividades( iActObjEsp : ActividadObjetivoEspecifico, transaction ?: Transaction  ){
-       await  this.iServiciosActividadObjetivoEsp.guardarDatos(iActObjEsp,transaction)
+       await  this.iServiciosActividadObjetivoEsp.guardarDatosEnBD(iActObjEsp,transaction)
      
     }
     async guardarCronogramasActividades( iActObjEsp : ActividadObjetivoEspecifico,transaction ?: Transaction){
@@ -104,9 +120,12 @@ export  class ServiciosObjetivoEspecifico implements IServiciosModelo {
 
 
 export  class ServiciosActividadObjetivoEspecifico implements IServiciosModelo {
-    editarDatos(iActObjEsp: ActividadObjetivoEspecifico, data : ActividadObjetivoEspecificoCreationAttributes & {
-        cronogramas : CronogramaActividadCreationAttributes[]
-    }) {
+   
+    async definirPersistencia(iActObjEsp: ActividadObjetivoEspecifico, transaction?: Transaction | undefined): Promise<void> {
+        if(process.env.NODE_ENV === 'development') console.log('ActObjEsp - ',this.definirPersistencia.name)
+        await ActividadObjetivoEspecifico.findByPk(iActObjEsp.idActividadObjetivoEspecifico,{transaction}).then( resp => iActObjEsp.isNewRecord = resp === null);
+    }
+    editarDatos(iActObjEsp: ActividadObjetivoEspecifico, data : TActObjIn) {
         iActObjEsp.set(data);
         if(data.cronogramas) {
             iActObjEsp.cronogramaActividads = CronogramaActividad.bulkBuild(data.cronogramas);
@@ -115,15 +134,15 @@ export  class ServiciosActividadObjetivoEspecifico implements IServiciosModelo {
 
 
     
-    async leerDatos(iActObjEsp : ActividadObjetivoEspecifico, transaction ?: Transaction){
+    async leerDatosDeBD(iActObjEsp : ActividadObjetivoEspecifico, transaction ?: Transaction){
         iActObjEsp.cronogramaActividads = [];
         await iActObjEsp.getCronogramaActividads({transaction})
             .then(resp => iActObjEsp.cronogramaActividads.push(...resp));
     
     }
   
-    async guardarDatos( iActObjEsp : ActividadObjetivoEspecifico, transaction ?: Transaction ){
-        iActObjEsp.isNewRecord = await ActividadObjetivoEspecifico.findByPk(iActObjEsp.idActividadObjetivoEspecifico,{transaction, attributes : ['idActividadObjetivoEspecifico']}) === null;
+    async guardarDatosEnBD( iActObjEsp : ActividadObjetivoEspecifico, transaction ?: Transaction ){
+        
         await iActObjEsp.save({transaction});
 
     }
@@ -158,9 +177,7 @@ export  class ServiciosActividadObjetivoEspecifico implements IServiciosModelo {
         }
     }
 
-    crearActObjEsp ( data : ActividadObjetivoEspecificoCreationAttributes & {
-        cronogramas : CronogramaActividadCreationAttributes[]
-    }) {
+    crearActObjEsp ( data :TActObjIn ) {
         const cronogramas = CronogramaActividad.bulkBuild(data.cronogramas);
         const actividad = ActividadObjetivoEspecifico.build(data);
         actividad.cronogramaActividads = [];
