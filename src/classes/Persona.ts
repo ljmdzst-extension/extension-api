@@ -26,14 +26,14 @@ export default class Persona{
         return this.dbPersona.dataValues;
     }
 
-    async determinarPersistencia (transaction: Transaction) : Promise<void>{
+    async determinarPersistencia (transaction ?: Transaction) : Promise<void>{
         
         if( await MPersona.findByPk(this.dbPersona.nroDoc,{transaction})){
             this.estadoEnBD = ESTADO_BD.M;
         } 
     }
 
-    async guardarDatos( transaction : Transaction  ) : Promise<TPersonaOut>{
+    async guardarDatos( transaction ?: Transaction  ) : Promise<TPersonaOut>{
 
         if(this.estadoEnBD === ESTADO_BD.B) {
             await this.dbPersona.destroy({transaction});

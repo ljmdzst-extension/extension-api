@@ -23,36 +23,53 @@ export default class Integrante {
 
     public estadoEnBD !: ESTADO_BD;
 
+    private dbIntegrante !: MIntegrante;
+
     private persona ?: Persona;
 
     private lRoles ?: Rol[];
 
     constructor( 
-        private dbIntegrante : MIntegrante
+        data : TIntegranteIn 
     ){
         this.estadoEnBD = ESTADO_BD.A;
-        this.persona = undefined;
+        this.persona = new Persona( data.persona );
         this.lRoles = new Array<Rol>();
+        if(data.roles.length) {
+            data.roles.forEach( dataRol => this.lRoles?.push( new Rol(dataRol) ))
+        }
     }
+
     
     editarDatos( data : TIntegranteIn  ) : TIntegranteOut {
         
         if(data.roles.length) {
            
-            data.roles.forEach( dataRol => this.lRoles?.push( new Rol(dataRol )) )
+            data.roles.forEach( dataRol => {
+                if(this.lRoles?.every( rol => rol.compararDatos(dataRol) === false)){
+                    this.lRoles.push( new Rol ( dataRol));
+                }
+            } )
             
         }
         this.persona = new Persona( data.persona )
         return this.verDatos();
     }
 
-    async determinarPersistencia () : Promise<void>{
+    async determinarPersistencia ( transaction ?: Transaction ) : Promise<void>{
 
-        const 
-         = await BD.Integrante.findByPk(this.persona?.verDatos().nroDoc) ;
-        
-        if(dbPersona) this.estadoEnBD = ESTADO_BD.M;
-        if(!dbPersona) this.estadoEnBD = ESTADO_BD.A;
+        if(this.lRoles?.length) {
+            await Promise.all( this.lRoles.map( rol => rol.determinarPersistencia(transaction)) )
+        }
+
+        await this.persona?.determinarPersistencia(transaction);
+
+        if(await BD.Integrante.findByPk(this.persona?.verDatos().nroDoc) ){
+            this.estadoEnBD = ESTADO_BD.M;
+        } else {
+            this.estadoEnBD = ESTADO_BD.A;
+        }
+      
         
     }
 
@@ -70,27 +87,33 @@ export default class Integrante {
         .then( resp => this.dbIntegrante.roles.push(...resp))
 
     }
+
+   
     async guardarDatos( transaction ?: Transaction ) {
-        this.dbIntegrante.isNewRecord = await Integrante.findByPk(this.dbIntegrante.nroDoc,{attributes : ['nroDoc'], transaction}) === null;
+       
 
         await this.dbIntegrante.save({transaction});
      
     }
-    async guardarDatosRoles ( transaction ?: Transaction ){
-        console.log('guardarDatosRoles()')
-        if(this.dbIntegrante.roles && this.dbIntegrante.roles.length) {
-            await RolIntegrante.bulkCreate(this.dbIntegrante.roles,{ignoreDuplicates : true,transaction});
-            
+    async guardarDatosRoles ( transaction ?: Transaction ) : Promise<Promise<TRolOut>[]> {
+        let salida : Promise<TRolOut>[] = [];
+
+        if(this.lRoles?.length) {
+            salida = this.lRoles.map( rol => rol.guardarDatos(transaction) )
         }
+
+
+        return salida;
+       
     }
+
     async guardarDatosPersonales( transaction ?: Transaction ){
         
         if(this.dbIntegrante.persona){
-            this.dbIntegrante.persona.isNewRecord = Persona.findByPk(this.dbIntegrante.persona.nroDoc,{transaction, attributes : ['nroDoc']}) === null; 
+            await this.persona?.determinarPersistencia(transaction);
+
+            await this.persona?.guardarDatos(transaction);
             
-            await this.dbIntegrante.persona.save({transaction});
-            
-            await this.dbIntegrante.setPersona( this.dbIntegrante.persona,{transaction} );
         }
     }
     verDatos ( ): TIntegranteOut {
@@ -102,23 +125,5 @@ export default class Integrante {
     }
 
 
-    crearIntegrante(  data : TIntegranteIn ) : TIntegranteOut{
-
-
-            const nuevoIntegrante = Integrante.build(data);
-
-            nuevoIntegrante.persona = Persona.build(data.persona);
-            
-            
-            nuevoIntegrante.roles = [];
-
-            if(data.roles.length) {
-                const roles = RolIntegrante.bulkBuild(data.roles);
-                roles.map( rol => rol.validate())
-                nuevoIntegrante.roles.push( ...roles);
-            }
-          
-      
-            return nuevoIntegrante;
-        }
+    
 }

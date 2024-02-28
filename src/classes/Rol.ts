@@ -17,6 +17,12 @@ export default class Rol {
         this.estadoEnBD = ESTADO_BD.A;
         this.dbRol = RolIntegrante.build(data);
     }
+    
+    public compararDatos( dataRol : TRolIn ) {
+        return this.dbRol.idRolIntegrante === dataRol.idRolIntegrante && 
+                this.dbRol.codigoPropuesta === dataRol.codigoPropuesta &&
+                this.dbRol.nroDoc === dataRol.nroDoc;
+    }
 
     verDatos() {
         return {
@@ -27,11 +33,20 @@ export default class Rol {
         }
     }
 
+    async determinarPersistencia( transaction ?: Transaction) {
+        this.dbRol.isNewRecord = await RolIntegrante.findOne({
+            where : {
+                ...this.dbRol.dataValues
+            },
+            transaction
+        }) === null;
+    }
+
     darDeBaja() {
         this.estadoEnBD = ESTADO_BD.B;
     }
 
-    async guardarDatos(transaction : Transaction) : Promise<TRolOut>{
+    async guardarDatos(transaction ?: Transaction) : Promise<TRolOut>{
         if(this.estadoEnBD === ESTADO_BD.B) {
             await this.dbRol.destroy({transaction});
         }
