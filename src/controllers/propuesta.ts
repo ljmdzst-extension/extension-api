@@ -93,7 +93,7 @@ export const putPropuesta = async(req : typeof request , res : typeof response)=
        
        const iServiciosPropuesta = new ServiciosPropuesta();
 
-    //    await iServiciosPropuesta.leerDatosDeBD(iPropuesta);
+        // await iServiciosPropuesta.leerDatosDeBD(iPropuesta);
 
 
        iServiciosPropuesta.editarDatos(iPropuesta,restData);

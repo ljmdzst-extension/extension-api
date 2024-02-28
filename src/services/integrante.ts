@@ -16,12 +16,16 @@ export interface IServiciosIntegrantes extends IServiciosModelo {
     guardarDatosPersonalesEnBD(iIntegrante : Integrante, transaction ?: Transaction ): Promise<void>;
     definirPersistenciaPersona( iIntegrante: Integrante ,transaction?: Transaction | undefined ) : Promise<void>;
 }
+
 export default class ServiciosIntegrantes implements IServiciosIntegrantes {
    
     async definirPersistencia(iIntegrante: Integrante ,transaction?: Transaction | undefined): Promise<void> {
         if(process.env.NODE_ENV === 'development') console.log(this.definirPersistencia.name)
         await Integrante.findOne( {
-            where : {nroDoc : iIntegrante.nroDoc , codigoPropuesta : iIntegrante.codigoPropuesta}, 
+            where : {
+                nroDoc : iIntegrante.nroDoc , 
+                codigoPropuesta : iIntegrante.codigoPropuesta
+            }, 
             paranoid : false,
             transaction
         } )
@@ -75,9 +79,6 @@ export default class ServiciosIntegrantes implements IServiciosIntegrantes {
             await iIntegrante.restore({transaction});
         }
         await iIntegrante.save({transaction});
-
-       
-     
     }
 
     async guardarDatosRolesEnBD (iIntegrante : Integrante, transaction ?: Transaction ){
@@ -97,7 +98,7 @@ export default class ServiciosIntegrantes implements IServiciosIntegrantes {
     }
 
     async guardarDatosPersonalesEnBD(iIntegrante : Integrante, transaction ?: Transaction ){
-        console.log(iIntegrante.codigoPropuesta);
+  
         await iIntegrante.persona.save({transaction});
     }
 
