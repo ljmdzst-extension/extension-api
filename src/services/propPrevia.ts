@@ -1,8 +1,11 @@
 import { Transaction } from "sequelize";
 import { IServiciosModelo } from "./IServiciosModelo";
-import { PropuestaPrevia, PropuestaPreviaCreationAttributes } from "../models/PropuestaPrevia";
+import { PropuestaPrevia, PropuestaPreviaAttributes, PropuestaPreviaCreationAttributes } from "../models/PropuestaPrevia";
 
 
+export type TPropuestaPreviaIn = PropuestaPreviaCreationAttributes 
+
+export type TPropuestaPreviaOut = PropuestaPreviaAttributes 
 
 
 export default class SPropuestaPrevia implements IServiciosModelo {

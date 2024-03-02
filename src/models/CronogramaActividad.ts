@@ -57,7 +57,8 @@ export class CronogramaActividad extends Model<CronogramaActividadAttributes, Cr
   }, {
     sequelize,
     tableName: 'Cronograma',
-    timestamps: false
+    timestamps: true,
+    paranoid : true
   });
   }
 }

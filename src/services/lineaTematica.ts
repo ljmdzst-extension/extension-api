@@ -1,8 +1,11 @@
 import { Model, Transaction } from "sequelize";
 import { IServiciosModelo } from "./IServiciosModelo";
-import { PropuestaLineaTematica, PropuestaLineaTematicaCreationAttributes } from "../models/PropuestaLineaTematica";
-import { LineaTematica, LineaTematicaCreationAttributes } from "../models/LineaTematica";
+import { PropuestaLineaTematica, PropuestaLineaTematicaAttributes, PropuestaLineaTematicaCreationAttributes } from "../models/PropuestaLineaTematica";
+import { LineaTematicaAttributes, LineaTematicaCreationAttributes } from "../models/LineaTematica";
 
+export type TPropuestaLineaTematicaIn = PropuestaLineaTematicaCreationAttributes 
+
+export type TPropuestaLineaTematicaOut = PropuestaLineaTematicaAttributes 
 
 export default class SLineaTematica implements IServiciosModelo {
    

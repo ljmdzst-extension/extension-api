@@ -18,35 +18,35 @@ export interface PropuestaAttributes {
   idUsuario: string;
   titulo: string;
   modalidad: string;
-  duracion?: string;
-  categoriaEquipo?: string;
-  integralidad?: string;
-  problematicaDetalle?: string;
-  problematicaSintesis?: string;
-  proyectosCaid?: string;
-  propuestaMetodologica?: string;
-  accionesCoordinacion?: string;
-  politicasPublicas?: string;
-  accionesComunicacion?: string;
-  integralidadDescripcion?: string;
-  sustentabilidad?: string;
-  sintesis?: string;
-  tipoMateriales?: string;
-  capacitacionAgentesMultip?: string;
-  perfilAgentesMultip?: string;
-  solicitaBecarioJustif?: string;
-  solicitaVoluntarioJustif?: string;
-  instanciasCapacitacionDetalle?: string;
-  solicitaBecario?: number;
-  ipFinalidad?: string;
-  ipParticipantesSociales?: string;
-  ipObserv?: string;
-  ipPotencialesActividades?: string;
-  ipCampoTematico?: string;
-  ipPoliticasPublicas?: string;
-  ipProblematica?: string;
-  planificacionFinalidad?: string;
-  planificacionObjetivoGeneral?: string;
+  duracion?: string | null;
+  categoriaEquipo?: string | null;
+  integralidad?: string | null;
+  problematicaDetalle?: string | null;
+  problematicaSintesis?: string | null;
+  proyectosCaid?: string | null;
+  propuestaMetodologica?: string | null;
+  accionesCoordinacion?: string | null;
+  politicasPublicas?: string | null;
+  accionesComunicacion?: string | null;
+  integralidadDescripcion?: string | null;
+  sustentabilidad?: string | null;
+  sintesis?: string | null;
+  tipoMateriales?: string | null;
+  capacitacionAgentesMultip?: string | null;
+  perfilAgentesMultip?: string | null;
+  solicitaBecarioJustif?: string | null;
+  solicitaVoluntarioJustif?: string | null;
+  instanciasCapacitacionDetalle?: string | null;
+  solicitaBecario?: number | null;
+  ipFinalidad?: string | null;
+  ipParticipantesSociales?: string | null;
+  ipObserv?: string | null;
+  ipPotencialesActividades?: string | null;
+  ipCampoTematico?: string | null;
+  ipPoliticasPublicas?: string | null;
+  ipProblematica?: string | null;
+  planificacionFinalidad?: string | null;
+  planificacionObjetivoGeneral?: string | null
 }
 
 export type PropuestaPk = "codigoPropuesta";
@@ -59,35 +59,35 @@ export class Propuesta extends Model<PropuestaAttributes, PropuestaCreationAttri
   idUsuario!: string;
   titulo!: string;
   modalidad!: string;
-  duracion?: string;
-  categoriaEquipo?: string;
-  integralidad?: string;
-  problematicaDetalle?: string;
-  problematicaSintesis?: string;
-  proyectosCaid?: string;
-  propuestaMetodologica?: string;
-  accionesCoordinacion?: string;
-  politicasPublicas?: string;
-  accionesComunicacion?: string;
-  integralidadDescripcion?: string;
-  sustentabilidad?: string;
-  sintesis?: string;
-  tipoMateriales?: string;
-  capacitacionAgentesMultip?: string;
-  perfilAgentesMultip?: string;
-  solicitaBecarioJustif?: string;
-  solicitaVoluntarioJustif?: string;
-  instanciasCapacitacionDetalle?: string;
-  solicitaBecario?: number;
-  ipFinalidad?: string;
-  ipParticipantesSociales?: string;
-  ipObserv?: string;
-  ipPotencialesActividades?: string;
-  ipCampoTematico?: string;
-  ipPoliticasPublicas?: string;
-  ipProblematica?: string;
-  planificacionFinalidad?: string;
-  planificacionObjetivoGeneral?: string;
+  duracion?: string | null;
+  categoriaEquipo?: string | null;
+  integralidad?: string | null;
+  problematicaDetalle?: string | null;
+  problematicaSintesis?: string | null;
+  proyectosCaid?: string | null;
+  propuestaMetodologica?: string | null;
+  accionesCoordinacion?: string | null;
+  politicasPublicas?: string | null;
+  accionesComunicacion?: string | null;
+  integralidadDescripcion?: string | null;
+  sustentabilidad?: string | null;
+  sintesis?: string | null;
+  tipoMateriales?: string | null;
+  capacitacionAgentesMultip?: string | null;
+  perfilAgentesMultip?: string | null;
+  solicitaBecarioJustif?: string | null;
+  solicitaVoluntarioJustif?: string | null;
+  instanciasCapacitacionDetalle?: string | null;
+  solicitaBecario?: number | null;
+  ipFinalidad?: string | null;
+  ipParticipantesSociales?: string | null;
+  ipObserv?: string | null;
+  ipPotencialesActividades?: string | null;
+  ipCampoTematico?: string | null;
+  ipPoliticasPublicas?: string | null;
+  ipProblematica?: string | null;
+  planificacionFinalidad?: string | null;
+  planificacionObjetivoGeneral?: string | null;
   
   // Propuesta hasMany Integrante via codigoPropuesta
   integrantes!: Integrante[];
@@ -253,19 +253,43 @@ export class Propuesta extends Model<PropuestaAttributes, PropuestaCreationAttri
     },
     titulo: {
       type: DataTypes.STRING(500),
-      allowNull: false
+      allowNull: false,
+      validate : {
+        len : {
+          args : [1,500],
+          msg : 'título max. 500 caracteres'
+        }
+      }
     },
     modalidad: {
       type: DataTypes.STRING(255),
-      allowNull: false
+      allowNull: false,
+      validate : {
+        isIn : {
+          args : [['AET','PEIS']],
+          msg : 'Modalidad debe ser AET, PEIS o PEEE'
+        }
+      }
     },
     duracion: {
       type: DataTypes.STRING(255),
-      allowNull: true
+      allowNull: true,
+      validate : {
+        isIn : {
+          args : [['ANUAL','BIANUAL']],
+          msg : 'Duración debe ser ANUAL O BIANUAL'
+        }
+      }
     },
     categoriaEquipo: {
       type: DataTypes.STRING(255),
-      allowNull: true
+      allowNull: true,
+      validate : {
+        isIn : {
+          args : [['INICIO','EXPERIENCIA','TRAYECTORIA']],
+          msg : 'categoriaEquipo debe ser INICIO , EXPERIENCIA O TRAYECTORIA'
+        }
+      }
     },
     integralidad: {
       type: DataTypes.STRING(255),

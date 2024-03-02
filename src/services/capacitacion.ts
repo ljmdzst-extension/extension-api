@@ -1,8 +1,11 @@
 import { Transaction } from "sequelize";
 import { IServiciosModelo } from "./IServiciosModelo";
-import { PropuestaCapacitacion, PropuestaCapacitacionCreationAttributes } from "../models/PropuestaCapacitacion";
+import { PropuestaCapacitacion, PropuestaCapacitacionAttributes, PropuestaCapacitacionCreationAttributes } from "../models/PropuestaCapacitacion";
+import { CapacitacionAttributes, CapacitacionCreationAttributes } from "../models/Capacitacion";
 
+export type TPropuestaCapacitacionIn = PropuestaCapacitacionCreationAttributes 
 
+export type TPropuestaCapacitacionOut = PropuestaCapacitacionAttributes 
 
 export default class SCapacitacion implements IServiciosModelo {
    

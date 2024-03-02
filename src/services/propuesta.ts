@@ -9,19 +9,43 @@ import { ObjetivoEspecifico } from "../models/ObjetivoEspecifico";
 import { IServiciosModelo } from "./IServiciosModelo";
 import { PropuestaRelacionada } from "../models/PropuestaRelacionada";
 import { PropuestaPrevia } from "../models/PropuestaPrevia";
-import ServiciosIntegrantes, { IServiciosIntegrantes } from "./integrante";
-import { ServiciosActividadObjetivoEspecifico, ServiciosObjetivoEspecifico, iServiciosObjetivoEspecifico } from "./planificacion";
-import ServiciosInstitucion, { IServiciosInstitucion } from "./institucion";
+import ServiciosIntegrantes, { IServiciosIntegrantes, TIntegranteIn, TIntegranteOut } from "./integrante";
+import { ServiciosActividadObjetivoEspecifico, ServiciosObjetivoEspecifico, TObjEspIn, TObjEspOut, iServiciosObjetivoEspecifico } from "./planificacion";
+import ServiciosInstitucion, { IServiciosInstitucion, TInstitucionIn, TInstitucionOut } from "./institucion";
 import { Op, Transaction } from "sequelize";
-import SPalabraClave, { ISPalabraClave } from "./palabraClave";
-import SCapacitacion from "./capacitacion";
-import SProgramaExtension from "./sippe";
-import SLineaTematica from "./lineaTematica";
-import SPropuestaPrevia from "./propPrevia";
-import SPropuestaRelacionada from "./propRel";
+import SPalabraClave, { ISPalabraClave, TPalabraClaveIn, TPalabraClaveOut } from "./palabraClave";
+import SCapacitacion, { TPropuestaCapacitacionIn, TPropuestaCapacitacionOut } from "./capacitacion";
+import SProgramaExtension, { TPropuestaProgramaExtensionIn, TPropuestaProgramaExtensionOut } from "./sippe";
+import SLineaTematica, { TPropuestaLineaTematicaIn, TPropuestaLineaTematicaOut } from "./lineaTematica";
+import SPropuestaPrevia, { TPropuestaPreviaIn, TPropuestaPreviaOut } from "./propPrevia";
+import SPropuestaRelacionada, { TPropuestaRelacionadaIn, TPropuestaRelacionadaOut } from "./propRel";
 
 
 type TServicio = string;
+
+export type TpropuestaIn = PropuestaAttributes & {
+    integrantes ?: TIntegranteIn[],
+    instituciones ?: TInstitucionIn[],
+    objetivosEspecificos ?: TObjEspIn[],
+    propuestaPalabrasClave ?: TPalabraClaveIn[],
+    propuestaCapacitaciones ?: TPropuestaCapacitacionIn[],
+    propuestaLineasTematicas ?: TPropuestaLineaTematicaIn[],
+    propuestaProgramasExtension ?: TPropuestaProgramaExtensionIn[],
+    propuestasRelacionadas ?: TPropuestaRelacionadaIn[],
+    propuestasPrevias ?: TPropuestaPreviaIn[]
+}
+
+type TpropuestaOut = PropuestaAttributes & {
+    integrantes ?: TIntegranteOut[],
+    instituciones ?: TInstitucionOut[],
+    objetivosEspecificos ?: TObjEspOut[],
+    propuestaPalabrasClave ?: TPalabraClaveOut[],
+    propuestaCapacitaciones ?: TPropuestaCapacitacionOut[],
+    propuestaLineasTematicas ?: TPropuestaLineaTematicaOut[],
+    propuestaProgramasExtension ?: TPropuestaProgramaExtensionOut[],
+    propuestasRelacionadas ?: TPropuestaRelacionadaOut[],
+    propuestasPrevias ?: TPropuestaPreviaOut[]
+}
 
 export default class ServiciosPropuesta implements IServiciosModelo {
     
@@ -44,187 +68,7 @@ export default class ServiciosPropuesta implements IServiciosModelo {
     async definirPersistencia( iPropuesta : Propuesta, transaction?: Transaction | undefined): Promise<void> {
         await Propuesta.findByPk(iPropuesta.codigoPropuesta,{transaction}).then( resp => iPropuesta.isNewRecord = resp === null)
     }
-   
-    editarDatos( iPropuesta : Propuesta, data: PropuestaAttributes ) {
-       iPropuesta.set(data);
-    }
-
-    verDatos(iPropuesta : Propuesta) : PropuestaAttributes {
-        return iPropuesta.dataValues;
-    }
-
-   
-    cargarIntegrantes( iPropuesta : Propuesta, _integrantes : Integrante[] ) {
-        console.log('carga integrantes')
-        if(!iPropuesta.integrantes ) iPropuesta.integrantes = [];
-        
-        if(_integrantes.length ){
-            _integrantes.forEach( integrante => {
-               
-             const integranteCargado =  iPropuesta.integrantes.find( integ => integ.nroDoc === integrante.nroDoc)
-             if(integranteCargado){
-                const dataNueva= this.lServiciosModelo.get('INTEG')?.verDatos(integrante);
-                this.lServiciosModelo.get('INTEG')?.editarDatos( integranteCargado, dataNueva ); 
-             } else {
-             
-                iPropuesta.integrantes.push(integrante);
-             }
-           });
-          
-        }
-    }
-
-    cargarObjetivosEspecificos( iPropuesta : Propuesta, _objetivos : ObjetivoEspecifico[]) {
-        console.log('carga objetivos')
-        if(!iPropuesta.objetivoEspecificos ) iPropuesta.objetivoEspecificos = [];
-       
-        if(_objetivos.length ){
-            _objetivos.forEach ( objetivo => {
-                const objetivoCargado = iPropuesta.objetivoEspecificos.find( obj => obj.idObjetivoEspecifico === objetivo.idObjetivoEspecifico );
-                if(objetivoCargado) {
-                    const nuevData = this.lServiciosModelo.get('OBJESP')?.verDatos(objetivo);
-                  
-                    this.lServiciosModelo.get('OBJESP')?.editarDatos( objetivoCargado,nuevData);
-                }else {
-                    iPropuesta.objetivoEspecificos.push( objetivo );
-                }
-           })
-        }
-    }
-
-    cargarInstituciones( iPropuesta : Propuesta, _propuestaInstituciones : PropuestaInstitucion[]) {
-        console.log('carga instituciones')
-        if(!iPropuesta.propuestaInstituciones) iPropuesta.propuestaInstituciones = [];
-       
-        if(_propuestaInstituciones.length ){
-            _propuestaInstituciones.forEach( propInst => {
-             const instCargada = iPropuesta.propuestaInstituciones.find( propIsnt => propIsnt.idInstitucion === propInst.idInstitucion );
-             if(instCargada){
-                const nuevaData = this.lServiciosModelo.get('INST')?.verDatos(propInst); 
-               this.lServiciosModelo.get('INST')?.editarDatos(instCargada, nuevaData);
-             } else {
-                iPropuesta.propuestaInstituciones.push( propInst );
-             }
-           })
-        }
-    }
-
-    cargarPropRelacionadas( iPropuesta : Propuesta, propuestasRelacionadas : PropuestaRelacionada[]) {
-        if(!iPropuesta.propuestaRelacionadas) iPropuesta.propuestaRelacionadas = [];
-        
-        if(propuestasRelacionadas.length ){
-            
-            iPropuesta.propuestaRelacionadas = [];
-            iPropuesta.propuestaRelacionadas.push( ...propuestasRelacionadas )
-        }
-    }
-
-    cargarPropPrevias( iPropuesta : Propuesta, propuestasPrevias : PropuestaPrevia[]) {
-        if(!iPropuesta.propuestasPrevias) iPropuesta.propuestasPrevias = [];
-        
-        if(propuestasPrevias.length ){
-            
-            iPropuesta.propuestasPrevias = [];
-            iPropuesta.propuestasPrevias.push( ...propuestasPrevias );
-        }
-    }
-    
-    cargarCapacitaciones( iPropuesta : Propuesta, capacitaciones : PropuestaCapacitacion[]) {
-        if(!iPropuesta.propuestaCapacitaciones) iPropuesta.propuestaCapacitaciones = [];
-        if(capacitaciones.length ){
-            
-            iPropuesta.propuestaCapacitaciones = [];
-            iPropuesta.propuestaCapacitaciones.push( ...capacitaciones )
-        }
-    }
-    cargarLineasTematicas( iPropuesta : Propuesta, lineasTematicas : PropuestaLineaTematica[]) {
-        if(!iPropuesta.propuestaLineaTematicas) iPropuesta.propuestaLineaTematicas = [];
-        if(lineasTematicas.length ){
-            
-            iPropuesta.propuestaLineaTematicas = [];
-            iPropuesta.propuestaLineaTematicas.push( ...lineasTematicas )
-        }
-    }
-    cargarProgramasSippe( iPropuesta : Propuesta, progSippe : PropuestaProgramaExtension[]) {
-        if(!iPropuesta.propuestaProgramaExtensions) iPropuesta.propuestaProgramaExtensions = [];
-        if(progSippe.length ){
-            
-            iPropuesta.propuestaProgramaExtensions = [];
-            iPropuesta.propuestaProgramaExtensions.push( ...progSippe )
-        }
-    }
-    cargarPalabrasClave( iPropuesta : Propuesta, palabrasClave : PropuestaPalabraClave[]) {
-        if(!iPropuesta.propuestaPalabraClaves) iPropuesta.propuestaPalabraClaves = [];
-        if(palabrasClave.length ){
-            
-            iPropuesta.propuestaPalabraClaves = [];
-            iPropuesta.propuestaPalabraClaves.push( ...palabrasClave )
-        }
-    }
-   
-    verIntegrantes( iPropuesta : Propuesta) {
-        const SIntegrantes = this.lServiciosModelo.get('INTEG') ;
-        if(iPropuesta.integrantes.length ){
-            return iPropuesta.integrantes.map( integ => SIntegrantes?.verDatos(integ));
-        }
-        return [];
-    }
-
-    verObjetivosEspecificos( iPropuesta : Propuesta) {
-        const SObjetivos = this.lServiciosModelo.get('OBJESP');
-        if(iPropuesta.objetivoEspecificos.length ){
-            return iPropuesta.objetivoEspecificos.map( objEsp => SObjetivos?.verDatos(objEsp))
-        }
-        return [];
-    }
-    verInstituciones( iPropuesta : Propuesta) {
-        const SInstituciones = this.lServiciosModelo.get('INST') as IServiciosInstitucion;
-        if(iPropuesta.propuestaInstituciones.length ){
-          
-           return iPropuesta.propuestaInstituciones.map( propInst => SInstituciones.verDatos(propInst) )
-        }
-        return [];
-    }
-    verPropRelacionadas( iPropuesta : Propuesta) {
-        if(iPropuesta.propuestaRelacionadas.length ){
-           return iPropuesta.propuestaRelacionadas;
-        }
-        return [];
-    }
-    verPropPrevias( iPropuesta : Propuesta) {
-        if(iPropuesta.propuestasPrevias.length ){
-           return iPropuesta.propuestasPrevias;
-        }
-        return [];
-    }
-    verCapacitaciones( iPropuesta : Propuesta) {
-        if(iPropuesta.propuestaCapacitaciones.length ){
-           return iPropuesta.propuestaCapacitaciones
-        }
-        return [];
-    }
-    verLineasTematicas( iPropuesta : Propuesta) {
-        if(iPropuesta.propuestaLineaTematicas.length ){
-           return iPropuesta.propuestaLineaTematicas;
-        }
-        return [];
-    }
-    verProgramasSippe( iPropuesta : Propuesta) {
-        if(iPropuesta.propuestaProgramaExtensions.length ){
-            return iPropuesta.propuestaProgramaExtensions;
-        }
-        return [];
-    }
-    verPalabrasClave( iPropuesta : Propuesta) {
-        if(iPropuesta.propuestaPalabraClaves.length ){
-            return iPropuesta.propuestaPalabraClaves.map( propPalabra => ({
-                ...propPalabra.dataValues ,
-                palabraClave : propPalabra.palabraClave.dataValues
-            }));
-        }
-        return [];
-    }
-    
+     
     async leerDatosDeBD (iPropuesta : Propuesta) {
 
         await iPropuesta.sequelize.transaction( async transaction => {
@@ -247,7 +91,260 @@ export default class ServiciosPropuesta implements IServiciosModelo {
         await this.leerDatosObjetivos(iPropuesta);
         await this.leerDatosPalabrasClave(iPropuesta);       
     }
+    
 
+    async guardarDatosEnBD (iPropuesta : Propuesta ) : Promise<void> {
+
+        await iPropuesta.save();
+
+        await this.guardarDatosLineasTematicas(iPropuesta);
+
+        await this.guardarDatosCapacitaciones(iPropuesta);
+
+        await this.guardarDatosProgramasExtension(iPropuesta);
+
+     
+        await this.guardarDatosInstituciones(iPropuesta);
+
+        await this.guardarDatosIntegrantes(iPropuesta);
+
+        await this.guardarDatosObjetivos(iPropuesta);
+
+        await this.guardarDatosPalabrasClave(iPropuesta);
+
+        await this.guardarDatosPropuestasPrevias(iPropuesta);
+
+        await this.guardarDatosPropuestaRelacionada(iPropuesta);
+        
+    }
+
+    editarDatos( iPropuesta : Propuesta, data: TpropuestaIn ) {
+       iPropuesta.set(data);
+       console.log('inicio cargas')
+       if(data.integrantes && data.integrantes.length){
+          const SIntegrantes = this.lServiciosModelo.get('INTEG') as IServiciosIntegrantes;
+          const lIntegrantes = data.integrantes.map( (integ : any) => SIntegrantes.crearIntegrante( integ))
+          this.cargarIntegrantes(iPropuesta,lIntegrantes);
+       }
+       if(data.instituciones && data.instituciones.length) {
+           const SIntituciones =this.lServiciosModelo.get('INST') as IServiciosInstitucion;
+           const lInstituciones = data.instituciones.map( (inst : any)=> SIntituciones.crearInstitucion(inst))
+           this.cargarInstituciones(iPropuesta,lInstituciones);
+       }
+       if(data.objetivosEspecificos && data.objetivosEspecificos.length) {
+           const SObjetivos = this.lServiciosModelo.get('OBJESP') as iServiciosObjetivoEspecifico;
+           const lObjetivos = data.objetivosEspecificos.map(  (obj : any) => SObjetivos.crearObjetivoEspecifico(obj) );
+           this.cargarObjetivosEspecificos(iPropuesta,lObjetivos);
+       }
+       if(data.propuestaPalabrasClave){
+            const SPalabraClave = this.lServiciosModelo.get('PALCLA') as ISPalabraClave;
+            const lPalabraClaves =data.propuestaPalabrasClave.map( (propPalabra : any) => SPalabraClave.crearPalabraClave(propPalabra)) 
+            this.cargarPalabrasClave(iPropuesta,lPalabraClaves);
+       }
+       if(data.propuestaLineasTematicas){
+           this.cargarLineasTematicas(iPropuesta,PropuestaLineaTematica.bulkBuild(data.propuestaLineasTematicas))
+       }
+       if(data.propuestaCapacitaciones){
+           this.cargarCapacitaciones(iPropuesta,PropuestaCapacitacion.bulkBuild(data.propuestaCapacitaciones))
+       }
+       if(data.propuestaProgramasExtension){
+           this.cargarProgramasSippe(iPropuesta,PropuestaProgramaExtension.bulkBuild(data.propuestaProgramasExtension))
+       }
+       if(data.propuestasPrevias){
+           this.cargarPropPrevias(iPropuesta,PropuestaPrevia.bulkBuild(data.propuestasPrevias))
+       }
+       if(data.propuestasRelacionadas){
+           this.cargarPropRelacionadas(iPropuesta,PropuestaRelacionada.bulkBuild(data.propuestasRelacionadas))
+       }
+    }
+
+    verDatos(iPropuesta : Propuesta) : TpropuestaOut {
+        let salida : TpropuestaOut = iPropuesta.dataValues;
+        
+        salida = {...salida, integrantes : this.verIntegrantes(iPropuesta) }
+        salida = {...salida, instituciones : this.verInstituciones(iPropuesta)}
+        salida = {...salida, objetivosEspecificos : this.verObjetivosEspecificos(iPropuesta)}
+        salida = {...salida, propuestaProgramasExtension : this.verProgramasSippe(iPropuesta)}
+        salida = {...salida, propuestasPrevias : this.verPropPrevias(iPropuesta)}
+        salida = {...salida, propuestasRelacionadas : this.verPropRelacionadas(iPropuesta)}
+        salida = {...salida, propuestaCapacitaciones : this.verCapacitaciones(iPropuesta)}
+        salida = {...salida, propuestaLineasTematicas : this.verLineasTematicas(iPropuesta)}
+        salida = {...salida, propuestaPalabrasClave : this.verPalabrasClave(iPropuesta)}
+
+        return salida;
+    }
+
+   
+    private cargarIntegrantes( iPropuesta : Propuesta, _integrantes : Integrante[] ) {
+        console.log('carga integrantes')
+        if(!iPropuesta.integrantes ) iPropuesta.integrantes = [];
+        
+        if(_integrantes.length ){
+            _integrantes.forEach( integrante => {
+               
+             const integranteCargado =  iPropuesta.integrantes.find( integ => integ.nroDoc === integrante.nroDoc)
+             if(integranteCargado){
+                const dataNueva= this.lServiciosModelo.get('INTEG')?.verDatos(integrante);
+                this.lServiciosModelo.get('INTEG')?.editarDatos( integranteCargado, dataNueva ); 
+             } else {
+             
+                iPropuesta.integrantes.push(integrante);
+             }
+           });
+          
+        }
+    }
+
+    private cargarObjetivosEspecificos( iPropuesta : Propuesta, _objetivos : ObjetivoEspecifico[]) {
+        console.log('carga objetivos')
+        if(!iPropuesta.objetivoEspecificos ) iPropuesta.objetivoEspecificos = [];
+       
+        if(_objetivos.length ){
+            _objetivos.forEach ( objetivo => {
+                const objetivoCargado = iPropuesta.objetivoEspecificos.find( obj => obj.idObjetivoEspecifico === objetivo.idObjetivoEspecifico );
+                if(objetivoCargado) {
+                    const nuevData = this.lServiciosModelo.get('OBJESP')?.verDatos(objetivo);
+                  
+                    this.lServiciosModelo.get('OBJESP')?.editarDatos( objetivoCargado,nuevData);
+                }else {
+                    iPropuesta.objetivoEspecificos.push( objetivo );
+                }
+           })
+        }
+    }
+
+    private cargarInstituciones( iPropuesta : Propuesta, _propuestaInstituciones : PropuestaInstitucion[]) {
+        console.log('carga instituciones')
+        if(!iPropuesta.propuestaInstituciones) iPropuesta.propuestaInstituciones = [];
+       
+        if(_propuestaInstituciones.length ){
+            _propuestaInstituciones.forEach( propInst => {
+             const instCargada = iPropuesta.propuestaInstituciones.find( propIsnt => propIsnt.idInstitucion === propInst.idInstitucion );
+             if(instCargada){
+                const nuevaData = this.lServiciosModelo.get('INST')?.verDatos(propInst); 
+               this.lServiciosModelo.get('INST')?.editarDatos(instCargada, nuevaData);
+             } else {
+                iPropuesta.propuestaInstituciones.push( propInst );
+             }
+           })
+        }
+    }
+
+    private cargarPropRelacionadas( iPropuesta : Propuesta, propuestasRelacionadas : PropuestaRelacionada[]) {
+        if(!iPropuesta.propuestaRelacionadas) iPropuesta.propuestaRelacionadas = [];
+        
+        if(propuestasRelacionadas.length ){
+            
+            iPropuesta.propuestaRelacionadas = [];
+            iPropuesta.propuestaRelacionadas.push( ...propuestasRelacionadas )
+        }
+    }
+
+    private cargarPropPrevias( iPropuesta : Propuesta, propuestasPrevias : PropuestaPrevia[]) {
+        if(!iPropuesta.propuestasPrevias) iPropuesta.propuestasPrevias = [];
+        
+        if(propuestasPrevias.length ){
+            
+            iPropuesta.propuestasPrevias = [];
+            iPropuesta.propuestasPrevias.push( ...propuestasPrevias );
+        }
+    }
+    
+    private cargarCapacitaciones( iPropuesta : Propuesta, capacitaciones : PropuestaCapacitacion[]) {
+        if(!iPropuesta.propuestaCapacitaciones) iPropuesta.propuestaCapacitaciones = [];
+        if(capacitaciones.length ){
+            
+            iPropuesta.propuestaCapacitaciones = [];
+            iPropuesta.propuestaCapacitaciones.push( ...capacitaciones )
+        }
+    }
+    private cargarLineasTematicas( iPropuesta : Propuesta, lineasTematicas : PropuestaLineaTematica[]) {
+        if(!iPropuesta.propuestaLineaTematicas) iPropuesta.propuestaLineaTematicas = [];
+        if(lineasTematicas.length ){
+            
+            iPropuesta.propuestaLineaTematicas = [];
+            iPropuesta.propuestaLineaTematicas.push( ...lineasTematicas )
+        }
+    }
+    private cargarProgramasSippe( iPropuesta : Propuesta, progSippe : PropuestaProgramaExtension[]) {
+        if(!iPropuesta.propuestaProgramaExtensions) iPropuesta.propuestaProgramaExtensions = [];
+        if(progSippe.length ){
+            
+            iPropuesta.propuestaProgramaExtensions = [];
+            iPropuesta.propuestaProgramaExtensions.push( ...progSippe )
+        }
+    }
+    private cargarPalabrasClave( iPropuesta : Propuesta, palabrasClave : PropuestaPalabraClave[]) {
+        if(!iPropuesta.propuestaPalabraClaves) iPropuesta.propuestaPalabraClaves = [];
+        if(palabrasClave.length ){
+            
+            iPropuesta.propuestaPalabraClaves = [];
+            iPropuesta.propuestaPalabraClaves.push( ...palabrasClave )
+        }
+    }
+   
+    private verIntegrantes( iPropuesta : Propuesta) {
+        if(iPropuesta.integrantes.length ){
+            return iPropuesta.integrantes;
+        }
+        return [];
+    }
+
+    private verObjetivosEspecificos( iPropuesta : Propuesta) {
+        const SObjetivos = this.lServiciosModelo.get('OBJESP');
+        if(iPropuesta.objetivoEspecificos.length ){
+            return iPropuesta.objetivoEspecificos.map( objEsp => SObjetivos?.verDatos(objEsp))
+        }
+        return [];
+    }
+    private verInstituciones( iPropuesta : Propuesta) {
+        const SInstituciones = this.lServiciosModelo.get('INST') as IServiciosInstitucion;
+        if(iPropuesta.propuestaInstituciones && iPropuesta.propuestaInstituciones.length ){
+          
+           return iPropuesta.propuestaInstituciones.map( propInst => SInstituciones.verDatos(propInst) )
+        }
+        return [];
+    }
+    private verPropRelacionadas( iPropuesta : Propuesta) {
+        if(iPropuesta.propuestaRelacionadas.length ){
+           return iPropuesta.propuestaRelacionadas;
+        }
+        return [];
+    }
+    private verPropPrevias( iPropuesta : Propuesta) {
+        if(iPropuesta.propuestasPrevias.length ){
+           return iPropuesta.propuestasPrevias;
+        }
+        return [];
+    }
+    private verCapacitaciones( iPropuesta : Propuesta) {
+        if(iPropuesta.propuestaCapacitaciones.length ){
+           return iPropuesta.propuestaCapacitaciones
+        }
+        return [];
+    }
+    private verLineasTematicas( iPropuesta : Propuesta) {
+        if(iPropuesta.propuestaLineaTematicas.length ){
+           return iPropuesta.propuestaLineaTematicas;
+        }
+        return [];
+    }
+    private verProgramasSippe( iPropuesta : Propuesta) {
+        if(iPropuesta.propuestaProgramaExtensions.length ){
+            return iPropuesta.propuestaProgramaExtensions;
+        }
+        return [];
+    }
+    private verPalabrasClave( iPropuesta : Propuesta) {
+        if(iPropuesta.propuestaPalabraClaves.length ){
+            return iPropuesta.propuestaPalabraClaves.map( propPalabra => ({
+                ...propPalabra.dataValues ,
+                palabraClave : propPalabra.palabraClave.dataValues
+            }));
+        }
+        return [];
+    }
+   
     private async leerDatosIntegrantes (iPropuesta : Propuesta) : Promise<void> {
        
         if(iPropuesta.integrantes.length) {
@@ -582,31 +679,6 @@ export default class ServiciosPropuesta implements IServiciosModelo {
         }
     }
     
-
-    async guardarDatosEnBD (iPropuesta : Propuesta ) : Promise<void> {
-
-        await iPropuesta.save();
-
-        await this.guardarDatosLineasTematicas(iPropuesta);
-
-        await this.guardarDatosCapacitaciones(iPropuesta);
-
-        await this.guardarDatosProgramasExtension(iPropuesta);
-
-     
-        await this.guardarDatosInstituciones(iPropuesta);
-
-        await this.guardarDatosIntegrantes(iPropuesta);
-
-        await this.guardarDatosObjetivos(iPropuesta);
-
-        await this.guardarDatosPalabrasClave(iPropuesta);
-
-        await this.guardarDatosPropuestasPrevias(iPropuesta);
-
-        await this.guardarDatosPropuestaRelacionada(iPropuesta);
-        
-    }
 }
 
 

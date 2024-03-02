@@ -1,19 +1,28 @@
 import { Model, Transaction } from "sequelize";
 import { Institucion, InstitucionAttributes, InstitucionCreationAttributes } from "../models/Institucion";
 import { Propuesta } from "../models/Propuesta";
-import { PropuestaInstitucion, PropuestaInstitucionCreationAttributes } from "../models/PropuestaInstitucion";
+import { PropuestaInstitucion, PropuestaInstitucionAttributes, PropuestaInstitucionCreationAttributes } from "../models/PropuestaInstitucion";
 import { IServiciosModelo } from "./IServiciosModelo";
-import { Responsable, ResponsableCreationAttributes } from "../models/Responsable";
-import { Persona, PersonaCreationAttributes } from "../models/init-models";
+import { Responsable, ResponsableAttributes, ResponsableCreationAttributes } from "../models/Responsable";
+import { Persona, PersonaAttributes, PersonaCreationAttributes } from "../models/init-models";
 
-export interface IServiciosInstitucion extends IServiciosModelo {
-    crearInstitucion( data :  PropuestaInstitucionCreationAttributes & {
-        institucion : InstitucionCreationAttributes & {
-            responsable : ResponsableCreationAttributes & {
-                persona : PersonaCreationAttributes
-            }
+export type TInstitucionIn =  PropuestaInstitucionCreationAttributes & {
+    institucion : InstitucionCreationAttributes & {
+        responsable : ResponsableCreationAttributes & {
+            persona : PersonaCreationAttributes
         }
-    }) : PropuestaInstitucion;
+    }
+}
+
+export type TInstitucionOut =  PropuestaInstitucionAttributes & {
+    institucion : InstitucionAttributes & {
+        responsable : ResponsableAttributes & {
+            persona : PersonaAttributes
+        }
+    }
+}
+export interface IServiciosInstitucion extends IServiciosModelo {
+    crearInstitucion( data : TInstitucionIn) : PropuestaInstitucion;
     leerDatosResponsable(iInstitucion : Institucion  , transaction ?: Transaction) : Promise<void>;
     leerDatosPersonalesResponsable(iInstitucion : Institucion, transaction ?: Transaction) : Promise<void>;
     guardarDatosResponsable(iInstitucion : Institucion  , transaction ?: Transaction) : Promise<void>;
@@ -130,15 +139,28 @@ export default class ServiciosInstitucion implements IServiciosInstitucion {
             await this.iServiciosResponsable.leerDatosPersonales(iInstitucion.responsables[iInstitucion.responsables.length -1],transaction);
         }
     }
-    verDatos(iPropuestaInstitucion: PropuestaInstitucion )  {
-        let salida : any =  {
+    verDatos(iPropuestaInstitucion: PropuestaInstitucion )  : TInstitucionOut {
+        let salida : TInstitucionOut =  {
             ...iPropuestaInstitucion.dataValues,
-            institucion : iPropuestaInstitucion.institucion.dataValues
+            institucion : {
+                ...iPropuestaInstitucion.institucion.dataValues,
+               responsable : {
+                nroDoc : '',
+                idInstitucion : 0,
+                desde : '',
+                persona : {
+                    nroDoc : '',
+                    tipoDoc : 1,
+                    ape : '',
+                    nom : ''
+                }
+               }
+            }
            
         } ;
-
-        if(iPropuestaInstitucion.institucion.responsables.length){
-            const vigente = iPropuestaInstitucion.institucion.responsables[iPropuestaInstitucion.institucion.responsables.length -1];
+        const responsables = iPropuestaInstitucion.institucion.responsables;
+        if(responsables && responsables.length){
+            const vigente = responsables[responsables.length -1];
             salida = {
                 ...salida,
                institucion : {

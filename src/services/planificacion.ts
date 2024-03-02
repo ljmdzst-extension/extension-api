@@ -1,8 +1,8 @@
 import { Model, Transaction } from "sequelize";
-import { ObjetivoEspecifico, ObjetivoEspecificoCreationAttributes } from "../models/ObjetivoEspecifico";
+import { ObjetivoEspecifico, ObjetivoEspecificoAttributes, ObjetivoEspecificoCreationAttributes } from "../models/ObjetivoEspecifico";
 import { IServiciosModelo } from "./IServiciosModelo";
-import { ActividadObjetivoEspecifico, ActividadObjetivoEspecificoCreationAttributes } from "../models/ActividadObjetivoEspecifico";
-import { CronogramaActividad, CronogramaActividadCreationAttributes } from "../models/CronogramaActividad";
+import { ActividadObjetivoEspecifico, ActividadObjetivoEspecificoAttributes, ActividadObjetivoEspecificoCreationAttributes } from "../models/ActividadObjetivoEspecifico";
+import { CronogramaActividad, CronogramaActividadAttributes, CronogramaActividadCreationAttributes } from "../models/CronogramaActividad";
 
 export interface iServiciosObjetivoEspecifico extends IServiciosModelo {
     crearObjetivoEspecifico(data : ObjetivoEspecificoCreationAttributes & {
@@ -25,9 +25,18 @@ type TActObjIn = ActividadObjetivoEspecificoCreationAttributes & {
     cronogramas : CronogramaActividadCreationAttributes[]
 }
 
-type TObjEspIn = ObjetivoEspecificoCreationAttributes & {
+type TActObjOut = ActividadObjetivoEspecificoAttributes & {
+    cronogramas : CronogramaActividadAttributes[]
+}
+
+export type TObjEspIn = ObjetivoEspecificoCreationAttributes & {
     actividadObjetivoEspecificos : TActObjIn[] 
 }
+
+export type TObjEspOut = ObjetivoEspecificoAttributes & {
+    actividadObjetivoEspecificos : TActObjOut[] 
+}
+
 
 export  class ServiciosObjetivoEspecifico implements IServiciosModelo {
 
@@ -102,7 +111,7 @@ export  class ServiciosObjetivoEspecifico implements IServiciosModelo {
             ...iObjetivoEsp.dataValues,
             actividadObjetivoEspecificos : <any>[]
         }
-        if(iObjetivoEsp.actividadObjetivoEspecificos.length){
+        if(iObjetivoEsp.actividadObjetivoEspecificos && iObjetivoEsp.actividadObjetivoEspecificos.length){
          
             salida = {
                 ...salida,
@@ -149,7 +158,7 @@ export  class ServiciosActividadObjetivoEspecifico implements IServiciosModelo {
 
     verDatos( iActObjEsp : ActividadObjetivoEspecifico){
         let salida = { ...iActObjEsp.dataValues , cronogramas : <any>[]};
-        if(iActObjEsp.cronogramaActividads.length) {
+        if(iActObjEsp.cronogramaActividads && iActObjEsp.cronogramaActividads.length) {
             salida = {
                 ...salida,
                 cronogramas : iActObjEsp.cronogramaActividads.map( cronograma => cronograma.dataValues)

@@ -10,14 +10,14 @@ export interface IntegranteAttributes {
   nroDoc: string;
   codigoPropuesta: string;
   tipoIntegrante: number;
-  observ?: string;
-  titulo?: string;
-  tieneTarjeta?: number;
-  dedicacionDocente?: string;
-  categoriaDocente?: string;
-  idAreaUnl?: number;
-  idCarrera?: number;
-  periodoLectivo?: string;
+  observ?: string | null;
+  titulo?: string | null;
+  tieneTarjeta?: number | null;
+  dedicacionDocente?: string | null;
+  categoriaDocente?: string | null;
+  idAreaUnl?: number | null;
+  idCarrera?: number | null;
+  periodoLectivo?: string | null;
 }
 
 export type IntegrantePk = "nroDoc" | "codigoPropuesta";
@@ -29,14 +29,14 @@ export class Integrante extends Model<IntegranteAttributes, IntegranteCreationAt
   nroDoc!: string;
   codigoPropuesta!: string;
   tipoIntegrante!: number;
-  observ?: string;
-  titulo?: string;
-  tieneTarjeta?: number;
-  dedicacionDocente?: string;
-  categoriaDocente?: string;
-  idAreaUnl?: number;
-  idCarrera?: number;
-  periodoLectivo?: string;
+  observ?: string | null;
+  titulo?: string | null;
+  tieneTarjeta?: number | null;
+  dedicacionDocente?: string | null;
+  categoriaDocente?: string | null;
+  idAreaUnl?: number | null;
+  idCarrera?: number | null;
+  periodoLectivo?: string | null;
 
 
   // Integrante hasMany RolIntegrante via nroDoc

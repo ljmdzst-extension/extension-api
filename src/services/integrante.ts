@@ -1,9 +1,20 @@
 import { Model, Op, Transaction } from "sequelize"
-import { Integrante, IntegranteCreationAttributes } from "../models/Integrante"
+import { Integrante, IntegranteAttributes, IntegranteCreationAttributes } from "../models/Integrante"
 import { Propuesta } from "../models/Propuesta";
 import { IServiciosModelo } from "./IServiciosModelo";
-import { RolIntegrante, RolIntegranteCreationAttributes } from "../models/RolIntegrante";
-import { Persona, PersonaCreationAttributes } from "../models/Persona";
+import { RolIntegrante, RolIntegranteAttributes, RolIntegranteCreationAttributes } from "../models/RolIntegrante";
+import { Persona, PersonaAttributes, PersonaCreationAttributes } from "../models/Persona";
+
+
+export type TIntegranteIn = IntegranteCreationAttributes & { 
+    persona : PersonaCreationAttributes , 
+    roles : RolIntegranteCreationAttributes[]
+}
+
+export type TIntegranteOut = IntegranteAttributes & { 
+    persona : PersonaAttributes , 
+    roles : RolIntegranteAttributes[]
+}
 
 export interface IServiciosIntegrantes extends IServiciosModelo {
     crearIntegrante( 
@@ -37,10 +48,7 @@ export default class ServiciosIntegrantes implements IServiciosIntegrantes {
         await Persona.findByPk( iIntegrante.persona.nroDoc, {transaction} ).then( resp => iIntegrante.persona.isNewRecord = resp === null)
     }
 
-    editarDatos(iIntegrante: Integrante , data :  IntegranteCreationAttributes & { 
-        persona : PersonaCreationAttributes , 
-        roles : RolIntegranteCreationAttributes[]
-    }) {
+    editarDatos(iIntegrante: Integrante , data :  TIntegranteIn) {
         iIntegrante.set(data);
 
 
@@ -102,7 +110,7 @@ export default class ServiciosIntegrantes implements IServiciosIntegrantes {
         await iIntegrante.persona.save({transaction});
     }
 
-    verDatos ( iIntegrante : Integrante){
+    verDatos ( iIntegrante : Integrante) : TIntegranteOut{
         return {
             ...iIntegrante.dataValues,
             persona : iIntegrante.persona?.dataValues,
@@ -112,10 +120,7 @@ export default class ServiciosIntegrantes implements IServiciosIntegrantes {
 
 
     crearIntegrante( 
-        data : IntegranteCreationAttributes & { 
-            persona : PersonaCreationAttributes , 
-            roles : RolIntegranteCreationAttributes[]
-        } ) {
+        data : TIntegranteIn ) {
 
 
 

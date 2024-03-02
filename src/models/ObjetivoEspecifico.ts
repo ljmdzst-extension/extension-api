@@ -6,8 +6,8 @@ import type { Propuesta, PropuestaId } from './Propuesta';
 export interface ObjetivoEspecificoAttributes {
   idObjetivoEspecifico: number;
   codigoPropuesta: string;
-  desc?: string;
-  resEsp?: string;
+  desc?: string | null;
+  resEsp?: string | null;
 }
 
 export type ObjetivoEspecificoPk = "idObjetivoEspecifico";

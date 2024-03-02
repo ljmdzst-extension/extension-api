@@ -1,14 +1,29 @@
 import { Model, Transaction } from "sequelize";
 import { IServiciosModelo } from "./IServiciosModelo";
-import { PropuestaPalabraClave, PropuestaPalabraClaveCreationAttributes } from "../models/PropuestaPalabraClave";
-import { PalabraClave, PalabraClaveCreationAttributes } from "../models/PalabraClave";
+import { PropuestaPalabraClave, PropuestaPalabraClaveAttributes, PropuestaPalabraClaveCreationAttributes } from "../models/PropuestaPalabraClave";
+import { PalabraClave, PalabraClaveAttributes, PalabraClaveCreationAttributes } from "../models/PalabraClave";
 
 export interface ISPalabraClave extends IServiciosModelo{
     definirPersistenciaPalabra(iPropuestaPalabraClave : PropuestaPalabraClave, transaction?: Transaction | undefined): Promise<void>;
     guardarDatosPalabraEnBD(iPropuestaPalabraClave : PropuestaPalabraClave, transaction?: Transaction | undefined): Promise<void>;
+    crearPalabraClave ( propPalabra : TPalabraClaveIn ) : PropuestaPalabraClave;
 }
 
+export type TPalabraClaveIn = PropuestaPalabraClaveCreationAttributes & {
+    palabraClave : PalabraClaveCreationAttributes
+}
+
+export type TPalabraClaveOut = PropuestaPalabraClaveAttributes & {
+    palabraClave : PalabraClaveAttributes
+}
+
+
 export default class SPalabraClave implements ISPalabraClave {
+    crearPalabraClave( propPalabra : TPalabraClaveIn): PropuestaPalabraClave {
+        const iPropPalabra = PropuestaPalabraClave.build(propPalabra);
+        iPropPalabra.palabraClave = PalabraClave.build(propPalabra.palabraClave);
+        return iPropPalabra;
+    }
     async definirPersistenciaPalabra(iPropuestaPalabraClave : PropuestaPalabraClave, transaction?: Transaction | undefined): Promise<void> {
         const iPalabra = iPropuestaPalabraClave.palabraClave; 
         await PalabraClave.findByPk(iPalabra.idPalabraClave,{transaction}).then( resp => {

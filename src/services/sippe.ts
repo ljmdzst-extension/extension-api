@@ -1,6 +1,11 @@
 import { Model, Transaction } from "sequelize";
 import { IServiciosModelo } from "./IServiciosModelo";
-import { PropuestaProgramaExtension, PropuestaProgramaExtensionCreationAttributes } from "../models/PropuestaProgramaExtension";
+import { PropuestaProgramaExtension, PropuestaProgramaExtensionAttributes, PropuestaProgramaExtensionCreationAttributes } from "../models/PropuestaProgramaExtension";
+
+
+export type TPropuestaProgramaExtensionIn = PropuestaProgramaExtensionCreationAttributes 
+
+export type TPropuestaProgramaExtensionOut = PropuestaProgramaExtensionAttributes 
 
 
 

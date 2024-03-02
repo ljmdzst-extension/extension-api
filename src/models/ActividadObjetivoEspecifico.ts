@@ -6,9 +6,9 @@ import type { ObjetivoEspecifico, ObjetivoEspecificoId } from './ObjetivoEspecif
 export interface ActividadObjetivoEspecificoAttributes {
   idActividadObjetivoEspecifico: number;
   idObjetivoEspecifico: number;
-  desc?: string;
-  motivoModificacion?: string;
-  motivoSuspension?: string;
+  desc?: string | null;
+  motivoModificacion?: string | null;
+  motivoSuspension?: string | null;
 }
 
 export type ActividadObjetivoEspecificoPk = "idActividadObjetivoEspecifico";

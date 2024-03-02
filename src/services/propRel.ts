@@ -1,7 +1,10 @@
 import { Transaction } from "sequelize";
 import { IServiciosModelo } from "./IServiciosModelo";
-import { PropuestaRelacionada, PropuestaRelacionadaCreationAttributes } from "../models/PropuestaRelacionada";
+import { PropuestaRelacionada, PropuestaRelacionadaAttributes, PropuestaRelacionadaCreationAttributes } from "../models/PropuestaRelacionada";
 
+export type TPropuestaRelacionadaIn = PropuestaRelacionadaCreationAttributes 
+
+export type TPropuestaRelacionadaOut = PropuestaRelacionadaAttributes 
 
 
 

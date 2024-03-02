@@ -1,19 +1,16 @@
 import * as Sequelize from 'sequelize';
 import { DataTypes, Model, Optional } from 'sequelize';
-import type { Actividad, ActividadId } from './Actividad';
 import type { InstitucionActividad, InstitucionActividadId } from './InstitucionActividad';
-import type { Persona, PersonaId } from './Persona';
-import type { Propuesta, PropuestaId } from './Propuesta';
 import type { PropuestaInstitucion, PropuestaInstitucionId } from './PropuestaInstitucion';
 import type { Responsable, ResponsableId } from './Responsable';
 
 export interface InstitucionAttributes {
   idInstitucion: number;
   nom: string;
-  dom?: string;
-  email?: string;
-  tel?: string;
-  ubicacion?: string;
+  dom?: string | null;
+  email?: string | null;
+  tel?: string | null;
+  ubicacion?: string | null;
 }
 
 export type InstitucionPk = "idInstitucion";
