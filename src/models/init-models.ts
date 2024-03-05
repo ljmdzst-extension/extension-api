@@ -97,20 +97,24 @@ import { UbicacionProblematica as _UbicacionProblematica } from "./UbicacionProb
 import type { UbicacionProblematicaAttributes, UbicacionProblematicaCreationAttributes } from "./UbicacionProblematica";
 import { Usuario as _Usuario } from "./Usuario";
 import type { UsuarioAttributes, UsuarioCreationAttributes } from "./Usuario";
-import { UsuarioCategoria as _UsuarioCategoria } from "./UsuarioCategoria";
-import type { UsuarioCategoriaAttributes, UsuarioCategoriaCreationAttributes } from "./UsuarioCategoria";
 import { Valoracion as _Valoracion } from "./Valoracion";
 import type { ValoracionAttributes, ValoracionCreationAttributes } from "./Valoracion";
 import { Instancia as _Instancia } from "./Instancia";
 import type { InstanciaAttributes, InstanciaCreationAttributes } from "./Instancia";
 import { RegistroPropuestaInstancia as _RegistroPropuestaInstancia } from "./RegistroPropuestaInstancia";
 import type { RegistroPropuestaInstanciaAttributes, RegistroPropuestaInstanciaCreationAttributes } from "./RegistroPropuestaInstancia";
+import { AreaPrograma as _AreaPrograma } from "./AreaPrograma";
+import type { AreaProgramaAttributes, AreaProgramaCreationAttributes } from "./AreaPrograma";
+import { AreaProgramaUsuario as _AreaProgramaUsuario } from "./AreaProgramaUsuario";
+import type { AreaProgramaUsuarioAttributes, AreaProgramaUsuarioCreationAttributes } from "./AreaProgramaUsuario";
 
 export {
   _Actividad as Actividad,
   _ActividadObjetivoEspecifico as ActividadObjetivoEspecifico,
   _ActividadParticipanteSocial as ActividadParticipanteSocial,
   _Area as Area,
+  _AreaPrograma as AreaPrograma,
+  _AreaProgramaUsuario as AreaProgramaUsuario,
   _Capacitacion as Capacitacion,
   _Carrera as Carrera,
   _Categoria as Categoria,
@@ -158,8 +162,7 @@ export {
   _UbicacionActividad as UbicacionActividad,
   _UbicacionProblematica as UbicacionProblematica,
   _Usuario as Usuario,
-  _UsuarioCategoria as UsuarioCategoria,
-  _Valoracion as Valoracion,
+  _Valoracion as Valoracion
 };
 
 export type {
@@ -171,6 +174,10 @@ export type {
   ActividadParticipanteSocialCreationAttributes,
   AreaAttributes,
   AreaCreationAttributes,
+  AreaProgramaAttributes,
+  AreaProgramaCreationAttributes,
+  AreaProgramaUsuarioAttributes,
+  AreaProgramaUsuarioCreationAttributes,
   CapacitacionAttributes,
   CapacitacionCreationAttributes,
   CarreraAttributes,
@@ -265,8 +272,6 @@ export type {
   UbicacionProblematicaCreationAttributes,
   UsuarioAttributes,
   UsuarioCreationAttributes,
-  UsuarioCategoriaAttributes,
-  UsuarioCategoriaCreationAttributes,
   ValoracionAttributes,
   ValoracionCreationAttributes,
 };
@@ -276,6 +281,8 @@ export function initModels(sequelize: Sequelize) {
   const ActividadObjetivoEspecifico = _ActividadObjetivoEspecifico.initModel(sequelize);
   const ActividadParticipanteSocial = _ActividadParticipanteSocial.initModel(sequelize);
   const Area = _Area.initModel(sequelize);
+  const AreaPrograma = _AreaPrograma.initModel(sequelize);
+  const AreaProgramaUsuario = _AreaProgramaUsuario.initModel(sequelize);
   const Capacitacion = _Capacitacion.initModel(sequelize);
   const Carrera = _Carrera.initModel(sequelize);
   const Categoria = _Categoria.initModel(sequelize);
@@ -323,7 +330,6 @@ export function initModels(sequelize: Sequelize) {
   const UbicacionActividad = _UbicacionActividad.initModel(sequelize);
   const UbicacionProblematica = _UbicacionProblematica.initModel(sequelize);
   const Usuario = _Usuario.initModel(sequelize);
-  const UsuarioCategoria = _UsuarioCategoria.initModel(sequelize);
   const Valoracion = _Valoracion.initModel(sequelize);
   
   Actividad.belongsTo(Area, { foreignKey: "idArea"});
@@ -346,16 +352,16 @@ export function initModels(sequelize: Sequelize) {
   ActividadObjetivoEspecifico.belongsTo(ObjetivoEspecifico, { foreignKey: "idObjetivoEspecifico"});
   
   ActividadParticipanteSocial.belongsTo(ParticipanteSocial, { foreignKey: "idParticipanteSocial"});
-  Area.belongsTo(Programa, { foreignKey: "idPrograma"});
+
   Area.hasMany(Actividad, { foreignKey: "idArea"});
+  AreaPrograma.belongsTo(Area,{ as :'area', foreignKey:'idArea' });
+  AreaPrograma.belongsTo(Programa,{ as :'programa', foreignKey:'idPrograma' });
   Capacitacion.belongsToMany(Propuesta, { as: 'codigoPropuestaPropuestaPropuestaCapacitacions', through: PropuestaCapacitacion, foreignKey: "idCapacitacion", otherKey: "codigoPropuesta" });
   Capacitacion.hasMany(PropuestaCapacitacion, { foreignKey: "idCapacitacion"});
   Carrera.belongsTo(Relacion, { foreignKey: "idUnidadAcademica"});
   Carrera.hasMany(Integrante, { foreignKey: "idCarrera"});
   Categoria.belongsToMany(Permiso, { as: 'idPermisoPermisos', through: PermisoCategoria, foreignKey: "idCategoria", otherKey: "idPermiso" });
-  Categoria.belongsToMany(Usuario, { as: 'idUsuarioUsuarioUsuarioCategoria', through: UsuarioCategoria, foreignKey: "idCategoria", otherKey: "idUsuario" });
   Categoria.hasMany(PermisoCategoria, { as :'permisosCategorias', foreignKey: "idCategoria"});
-  Categoria.hasMany(UsuarioCategoria, { as :'usuariosCategorias', foreignKey: "idCategoria"});
   CronogramaActividad.belongsTo(ActividadObjetivoEspecifico, { foreignKey: "idActividadObjetivoEspecifico"});
   Enlace.belongsTo(Actividad, { foreignKey: "idActividad"});
   Evaluacion.hasMany(EvaluacionItem, { foreignKey: "idEvaluacion"});
@@ -397,7 +403,7 @@ export function initModels(sequelize: Sequelize) {
   Permiso.belongsToMany(Categoria, { as: 'idCategoriaCategoria', through: PermisoCategoria, foreignKey: "idPermiso", otherKey: "idCategoria" });
   Permiso.hasMany(PermisoCategoria, {   foreignKey: "idPermiso"});
   PermisoCategoria.belongsTo(Permiso, { as : 'permiso', foreignKey: "idPermiso"});
-  PermisoCategoria.belongsTo(Categoria, { foreignKey: "idCategoria"});
+  PermisoCategoria.belongsTo(Categoria, { as : 'categoria', foreignKey: "idCategoria"});
   Persona.belongsToMany(Institucion, { as: 'idInstitucionInstitucionResponsables', through: Responsable, foreignKey: "nroDoc", otherKey: "idInstitucion" });
   Persona.belongsToMany(Propuesta, { as: 'codigoPropuestaPropuesta', through: Integrante, foreignKey: "nroDoc", otherKey: "codigoPropuesta" });
   ProgramaSippe.belongsToMany(Actividad, { as: 'idActividadActividadProgramaSippeActividads', through: ProgramaSippeActividad, foreignKey: "idProgramaSippe", otherKey: "idActividad" });
@@ -446,7 +452,6 @@ export function initModels(sequelize: Sequelize) {
 
 
   Persona.hasMany(Usuario, { foreignKey: "nroDoc"});
-  Programa.hasMany(Area, { foreignKey: "idPrograma"});
   ProgramaSippeActividad.belongsTo(ProgramaSippe, { foreignKey: "idProgramaSippe"});
   ProgramaSippe.hasMany(ProgramaSippeActividad, { foreignKey: "idProgramaSippe"});
   PropuestaProgramaExtension.belongsTo(ProgramaSippe, { foreignKey: "idProgramaExtension"});
@@ -484,20 +489,19 @@ export function initModels(sequelize: Sequelize) {
   UbicacionActividad.belongsTo(Actividad, { foreignKey: "idActividad"});
   UbicacionProblematica.belongsTo(Propuesta, { foreignKey: "codigoPropuesta"});
   Usuario.belongsTo(Persona, { as : 'persona', foreignKey: "nroDoc"});
-  Usuario.belongsToMany(Categoria, { as: 'idCategoriaCategoriaUsuarioCategoria', through: UsuarioCategoria, foreignKey: "idUsuario", otherKey: "idCategoria" });
+  Usuario.belongsTo(Categoria, { as: 'categoria',  foreignKey: "idCategoria" });
   Usuario.belongsToMany(Evaluacion, { as: 'idEvaluacionEvaluacions', through: EvaluacionItem, foreignKey: "idUsuario", otherKey: "idEvaluacion" });
   Usuario.hasMany(Actividad, { foreignKey: "idUsuario"});
   Usuario.hasMany(EvaluacionItem, { foreignKey: "idUsuario"});
   Usuario.hasMany(Propuesta, { as : 'propuestas', foreignKey: "idUsuario"});
-  Usuario.hasMany(UsuarioCategoria, { foreignKey: "idUsuario"});
-  UsuarioCategoria.belongsTo(Categoria, { foreignKey: "idCategoria"});
-  UsuarioCategoria.belongsTo(Usuario, { foreignKey: "idUsuario"});
   Valoracion.hasMany(Meta, { foreignKey: "idValoracion"});
   return {
     Actividad: Actividad,
     ActividadObjetivoEspecifico: ActividadObjetivoEspecifico,
     ActividadParticipanteSocial: ActividadParticipanteSocial,
     Area: Area,
+    AreaPrograma : AreaPrograma,
+    AreaProgramaUsuario : AreaProgramaUsuario,
     Capacitacion: Capacitacion,
     Carrera: Carrera,
     Categoria: Categoria,
@@ -545,7 +549,6 @@ export function initModels(sequelize: Sequelize) {
     UbicacionActividad: UbicacionActividad,
     UbicacionProblematica: UbicacionProblematica,
     Usuario: Usuario,
-    UsuarioCategoria: UsuarioCategoria,
     Valoracion: Valoracion,
   };
 }

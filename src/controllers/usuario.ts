@@ -1,31 +1,22 @@
 
 import jwt from 'jsonwebtoken';
-import sequelizeExtension from "../config/dbConfig";
+import sequelizeExtension, { BD } from "../config/dbConfig";
 import { Usuario } from "../models/Usuario"
 import { Persona, PersonaCreationAttributes} from '../models/Persona'
 import { Transaction } from "sequelize";
 import { usuarioPayload } from '../types/usuario';
 import { generarEmailValidaciónRegistro, smtpService } from '../config/smtpConfig';
 import { v4 as uuidv4 } from 'uuid';
-import { PermisoCategoria } from '../models/PermisoCategoria';
-import { Categoria } from '../models/Categoria';
-import { Permiso } from '../models/Permiso';
 
 type DataLoginUsuario = {email : string , pass : string, confirmPass ?: string};
 type DataRegistroUsuario = PersonaCreationAttributes & DataLoginUsuario;
 type DataListaUsuarios = { usuarios :{ idUsuario : string , email : string }[] }
 
-export const loginUsuario = async(
-    {email,pass} : DataLoginUsuario, 
-    transaction ?: Transaction, 
-    transactionPersonas ?: Transaction
+export const loginUsuario = async({email,pass} : DataLoginUsuario) : Promise<usuarioPayload> => {
 
-    ) : Promise<usuarioPayload> => {
-
-    const usuario = await Usuario.initModel(sequelizeExtension).findOne({
-        attributes : ['idUsuario','email','pass','nroDoc'],
-        where : { email }, 
-        transaction
+    const usuario = await BD.Usuario.findOne({
+        attributes : ['idUsuario','email','pass','nroDoc','idCategoria'],
+        where : { email }
     });
 
     if( !usuario ) 
@@ -37,20 +28,21 @@ export const loginUsuario = async(
     if( usuario.pendiente) 
         throw { status : 403 , msg : 'Usuario pendiente de confirmación de registro' }
 
-    const persona = await Persona.initModel(sequelizeExtension).findOne({
+    const persona = await BD.Persona.findOne({
         attributes : ['ape','nom'],
-        where : { nroDoc : usuario.nroDoc },
-        transaction : transactionPersonas
+        where : { nroDoc : usuario.nroDoc }
     })
 
     if( ! persona ) 
         throw { status : 500 , msg : `No existe persona asociada a usuario : ${usuario.idUsuario}`}
 
-    const categorias = await usuario.getIdCategoriaCategoriaUsuarioCategoria({transaction});
+    const categoria = await BD.Categoria.findByPk(usuario.idCategoria);
 
-    const permisosCategorias = await PermisoCategoria.findAll({where : {idCategoria : categorias.map( item => item.idCategoria )}})
+    if(!categoria) throw{ status :500, msg : 'el usuario no tiene categoría'}
 
-    const permisos = await Permiso.findAll({ where : {idPermiso : permisosCategorias.map(item => item.idPermiso) } });
+    const permisosCategorias = await BD.PermisoCategoria.findAll({where : {idCategoria : categoria.idCategoria }})
+
+    const permisos = await BD.Permiso.findAll({ where : {idPermiso : permisosCategorias.map(item => item.idPermiso) } });
 
     const token = jwt.sign( {idUsuario : usuario.idUsuario} , process.env.HASH_KEY || '',{expiresIn : 60 * 60} )
 
@@ -60,12 +52,10 @@ export const loginUsuario = async(
         ape : persona.ape,
         nom : persona.nom,
         token : token ,
-        categorias : categorias.map( cat => ({
-            ...cat.dataValues,
-            permisos : permisosCategorias
-                .filter( item => item.idCategoria === cat.idCategoria )
-                .map( item => ({...permisos.find( perm => perm.idPermiso === item.idPermiso )}) )
-        }))
+        categoria : {
+            ...categoria.dataValues,
+            permisos : permisos.map(permiso =>permiso.dataValues)
+        }
     };
 
 }
@@ -112,6 +102,7 @@ export  const registerUsuario = async  (
 
     const usuarioPendiente = await Usuario.initModel(sequelizeExtension).create({
         idUsuario : nuevoId,
+        idCategoria : 4,
         nroDoc :dbPersona.nroDoc,
         idUnidadAcademica : 1,
         email,
@@ -134,6 +125,8 @@ export  const registerUsuario = async  (
    
     return salida;
 }
+
+
 
 export const validarRegistro = async ( data : { idUsuario : string }, transaction ?: Transaction) : Promise<void> => {
 

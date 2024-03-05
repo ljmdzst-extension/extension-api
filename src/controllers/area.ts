@@ -8,12 +8,13 @@ import { DataGetActividades, DataGetAreas } from "../types/area";
 class ControllerArea {
 
     public static async verListaAreas( data : DataGetAreas , transaction : Transaction ) : Promise<IArea[]> {
+
         let salida : IArea[] = [];
 
       
         const iPrograma = await Programa.buscarPorID(data.idPrograma,transaction);
 
-        const areas = await iPrograma.verListaAreas(transaction);
+        const areas = iPrograma.verListaAreas();
 
         salida = areas.map( area => area.verDatos());
         

@@ -12,12 +12,12 @@ export type usuarioPayload = {
     nom : string, 
     email : string,
     token : string,
-    categorias ?: {
+    categoria ?: {
         idCategoria ?: number,
         nom ?: number,
         permisos : {
             idPermiso ?: number,
             nom ?: number
         }[]
-    }[]
+    }
 }

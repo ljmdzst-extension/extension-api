@@ -6,11 +6,10 @@ import type { Evaluacion, EvaluacionId } from './Evaluacion';
 import type { EvaluacionItem, EvaluacionItemId } from './EvaluacionItem';
 import type { Persona, PersonaId } from './Persona';
 import type { Propuesta, PropuestaId } from './Propuesta';
-import type { UsuarioCategoria, UsuarioCategoriaId } from './UsuarioCategoria';
-import { Permiso } from './Permiso';
 
 export interface UsuarioAttributes {
   idUsuario: string;
+  idCategoria : number;
   nroDoc: string;
   email: string;
   pass: string;
@@ -25,6 +24,7 @@ export type UsuarioCreationAttributes = Optional<UsuarioAttributes, UsuarioOptio
 
 export class Usuario extends Model<UsuarioAttributes, UsuarioCreationAttributes> implements UsuarioAttributes {
   idUsuario!: string;
+  idCategoria !: number;
   nroDoc!: string;
   email!: string;
   pass!: string;
@@ -48,18 +48,12 @@ export class Usuario extends Model<UsuarioAttributes, UsuarioCreationAttributes>
   hasActividad!: Sequelize.HasManyHasAssociationMixin<Actividad, ActividadId>;
   hasActividads!: Sequelize.HasManyHasAssociationsMixin<Actividad, ActividadId>;
   countActividads!: Sequelize.HasManyCountAssociationsMixin;
-  // Usuario belongsToMany Categoria via idUsuario and idCategoria
-  idCategoriaCategoriaUsuarioCategoria!: Categoria[];
-  getIdCategoriaCategoriaUsuarioCategoria!: Sequelize.BelongsToManyGetAssociationsMixin<Categoria>;
-  setIdCategoriaCategoriaUsuarioCategoria!: Sequelize.BelongsToManySetAssociationsMixin<Categoria, CategoriaId>;
-  addIdCategoriaCategoriaUsuarioCategorium!: Sequelize.BelongsToManyAddAssociationMixin<Categoria, CategoriaId>;
-  addIdCategoriaCategoriaUsuarioCategoria!: Sequelize.BelongsToManyAddAssociationsMixin<Categoria, CategoriaId>;
-  createIdCategoriaCategoriaUsuarioCategorium!: Sequelize.BelongsToManyCreateAssociationMixin<Categoria>;
-  removeIdCategoriaCategoriaUsuarioCategorium!: Sequelize.BelongsToManyRemoveAssociationMixin<Categoria, CategoriaId>;
-  removeIdCategoriaCategoriaUsuarioCategoria!: Sequelize.BelongsToManyRemoveAssociationsMixin<Categoria, CategoriaId>;
-  hasIdCategoriaCategoriaUsuarioCategorium!: Sequelize.BelongsToManyHasAssociationMixin<Categoria, CategoriaId>;
-  hasIdCategoriaCategoriaUsuarioCategoria!: Sequelize.BelongsToManyHasAssociationsMixin<Categoria, CategoriaId>;
-  countIdCategoriaCategoriaUsuarioCategoria!: Sequelize.BelongsToManyCountAssociationsMixin;
+  // Usuario belongsTo Categoria via idCategoria
+
+  categoria!: Categoria;
+  getCategoria!: Sequelize.BelongsToGetAssociationMixin<Categoria>;
+  setCategoria!: Sequelize.BelongsToSetAssociationMixin<Categoria, CategoriaId>;
+
   // Usuario belongsToMany Evaluacion via idUsuario and idEvaluacion
   idEvaluacionEvaluacions!: Evaluacion[];
   getIdEvaluacionEvaluacions!: Sequelize.BelongsToManyGetAssociationsMixin<Evaluacion>;
@@ -92,18 +86,6 @@ export class Usuario extends Model<UsuarioAttributes, UsuarioCreationAttributes>
   removePropuestas!: Sequelize.HasManyRemoveAssociationsMixin<Propuesta, PropuestaId>;
   hasPropuestas!: Sequelize.HasManyHasAssociationsMixin<Propuesta, PropuestaId>;
   countPropuestas!: Sequelize.HasManyCountAssociationsMixin;
-  // Usuario hasMany UsuarioCategoria via idUsuario
-  usuarioCategoria!: UsuarioCategoria[];
-  getUsuarioCategoria!: Sequelize.HasManyGetAssociationsMixin<UsuarioCategoria>;
-  setUsuarioCategoria!: Sequelize.HasManySetAssociationsMixin<UsuarioCategoria, UsuarioCategoriaId>;
-  addUsuarioCategorium!: Sequelize.HasManyAddAssociationMixin<UsuarioCategoria, UsuarioCategoriaId>;
-  addUsuarioCategoria!: Sequelize.HasManyAddAssociationsMixin<UsuarioCategoria, UsuarioCategoriaId>;
-  createUsuarioCategorium!: Sequelize.HasManyCreateAssociationMixin<UsuarioCategoria>;
-  removeUsuarioCategorium!: Sequelize.HasManyRemoveAssociationMixin<UsuarioCategoria, UsuarioCategoriaId>;
-  removeUsuarioCategoria!: Sequelize.HasManyRemoveAssociationsMixin<UsuarioCategoria, UsuarioCategoriaId>;
-  hasUsuarioCategorium!: Sequelize.HasManyHasAssociationMixin<UsuarioCategoria, UsuarioCategoriaId>;
-  hasUsuarioCategoria!: Sequelize.HasManyHasAssociationsMixin<UsuarioCategoria, UsuarioCategoriaId>;
-  countUsuarioCategoria!: Sequelize.HasManyCountAssociationsMixin;
 
 
   public static async verlistaIdsUsados ( db :Sequelize.Sequelize, transaction ?: Sequelize.Transaction ) : Promise<string[]> {
@@ -116,6 +98,14 @@ export class Usuario extends Model<UsuarioAttributes, UsuarioCreationAttributes>
       type: DataTypes.STRING(255),
       allowNull: false,
       primaryKey: true
+    },
+    idCategoria : {
+      type : DataTypes.NUMBER(),
+      allowNull : false,
+      references : {
+        model : 'Categoria',
+        key : 'idCategoria'
+      }
     },
     nroDoc: {
       type: DataTypes.STRING(9),

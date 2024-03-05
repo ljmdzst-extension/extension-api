@@ -1,3 +1,5 @@
+
+import jwt from 'jsonwebtoken';
 import { Transaction } from "sequelize";
 import Programa, { IPrograma } from "../classes/Programa";
 import { DataGetProgramas } from "../types/programa";
@@ -11,7 +13,14 @@ export class ControllerPrograma {
 
         let salida : IPrograma[] = [];
 
-        const listaProgramas = await Programa.verTodosConAreas( data.anio, transaction );
+        let _idUsuario : string | undefined = undefined;
+
+        if(data.token){
+            const { idUsuario }= jwt.verify(data.token,process.env.HASH_KEY || '' ) as jwt.JwtPayload;
+            _idUsuario = idUsuario;
+        }
+      
+        const listaProgramas = await Programa.verTodosConAreas( data.anio, _idUsuario ,transaction );
 
         if(listaProgramas.length) {
             salida = listaProgramas.map( prog => prog.verDatos());

@@ -6,7 +6,6 @@ import type { Programa, ProgramaId } from './Programa';
 export interface AreaAttributes {
   idArea: number;
   nom: string;
-  idPrograma: number;
 }
 
 export type AreaPk = "idArea";
@@ -17,7 +16,6 @@ export type AreaCreationAttributes = Optional<AreaAttributes, AreaOptionalAttrib
 export class Area extends Model<AreaAttributes, AreaCreationAttributes> implements AreaAttributes {
   idArea!: number;
   nom!: string;
-  idPrograma!: number;
 
   // Area hasMany Actividad via idArea
   actividads!: Actividad[];
@@ -48,14 +46,6 @@ export class Area extends Model<AreaAttributes, AreaCreationAttributes> implemen
     nom: {
       type: DataTypes.STRING(150),
       allowNull: false
-    },
-    idPrograma: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-      references: {
-        model: 'Programa',
-        key: 'idPrograma'
-      }
     }
   }, {
     sequelize,

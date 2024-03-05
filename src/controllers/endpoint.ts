@@ -20,6 +20,13 @@ export const endpoint = <ENTRADA,SALIDA >( _servicio : servicio<ENTRADA,SALIDA>)
             let data : any = undefined;
             if(req.header('Authorization')){
                 data = { token : req.header('Authorization')?.split(' ')[1] }
+                if(req.method === 'GET'){
+                    data = {...data,...req.params};
+                }
+                else if(req.method !== 'GET'){
+                    data = {...data,...req.body};
+                }
+
             }
             else if(req.method === 'GET'){
                 data = req.params;

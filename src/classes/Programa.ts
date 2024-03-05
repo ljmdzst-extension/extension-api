@@ -9,7 +9,6 @@ export type ID_PROG = number;
 export interface IPrograma {
     idPrograma : number,
     nom : string,
-    anio : number,
     listaAreas ?: IArea[]
 }
 
@@ -23,9 +22,9 @@ export interface IPrograma {
         this.listaAreas = [];
     }
 
-    public async verListaAreas ( transaction ?: Transaction ) : Promise<Area[]>{
+    public verListaAreas (  ) : Area[]{
    
-        return await this.buscarAreas(transaction);
+        return this.listaAreas;
     }
     
     public verDatos () : IPrograma{
@@ -37,13 +36,12 @@ export interface IPrograma {
 
     /**Conexion BD */
 
-    private async buscarAreas(transaction ?: Transaction) : Promise<Area[]> {
-        this.listaAreas = await Area.buscarPorProgID(this.data.idPrograma,transaction) 
-        return this.listaAreas;
+    private async leerAreasDeBD ( ids : ID_AREA[], transaction ?: Transaction ) : Promise<Area[]>{
+       return Area.buscarPorListaID( ids,transaction).then( resp => this.listaAreas = resp ); 
     }
 
-    public static async buscarPorID(idPrograma : ID_PROG,transaction ?: Transaction) : Promise<Programa> {
-        let salida : Programa = new Programa({idPrograma : 0,nom : '',anio:0});
+    public static async buscarPorID(idPrograma : ID_PROG , transaction ?: Transaction) : Promise<Programa> {
+        let salida : Programa = new Programa({idPrograma : 0,nom : ''});
 
         const bdPrograma = await BD.Programa.findByPk(idPrograma,{transaction});
 
@@ -51,30 +49,51 @@ export interface IPrograma {
 
         salida = new Programa(bdPrograma.dataValues);
 
-        salida.listaAreas = await Area.buscarPorProgID(idPrograma,transaction);
-
         return salida;
     }
 
-    public static async verTodosConAreas( anio : number, transaction ?: Transaction) : Promise<Programa[]>{
+    public static async verTodosConAreas( anio : number, idUsuario ?: string ,transaction ?: Transaction) : Promise<Programa[]>{
         let salida : Programa[] = [];
 
-        const bdPrograma = await BD.Programa.findAll({ where : {anio}, transaction});
+        let areasProgramas = await BD.AreaPrograma.findAll({where : {anio}, transaction});
 
-        if(!bdPrograma) throw ERROR.PROGRAMA_INEXISTENTE;
+        if(idUsuario) {
+            const areasDeUsuario  = await BD.AreaProgramaUsuario.findAll({where : {idUsuario , anio}, transaction});
+            areasProgramas = areasProgramas.filter( areaProg => 
+                areasDeUsuario.find( ({idArea,idPrograma,anio}) => 
+                    idArea === areaProg.idArea && 
+                    idPrograma === areaProg.idPrograma && 
+                    anio === areaProg.anio 
+                ));
+        }
 
-        bdPrograma.forEach( iProg => {
-            salida.push( new Programa(iProg.dataValues));
-        })
+        const programas = await BD.Programa.findAll({ 
+            where : {
+                idPrograma : [...new Set(areasProgramas.map( areaProg => areaProg.idPrograma)).values()]
+            }, 
+            transaction
+        });
 
-        await Promise.all(  salida.map( async prog => await prog.buscarAreas(transaction) ) );
+        if(programas.length) {
+         
+            programas.forEach( iProg => {
+                salida.push( new Programa(iProg.dataValues) );
+            })
 
-        return salida;
+            await Promise.all(  
+                salida.map( prog => prog.leerAreasDeBD(
+                    areasProgramas.filter(areaProg => areaProg.idPrograma === prog.verDatos().idPrograma)
+                                .map( areaProg => areaProg.idArea )
+                    ),
+                    transaction 
+                )  
+            );
+
+       }
+       
+       return salida;
     }
-    public static async validarAnio ( anio : number, transaction ?: Transaction) : Promise<boolean> {
-        return (await BD.Programa.findOne({where : {anio : anio},transaction})) !== null;
-        
-    }
+
 
 }
 

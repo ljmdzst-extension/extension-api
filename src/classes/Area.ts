@@ -4,13 +4,11 @@ import { Transaction } from "sequelize";
 import { BD } from "../config/dbConfig";
 import { ERROR } from "../logs/errores";
 import  Actividad, { IItemActividad }  from "./Actividad";
-import { ID_PROG } from "./Programa";
 
 
 export type ID_AREA = number;
 export interface IArea {
     idArea : ID_AREA,
-    idPrograma : number,
     nom : string,
     listaActividades ?: Array<IItemActividad>
 }
@@ -58,7 +56,7 @@ class Area {
     /**Conexion BD */
 
     public static async buscarPorID(idArea : ID_AREA,transaction ?: Transaction):Promise<Area>{
-        let salida : Area = new Area({idArea:0,idPrograma:0,nom:''});
+        let salida : Area = new Area({idArea:0,nom:''});
 
         const bdArea = await BD.Area.findByPk(idArea,{transaction});
 
@@ -68,10 +66,11 @@ class Area {
 
         return salida;
     }
-    public static async buscarPorProgID(idProg : ID_PROG,transaction ?: Transaction):Promise<Area[]>{
+
+    public static async buscarPorListaID(ids : ID_AREA[],transaction ?: Transaction):Promise<Area[]>{
         let salida : Area[] = [];
 
-        const bdAreas = await BD.Area.findAll({ where : { idPrograma : idProg }, transaction});
+        const bdAreas = await BD.Area.findAll({ where : { idArea : ids }, transaction});
 
         if(bdAreas.length) {
 
