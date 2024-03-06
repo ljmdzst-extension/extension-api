@@ -1,26 +1,28 @@
 import * as Sequelize from 'sequelize';
 import { DataTypes, Model } from 'sequelize';
 
-export interface AreaProgramaUsuarioAttributes {
+export interface AreaProgramaCategoriaAttributes {
   idArea: number;
   idPrograma: number;
   anio : number;
-  idUsuario: string;
+  idCategoria: string;
 }
 
-export type AreaProgramaUsuarioPk = "idArea" | "idPrograma" | "anio" | "idUsuario";
-export type AreaProgramaUsuarioId = AreaProgramaUsuario[AreaProgramaUsuarioPk];
-export type AreaProgramaUsuarioCreationAttributes = AreaProgramaUsuarioAttributes;
+export type AreaProgramaCategoriaPk = "idArea" | "idPrograma" | "anio" | "idCategoria";
+export type AreaProgramaCategoriaId = AreaProgramaCategoria[AreaProgramaCategoriaPk];
+export type AreaProgramaCategoriaCreationAttributes = AreaProgramaCategoriaAttributes;
 
-export class AreaProgramaUsuario extends Model<AreaProgramaUsuarioAttributes, AreaProgramaUsuarioCreationAttributes> implements AreaProgramaUsuarioAttributes {
+export class AreaProgramaCategoria extends Model<AreaProgramaCategoriaAttributes, AreaProgramaCategoriaCreationAttributes> implements AreaProgramaCategoriaAttributes {
   idArea!: number;
   idPrograma!: number;
   anio !: number;
-  idUsuario !: string;
+  idCategoria !: string;
+
+  
 
 
-  static initModel(sequelize: Sequelize.Sequelize): typeof AreaProgramaUsuario {
-    return AreaProgramaUsuario.init({
+  static initModel(sequelize: Sequelize.Sequelize): typeof AreaProgramaCategoria {
+    return AreaProgramaCategoria.init({
     idArea: {
       type: DataTypes.INTEGER,
       allowNull: false,
@@ -49,18 +51,18 @@ export class AreaProgramaUsuario extends Model<AreaProgramaUsuarioAttributes, Ar
         }
     },
  
-    idUsuario: {
+    idCategoria: {
         type: DataTypes.STRING(255),
         allowNull: false,
         primaryKey: true,
         references: {
-          model: 'Usuario',
-          key: 'idUsuario'
+          model: 'Categoria',
+          key: 'idCategoria'
         }
       }
   }, {
     sequelize,
-    tableName: 'AreaProgramaUsuario',
+    tableName: 'AreaProgramaCategoria',
     timestamps: false
   });
   }

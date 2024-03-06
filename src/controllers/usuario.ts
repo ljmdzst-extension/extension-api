@@ -60,10 +60,7 @@ export const loginUsuario = async({email,pass} : DataLoginUsuario) : Promise<usu
 
 }
 
-export const authUsuario = async(
-    {token} : {token :string}
-
-    ) : Promise<{token : string}> => {
+export const authUsuario = async( {token} : {token :string}  ) : Promise<{token : string}> => {
 
     const {idUsuario} = jwt.verify(token,process.env.HASH_KEY || '' ) as jwt.JwtPayload;
 

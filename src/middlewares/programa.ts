@@ -1,6 +1,5 @@
-import { Transaction, where } from "sequelize";
+import { Transaction } from "sequelize";
 import { INVALIDO } from "../logs/validaciones";
-import Programa from "../classes/Programa";
 import { AreaPrograma } from "../models/AreaPrograma";
 
 

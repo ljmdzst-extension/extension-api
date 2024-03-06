@@ -105,8 +105,8 @@ import { RegistroPropuestaInstancia as _RegistroPropuestaInstancia } from "./Reg
 import type { RegistroPropuestaInstanciaAttributes, RegistroPropuestaInstanciaCreationAttributes } from "./RegistroPropuestaInstancia";
 import { AreaPrograma as _AreaPrograma } from "./AreaPrograma";
 import type { AreaProgramaAttributes, AreaProgramaCreationAttributes } from "./AreaPrograma";
-import { AreaProgramaUsuario as _AreaProgramaUsuario } from "./AreaProgramaUsuario";
-import type { AreaProgramaUsuarioAttributes, AreaProgramaUsuarioCreationAttributes } from "./AreaProgramaUsuario";
+import { AreaProgramaCategoria as _AreaProgramaCategoria } from "./AreaProgramaCategoria";
+import type { AreaProgramaCategoriaAttributes, AreaProgramaCategoriaCreationAttributes } from "./AreaProgramaCategoria";
 
 export {
   _Actividad as Actividad,
@@ -114,7 +114,7 @@ export {
   _ActividadParticipanteSocial as ActividadParticipanteSocial,
   _Area as Area,
   _AreaPrograma as AreaPrograma,
-  _AreaProgramaUsuario as AreaProgramaUsuario,
+  _AreaProgramaCategoria as AreaProgramaCategoria,
   _Capacitacion as Capacitacion,
   _Carrera as Carrera,
   _Categoria as Categoria,
@@ -176,8 +176,8 @@ export type {
   AreaCreationAttributes,
   AreaProgramaAttributes,
   AreaProgramaCreationAttributes,
-  AreaProgramaUsuarioAttributes,
-  AreaProgramaUsuarioCreationAttributes,
+  AreaProgramaCategoriaAttributes,
+  AreaProgramaCategoriaCreationAttributes,
   CapacitacionAttributes,
   CapacitacionCreationAttributes,
   CarreraAttributes,
@@ -282,7 +282,7 @@ export function initModels(sequelize: Sequelize) {
   const ActividadParticipanteSocial = _ActividadParticipanteSocial.initModel(sequelize);
   const Area = _Area.initModel(sequelize);
   const AreaPrograma = _AreaPrograma.initModel(sequelize);
-  const AreaProgramaUsuario = _AreaProgramaUsuario.initModel(sequelize);
+  const AreaProgramaCategoria = _AreaProgramaCategoria.initModel(sequelize);
   const Capacitacion = _Capacitacion.initModel(sequelize);
   const Carrera = _Carrera.initModel(sequelize);
   const Categoria = _Categoria.initModel(sequelize);
@@ -501,7 +501,7 @@ export function initModels(sequelize: Sequelize) {
     ActividadParticipanteSocial: ActividadParticipanteSocial,
     Area: Area,
     AreaPrograma : AreaPrograma,
-    AreaProgramaUsuario : AreaProgramaUsuario,
+    AreaProgramaCategoria : AreaProgramaCategoria,
     Capacitacion: Capacitacion,
     Carrera: Carrera,
     Categoria: Categoria,

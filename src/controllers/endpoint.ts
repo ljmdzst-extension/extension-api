@@ -12,28 +12,21 @@ import sequelizeExtension from '../config/dbConfig';
 
 export const endpoint = <ENTRADA,SALIDA >( _servicio : servicio<ENTRADA,SALIDA>)=>{
     
-    return async( req : typeof request, resp : typeof response)=>{
+    return async( req : any, resp : typeof response)=>{
         console.log(cli.yellow(`[${req.method}] - ${_servicio.name} iniciando...`));
         const transaction  = await sequelizeExtension.transaction();
         try {
             
             let data : any = undefined;
-            if(req.header('Authorization')){
-                data = { token : req.header('Authorization')?.split(' ')[1] }
-                if(req.method === 'GET'){
-                    data = {...data,...req.params};
-                }
-                else if(req.method !== 'GET'){
-                    data = {...data,...req.body};
-                }
-
-            }
-            else if(req.method === 'GET'){
+            if(req.method === 'GET'){
                 data = req.params;
             }
             else if(req.method !== 'GET'){
                 data = req.body;
             }
+            if(req.token) {
+                data = {...data,token : req.token}
+            } 
             const salida = await _servicio(data,transaction);
             
             await transaction.commit();

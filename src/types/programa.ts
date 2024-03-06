@@ -1,3 +1,3 @@
 
 
-export type DataGetProgramas = { anio : number , token ?: string};
+export type DataGetProgramas = { anio : number , idCategoriaUsuario ?: number};
