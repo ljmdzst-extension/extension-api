@@ -13,16 +13,20 @@ import sequelizeExtension from '../config/dbConfig';
 export const endpoint = <ENTRADA,SALIDA >( _servicio : servicio<ENTRADA,SALIDA>)=>{
     
     return async( req : any, resp : typeof response)=>{
-        console.log(cli.yellow(`[${req.method}] - ${_servicio.name} iniciando...`));
+     
         const transaction  = await sequelizeExtension.transaction();
         try {
             
             let data : any = undefined;
+
+            if(req.usuario) {
+                data = {usuario : req.usuario}
+            }
             if(req.method === 'GET'){
-                data = req.params;
+                data = {...data, ...req.params};
             }
             else if(req.method !== 'GET'){
-                data = req.body;
+                data =  {...data, ...req.body};
             }
             if(req.token) {
                 data = {...data,token : req.token}
@@ -30,10 +34,7 @@ export const endpoint = <ENTRADA,SALIDA >( _servicio : servicio<ENTRADA,SALIDA>)
             const salida = await _servicio(data,transaction);
             
             await transaction.commit();
-            
-
-            console.log(cli.green(`[${req.method}] - ${_servicio.name} OK`));
-            console.log('---------------------------------------------')
+        
             
             resp.status(200).json({
                 ok : true,
@@ -41,8 +42,6 @@ export const endpoint = <ENTRADA,SALIDA >( _servicio : servicio<ENTRADA,SALIDA>)
                 error : null
             })
 
-           
-            
         } catch (error : any) {
             let logError = '';
             await transaction.rollback();

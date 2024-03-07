@@ -14,7 +14,7 @@ export class ControllerPrograma {
         let salida : IPrograma[] = [];
 
 
-        const listaProgramas = await Programa.verTodosConAreas( data.anio, data.idCategoriaUsuario  ,transaction );
+        const listaProgramas = await Programa.verTodosConAreas( data.anio, data.usuario?.idCategoria  ,transaction );
 
         if(listaProgramas.length) {
             salida = listaProgramas.map( prog => prog.verDatos());

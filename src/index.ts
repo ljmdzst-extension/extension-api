@@ -5,12 +5,10 @@ dotenv.config();
 import express from 'express';
 import cors from 'cors';
 import path from 'path';
-import morgan from 'morgan';
 import RouterPropuesta from './routes/propuesta';
 import RouterPropuestas from './routes/propuestas';
 import RouterEvaluacion from './routes/evaluacion';
 import RouterEvaluaciones from './routes/evaluaciones';
-import { accesLogStream, combinedLogStream } from './config/logsConfig';
 import sequelizePropuestas from './config/dbConfig';
 import RouterPersonas from './routes/personas';
 import RouterIntegrates from './routes/integrantes';
@@ -22,6 +20,8 @@ import routerArea from './routes/area';
 import routerActividad from './routes/actividad';
 import usuarioRouter from './routes/usuario';
 import RouterProyecto from './routes/proyecto';
+import { informarPeticion } from './middlewares/bases';
+import { extraerToken, validarTokenYObtenerDataUsuario } from './middlewares/auth';
 
 
 
@@ -29,27 +29,39 @@ const app = express();
 
 app.use(cors());
 
-app.use(morgan('dev',{stream : accesLogStream}));
-app.use(morgan('combined',{stream : combinedLogStream}));
+
 app.use(express.json());
+
 app.use(express.static(path.join(__dirname,'public')));
 
-app.use('/api/v2/proy',RouterProyecto);
-app.use('/api/v2/propuesta',RouterPropuesta);
-app.use('/api/v2/propuestas',RouterPropuestas);
-app.use('/api/v2/evaluacion',RouterEvaluacion);
-app.use('/api/v2/evaluaciones',RouterEvaluaciones);
-app.use('/api/v2/persona',RouterPersonas);
-app.use('/api/v2/integrantes',RouterIntegrates);
-app.use('/api/v2/bases',RouterBases);
-app.use('/api/v2/instituciones',RouterInstituciones);
-app.use('/api/v2/planificacion',RouterPlanificacion);
-app.use('/api/v2/metas/programas',routerPrograma);
-app.use('/api/v2/metas/areas',routerArea);
-app.use('/api/v2/metas/bases',RouterBases);
-app.use('/api/v2/metas/actividad',routerActividad);
-app.use( '/api/v2/usr', usuarioRouter  ) 
-app.use( '/api/v2/usr/bases', RouterBases  ) 
+// login de cada request
+app.use(informarPeticion);
+
+const BASE_PATH = '/api/v2';
+
+app.use(`${BASE_PATH}/proy`,RouterProyecto);
+app.use(`${BASE_PATH}/propuesta`,RouterPropuesta);
+app.use(`${BASE_PATH}/propuestas`,RouterPropuestas);
+app.use(`${BASE_PATH}/evaluacion`,RouterEvaluacion);
+app.use(`${BASE_PATH}/evaluaciones`,RouterEvaluaciones);
+app.use(`${BASE_PATH}/persona`,RouterPersonas);
+app.use(`${BASE_PATH}/integrantes`,RouterIntegrates);
+app.use(`${BASE_PATH}/bases`,RouterBases);
+app.use(`${BASE_PATH}/instituciones`,RouterInstituciones);
+app.use(`${BASE_PATH}/planificacion`,RouterPlanificacion);
+
+const BASE_PATH_METAS=`${BASE_PATH}/metas`;
+
+app.use(BASE_PATH_METAS,extraerToken,validarTokenYObtenerDataUsuario);
+
+app.use(`${BASE_PATH_METAS}/programas`,routerPrograma);
+app.use(`${BASE_PATH_METAS}/areas`,routerArea);
+app.use(`${BASE_PATH_METAS}/bases`,RouterBases);
+app.use(`${BASE_PATH_METAS}/actividad`,routerActividad);
+
+
+app.use( `${BASE_PATH}/usr`, usuarioRouter  ) 
+app.use( `${BASE_PATH}/usr/bases`, RouterBases  ) 
 
 app.listen( process.env.PORT , async()=>{
     try {

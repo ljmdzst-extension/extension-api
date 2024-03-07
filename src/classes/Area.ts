@@ -43,10 +43,16 @@ class Area {
     }
     public verDatos() : IArea 
     {
-        return {
+        let salida = {
             ...this.data,
-            listaActividades : this.listaActividades?.map(iAct => iAct.verDatos())
+           
         };
+
+        if(this.listaActividades?.length) {
+            salida = {...salida ,  listaActividades : this.listaActividades?.map(iAct => iAct.verDatos())}
+        }
+
+        return salida; 
     }
 
     public verID() : ID_AREA {

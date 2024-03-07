@@ -1,32 +1,18 @@
-import jwt from 'jsonwebtoken';
+
 import { response, NextFunction } from "express";
 import { BD } from "../config/dbConfig";
 
 export const validarPermisoGestionMetas = async( req : any, resp : typeof response, next : NextFunction)=>{
     try {
-        
-        
-        const { idUsuario }= jwt.verify(req.token,process.env.HASH_KEY || '' ) as jwt.JwtPayload;
+        const {idCategoria,categoria} = req.usuario;
     
-        const iUsuario = await BD.Usuario.findByPk(idUsuario);
-        
-        if(!iUsuario) throw {status : 400 , message: 'no existe un usuario con ese id'}
-
-        
-    
-        const categoria = await BD.Categoria.findByPk(iUsuario.idCategoria);
-    
-        if(!categoria) throw { status : 500 , message : 'usuario sin categoría'}
-
-        req.params.idCategoriaUsuario = categoria.idCategoria
-    
-        if(categoria.nombre === 'admin')  {
+        if(categoria === 'admin')  {
             
             next();
     
         } else {
     
-            const permisosAsignados = await BD.PermisoCategoria.findAll({where : { idCategoria : categoria.idCategoria}});
+            const permisosAsignados = await BD.PermisoCategoria.findAll({where : { idCategoria : idCategoria}});
     
             if(!permisosAsignados.length)  throw { status : 500 , message : 'la categoría del usuario no tiene permisos asignados'}
     
@@ -46,6 +32,9 @@ export const validarPermisoGestionMetas = async( req : any, resp : typeof respon
         }
         if(error.message){
             message = error.message
+        }
+        if(status === 500) {
+            console.log(`ERROR : ${req.method}-${req.path}-${message}`)
         }
         resp.status(status).json({
             ok : false,

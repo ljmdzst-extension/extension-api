@@ -30,7 +30,6 @@ routerActividad.get (
 
 routerActividad.post ( 
     '/',
-    extraerToken,
     validarPermisoGestionMetas,
     middleware(validarCamposActividad), 
     endpoint( ControllerActividad.cargarActividad ) 
@@ -38,8 +37,6 @@ routerActividad.post (
 
 routerActividad.put ( 
     '/',
-    
-    extraerToken,
     validarPermisoGestionMetas,
     [
         ...validarCampos,
@@ -60,7 +57,6 @@ routerActividad.put (
 
 routerActividad.delete (
     '/',
-    extraerToken,
     validarPermisoGestionMetas,
     middleware(validarActividadExistente),
     endpoint( ControllerActividad.darDeBajaActividad)

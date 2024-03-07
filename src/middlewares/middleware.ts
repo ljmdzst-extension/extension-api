@@ -7,7 +7,7 @@ import sequelizeExtension from '../config/dbConfig';
 export const middleware = <ENTRADA,SALIDA >( _servicio : servicio<ENTRADA,SALIDA>)=>{
     
     return async( req : typeof request, resp : typeof response, next : NextFunction)=>{
-        console.log(cli.yellow(`[MIDDLEWARE] - ${_servicio.name} iniciando...`));
+        if(process.env.NODE_ENV ==='development')console.log(cli.yellow(`[MIDDLEWARE] - ${_servicio.name} iniciando...`));
         const transaction  = await sequelizeExtension.transaction();
         try {
             
@@ -26,8 +26,8 @@ export const middleware = <ENTRADA,SALIDA >( _servicio : servicio<ENTRADA,SALIDA
             await transaction.commit();
             
 
-            console.log(cli.green(`[MIDDLEWARE] - ${_servicio.name} OK`));
-            console.log('---------------------------------------------')
+           if(process.env.NODE_ENV ==='development') console.log(cli.green(`[MIDDLEWARE] - ${_servicio.name} OK`));
+            if(process.env.NODE_ENV ==='development')console.log('---------------------------------------------')
             
            next();
 
