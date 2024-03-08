@@ -1,0 +1,197 @@
+{
+    "codigoPropuesta": "23-02-PEIS-FHUC-ML",
+    "idUsuario": "$2b$10$bWJTn1WKyh0BVAvc9vSfux1U4er4ziyd5SeotQuqqc0yf2.Y10uq",
+    "titulo": "Arsénico estás ahí? Visibilizando el problema del agua subterránea de la provincia de Santa Fe.",
+    "modalidad": "PEIS",
+    "duracion": "ANUAL",
+    "categoriaEquipo": null,
+    "integralidad": null,
+    "problematicaDetalle": "El arsénico (As) es uno de los elementos tóxicos más abundantes en la corteza terrestre. En nuestro país, alrededor de 4 millones de personas consumen agua con concentraciones de As superiores a 10 μg/ L, límite de tolerancia recomendado por la Organización Mundial de la Salud (OMS) y adoptado en 2007 por el Código Alimentario Argentino (CAA). En particular, la provincia de Santa Fe, según el contenido de As en sus acuíferos, puede dividirse en 3 áreas: una franja este, próxima al río Paraná, con valores inferiores a 50 μg/L, una franja oeste con valores superiores a 100 μg/L, y una franja centro-sur con niveles intermedios de As (Litter y col, 2019).",
+    "problematicaSintesis": null,
+    "proyectosCaid": null,
+    "propuestaMetodologica": null,
+    "accionesCoordinacion": null,
+    "politicasPublicas": null,
+    "accionesComunicacion": null,
+    "integralidadDescripcion": null,
+    "sustentabilidad": null,
+    "sintesis": "Este proyecto tiene como finalidad indagar acerca del conocimiento que tienen los y las adolescentes acerca de la Educación Sexual Integral y las leyes que amparan estos derechos, para poder posteriormente trabajar de forma interdisciplinaria con los mitos y tabúes con que nos encontremos y brindar información para vivir una sexualidad placentera, responsable y saludable.",
+    "tipoMateriales": null,
+    "capacitacionAgentesMultip": null,
+    "perfilAgentesMultip": null,
+    "solicitaBecarioJustif": null,
+    "solicitaVoluntarioJustif": null,
+    "instanciasCapacitacionDetalle": null,
+    "solicitaBecario": null,
+    "ipFinalidad": null,
+    "ipParticipantesSociales": null,
+    "ipObserv": null,
+    "ipPotencialesActividades": null,
+    "ipCampoTematico": null,
+    "ipPoliticasPublicas": null,
+    "ipProblematica": null,
+    "planificacionFinalidad": null,
+    "planificacionObjetivoGeneral": null,
+    "createdAt": "2023-12-22T02:09:09.000Z",
+    "updatedAt": "2023-12-22T02:14:25.000Z",
+    "deletedAt": null,
+    "integrantes": [
+        {
+            "nroDoc": "87654321",
+            "codigoPropuesta": "23-02-PEIS-FHUC-ML",
+            "tipoIntegrante": 1,
+            "observ": null,
+            "titulo": "Contador",
+            "tieneTarjeta": null,
+            "dedicacionDocente": "EXCLUSIVA B",
+            "categoriaDocente": "JTP",
+            "idAreaUnl": null,
+            "idCarrera": 1,
+            "periodoLectivo": null,
+            "createdAt": "2024-02-25T02:24:02.000Z",
+            "updatedAt": "2024-02-28T23:41:15.000Z",
+            "deletedAt": null,
+            "persona": {
+                "nroDoc": "87654321",
+                "tipoDoc": 1,
+                "ape": "Enric",
+                "nom": "Flex",
+                "tel": "11667788",
+                "dom": "calle 5555",
+                "email": "Enric@gmail.com",
+                "ciudad": "santa fe",
+                "provincia": "santa fe ",
+                "pais": "Argentina"
+            },
+            "roles": [
+                {
+                    "idRolIntegrante": 1,
+                    "nroDoc": "87654321",
+                    "codigoPropuesta": "23-02-PEIS-FHUC-ML"
+                }
+            ]
+        }
+    ],
+    "instituciones": [],
+    "objetivosEspecificos": [
+        {
+            "idObjetivoEspecifico": 1,
+            "codigoPropuesta": "23-02-PEIS-FHUC-ML",
+            "desc": " Objetivo 1 de 23-02-PEIS-FHUC-ML ",
+            "resEsp": "Que se muestre en pantalla",
+            "createdAt": "2024-02-15T17:33:02.000Z",
+            "updatedAt": "2024-02-28T23:41:15.000Z",
+            "deletedAt": null,
+            "actividadObjetivoEspecificos": [
+                {
+                    "idActividadObjetivoEspecifico": 1,
+                    "idObjetivoEspecifico": 1,
+                    "desc": "Actividad 1 - Objetivo 1 de 23-02-PEIS-FHUC-ML",
+                    "motivoModificacion": null,
+                    "motivoSuspension": null,
+                    "createdAt": "2024-02-15T17:34:01.000Z",
+                    "updatedAt": "2024-02-28T23:41:15.000Z",
+                    "deletedAt": null,
+                    "cronogramas": [
+                        {
+                            "idCronograma": 1,
+                            "idActividadObjetivoEspecifico": 1,
+                            "mes": 1,
+                            "anio": 1
+                        }
+                    ]
+                }
+            ]
+        }
+    ],
+    "propuestaProgramasExtension": [
+        {
+            "idProgramaExtension": 2,
+            "codigoPropuesta": "23-02-PEIS-FHUC-ML",
+            "createdAt": "2024-02-15T17:43:09.000Z",
+            "updatedAt": "2024-02-28T23:41:15.000Z",
+            "deletedAt": null
+        }
+    ],
+    "propuestasPrevias": [
+        {
+            "codigoPropuesta": "23-02-PEIS-FHUC-ML",
+            "codigoPropuestaPrevia": "23-251-PEIS-FIQ-EP",
+            "createdAt": "2024-02-28T23:41:01.000Z",
+            "updatedAt": "2024-02-28T23:41:15.000Z",
+            "deletedAt": null
+        },
+        {
+            "codigoPropuesta": "23-02-PEIS-FHUC-ML",
+            "codigoPropuestaPrevia": "23-255-AET-FCJS-IM",
+            "createdAt": "2024-02-28T23:40:26.000Z",
+            "updatedAt": "2024-02-28T23:41:15.000Z",
+            "deletedAt": null
+        }
+    ],
+    "propuestasRelacionadas": [
+        {
+            "codigoPropuesta": "23-02-PEIS-FHUC-ML",
+            "codigoPropuestaRelacionada": "23-254-PEIS-FBCB-MO",
+            "createdAt": "2024-02-28T23:40:01.000Z",
+            "updatedAt": "2024-02-28T23:41:15.000Z",
+            "deletedAt": null
+        }
+    ],
+    "propuestaCapacitaciones": [
+        {
+            "codigoPropuesta": "23-02-PEIS-FHUC-ML",
+            "idCapacitacion": 1,
+            "createdAt": "2024-02-15T17:40:22.000Z",
+            "updatedAt": "2024-02-28T23:41:15.000Z",
+            "deletedAt": null
+        },
+        {
+            "codigoPropuesta": "23-02-PEIS-FHUC-ML",
+            "idCapacitacion": 4,
+            "createdAt": "2024-02-15T17:40:22.000Z",
+            "updatedAt": "2024-02-28T23:41:15.000Z",
+            "deletedAt": null
+        }
+    ],
+    "propuestaLineasTematicas": [
+        {
+            "idLineaTematica": 1,
+            "codigoPropuesta": "23-02-PEIS-FHUC-ML",
+            "createdAt": "2024-02-15T17:41:33.000Z",
+            "updatedAt": "2024-02-28T23:41:15.000Z",
+            "deletedAt": null
+        },
+        {
+            "idLineaTematica": 4,
+            "codigoPropuesta": "23-02-PEIS-FHUC-ML",
+            "createdAt": "2024-02-15T17:41:33.000Z",
+            "updatedAt": "2024-02-28T23:41:15.000Z",
+            "deletedAt": null
+        }
+    ],
+    "propuestaPalabrasClave": [
+        {
+            "codigoPropuesta": "23-02-PEIS-FHUC-ML",
+            "idPalabraClave": 7,
+            "createdAt": "2024-02-28T23:08:32.000Z",
+            "updatedAt": "2024-02-28T23:41:15.000Z",
+            "deletedAt": null,
+            "palabraClave": {
+                "idPalabraClave": 7,
+                "nom": "ambiente"
+            }
+        },
+        {
+            "codigoPropuesta": "23-02-PEIS-FHUC-ML",
+            "idPalabraClave": 11,
+            "createdAt": "2024-02-28T23:15:27.000Z",
+            "updatedAt": "2024-02-28T23:41:15.000Z",
+            "deletedAt": null,
+            "palabraClave": {
+                "idPalabraClave": 11,
+                "nom": "ambiente"
+            }
+        }
+    ]
+}

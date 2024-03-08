@@ -1,0 +1,45 @@
+
+import { Router } from "express";
+import { endpoint } from "../controllers/endpoint";
+import ControllerArea from "../controllers/area";
+import { middleware } from "../middlewares/middleware";
+import { validarIdArea } from "../middlewares/area";
+import { validarPermisoGestionMetas } from "../middlewares/permisos";
+import { extraerToken } from "../middlewares/auth";
+
+const routerArea = Router();
+
+routerArea.get('/:idPrograma',[],endpoint(ControllerArea.verListaAreas));
+routerArea.get(
+    '/:idArea/actividades',
+        extraerToken,
+        validarPermisoGestionMetas,
+
+        middleware(validarIdArea)
+    ,
+    endpoint(ControllerArea.verListaActividades)
+);
+export default routerArea;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
