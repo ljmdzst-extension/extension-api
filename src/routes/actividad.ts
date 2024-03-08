@@ -5,6 +5,7 @@ import { endpoint } from "../controllers/endpoint";
 
 import { 
     validarActividadExistente,
+    validarActividadSuspendida,
     validarCampos,
     validarCamposActividad, 
     validarMotivoSuspension, 
@@ -54,6 +55,13 @@ routerActividad.put (
     middleware(validarMotivoSuspension),
     endpoint( ControllerActividad.suspenderActividad)
 );
+
+routerActividad.put (
+    '/restore',
+    middleware(validarActividadSuspendida),
+    endpoint( ControllerActividad.restaurarActividad)
+);
+
 
 routerActividad.delete (
     '/',

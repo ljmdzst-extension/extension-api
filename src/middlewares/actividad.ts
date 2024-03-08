@@ -20,6 +20,18 @@ export const validarActividadExistente = async(data : IActividad, transaction ?:
     }
 }
 
+export const validarActividadSuspendida = async(data : IActividad, transaction ?: Transaction,transactionInsituciones ?: Transaction)=>{
+    const iActividad = await BD.Actividad.findByPk(Number(data.idActividad),{attributes : ['idActividad'], transaction})
+    if(!iActividad){
+        throw ERROR.ACTIVIDAD_INEXISTENTE;
+    }
+
+    if(! iActividad.motivoCancel) {
+        throw ERROR.ACTIVIDAD_NO_SUSPENDIDA;
+    }
+
+}
+
 export const validarParametros = async( data : {idActividad : string}, transaction ?: Transaction, transactionInsituciones ?: Transaction) => {
  
     if((!Number(data.idActividad)) || (Number(data.idActividad) < 1)) throw INVALIDO.ID_ACT;
@@ -72,10 +84,10 @@ export const validarCampos = checkSchema({
         //     errorMessage : 'fechaHasta debe ser : YYYY-MM-DD' 
         // }
     },
-    mot_cancel : { 
+    motivoCancel : { 
         isString : {
-            if : body('mot_cancel').not().isEmpty(),
-            errorMessage : 'mot_cancel debe ser texto',
+            if : body('motivoCancel').not().isEmpty(),
+            errorMessage : 'motivoCancel debe ser texto',
             
         }, 
         escape : true

@@ -88,6 +88,23 @@ class ControllerActividad {
         return salida;
     }
     
+    public static async restaurarActividad( data : DataPutActividad, transaction : Transaction )
+    : Promise<IResponseActividad> {
+
+        const iActividad = await Actividad.buscarPorIDBD(data.idActividad);
+        
+        iActividad.editar({
+            idActividad : iActividad.verID(),
+            idArea : iActividad.verDatos().idArea,
+            idUsuario : iActividad.verDatos().idUsuario,
+            desc : iActividad.verDatos().desc,
+            motivoCancel : null
+        });
+
+        await iActividad.guardarEnBD(transaction);
+
+        return iActividad.verDatos();
+    }
 }
 
 export default ControllerActividad;

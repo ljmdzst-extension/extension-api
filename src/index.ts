@@ -39,16 +39,9 @@ app.use(informarPeticion);
 
 const BASE_PATH = '/api/v2';
 
-app.use(`${BASE_PATH}/proy`,RouterProyecto);
-app.use(`${BASE_PATH}/propuesta`,RouterPropuesta);
-app.use(`${BASE_PATH}/propuestas`,RouterPropuestas);
-app.use(`${BASE_PATH}/evaluacion`,RouterEvaluacion);
-app.use(`${BASE_PATH}/evaluaciones`,RouterEvaluaciones);
-app.use(`${BASE_PATH}/persona`,RouterPersonas);
-app.use(`${BASE_PATH}/integrantes`,RouterIntegrates);
-app.use(`${BASE_PATH}/bases`,RouterBases);
-app.use(`${BASE_PATH}/instituciones`,RouterInstituciones);
-app.use(`${BASE_PATH}/planificacion`,RouterPlanificacion);
+
+app.use( `${BASE_PATH}/usr`, usuarioRouter  ) 
+app.use( `${BASE_PATH}/usr/bases`, RouterBases  ) 
 
 const BASE_PATH_METAS=`${BASE_PATH}/metas`;
 
@@ -60,8 +53,19 @@ app.use(`${BASE_PATH_METAS}/bases`,RouterBases);
 app.use(`${BASE_PATH_METAS}/actividad`,routerActividad);
 
 
-app.use( `${BASE_PATH}/usr`, usuarioRouter  ) 
-app.use( `${BASE_PATH}/usr/bases`, RouterBases  ) 
+
+
+app.use(`${BASE_PATH}/proy`,RouterProyecto);
+app.use(`${BASE_PATH}/propuesta`,RouterPropuesta);
+app.use(`${BASE_PATH}/propuestas`,RouterPropuestas);
+app.use(`${BASE_PATH}/evaluacion`,RouterEvaluacion);
+app.use(`${BASE_PATH}/evaluaciones`,RouterEvaluaciones);
+app.use(`${BASE_PATH}/persona`,RouterPersonas);
+app.use(`${BASE_PATH}/integrantes`,RouterIntegrates);
+app.use(`${BASE_PATH}/bases`,RouterBases);
+app.use(`${BASE_PATH}/instituciones`,RouterInstituciones);
+app.use(`${BASE_PATH}/planificacion`,RouterPlanificacion);
+
 
 app.listen( process.env.PORT , async()=>{
     try {

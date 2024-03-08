@@ -6,7 +6,7 @@ export namespace ERROR {
    export const ACTIVIDAD_NO_CORRESPONDE : ERROR_LOG = { status : 400, msg : ' La actividad no corresponde al area indicada' }
    export const ACTIVIDAD_BAJA_BD : ERROR_LOG = { status : 500, msg : ' No se pudo dar de baja la actividad, no existe el registro '}
    export const ACTIVIDAD_MOD_BD : ERROR_LOG = { status : 500, msg : ' No se pudo modificar la actividad, no existe el registro '}
-   
+   export const ACTIVIDAD_NO_SUSPENDIDA : ERROR_LOG = { status : 400, msg : ' La actividad no está suspendida '}
    export const AREA_INEXISTENTE : ERROR_LOG = {status : 500 , msg : '- No existe area con ese id'}
    export const ENLACE_INEXISTENTE : ERROR_LOG = { status : 500 , msg : ' - No existe actividad con ese id' }
    export const ENLACE_BAJA_BD : ERROR_LOG = { status : 500, msg : ' No se pudo dar de baja el enlace, no existe el registro '}

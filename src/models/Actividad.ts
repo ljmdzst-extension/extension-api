@@ -23,7 +23,7 @@ export interface ActividadAttributes {
   idUsuario?: string;
   nro?: number;
   desc: string;
-  motivoCancel?: string;
+  motivoCancel?: string | null;
   fechaDesde?: string;
   fechaHasta?: string;
 }

@@ -28,26 +28,10 @@ type IActividad = {
     idUsuario ?: string,
     fechaDesde ?: string,
     fechaHasta ?: string,
-    motivoCancel ?: string,
-    listaRelaciones      ?: Map<ID_RELACION,ESTADO_BD>,
-    listaObjetivos       ?: Map<ID_OBJETIVO,ESTADO_BD>,
-    listaProgramasSIPPE  ?: Map<ID_PROG_SIPPE,ESTADO_BD>,
-    listaMetas           ?: Array<IMeta>,
-    listaUbicaciones     ?: Array<IUbicacion>,
-    listaInstituciones   ?: Array<IInstitucion>,
-    listaFechasPuntuales ?: Array<IFecha>,
-    listaEnlaces         ?: Array<IEnlace>
+    motivoCancel ?: string | null
 }
 
-type IRequestActividad = {
-    idActividad : number,
-    idArea : number,
-    desc : string,
-    nro ?: number,
-    idUsuario ?: string,
-    fechaDesde ?: string,
-    fechaHasta ?: string,
-    motivoCancel ?: string,
+type IRequestActividad = IActividad & {
     listaRelaciones      ?: Array<ID_RELACION>,
     listaObjetivos       ?: Array<ID_OBJETIVO>,
     listaProgramasSIPPE  ?: Array<ID_PROG_SIPPE>,
@@ -78,7 +62,17 @@ class Actividad  {
     private listaFechasPuntuales !: FechaPuntual[];
     private listaEnlaces !: Enlace[];
 
-    private data !: IActividad
+    private data !: IActividad & {
+        
+        listaRelaciones      ?: Map<ID_RELACION,ESTADO_BD>,
+        listaObjetivos       ?: Map<ID_OBJETIVO,ESTADO_BD>,
+        listaProgramasSIPPE  ?: Map<ID_PROG_SIPPE,ESTADO_BD>,
+        listaMetas           ?: Array<IMeta>,
+        listaUbicaciones     ?: Array<IUbicacion>,
+        listaInstituciones   ?: Array<IInstitucion>,
+        listaFechasPuntuales ?: Array<IFecha>,
+        listaEnlaces         ?: Array<IEnlace>
+    }
 
     constructor(
         data : IRequestActividad
@@ -156,7 +150,7 @@ class Actividad  {
             listaEnlaces : this.listaEnlaces.filter(item => !item.estaDeBaja()).map( item => item.verDatos()),
         };
     }
-    
+
     private cargarProgramasSIPPE( listaIds : Array<ID_PROG_SIPPE>)
     {   
         if( !listaIds.length ) { console.log(cli.white(' lista prog SIPPE vacía - omitiendo...')); return; }
@@ -376,7 +370,17 @@ class Actividad  {
         
     }
 
-    public static async validar ( data : IActividad, transaction ?: Transaction) : Promise<void> {
+    public static async validar ( data : IActividad & {
+        
+        listaRelaciones      ?: Map<ID_RELACION,ESTADO_BD>,
+        listaObjetivos       ?: Map<ID_OBJETIVO,ESTADO_BD>,
+        listaProgramasSIPPE  ?: Map<ID_PROG_SIPPE,ESTADO_BD>,
+        listaMetas           ?: Array<IMeta>,
+        listaUbicaciones     ?: Array<IUbicacion>,
+        listaInstituciones   ?: Array<IInstitucion>,
+        listaFechasPuntuales ?: Array<IFecha>,
+        listaEnlaces         ?: Array<IEnlace>
+    }, transaction ?: Transaction) : Promise<void> {
         await new BD.Actividad(data).validate({ skip : ['createdAt','updatedAt','deletedAt']});
         if(data.fechaDesde && data.fechaHasta  ){
            if(Date.parse(data.fechaDesde.toString()) > Date.parse(data.fechaHasta.toString()) ){
@@ -429,6 +433,7 @@ class Actividad  {
 
     /* Conexion BD */
 
+    
     
     public async guardarEnBD( transaction ?: Transaction, transactionInsituciones ?: Transaction) : Promise<void> {
         console.log('Actividad.guardarEnBD...');

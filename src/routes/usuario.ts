@@ -17,7 +17,7 @@ const usuarioRouter = Router();
 
 usuarioRouter.post('/login', [...validarCorreoYContraseña,validarSchema], endpoint( loginUsuario ) );
 
-usuarioRouter.post('/register',[...validarCamposRegistro, validarSchema, middleware(chequearUsuarioNoExistente)], endpoint(registerUsuario) );
+usuarioRouter.post('/register',[...validarCamposRegistro, validarSchema, ],middleware(chequearUsuarioNoExistente), endpoint(registerUsuario) );
 
 usuarioRouter.post('/auth', extraerToken ,endpoint(authUsuario) );
 

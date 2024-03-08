@@ -20,7 +20,7 @@ export const loginUsuario = async({email,pass} : DataLoginUsuario) : Promise<usu
     });
 
     if( !usuario ) 
-        throw { status : 400 , msg : 'No existe un usuario con ese email' }
+        throw { status : 500 , msg : 'No existe un usuario en bd con ese email' }
     
     if( usuario.pass !== pass ) 
         throw { status : 400 , msg : 'Contraseña errónea' }
@@ -36,14 +36,6 @@ export const loginUsuario = async({email,pass} : DataLoginUsuario) : Promise<usu
     if( ! persona ) 
         throw { status : 500 , msg : `No existe persona asociada a usuario : ${usuario.idUsuario}`}
 
-    const categoria = await BD.Categoria.findByPk(usuario.idCategoria);
-
-    if(!categoria) throw{ status :500, msg : 'el usuario no tiene categoría'}
-
-    const permisosCategorias = await BD.PermisoCategoria.findAll({where : {idCategoria : categoria.idCategoria }})
-
-    const permisos = await BD.Permiso.findAll({ where : {idPermiso : permisosCategorias.map(item => item.idPermiso) } });
-
     const token = jwt.sign( {idUsuario : usuario.idUsuario} , process.env.HASH_KEY || '',{expiresIn : 60 * 60} )
 
     return {
@@ -51,11 +43,7 @@ export const loginUsuario = async({email,pass} : DataLoginUsuario) : Promise<usu
         email : usuario.email,
         ape : persona.ape,
         nom : persona.nom,
-        token : token ,
-        categoria : {
-            ...categoria.dataValues,
-            permisos : permisos.map(permiso =>permiso.dataValues)
-        }
+        token : token
     };
 
 }
@@ -77,7 +65,9 @@ export  const registerUsuario = async  (
 ):Promise<{ respuesta : string }>=> {
 
     let salida = { respuesta : ''};
+    
     const {email,pass,...dataPersona} = data;
+
     const [dbPersona,creado] = await Persona.initModel(sequelizeExtension).findOrCreate({
         defaults : { ...dataPersona, nroDoc : ''}, 
         where : { nroDoc : dataPersona.nroDoc },
