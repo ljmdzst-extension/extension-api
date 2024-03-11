@@ -122,16 +122,24 @@ class Actividad  {
             new Date(this.data.fechaHasta || '') , 
             data.listaFechasPuntuales || []
         );
+        
         this.cargarInstituciones(data.listaInstituciones);
+
         this.cargarMetas(data.listaMetas);
         
         this.cargarUbicaciones(data.listaUbicaciones);
+
         this.cargarEnlaces(data.listaEnlaces);
     };
     public cancelar( motCancel : string){
         this.data.motivoCancel = motCancel;
         this.estadoEnBD = ESTADO_BD.M;
     }
+    public restaurar(){
+        this.data.motivoCancel = null;
+        this.estadoEnBD = ESTADO_BD.M;
+    }
+    
     public verID() : number 
     {
         return this.data.idActividad;

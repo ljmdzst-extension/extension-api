@@ -13,41 +13,26 @@ export type AreaId = Area[AreaPk];
 export type AreaOptionalAttributes = "idArea";
 export type AreaCreationAttributes = Optional<AreaAttributes, AreaOptionalAttributes>;
 
+const AREA_ATTRIBUTES = {
+  idArea: {
+    autoIncrement: true,
+    type: DataTypes.INTEGER,
+    allowNull: false,
+    primaryKey: true
+  },
+  nom: {
+    type: DataTypes.STRING(150),
+    allowNull: false
+  }
+}
+
 export class Area extends Model<AreaAttributes, AreaCreationAttributes> implements AreaAttributes {
   idArea!: number;
   nom!: string;
 
-  // Area hasMany Actividad via idArea
-  actividads!: Actividad[];
-  getActividads!: Sequelize.HasManyGetAssociationsMixin<Actividad>;
-  setActividads!: Sequelize.HasManySetAssociationsMixin<Actividad, ActividadId>;
-  addActividad!: Sequelize.HasManyAddAssociationMixin<Actividad, ActividadId>;
-  addActividads!: Sequelize.HasManyAddAssociationsMixin<Actividad, ActividadId>;
-  createActividad!: Sequelize.HasManyCreateAssociationMixin<Actividad>;
-  removeActividad!: Sequelize.HasManyRemoveAssociationMixin<Actividad, ActividadId>;
-  removeActividads!: Sequelize.HasManyRemoveAssociationsMixin<Actividad, ActividadId>;
-  hasActividad!: Sequelize.HasManyHasAssociationMixin<Actividad, ActividadId>;
-  hasActividads!: Sequelize.HasManyHasAssociationsMixin<Actividad, ActividadId>;
-  countActividads!: Sequelize.HasManyCountAssociationsMixin;
-  // Area belongsTo Programa via idPrograma
-  idProgramaPrograma!: Programa;
-  getIdProgramaPrograma!: Sequelize.BelongsToGetAssociationMixin<Programa>;
-  setIdProgramaPrograma!: Sequelize.BelongsToSetAssociationMixin<Programa, ProgramaId>;
-  createIdProgramaPrograma!: Sequelize.BelongsToCreateAssociationMixin<Programa>;
 
   static initModel(sequelize: Sequelize.Sequelize): typeof Area {
-    return Area.init({
-    idArea: {
-      autoIncrement: true,
-      type: DataTypes.INTEGER,
-      allowNull: false,
-      primaryKey: true
-    },
-    nom: {
-      type: DataTypes.STRING(150),
-      allowNull: false
-    }
-  }, {
+    return Area.init(AREA_ATTRIBUTES, {
     sequelize,
     tableName: 'Area',
     timestamps: false

@@ -4,12 +4,13 @@ import sequelizeExtension, { BD } from "../config/dbConfig";
 import { Usuario } from "../models/Usuario"
 import { Persona, PersonaCreationAttributes} from '../models/Persona'
 import { Transaction } from "sequelize";
-import { usuarioPayload } from '../types/usuario';
+import { usuarioPayload,DataRegistroUsuario } from '../types/usuario';
 import { generarEmailValidaciónRegistro, smtpService } from '../config/smtpConfig';
 import { v4 as uuidv4 } from 'uuid';
+import { response } from 'express';
 
 type DataLoginUsuario = {email : string , pass : string, confirmPass ?: string};
-type DataRegistroUsuario = PersonaCreationAttributes & DataLoginUsuario;
+
 type DataListaUsuarios = { usuarios :{ idUsuario : string , email : string }[] }
 
 export const loginUsuario = async({email,pass} : DataLoginUsuario) : Promise<usuarioPayload> => {
@@ -66,18 +67,17 @@ export  const registerUsuario = async  (
 
     let salida = { respuesta : ''};
     
-    const {email,pass,...dataPersona} = data;
+    const {email,pass,idUnidadAcademica,confirmPass,...dataPersona} = data;
 
     const [dbPersona,creado] = await Persona.initModel(sequelizeExtension).findOrCreate({
-        defaults : { ...dataPersona, nroDoc : ''}, 
-        where : { nroDoc : dataPersona.nroDoc },
-        transaction : transactionPersonas
+        defaults : { ...dataPersona, nroDoc : dataPersona.nroDoc}, 
+        where : { nroDoc : dataPersona.nroDoc }
     });
 
     if(creado){
         const {tel,nroDoc,dom} = dataPersona;
         dbPersona.set( {tel,nroDoc,dom});
-        await dbPersona.save({transaction : transactionPersonas});
+        await dbPersona.save();
     }
 
     const listaIdsUsados = await Usuario.verlistaIdsUsados(sequelizeExtension,transaction);
@@ -89,15 +89,14 @@ export  const registerUsuario = async  (
 
     const usuarioPendiente = await Usuario.initModel(sequelizeExtension).create({
         idUsuario : nuevoId,
-        idCategoria : 4,
+        idCategoria : 5,
         nroDoc :dbPersona.nroDoc,
-        idUnidadAcademica : 1,
+        idUnidadAcademica : idUnidadAcademica,
         email,
         pass,
         pendiente : 1
     });
     
-    console.log( usuarioPendiente );
 
     console.log('enviando correo confirmación..');
 
@@ -115,21 +114,32 @@ export  const registerUsuario = async  (
 
 
 
-export const validarRegistro = async ( data : { idUsuario : string }, transaction ?: Transaction) : Promise<void> => {
+export const validarRegistro = async (req : any , resp : typeof response) => {
 
-//    const usuarioPendiente =  await Usuario.initModel(sequelizeExtension).findByPk( data.idUsuario , { transaction});
+  try {
+    const usuarioPendiente =  await BD.Usuario.findByPk( req.params.idUsuario  );
 
-//    if( ! usuarioPendiente ) throw { status : 400, msg : 'No existe usuario con ese id' }
-
-//    usuarioPendiente.set('pendiente',0);
-   
-
-//    await usuarioPendiente.asociarCategorias(sequelizeExtension,transaction);
-   
-//    await usuarioPendiente.save({transaction});
-   
-
-//    return {respuesta : `Usuario ${usuarioPendiente.email} registrado !`};
+    if( ! usuarioPendiente ) throw { status : 400, msg : 'No existe usuario con ese id' }
+ 
+    usuarioPendiente.set('pendiente',0);
+    
+    await usuarioPendiente.save();
+    
+    resp.status(200).json({
+        ok : false,
+        data : {
+            respuesta : `Usuario ${usuarioPendiente.email} registrado !`
+        },
+        error :null
+     })
+  } catch (error : any) {
+     if(error.status === 500) { console.log(error.message); }
+     resp.status(error.status || 500).json({
+        ok : false,
+        data : null,
+        error : error.message || 'Error de servidor'
+     })
+  }
 
 
 }

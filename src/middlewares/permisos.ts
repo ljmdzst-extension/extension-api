@@ -4,15 +4,15 @@ import { BD } from "../config/dbConfig";
 
 export const validarPermisoGestionMetas = async( req : any, resp : typeof response, next : NextFunction)=>{
     try {
-        const {idCategoria,categoria} = req.usuario;
+        const {categoria} = req.usuario;
     
-        if(categoria === 'admin')  {
+        if(categoria.nombre === 'admin')  {
             
             next();
     
         } else {
     
-            const permisosAsignados = await BD.PermisoCategoria.findAll({where : { idCategoria : idCategoria}});
+            const permisosAsignados = await BD.PermisoCategoria.findAll({where : { idCategoria : categoria.idCategoria}});
     
             if(!permisosAsignados.length)  throw { status : 500 , message : 'la categoría del usuario no tiene permisos asignados'}
     

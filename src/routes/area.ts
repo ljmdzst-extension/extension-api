@@ -12,9 +12,7 @@ const routerArea = Router();
 routerArea.get('/:idPrograma',[],endpoint(ControllerArea.verListaAreas));
 routerArea.get(
     '/:idArea/actividades',
-        extraerToken,
         validarPermisoGestionMetas,
-
         middleware(validarIdArea)
     ,
     endpoint(ControllerArea.verListaActividades)

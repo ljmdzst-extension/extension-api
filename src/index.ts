@@ -21,7 +21,7 @@ import routerActividad from './routes/actividad';
 import usuarioRouter from './routes/usuario';
 import RouterProyecto from './routes/proyecto';
 import { informarPeticion } from './middlewares/bases';
-import { extraerToken, validarTokenYObtenerDataUsuario } from './middlewares/auth';
+import { extraerToken, obtenerDataUsuario, validarToken } from './middlewares/auth';
 
 
 
@@ -45,7 +45,7 @@ app.use( `${BASE_PATH}/usr/bases`, RouterBases  )
 
 const BASE_PATH_METAS=`${BASE_PATH}/metas`;
 
-app.use(BASE_PATH_METAS,extraerToken,validarTokenYObtenerDataUsuario);
+app.use(BASE_PATH_METAS,extraerToken,validarToken,obtenerDataUsuario);
 
 app.use(`${BASE_PATH_METAS}/programas`,routerPrograma);
 app.use(`${BASE_PATH_METAS}/areas`,routerArea);
@@ -53,18 +53,21 @@ app.use(`${BASE_PATH_METAS}/bases`,RouterBases);
 app.use(`${BASE_PATH_METAS}/actividad`,routerActividad);
 
 
+// propuestas
 
+const BASE_PATH_PROPUESTAS=`${BASE_PATH}/prop`
 
-app.use(`${BASE_PATH}/proy`,RouterProyecto);
-app.use(`${BASE_PATH}/propuesta`,RouterPropuesta);
-app.use(`${BASE_PATH}/propuestas`,RouterPropuestas);
-app.use(`${BASE_PATH}/evaluacion`,RouterEvaluacion);
-app.use(`${BASE_PATH}/evaluaciones`,RouterEvaluaciones);
-app.use(`${BASE_PATH}/persona`,RouterPersonas);
-app.use(`${BASE_PATH}/integrantes`,RouterIntegrates);
-app.use(`${BASE_PATH}/bases`,RouterBases);
-app.use(`${BASE_PATH}/instituciones`,RouterInstituciones);
-app.use(`${BASE_PATH}/planificacion`,RouterPlanificacion);
+app.use(BASE_PATH_PROPUESTAS,extraerToken,validarToken,obtenerDataUsuario);
+
+app.use(`${BASE_PATH_PROPUESTAS}/`,RouterPropuestas);
+app.use(`${BASE_PATH_PROPUESTAS}/propuesta`,RouterPropuesta);
+app.use(`${BASE_PATH_PROPUESTAS}/evaluacion`,RouterEvaluacion);
+app.use(`${BASE_PATH_PROPUESTAS}/evaluaciones`,RouterEvaluaciones);
+app.use(`${BASE_PATH_PROPUESTAS}/persona`,RouterPersonas);
+app.use(`${BASE_PATH_PROPUESTAS}/integrantes`,RouterIntegrates);
+app.use(`${BASE_PATH_PROPUESTAS}/bases`,RouterBases);
+app.use(`${BASE_PATH_PROPUESTAS}/instituciones`,RouterInstituciones);
+app.use(`${BASE_PATH_PROPUESTAS}/planificacion`,RouterPlanificacion);
 
 
 app.listen( process.env.PORT , async()=>{

@@ -57,7 +57,7 @@ class ControllerActividad {
     public static async darDeBajaActividad ( data : DataDeleteActividad, transaction : Transaction )
     : Promise<boolean> 
     {
-        let salida : boolean = false;
+
 
         const iActividad = await Actividad.buscarPorIDBD( data.idActividad, transaction );
 
@@ -65,7 +65,7 @@ class ControllerActividad {
 
         await iActividad.guardarEnBD(transaction);
 
-        return salida;
+        return true;
     }
 
     public static async suspenderActividad ( data : DataPutActividad, transaction  : Transaction,  transactionInsituciones ?: Transaction)
@@ -92,14 +92,9 @@ class ControllerActividad {
     : Promise<IResponseActividad> {
 
         const iActividad = await Actividad.buscarPorIDBD(data.idActividad);
-        
-        iActividad.editar({
-            idActividad : iActividad.verID(),
-            idArea : iActividad.verDatos().idArea,
-            idUsuario : iActividad.verDatos().idUsuario,
-            desc : iActividad.verDatos().desc,
-            motivoCancel : null
-        });
+
+        iActividad.editar(iActividad.verDatos());
+        iActividad.restaurar();
 
         await iActividad.guardarEnBD(transaction);
 

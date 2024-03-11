@@ -28,14 +28,12 @@ export const endpoint = <ENTRADA,SALIDA >( _servicio : servicio<ENTRADA,SALIDA>)
             else if(req.method !== 'GET'){
                 data =  {...data, ...req.body};
             }
-            if(req.token) {
-                data = {...data,token : req.token}
-            } 
             const salida = await _servicio(data,transaction);
             
             await transaction.commit();
         
-            
+
+
             resp.status(200).json({
                 ok : true,
                 data : salida,

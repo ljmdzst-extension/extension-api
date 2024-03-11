@@ -57,16 +57,16 @@ export const validarCorreoYContraseña = checkSchema({
 
 
 export const validarCamposRegistro = checkSchema({
-    dni : { 
+    nroDoc : { 
         exists : {
-            errorMessage : 'DNI obligatorio'
+            errorMessage : 'nroDoc obligatorio'
         },
         isNumeric: {
-            errorMessage : 'DNI inválido' 
+            errorMessage : 'nroDoc inválido' 
         }, 
         isLength: { 
             options : {min : 8, max : 8}, 
-            errorMessage : 'DNI de 8 dígitos sin puntos, con 0 adelante si tiene 7 dígitos'
+            errorMessage : 'nroDoc de 8 dígitos sin puntos, con 0 adelante si tiene 7 dígitos'
         }
         
     },

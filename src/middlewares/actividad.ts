@@ -21,12 +21,12 @@ export const validarActividadExistente = async(data : IActividad, transaction ?:
 }
 
 export const validarActividadSuspendida = async(data : IActividad, transaction ?: Transaction,transactionInsituciones ?: Transaction)=>{
-    const iActividad = await BD.Actividad.findByPk(Number(data.idActividad),{attributes : ['idActividad'], transaction})
+    const iActividad = await BD.Actividad.findByPk(Number(data.idActividad),{attributes : ['idActividad','motivoCancel'], transaction})
     if(!iActividad){
         throw ERROR.ACTIVIDAD_INEXISTENTE;
     }
 
-    if(! iActividad.motivoCancel) {
+    if(!iActividad.motivoCancel) {
         throw ERROR.ACTIVIDAD_NO_SUSPENDIDA;
     }
 
