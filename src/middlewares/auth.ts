@@ -26,12 +26,9 @@ export const validarTokenYObtenerDataUsuario = async(req : any, resp : typeof re
         console.log(` USR : ${idUsuario}`)
 
         req.usuario = {
-            idUsuario : idUsuario,
-            idCategoria : categoria.idCategoria,
-            categoria : categoria.nombre
+            usuario : iUsuario,
+            categoria : categoria
         }
-
-    
 
         next();
     

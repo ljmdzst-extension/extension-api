@@ -1,7 +1,6 @@
 
 import { initModels } from "../models/init-models";
 import { request, response } from "express";
-import logger from '../config/logsConfig';
 import ServiciosPropuesta from '../services/propuesta';
 import sequelizeExtension from "../config/dbConfig";
 import { ValidationError } from "sequelize";
@@ -30,7 +29,7 @@ export const getPropuesta = async(req : typeof request , res : typeof response)=
         
 
     } catch (error : any) {
-        logger.log('error',error.status,' - ',error.message);
+        console.log('error',error.status,' - ',error.message);
         res.status(error.status || 500).json({
             ok : false,
             data : null,
@@ -46,7 +45,7 @@ export const postPropuesta = async(req : typeof request , res : typeof response)
 
     } catch (error : any) {
         await transaction.rollback();
-        logger.log('error',error.status,' - ',error.message);
+        console.log('error',error.status,' - ',error.message);
         res.status(500).json({
             ok : false,
             data : null,
@@ -85,7 +84,7 @@ export const putPropuesta = async(req : typeof request , res : typeof response)=
 
 
     } catch (error : any) {
-        logger.log('error',error.status,' - ',error.message);
+        console.log('error',error.status,' - ',error.message);
         if(error instanceof ValidationError){
             console.log(error)
             res.status(400).json({
@@ -110,7 +109,7 @@ export const deletePropuesta = async(req : typeof request , res : typeof respons
         
 
     } catch (error : any) {
-        logger.log('error',error.status,' - ',error.message);
+        console.log('error',error.status,' - ',error.message);
         res.status(error.status || 500).json({
             ok : false,
             data : null,
