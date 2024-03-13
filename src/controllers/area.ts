@@ -1,40 +1,56 @@
-import { Transaction } from "sequelize";
+
+import cli from 'cli-color'
+import { request, response } from "express";
+
 import {  IItemActividad } from "../classes/Actividad";
-import Area, { IArea, ID_AREA } from "../classes/Area";
-import Programa, { ID_PROG } from "../classes/Programa";
-import { DataGetActividades, DataGetAreas } from "../types/area";
+import Area, { IArea } from "../classes/Area";
+import Programa from "../classes/Programa";
+import { HttpHelpers } from "../helpers/general";
 
 
-class ControllerArea {
+ export const  verListaAreas = async(  req : typeof request , resp : typeof response) => {
+    try {
+            let salida : IArea[] = [];
 
-    public static async verListaAreas( data : DataGetAreas , transaction : Transaction ) : Promise<IArea[]> {
+            const { idPrograma } = req.params;
 
-        let salida : IArea[] = [];
+            const iPrograma = await Programa.buscarPorID(Number(idPrograma));
 
-      
-        const iPrograma = await Programa.buscarPorID(data.idPrograma,transaction);
+            const areas = iPrograma.verListaAreas();
 
-        const areas = iPrograma.verListaAreas();
+            salida = areas.map( area => area.verDatos());
 
-        salida = areas.map( area => area.verDatos());
+
+            HttpHelpers.responderPeticionOk(resp,salida);
         
-        return salida;
+        } catch (error : any) {
+            if(!error.status) console.log(cli.red(error));
+            
+            HttpHelpers.responderPeticionError(resp, error.message,error.status );
+       }
+
+
+        
     }
    
-    public static async verListaActividades ( data : DataGetActividades , transaction : Transaction) : Promise<IItemActividad[]>{
-        
-        let salida : IItemActividad[] = []
+export const  verListaActividades = async (  req : typeof request , resp : typeof response ) => {
+    
+    try {
+            let salida : IItemActividad[] = []
 
+            const { idArea} = req.params;
 
-        const listaActividades = await Area.buscarPorIDConAct(data.idArea , transaction);
+            const listaActividades = await Area.buscarPorIDConAct(Number(idArea) );
 
-        if(listaActividades.length){
-            salida = listaActividades;
-        }
+            if(listaActividades.length){
+                salida = listaActividades;
+            }
+            HttpHelpers.responderPeticionOk(resp,salida)
 
-        return salida;
+        } catch (error : any) {
+            if(!error.status) console.log(cli.red(error));
+            
+            HttpHelpers.responderPeticionError(resp, error.message,error.status );
+       }
+
     }
-
-}
-
-export default ControllerArea;

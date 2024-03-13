@@ -1,3 +1,4 @@
+import { response } from "express";
 import { Model } from "sequelize";
 
 export const indexarJsons = (lista : Array<any>, indice : string) => lista.reduce(
@@ -45,7 +46,21 @@ export const splitNuevosRegistros = ( registros : Array<any>, indice : string ) 
             ...salida,
             VIEJOS : [...salida.VIEJOS , registro]
         })
-    ,{NUEVOS : [], VIEJOS : []})
+    ,{NUEVOS : [], VIEJOS : []});
 
-export const armarCantPropuestasXModalidad = ( cant : number )=>
-        cant < 10 ? `0${cant}` : `${cant}`;
+
+export namespace HttpHelpers {
+    export const responderPeticionOk = ( resp : typeof response,  data : any )=> resp.status(200).json({
+        ok : true,
+        data : data,
+        error : null
+    });
+
+    export const responderPeticionError = ( resp : typeof response, message ?: string,status ?: number) => resp.status(status || 500).json({
+        ok : false,
+        data : null,
+        error : message || 'error de servidor'
+    })
+}
+
+

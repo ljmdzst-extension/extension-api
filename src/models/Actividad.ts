@@ -1,21 +1,18 @@
 import * as Sequelize from 'sequelize';
-import { DataTypes, Model, Optional } from 'sequelize';
-import type { Area, AreaId } from './Area';
-import type { Enlace, EnlaceId } from './Enlace';
-import type { FechaPuntual, FechaPuntualId } from './FechaPuntual';
-import type { FechaPuntualActividad, FechaPuntualActividadId } from './FechaPuntualActividad';
-import type { Institucion, InstitucionId } from './Institucion';
-import type { InstitucionActividad, InstitucionActividadId } from './InstitucionActividad';
-import type { Meta, MetaId } from './Meta';
-import type { Objetivo, ObjetivoId } from './Objetivo';
-import type { ObjetivoActividad, ObjetivoActividadId } from './ObjetivoActividad';
-import type { ProgramaSippe, ProgramaSippeId } from './ProgramaSippe';
-import type { ProgramaSippeActividad, ProgramaSippeActividadId } from './ProgramaSippeActividad';
-import type { Relacion, RelacionId } from './Relacion';
-import type { RelacionActividad, RelacionActividadId } from './RelacionActividad';
-import type { Ubicacion, UbicacionId } from './Ubicacion';
-import type { UbicacionActividad, UbicacionActividadId } from './UbicacionActividad';
-import type { Usuario, UsuarioId } from './Usuario';
+import cli from 'cli-color';
+import { DataTypes, Model, Optional, Transaction } from 'sequelize';
+import { AreaId } from './Area';
+import { Enlace, TEnlace } from './Enlace';
+import { FechaPuntual, TFecha } from './FechaPuntual';
+import { Institucion } from './Institucion';
+import { Meta } from './Meta';
+import { Objetivo, ObjetivoId } from './Objetivo';
+import { ProgramaSippeId } from './ProgramaSippe';
+import { Relacion, RelacionId } from './Relacion';
+import { Ubicacion } from './Ubicacion';
+import { ESTADO_BD } from '../types/general';
+import { BD } from '../config/dbConfig';
+import { ERROR } from '../logs/errores';
 
 export interface ActividadAttributes {
   idActividad: number;
@@ -33,240 +30,621 @@ export type ActividadId = Actividad[ActividadPk];
 export type ActividadOptionalAttributes = "idActividad" | "idUsuario" | "nro" | "motivoCancel" | "fechaDesde" | "fechaHasta" ;
 export type ActividadCreationAttributes = Optional<ActividadAttributes, ActividadOptionalAttributes>;
 
+type TRequestActividad = ActividadAttributes & {
+  listaRelaciones      ?: Array<RelacionId>,
+  listaObjetivos       ?: Array<ObjetivoId>,
+  listaProgramasSIPPE  ?: Array<ProgramaSippeId>,
+  listaMetas           ?: Array<TMeta>,
+  listaUbicaciones     ?: Array<TUbicacion>,
+  listaInstituciones   ?: Array<TInstitucion>,
+  listaFechasPuntuales ?: Array<TFecha>,
+  listaEnlaces         ?: Array<TEnlace>
+}
+
+type TResponseActividad = TRequestActividad;
+
+export type TItemActividad = {
+  idActividad : ActividadId,
+  desc : string
+} 
+
+const ATRIBUTOS_TABLA_ACTIVIDAD_CONFIG = {
+  idActividad: {
+    autoIncrement: true,
+    type: DataTypes.INTEGER,
+    allowNull: false,
+    primaryKey: true
+  },
+  idArea: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+    references: {
+      model: 'Area',
+      key: 'idArea'
+    }
+  },
+  idUsuario: {
+    type: DataTypes.STRING(255),
+    allowNull: true,
+    references: {
+      model: 'Usuario',
+      key: 'idUsuario'
+    }
+  },
+  nro: {
+    type: DataTypes.INTEGER,
+    allowNull: true
+  },
+  desc: {
+    type: DataTypes.STRING(2000),
+    allowNull: false
+  },
+  motivoCancel: {
+    type: DataTypes.STRING(500),
+    allowNull: true
+  },
+  fechaDesde: {
+    type: DataTypes.DATEONLY,
+    allowNull: true
+  },
+  fechaHasta: {
+    type: DataTypes.DATEONLY,
+    allowNull: true
+  }
+}
+
+const ACTIVIDAD_NULA = {idActividad : 0, idArea : 0, nro : 0 , desc : ''};
+  
+
 export class Actividad extends Model<ActividadAttributes, ActividadCreationAttributes> implements ActividadAttributes {
   idActividad!: number;
   idArea!: number;
   idUsuario?: string;
   nro?: number;
   desc!: string;
-  motivoCancel?: string;
+  motivoCancel?: string | null;
   fechaDesde?: string;
   fechaHasta?: string;
 
-  // Actividad hasMany Enlace via idActividad
-  enlaces!: Enlace[];
-  getEnlaces!: Sequelize.HasManyGetAssociationsMixin<Enlace>;
-  setEnlaces!: Sequelize.HasManySetAssociationsMixin<Enlace, EnlaceId>;
-  addEnlace!: Sequelize.HasManyAddAssociationMixin<Enlace, EnlaceId>;
-  addEnlaces!: Sequelize.HasManyAddAssociationsMixin<Enlace, EnlaceId>;
-  createEnlace!: Sequelize.HasManyCreateAssociationMixin<Enlace>;
-  removeEnlace!: Sequelize.HasManyRemoveAssociationMixin<Enlace, EnlaceId>;
-  removeEnlaces!: Sequelize.HasManyRemoveAssociationsMixin<Enlace, EnlaceId>;
-  hasEnlace!: Sequelize.HasManyHasAssociationMixin<Enlace, EnlaceId>;
-  hasEnlaces!: Sequelize.HasManyHasAssociationsMixin<Enlace, EnlaceId>;
-  countEnlaces!: Sequelize.HasManyCountAssociationsMixin;
-  // Actividad belongsToMany FechaPuntual via idActividad and idFecha
-  idFechaFechaPuntuals!: FechaPuntual[];
-  getIdFechaFechaPuntuals!: Sequelize.BelongsToManyGetAssociationsMixin<FechaPuntual>;
-  setIdFechaFechaPuntuals!: Sequelize.BelongsToManySetAssociationsMixin<FechaPuntual, FechaPuntualId>;
-  addIdFechaFechaPuntual!: Sequelize.BelongsToManyAddAssociationMixin<FechaPuntual, FechaPuntualId>;
-  addIdFechaFechaPuntuals!: Sequelize.BelongsToManyAddAssociationsMixin<FechaPuntual, FechaPuntualId>;
-  createIdFechaFechaPuntual!: Sequelize.BelongsToManyCreateAssociationMixin<FechaPuntual>;
-  removeIdFechaFechaPuntual!: Sequelize.BelongsToManyRemoveAssociationMixin<FechaPuntual, FechaPuntualId>;
-  removeIdFechaFechaPuntuals!: Sequelize.BelongsToManyRemoveAssociationsMixin<FechaPuntual, FechaPuntualId>;
-  hasIdFechaFechaPuntual!: Sequelize.BelongsToManyHasAssociationMixin<FechaPuntual, FechaPuntualId>;
-  hasIdFechaFechaPuntuals!: Sequelize.BelongsToManyHasAssociationsMixin<FechaPuntual, FechaPuntualId>;
-  countIdFechaFechaPuntuals!: Sequelize.BelongsToManyCountAssociationsMixin;
-  // Actividad hasMany FechaPuntualActividad via idActividad
-  fechaPuntualActividads!: FechaPuntualActividad[];
-  getFechaPuntualActividads!: Sequelize.HasManyGetAssociationsMixin<FechaPuntualActividad>;
-  setFechaPuntualActividads!: Sequelize.HasManySetAssociationsMixin<FechaPuntualActividad, FechaPuntualActividadId>;
-  addFechaPuntualActividad!: Sequelize.HasManyAddAssociationMixin<FechaPuntualActividad, FechaPuntualActividadId>;
-  addFechaPuntualActividads!: Sequelize.HasManyAddAssociationsMixin<FechaPuntualActividad, FechaPuntualActividadId>;
-  createFechaPuntualActividad!: Sequelize.HasManyCreateAssociationMixin<FechaPuntualActividad>;
-  removeFechaPuntualActividad!: Sequelize.HasManyRemoveAssociationMixin<FechaPuntualActividad, FechaPuntualActividadId>;
-  removeFechaPuntualActividads!: Sequelize.HasManyRemoveAssociationsMixin<FechaPuntualActividad, FechaPuntualActividadId>;
-  hasFechaPuntualActividad!: Sequelize.HasManyHasAssociationMixin<FechaPuntualActividad, FechaPuntualActividadId>;
-  hasFechaPuntualActividads!: Sequelize.HasManyHasAssociationsMixin<FechaPuntualActividad, FechaPuntualActividadId>;
-  countFechaPuntualActividads!: Sequelize.HasManyCountAssociationsMixin;
-  // Actividad belongsToMany Institucion via idActividad and idInstitucion
-  idInstitucionInstitucions!: Institucion[];
-  getIdInstitucionInstitucions!: Sequelize.BelongsToManyGetAssociationsMixin<Institucion>;
-  setIdInstitucionInstitucions!: Sequelize.BelongsToManySetAssociationsMixin<Institucion, InstitucionId>;
-  addIdInstitucionInstitucion!: Sequelize.BelongsToManyAddAssociationMixin<Institucion, InstitucionId>;
-  addIdInstitucionInstitucions!: Sequelize.BelongsToManyAddAssociationsMixin<Institucion, InstitucionId>;
-  createIdInstitucionInstitucion!: Sequelize.BelongsToManyCreateAssociationMixin<Institucion>;
-  removeIdInstitucionInstitucion!: Sequelize.BelongsToManyRemoveAssociationMixin<Institucion, InstitucionId>;
-  removeIdInstitucionInstitucions!: Sequelize.BelongsToManyRemoveAssociationsMixin<Institucion, InstitucionId>;
-  hasIdInstitucionInstitucion!: Sequelize.BelongsToManyHasAssociationMixin<Institucion, InstitucionId>;
-  hasIdInstitucionInstitucions!: Sequelize.BelongsToManyHasAssociationsMixin<Institucion, InstitucionId>;
-  countIdInstitucionInstitucions!: Sequelize.BelongsToManyCountAssociationsMixin;
-  // Actividad hasMany InstitucionActividad via idActividad
-  institucionActividads!: InstitucionActividad[];
-  getInstitucionActividads!: Sequelize.HasManyGetAssociationsMixin<InstitucionActividad>;
-  setInstitucionActividads!: Sequelize.HasManySetAssociationsMixin<InstitucionActividad, InstitucionActividadId>;
-  addInstitucionActividad!: Sequelize.HasManyAddAssociationMixin<InstitucionActividad, InstitucionActividadId>;
-  addInstitucionActividads!: Sequelize.HasManyAddAssociationsMixin<InstitucionActividad, InstitucionActividadId>;
-  createInstitucionActividad!: Sequelize.HasManyCreateAssociationMixin<InstitucionActividad>;
-  removeInstitucionActividad!: Sequelize.HasManyRemoveAssociationMixin<InstitucionActividad, InstitucionActividadId>;
-  removeInstitucionActividads!: Sequelize.HasManyRemoveAssociationsMixin<InstitucionActividad, InstitucionActividadId>;
-  hasInstitucionActividad!: Sequelize.HasManyHasAssociationMixin<InstitucionActividad, InstitucionActividadId>;
-  hasInstitucionActividads!: Sequelize.HasManyHasAssociationsMixin<InstitucionActividad, InstitucionActividadId>;
-  countInstitucionActividads!: Sequelize.HasManyCountAssociationsMixin;
-  // Actividad hasMany Meta via idActividad
-  meta!: Meta[];
-  getMeta!: Sequelize.HasManyGetAssociationsMixin<Meta>;
-  setMeta!: Sequelize.HasManySetAssociationsMixin<Meta, MetaId>;
-  addMetum!: Sequelize.HasManyAddAssociationMixin<Meta, MetaId>;
-  addMeta!: Sequelize.HasManyAddAssociationsMixin<Meta, MetaId>;
-  createMetum!: Sequelize.HasManyCreateAssociationMixin<Meta>;
-  removeMetum!: Sequelize.HasManyRemoveAssociationMixin<Meta, MetaId>;
-  removeMeta!: Sequelize.HasManyRemoveAssociationsMixin<Meta, MetaId>;
-  hasMetum!: Sequelize.HasManyHasAssociationMixin<Meta, MetaId>;
-  hasMeta!: Sequelize.HasManyHasAssociationsMixin<Meta, MetaId>;
-  countMeta!: Sequelize.HasManyCountAssociationsMixin;
-  // Actividad belongsToMany Objetivo via idActividad and idObjetivo
-  idObjetivoObjetivos!: Objetivo[];
-  getIdObjetivoObjetivos!: Sequelize.BelongsToManyGetAssociationsMixin<Objetivo>;
-  setIdObjetivoObjetivos!: Sequelize.BelongsToManySetAssociationsMixin<Objetivo, ObjetivoId>;
-  addIdObjetivoObjetivo!: Sequelize.BelongsToManyAddAssociationMixin<Objetivo, ObjetivoId>;
-  addIdObjetivoObjetivos!: Sequelize.BelongsToManyAddAssociationsMixin<Objetivo, ObjetivoId>;
-  createIdObjetivoObjetivo!: Sequelize.BelongsToManyCreateAssociationMixin<Objetivo>;
-  removeIdObjetivoObjetivo!: Sequelize.BelongsToManyRemoveAssociationMixin<Objetivo, ObjetivoId>;
-  removeIdObjetivoObjetivos!: Sequelize.BelongsToManyRemoveAssociationsMixin<Objetivo, ObjetivoId>;
-  hasIdObjetivoObjetivo!: Sequelize.BelongsToManyHasAssociationMixin<Objetivo, ObjetivoId>;
-  hasIdObjetivoObjetivos!: Sequelize.BelongsToManyHasAssociationsMixin<Objetivo, ObjetivoId>;
-  countIdObjetivoObjetivos!: Sequelize.BelongsToManyCountAssociationsMixin;
-  // Actividad hasMany ObjetivoActividad via idActividad
-  objetivoActividads!: ObjetivoActividad[];
-  getObjetivoActividads!: Sequelize.HasManyGetAssociationsMixin<ObjetivoActividad>;
-  setObjetivoActividads!: Sequelize.HasManySetAssociationsMixin<ObjetivoActividad, ObjetivoActividadId>;
-  addObjetivoActividad!: Sequelize.HasManyAddAssociationMixin<ObjetivoActividad, ObjetivoActividadId>;
-  addObjetivoActividads!: Sequelize.HasManyAddAssociationsMixin<ObjetivoActividad, ObjetivoActividadId>;
-  createObjetivoActividad!: Sequelize.HasManyCreateAssociationMixin<ObjetivoActividad>;
-  removeObjetivoActividad!: Sequelize.HasManyRemoveAssociationMixin<ObjetivoActividad, ObjetivoActividadId>;
-  removeObjetivoActividads!: Sequelize.HasManyRemoveAssociationsMixin<ObjetivoActividad, ObjetivoActividadId>;
-  hasObjetivoActividad!: Sequelize.HasManyHasAssociationMixin<ObjetivoActividad, ObjetivoActividadId>;
-  hasObjetivoActividads!: Sequelize.HasManyHasAssociationsMixin<ObjetivoActividad, ObjetivoActividadId>;
-  countObjetivoActividads!: Sequelize.HasManyCountAssociationsMixin;
-  // Actividad belongsToMany ProgramaSippe via idActividad and idProgramaSippe
-  idProgramaSippeProgramaSippes!: ProgramaSippe[];
-  getIdProgramaSippeProgramaSippes!: Sequelize.BelongsToManyGetAssociationsMixin<ProgramaSippe>;
-  setIdProgramaSippeProgramaSippes!: Sequelize.BelongsToManySetAssociationsMixin<ProgramaSippe, ProgramaSippeId>;
-  addIdProgramaSippeProgramaSippe!: Sequelize.BelongsToManyAddAssociationMixin<ProgramaSippe, ProgramaSippeId>;
-  addIdProgramaSippeProgramaSippes!: Sequelize.BelongsToManyAddAssociationsMixin<ProgramaSippe, ProgramaSippeId>;
-  createIdProgramaSippeProgramaSippe!: Sequelize.BelongsToManyCreateAssociationMixin<ProgramaSippe>;
-  removeIdProgramaSippeProgramaSippe!: Sequelize.BelongsToManyRemoveAssociationMixin<ProgramaSippe, ProgramaSippeId>;
-  removeIdProgramaSippeProgramaSippes!: Sequelize.BelongsToManyRemoveAssociationsMixin<ProgramaSippe, ProgramaSippeId>;
-  hasIdProgramaSippeProgramaSippe!: Sequelize.BelongsToManyHasAssociationMixin<ProgramaSippe, ProgramaSippeId>;
-  hasIdProgramaSippeProgramaSippes!: Sequelize.BelongsToManyHasAssociationsMixin<ProgramaSippe, ProgramaSippeId>;
-  countIdProgramaSippeProgramaSippes!: Sequelize.BelongsToManyCountAssociationsMixin;
-  // Actividad hasMany ProgramaSippeActividad via idActividad
-  programaSippeActividads!: ProgramaSippeActividad[];
-  getProgramaSippeActividads!: Sequelize.HasManyGetAssociationsMixin<ProgramaSippeActividad>;
-  setProgramaSippeActividads!: Sequelize.HasManySetAssociationsMixin<ProgramaSippeActividad, ProgramaSippeActividadId>;
-  addProgramaSippeActividad!: Sequelize.HasManyAddAssociationMixin<ProgramaSippeActividad, ProgramaSippeActividadId>;
-  addProgramaSippeActividads!: Sequelize.HasManyAddAssociationsMixin<ProgramaSippeActividad, ProgramaSippeActividadId>;
-  createProgramaSippeActividad!: Sequelize.HasManyCreateAssociationMixin<ProgramaSippeActividad>;
-  removeProgramaSippeActividad!: Sequelize.HasManyRemoveAssociationMixin<ProgramaSippeActividad, ProgramaSippeActividadId>;
-  removeProgramaSippeActividads!: Sequelize.HasManyRemoveAssociationsMixin<ProgramaSippeActividad, ProgramaSippeActividadId>;
-  hasProgramaSippeActividad!: Sequelize.HasManyHasAssociationMixin<ProgramaSippeActividad, ProgramaSippeActividadId>;
-  hasProgramaSippeActividads!: Sequelize.HasManyHasAssociationsMixin<ProgramaSippeActividad, ProgramaSippeActividadId>;
-  countProgramaSippeActividads!: Sequelize.HasManyCountAssociationsMixin;
-  // Actividad belongsToMany Relacion via idActividad and idRelacion
-  idRelacionRelacions!: Relacion[];
-  getIdRelacionRelacions!: Sequelize.BelongsToManyGetAssociationsMixin<Relacion>;
-  setIdRelacionRelacions!: Sequelize.BelongsToManySetAssociationsMixin<Relacion, RelacionId>;
-  addIdRelacionRelacion!: Sequelize.BelongsToManyAddAssociationMixin<Relacion, RelacionId>;
-  addIdRelacionRelacions!: Sequelize.BelongsToManyAddAssociationsMixin<Relacion, RelacionId>;
-  createIdRelacionRelacion!: Sequelize.BelongsToManyCreateAssociationMixin<Relacion>;
-  removeIdRelacionRelacion!: Sequelize.BelongsToManyRemoveAssociationMixin<Relacion, RelacionId>;
-  removeIdRelacionRelacions!: Sequelize.BelongsToManyRemoveAssociationsMixin<Relacion, RelacionId>;
-  hasIdRelacionRelacion!: Sequelize.BelongsToManyHasAssociationMixin<Relacion, RelacionId>;
-  hasIdRelacionRelacions!: Sequelize.BelongsToManyHasAssociationsMixin<Relacion, RelacionId>;
-  countIdRelacionRelacions!: Sequelize.BelongsToManyCountAssociationsMixin;
-  // Actividad hasMany RelacionActividad via idActividad
-  relacionActividads!: RelacionActividad[];
-  getRelacionActividads!: Sequelize.HasManyGetAssociationsMixin<RelacionActividad>;
-  setRelacionActividads!: Sequelize.HasManySetAssociationsMixin<RelacionActividad, RelacionActividadId>;
-  addRelacionActividad!: Sequelize.HasManyAddAssociationMixin<RelacionActividad, RelacionActividadId>;
-  addRelacionActividads!: Sequelize.HasManyAddAssociationsMixin<RelacionActividad, RelacionActividadId>;
-  createRelacionActividad!: Sequelize.HasManyCreateAssociationMixin<RelacionActividad>;
-  removeRelacionActividad!: Sequelize.HasManyRemoveAssociationMixin<RelacionActividad, RelacionActividadId>;
-  removeRelacionActividads!: Sequelize.HasManyRemoveAssociationsMixin<RelacionActividad, RelacionActividadId>;
-  hasRelacionActividad!: Sequelize.HasManyHasAssociationMixin<RelacionActividad, RelacionActividadId>;
-  hasRelacionActividads!: Sequelize.HasManyHasAssociationsMixin<RelacionActividad, RelacionActividadId>;
-  countRelacionActividads!: Sequelize.HasManyCountAssociationsMixin;
-  // Actividad belongsToMany Ubicacion via idActividad and idUbicacion
-  idUbicacionUbicacions!: Ubicacion[];
-  getIdUbicacionUbicacions!: Sequelize.BelongsToManyGetAssociationsMixin<Ubicacion>;
-  setIdUbicacionUbicacions!: Sequelize.BelongsToManySetAssociationsMixin<Ubicacion, UbicacionId>;
-  addIdUbicacionUbicacion!: Sequelize.BelongsToManyAddAssociationMixin<Ubicacion, UbicacionId>;
-  addIdUbicacionUbicacions!: Sequelize.BelongsToManyAddAssociationsMixin<Ubicacion, UbicacionId>;
-  createIdUbicacionUbicacion!: Sequelize.BelongsToManyCreateAssociationMixin<Ubicacion>;
-  removeIdUbicacionUbicacion!: Sequelize.BelongsToManyRemoveAssociationMixin<Ubicacion, UbicacionId>;
-  removeIdUbicacionUbicacions!: Sequelize.BelongsToManyRemoveAssociationsMixin<Ubicacion, UbicacionId>;
-  hasIdUbicacionUbicacion!: Sequelize.BelongsToManyHasAssociationMixin<Ubicacion, UbicacionId>;
-  hasIdUbicacionUbicacions!: Sequelize.BelongsToManyHasAssociationsMixin<Ubicacion, UbicacionId>;
-  countIdUbicacionUbicacions!: Sequelize.BelongsToManyCountAssociationsMixin;
-  // Actividad hasMany UbicacionActividad via idActividad
-  ubicacionActividads!: UbicacionActividad[];
-  getUbicacionActividads!: Sequelize.HasManyGetAssociationsMixin<UbicacionActividad>;
-  setUbicacionActividads!: Sequelize.HasManySetAssociationsMixin<UbicacionActividad, UbicacionActividadId>;
-  addUbicacionActividad!: Sequelize.HasManyAddAssociationMixin<UbicacionActividad, UbicacionActividadId>;
-  addUbicacionActividads!: Sequelize.HasManyAddAssociationsMixin<UbicacionActividad, UbicacionActividadId>;
-  createUbicacionActividad!: Sequelize.HasManyCreateAssociationMixin<UbicacionActividad>;
-  removeUbicacionActividad!: Sequelize.HasManyRemoveAssociationMixin<UbicacionActividad, UbicacionActividadId>;
-  removeUbicacionActividads!: Sequelize.HasManyRemoveAssociationsMixin<UbicacionActividad, UbicacionActividadId>;
-  hasUbicacionActividad!: Sequelize.HasManyHasAssociationMixin<UbicacionActividad, UbicacionActividadId>;
-  hasUbicacionActividads!: Sequelize.HasManyHasAssociationsMixin<UbicacionActividad, UbicacionActividadId>;
-  countUbicacionActividads!: Sequelize.HasManyCountAssociationsMixin;
-  // Actividad belongsTo Area via idArea
-  idAreaArea!: Area;
-  getIdAreaArea!: Sequelize.BelongsToGetAssociationMixin<Area>;
-  setIdAreaArea!: Sequelize.BelongsToSetAssociationMixin<Area, AreaId>;
-  createIdAreaArea!: Sequelize.BelongsToCreateAssociationMixin<Area>;
-  // Actividad belongsTo Usuario via idUsuario
-  idUsuarioUsuario!: Usuario;
-  getIdUsuarioUsuario!: Sequelize.BelongsToGetAssociationMixin<Usuario>;
-  setIdUsuarioUsuario!: Sequelize.BelongsToSetAssociationMixin<Usuario, UsuarioId>;
-  createIdUsuarioUsuario!: Sequelize.BelongsToCreateAssociationMixin<Usuario>;
+  public estadoEnBD !: ESTADO_BD;
+
+  private listaMetas !: Meta[];
+  private listaUbicaciones !: Ubicacion[];
+  private listaInstituciones !: Institucion[];
+  private listaFechasPuntuales !: FechaPuntual[];
+  private listaEnlaces !: Enlace[];
+
+  private listaRelaciones      ?: Map<RelacionId,ESTADO_BD>;
+  private listaObjetivos       ?: Map<ObjetivoId,ESTADO_BD>;
+  private listaProgramasSIPPE  ?: Map<ProgramaSippeId,ESTADO_BD>;
+
+
+
+    
+    public editar(data : TRequestActividad)
+    {   
+        // validar antes
+        this.idActividad = data.idActividad;
+        this.idArea = data.idArea;
+        this.nro = data.nro;
+        this.desc = data.desc;
+        this.idUsuario = data.idUsuario;
+        this.fechaDesde = data.fechaDesde;
+        this.fechaHasta = data.fechaHasta;
+        this.motivoCancel = data.motivoCancel;
+
+        if(data.listaObjetivos){
+            this.cargarObjetivos(data.listaObjetivos);
+        }
+        if(data.listaProgramasSIPPE){
+            this.cargarProgramasSIPPE(data.listaProgramasSIPPE);
+        }
+        if(data.listaRelaciones){
+            this.cargarRelaciones(data.listaRelaciones);
+        }
+        this.cargarFechasPuntuales( 
+            new Date(this.fechaDesde || '') ,
+            new Date(this.fechaHasta || '') , 
+            data.listaFechasPuntuales || []
+        );
+        
+        this.cargarInstituciones(data.listaInstituciones);
+
+        this.cargarMetas(data.listaMetas);
+        
+        this.cargarUbicaciones(data.listaUbicaciones);
+
+        this.cargarEnlaces(data.listaEnlaces);
+    };
+    public cancelar( motCancel : string){
+        this.motivoCancel = motCancel;
+        this.estadoEnBD = ESTADO_BD.M;
+    }
+    public restaurar(){
+        this.motivoCancel = null;
+        this.estadoEnBD = ESTADO_BD.M;
+    }
+    
+    public verID() : number 
+    {
+        return this.idActividad;
+    }
+    public verDatos() : TResponseActividad 
+    {
+        return {
+            ...this,
+            listaObjetivos : this.listaObjetivos? Array.from(this.listaObjetivos.keys()).filter( item => this.listaObjetivos?.get(item) === ESTADO_BD.A).sort( (a,b) => a-b) : [],
+            listaRelaciones : this.listaRelaciones? Array.from(this.listaRelaciones.keys()).filter( item => this.listaRelaciones?.get(item) === ESTADO_BD.A).sort( (a,b) => a-b) : [],
+            listaProgramasSIPPE : this.listaProgramasSIPPE? Array.from(this.listaProgramasSIPPE.keys()).filter( item => this.listaProgramasSIPPE?.get(item) === ESTADO_BD.A).sort( (a,b) => a-b) : [],
+            listaMetas : this.listaMetas.filter(item => !item.estaDeBaja()).map( item => item.verDatos()),
+            listaUbicaciones : this.listaUbicaciones.filter(item => !item.estaDeBaja()).map( item => item.verDatos()),
+            listaInstituciones : this.listaInstituciones.filter(item => !item.estaDeBaja()).map( item => item.verDatos()),
+            listaFechasPuntuales : this.listaFechasPuntuales.filter(item => !item.estaDeBaja()).map( item => item.verDatos()),
+            listaEnlaces : this.listaEnlaces.filter(item => !item.estaDeBaja()).map( item => item.verDatos()),
+        };
+    }
+
+    private cargarProgramasSIPPE( listaIds : Array<ProgramaSippeId>)
+    {   
+        if( !listaIds.length ) { 
+            if(process.env.NODE_ENV === 'development') console.log(cli.white(' lista prog SIPPE vacía - omitiendo...')); return; }
+
+        Array.from(this.listaProgramasSIPPE?.keys() || [])?.forEach( clave => this.listaProgramasSIPPE?.set(clave,ESTADO_BD.B) );
+        if(listaIds.length > 0){
+
+            listaIds.forEach( id => this.listaProgramasSIPPE?.set(id,ESTADO_BD.A));
+        }
+        
+        
+    };
+    private cargarRelaciones( listaIds : Array<RelacionId> )
+    {
+        if( !listaIds.length ) { 
+            if(process.env.NODE_ENV === 'development') console.log(cli.white(' lista relaciones vacía - omitiendo...')); return; }
+      
+        Array.from(this.listaRelaciones?.keys() || [])
+            ?.forEach( clave => this.listaRelaciones?.set(clave,ESTADO_BD.B) );
+        
+        if(listaIds.length > 0){
+            listaIds.forEach( id => this.listaRelaciones?.set(id,ESTADO_BD.A));
+        }
+        
+       
+    };
+    private cargarObjetivos( listaIds : Array<ObjetivoId> )
+    {
+        if( !listaIds.length ) { 
+            if(process.env.NODE_ENV === 'development') console.log(cli.white(' lista objetivos vacía - omitiendo...')); return; }
+        
+        Array.from(this.listaObjetivos?.keys() || [])?.forEach( clave => this.listaObjetivos?.set(clave,ESTADO_BD.B) );
+
+        if(listaIds.length > 0){
+            listaIds.forEach( id => this.listaObjetivos?.set(id,ESTADO_BD.A))
+        }
+
+    };
+    private cargarFechasPuntuales(desde : Date , hasta : Date , listaFechas ?: Array<TFecha> )
+    {
+        if( !listaFechas) {console.log(cli.white(' lista fechas puntuales vacía - omitiendo...')); return;}
+        if( listaFechas.length < 1) { 
+            this.listaFechasPuntuales.forEach( item => {item.darDeBajaBD();});
+            return;
+         }
+
+        listaFechas.sort( (a,b) => a.idFecha < 1 ? 1 : a.idFecha - b.idFecha )
+        
+        if(listaFechas[listaFechas.length -1].idFecha < 1) {
+            const fechasNuevas = listaFechas
+                .splice( listaFechas.findIndex( fecha => fecha.idFecha < 1 ))
+                .map( fecha => new FechaPuntual(fecha,this));
+            
+            this.listaFechasPuntuales = [...this.listaFechasPuntuales , ...fechasNuevas]
+        }
+
+        listaFechas.forEach( fecha => {
+            const fechaCargada = this.listaFechasPuntuales.find( item => item.verDatos().idFecha === fecha.idFecha);
+            if( !fechaCargada ){
+                const iFechaPuntual = FechaPuntual.crear(fecha,this);
+                if(!iFechaPuntual.estaEnRango(desde,hasta)) throw ERROR.FECHA_FUERA_DE_RANGO;
+                this.listaFechasPuntuales.push(iFechaPuntual);
+            } 
+        });
+
+        this.listaFechasPuntuales.forEach( item => {
+            if( item.verDatos().idFecha > 0 && listaFechas.every( fecha => fecha.idFecha !== item.verDatos().idFecha) ){
+                item.darDeBajaBD();
+            }
+        });
+      
+    };
+    private cargarInstituciones( listaInstituciones ?: Array< TInstitucion> )
+    {
+
+        if( !listaInstituciones) {
+            if(process.env.NODE_ENV === 'development') console.log(cli.white(' lista instituciones vacía - omitiendo...')); 
+            return; }
+        if(listaInstituciones.length < 1){
+            this.listaInstituciones.forEach( item => {item.darDeBajaBD();});
+            return;
+        }
+
+        listaInstituciones.sort( (a,b) => a.idInstitucion < 1 ? 1 : a.idInstitucion - b.idInstitucion )
+        
+        if(listaInstituciones[listaInstituciones.length -1].idInstitucion < 1) {
+            const insitucionesNuevas = listaInstituciones
+                .splice( listaInstituciones.findIndex( institucion => institucion.idInstitucion < 1 ))
+                .map( institucion => new Institucion(institucion,this));
+            
+            this.listaInstituciones = [...this.listaInstituciones , ...insitucionesNuevas]
+        }
+
+
+        listaInstituciones.forEach( institucion => {
+            const instCargada = this.listaInstituciones.find( item => item.verDatos().idInstitucion === institucion.idInstitucion)
+            if( !instCargada){
+               this.listaInstituciones.push(new Institucion(institucion,this));
+            }else {
+                instCargada.editarDatos(institucion);
+            }
+        });
+        this.listaInstituciones.forEach( item => {
+            if(item.verDatos().idInstitucion > 0 && listaInstituciones.every( inst => inst.idInstitucion !== item.verDatos().idInstitucion)){ 
+                item.darDeBajaBD();
+            }
+        }
+           
+        );
+        
+    };
+    
+    private cargarMetas(listaMetas ?: Array<TMeta> )
+    {
+        if( !listaMetas) {
+            if(process.env.NODE_ENV === 'development') console.log(cli.white(' lista metas vacía - omitiendo...')); 
+            return; }
+        if( listaMetas.length < 1) {
+            this.listaMetas.forEach( item => {item.estadoEnBD = ESTADO_BD.B;});
+            return;
+        }
+        listaMetas.sort( (a,b) => a.idMeta < 1 ? 1 : a.idMeta - b.idMeta )
+        
+        if(listaMetas[listaMetas.length -1].idMeta < 1) {
+            const metasNuevas = listaMetas
+                .splice( listaMetas.findIndex( meta => meta.idMeta < 1 ))
+                .map( meta => new Meta(meta,this));
+            
+            this.listaMetas = [...this.listaMetas , ...metasNuevas]
+        }
+
+        listaMetas.forEach( dataMeta => {
+            const metaCargada = this.listaMetas.find( item => item.verDatos().idMeta === dataMeta.idMeta );
+            if( ! metaCargada ) {
+
+                const nuevaMeta = new Meta(dataMeta,this);
+
+                this.listaMetas.push(nuevaMeta);
+
+            } else {
+
+                metaCargada.editarDatos(dataMeta);
+            }
+           
+        });
+
+        this.listaMetas.forEach( item => {
+            if( item.verDatos().idMeta > 0 && listaMetas.every(  meta => meta.idMeta !== item.verDatos().idMeta) ){
+               item.estadoEnBD = ESTADO_BD.B;
+            }
+        });
+        
+    };
+    private cargarUbicaciones( listaUbicaciones ?: Array<TUbicacion>)
+    {
+       if( !listaUbicaciones ){
+        if(process.env.NODE_ENV === 'development') console.log(cli.white(' lista ubicaciones vacía - omitiendo...')); 
+        return; }
+       if( listaUbicaciones.length < 1) { 
+        this.listaUbicaciones.forEach( item => {item.estadoEnBD = ESTADO_BD.B;} );
+        return;
+       }
+       
+       listaUbicaciones.sort( (a,b) => a.idUbicacion < 1 ? 1 : a.idUbicacion - b.idUbicacion )
+       
+       if(listaUbicaciones[listaUbicaciones.length -1].idUbicacion < 1) {
+            const ubicacionesNuevas = listaUbicaciones
+                .splice( listaUbicaciones.findIndex( ubicacion => ubicacion.idUbicacion < 1 ))
+                .map( ubicacion => new Ubicacion(ubicacion,this));
+            
+            this.listaUbicaciones = [...this.listaUbicaciones , ...ubicacionesNuevas]
+        }
+
+       listaUbicaciones.forEach( dataUbicacion => {
+            const ubicacionCargada = this.listaUbicaciones.find( item => item.verDatos().idUbicacion === dataUbicacion.idUbicacion );
+            if(!ubicacionCargada){
+                const nuevaUbicacion = new Ubicacion(dataUbicacion,this);
+                this.listaUbicaciones.push(nuevaUbicacion);
+            }else {
+                ubicacionCargada.editarDatos(dataUbicacion);
+    
+            }
+        })
+       
+        this.listaUbicaciones.forEach( item => {
+            if(item.verDatos().idUbicacion > 0 &&  listaUbicaciones.every( ubicacion => ubicacion.idUbicacion !== item.verDatos().idUbicacion) ){
+                item.estadoEnBD = ESTADO_BD.B;
+            }
+        } );
+       
+    };
+    private cargarEnlaces(listaEnlaces ?: Array<TEnlace>)
+    {
+        if( !listaEnlaces ) {
+            if(process.env.NODE_ENV === 'development') console.log(cli.white(' lista enlaces vacía - omitiendo...')); 
+            return;}
+        if( listaEnlaces.length < 1) { 
+            this.listaEnlaces.forEach( item => {item.estadoEnBD = ESTADO_BD.B; }) ;
+            return;
+         }
+
+        listaEnlaces.sort( (a,b) => a.idEnlace < 1 ? 1 : a.idEnlace - b.idEnlace )
+       
+        if(listaEnlaces[listaEnlaces.length -1].idEnlace < 1) {
+             const enlacesNuevos = listaEnlaces
+                 .splice( listaEnlaces.findIndex( meta => meta.idEnlace < 1 ))
+                 .map( enlace => Enlace.crear(enlace,this));
+             
+             this.listaEnlaces = [...this.listaEnlaces , ...enlacesNuevos]
+         }
+ 
+
+        listaEnlaces.forEach( dataEnlace => {
+            const enlaceCargado = this.listaEnlaces.find( item => item.verDatos().idEnlace === dataEnlace.idEnlace );
+            if(!enlaceCargado){
+                this.listaEnlaces.push(new Enlace(dataEnlace,this));
+            }else {
+                enlaceCargado.editarDatos(dataEnlace);
+        
+            }
+        })
+        this.listaEnlaces.forEach( item => {
+            if(item.verDatos().idEnlace && listaEnlaces.every( enlace => enlace.idEnlace !== item.verDatos().idEnlace) ){
+                item.estadoEnBD = ESTADO_BD.B; 
+               }
+        }) ;
+        
+    }
+
+    public static async validar ( data : TRequestActividad, transaction ?: Transaction) : Promise<void> {
+        await new BD.Actividad(data).validate({ skip : ['createdAt','updatedAt','deletedAt']});
+        if(data.fechaDesde && data.fechaHasta  ){
+           if(Date.parse(data.fechaDesde.toString()) > Date.parse(data.fechaHasta.toString()) ){
+            throw INVALIDO.RANGO_ACT;
+           } 
+        } 
+        if(data.listaEnlaces){
+            if(process.env.NODE_ENV === 'development')console.log("validando enlaces..")
+           await Promise.all( data.listaEnlaces.map( async enlace =>await Enlace.validar(enlace)))
+        }
+        if(data.listaInstituciones){
+            if(process.env.NODE_ENV === 'development')console.log("validando instituciones..")
+            data.listaInstituciones.forEach(institucion => Institucion.validar(institucion))
+        }
+        if(data.listaMetas){
+            if(process.env.NODE_ENV === 'development')console.log("validando metas..")
+           await Promise.all( data.listaMetas.map( async meta =>await Meta.validar(meta)))
+        }
+        if(data.listaObjetivos){
+            if(process.env.NODE_ENV === 'development')console.log("validando objetivos..")
+            await Promise.all( Array.from(data.listaObjetivos.values()).map( async (id: any) => await Objetivo.validar({idObjetivo : id},transaction) ) )
+        }
+        if(data.listaProgramasSIPPE){
+            if(process.env.NODE_ENV === 'development')console.log("validando programas sippe..")
+            await Promise.all( Array.from(data.listaProgramasSIPPE.values()).map( async (id: any) => await ProgramaSIPPE.validar({idProgramaSippe : id},transaction) ) )
+        }
+        if(data.listaRelaciones){
+           if(process.env.NODE_ENV === 'development') console.log("validando relaciones..")
+            await Promise.all( Array.from(data.listaRelaciones.values()).map( async (id: any) => await Relacion.validar({idRelacion : id},transaction) ) )
+        }
+
+        if(data.listaUbicaciones){
+           if(process.env.NODE_ENV === 'development')console.log("validando ubicaciones..")
+            await Promise.all(data.listaUbicaciones.map( async ubi => await Ubicacion.validar(ubi)))
+        }
+        
+        if(data.listaFechasPuntuales ){
+           if(process.env.NODE_ENV === 'development') console.log("validando fechas puntuales..")
+           
+            data.listaFechasPuntuales.forEach( fecha => 
+                FechaPuntual.validar(
+                    fecha,
+                    new Date(data.fechaDesde || ''),
+                    new Date(data.fechaHasta || '')
+                ))
+        }
+        
+        
+    }
+
+    /* Conexion BD */
+
+    public async guardarEnBD( transaction ?: Transaction, transactionInsituciones ?: Transaction) : Promise<void> {
+        console.log('Actividad.guardarEnBD...');
+
+        switch (this.estadoEnBD) {
+            case ESTADO_BD.A:
+                await this.darDeAltaBD(transaction);
+                break;
+            case ESTADO_BD.M:
+                await this.modificarBD(transaction);
+                break;
+            case ESTADO_BD.B:
+                await this.darDeBajaBD(transaction)
+            default:
+                break;
+        }
+
+        if(this.listaEnlaces.length){
+            console.log('guardando enlaces..')
+            await Promise.all( this.listaEnlaces.map( async enlace => await enlace.guardarEnBD(transaction) ) )
+        }
+        if(this.listaFechasPuntuales.length){
+            console.log('guardando fecha puntuales..')
+            await Promise.all( this.listaFechasPuntuales.map( async fechaPuntual => await fechaPuntual.guardarEnBD(transaction) ) )
+        }
+        if(this.listaInstituciones.length){
+            console.log('guardando instituciones ..');
+        
+            await Promise.all( this.listaInstituciones.map(  async institucion => await institucion.guardarEnBD(transaction,transactionInsituciones) ) );
+          
+        }
+        if(this.listaMetas.length){
+            console.log('guardando metas ..')
+            await Promise.all( this.listaMetas.map( async meta => await meta.guardarEnBD(transaction) ) )
+        }
+        if(this.listaUbicaciones?.length){
+            console.log('guardando ubicaciones ..')
+            await Promise.all( this.listaUbicaciones.map( async ubicacion => await ubicacion.guardarEnBD(transaction)  ));
+        }
+        if(this.listaObjetivos?.size){
+            console.log('guardando objetivos ..')
+            await Objetivo.guardarPorActBD(this,this.listaObjetivos,transaction);
+
+        }
+        if(this.listaProgramasSIPPE?.size){
+            console.log('guardando programas ..')
+            await ProgramaSIPPE.guardarPorActBD(this,this.listaProgramasSIPPE,transaction)
+
+        }
+        if(this.listaRelaciones?.size){
+            console.log('guardando relaciones ..')
+            await Relacion.guardarPorActBD(this,this.listaRelaciones,transaction)
+
+        }
+       
+    }
+    private async darDeAltaBD(transaction?: Transaction): Promise<void> {
+
+        this.idActividad = (await BD.Actividad.create(this,{transaction})).idActividad;
+        
+    }
+    private async darDeBajaBD(transaction?: Transaction): Promise<void> {
+        
+        const resp = await BD.Actividad.destroy({
+            where : {idActividad : this.verID()},
+            transaction
+        });
+        if(resp < 1) throw ERROR.ACTIVIDAD_BAJA_BD;
+
+        if(this.listaEnlaces.length) {
+            this.listaEnlaces.forEach( item => item.estadoEnBD = ESTADO_BD.B);
+        }
+        if(this.listaFechasPuntuales.length) {
+            this.listaFechasPuntuales.forEach( item => item.estadoEnBD = ESTADO_BD.B);
+        }
+        if(this.listaInstituciones.length) {
+            this.listaInstituciones.forEach( item => item.estadoEnBD = ESTADO_BD.B);
+        }
+        if(this.listaUbicaciones.length) {
+            this.listaUbicaciones.forEach( item => item.estadoEnBD = ESTADO_BD.B);
+        }
+        if(this.listaObjetivos) {
+            Array.from(this.listaObjetivos.keys()).forEach( item => this.listaObjetivos?.set(item,ESTADO_BD.B)  )
+        }
+        if(this.listaRelaciones) {
+            Array.from(this.listaRelaciones.keys()).forEach( item => this.listaRelaciones?.set(item,ESTADO_BD.B)  )
+        }
+        if(this.listaProgramasSIPPE) {
+            Array.from(this.listaProgramasSIPPE.keys()).forEach( item => this.listaProgramasSIPPE?.set(item,ESTADO_BD.B)  )
+        }
+        if(this.listaMetas) {
+            this.listaMetas.forEach( meta => meta.estadoEnBD = ESTADO_BD.B);
+        }
+        
+    }
+    private async modificarBD(transaction?: Transaction): Promise<void> {
+
+
+       const resp = await BD.Actividad.update( 
+        this, 
+        { 
+            where : {idActividad : this.verID()}, 
+            transaction 
+        }
+        );
+    
+        if(resp[0] < 1 ) throw ERROR.ACTIVIDAD_MOD_BD;
+
+    }
+    public static async buscarPorIDBD(id: number, transaction?: Transaction, transactionInsituciones ?: Transaction): Promise<Actividad> { 
+        console.log('buscando actividad..',id)
+
+        let salida : Actividad = BD.Actividad.build(ACTIVIDAD_NULA,);
+        
+        const bdActividad  = await BD.Actividad.findByPk(id,{transaction});
+
+        if(!bdActividad) throw ERROR.ACTIVIDAD_INEXISTENTE;
+
+        salida.editar(bdActividad.dataValues);
+
+        console.log('cargando enlaces..')
+        const bdEnlaces = await BD.Enlace.buscarPorActBD(salida.verID(),transaction);
+        if(bdEnlaces)salida.cargarEnlaces(bdEnlaces.map(enlace => enlace.verDatos()));
+
+        console.log('cargando rango ejecución y fechas puntuales..');
+        if(salida.fechaDesde && salida.fechaHasta){
+            console.log('cargando fecha puntuales')
+            const bdFechasPuntuales = await FechaPuntual.buscarPorActBD(salida,transaction);
+            salida.cargarFechasPuntuales(
+                new Date(salida.data.fechaDesde ),
+                new Date(salida.data.fechaHasta),
+                bdFechasPuntuales.map(fecha => fecha.verDatos())
+            );
+        }
+
+        console.log('cargando instituciones ..')
+        const bdInsituciones = await BD.Institucion.buscarPorActBD(salida,transaction,transactionInsituciones);
+        if(bdInsituciones) salida.cargarInstituciones(bdInsituciones.map(inst => inst.verDatos()));
+        
+        console.log('cargando metas ..')
+        const bdMetas = await BD.Meta.buscarPorActBD(salida,transaction);
+        if(bdMetas) salida.cargarMetas(bdMetas.map(meta => meta.verDatos()));
+
+
+        console.log('cargando ubicaciones')
+        const bdUbicaciones = await BD.Ubicacion.buscarPorActBD(salida.verID(),transaction);
+        if(bdUbicaciones) salida.cargarUbicaciones(bdUbicaciones.map(ubicacion => ubicacion.verDatos()));
+        
+        console.log('cargando objetivos ..')
+        const bdObjetivos = await BD.Objetivo.buscarPorActBD(salida,transaction);
+        salida.cargarObjetivos(bdObjetivos);
+       
+        console.log('cargando programas ..')
+        const bdProgramas = await ProgramaSIPPE.buscarPorActBD(salida,transaction);
+        salida.cargarProgramasSIPPE( bdProgramas  )
+        
+        console.log('cargando relaciones ..')
+        const bdRelacioness = await BD.Relacion.buscarPorActBD(salida,transaction);
+        salida.cargarRelaciones( bdRelacioness  );
+        
+
+        salida.estadoEnBD = ESTADO_BD.M;
+        return salida;
+    } ;
+    public static async buscarPorAreaID(id : AreaId, transaction ?: Transaction) : Promise<TItemActividad[]>{
+        let salida : TItemActividad[] = [];
+
+        salida = (await BD.Actividad.findAll({  where : {idArea : id}, transaction}))
+            .map( (data : any)=> ({
+                idActividad : data.idActividad, 
+                desc : data.desc
+            }));
+        
+        return salida;
+    }
+
 
   static initModel(sequelize: Sequelize.Sequelize): typeof Actividad {
-    return Actividad.init({
-    idActividad: {
-      autoIncrement: true,
-      type: DataTypes.INTEGER,
-      allowNull: false,
-      primaryKey: true
-    },
-    idArea: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-      references: {
-        model: 'Area',
-        key: 'idArea'
-      }
-    },
-    idUsuario: {
-      type: DataTypes.STRING(255),
-      allowNull: true,
-      references: {
-        model: 'Usuario',
-        key: 'idUsuario'
-      }
-    },
-    nro: {
-      type: DataTypes.INTEGER,
-      allowNull: true
-    },
-    desc: {
-      type: DataTypes.STRING(2000),
-      allowNull: false
-    },
-    motivoCancel: {
-      type: DataTypes.STRING(500),
-      allowNull: true
-    },
-    fechaDesde: {
-      type: DataTypes.DATEONLY,
-      allowNull: true
-    },
-    fechaHasta: {
-      type: DataTypes.DATEONLY,
-      allowNull: true
-    }
-  }, {
+    return Actividad.init(ATRIBUTOS_TABLA_ACTIVIDAD_CONFIG, {
     sequelize,
     tableName: 'Actividad',
     timestamps: true,

@@ -12,3 +12,6 @@ export const generarOpcionesRemove = ( key : string,  foreignKey : string , mode
         }
     }
 }
+
+export const armarCantPropuestasXModalidad = ( cant : number )=>
+        cant < 10 ? `0${cant}` : `${cant}`;

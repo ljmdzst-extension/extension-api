@@ -1,6 +1,5 @@
 import { request, response } from "express";
 import sequelizeExtension from "../config/dbConfig";
-import logger from "../config/logsConfig";
 import { initModels } from "../models/init-models";
 
 
@@ -20,7 +19,7 @@ export const buscar = async(req : typeof request , res : typeof response)=>{
         });
 
     } catch (error : any) {
-        logger.log('error',error.status,' - ',error.message);
+        console.log('error',error.status,' - ',error.message);
         res.status(500).json({
             ok : true,
             data : null,

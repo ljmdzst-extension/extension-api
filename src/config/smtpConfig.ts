@@ -34,7 +34,7 @@ export const generarEmailValidaciónRegistro = (_to : string, _idUsuario : strin
             <section>
                 <p>Recibimos una solicitud de registro de usuario con este correo electrónico</p>
                 <p>Para confirmar el registro, haga clic en el siguiente enlace :</p>
-                <p><a href="${process.env.SERVER_HOST}/register/validation/${_idUsuario}">CONFIRMAR REGISTRO DE USUARIO</a></p> 
+                <p><a href="${process.env.SERVER_HOST}/usr/validar/${_idUsuario}">CONFIRMAR REGISTRO DE USUARIO</a></p> 
             </section>
             <footer>
                 <hr>

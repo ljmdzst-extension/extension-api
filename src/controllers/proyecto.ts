@@ -1,7 +1,6 @@
 
 import { initModels } from "../models/init-models";
 import { request, response } from "express";
-import logger from '../config/logsConfig';
 import sequelizeExtension from "../config/dbConfig";
 import ServiciosProyecto from "../services/proyecto";
 
@@ -37,7 +36,7 @@ export const getProyecto = async(req : typeof request , res : typeof response)=>
         
 
     } catch (error : any) {
-        logger.log('error',error.status,' - ',error.message);
+       console.log('error',error.status,' - ',error.message);
         res.status(error.status || 500).json({
             ok : false,
             data : null,
@@ -53,7 +52,7 @@ export const postProyecto = async(req : typeof request , res : typeof response)=
 
     } catch (error : any) {
         await transaction.rollback();
-        logger.log('error',error.status,' - ',error.message);
+       console.log('error',error.status,' - ',error.message);
         res.status(500).json({
             ok : false,
             data : null,
@@ -71,7 +70,7 @@ export const putProyecto = async(req : typeof request , res : typeof response)=>
 
     } catch (error : any) {
         await transaction.rollback();
-        logger.log('error',error.status,' - ',error.message);
+       console.log('error',error.status,' - ',error.message);
         res.status(error.status || 500).json({
             ok : false,
             data : null,
@@ -85,7 +84,7 @@ export const deleteProyecto = async(req : typeof request , res : typeof response
         
 
     } catch (error : any) {
-        logger.log('error',error.status,' - ',error.message);
+       console.log('error',error.status,' - ',error.message);
         res.status(error.status || 500).json({
             ok : false,
             data : null,

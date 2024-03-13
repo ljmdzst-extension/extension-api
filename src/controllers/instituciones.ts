@@ -1,5 +1,4 @@
 import { request, response } from "express";
-import logger from "../config/logsConfig";
 import sequelizeExtension from "../config/dbConfig";
 import { Propuesta } from "../models/Propuesta";
 import { Institucion } from "../models/Institucion";
@@ -18,7 +17,7 @@ export const verInstituciones = async (req : typeof request , res : typeof respo
     } catch (error : any) {
         await transaction.rollback();
 
-        logger.log('error',error.status,' - ',error.message);
+        console.log('error',error.status,' - ',error.message);
 
         res.status(error.status || 500).json({
             ok : false,
@@ -39,7 +38,7 @@ export const editarInstituciones = async (req : typeof request , res : typeof re
 
 
     } catch (error : any) {
-        logger.log('error',error.status,' - ',error.message);
+        console.log('error',error.status,' - ',error.message);
         console.log(error)
         res.status(500).json({
             ok : false,
@@ -57,7 +56,7 @@ export const bajaInstitucion = async (req : typeof request , res : typeof respon
 
 
     } catch (error : any) {
-        logger.log('error',error.status,' - ',error.message);
+        console.log('error',error.status,' - ',error.message);
         console.log(error)
         res.status(500).json({
             ok : false,
