@@ -1,8 +1,5 @@
 
 import { Router } from "express";
-
-import { endpoint } from "../controllers/endpoint";
-
 import { 
     validarActividadExistente,
     validarActividadSuspendida,
@@ -13,11 +10,16 @@ import {
     validarSchema
 } from "../middlewares/actividad";
 
-import ControllerActividad from "../controllers/actividad";
+import { 
+    cargarActividad, 
+    darDeBajaActividad, 
+    editarActividad, 
+    restaurarActividad, 
+    suspenderActividad, 
+    verActividad 
+} from "../controllers/actividad";
 
-import { middleware } from "../middlewares/middleware";
 import {check} from 'express-validator';
-import { extraerToken } from "../middlewares/auth";
 import { validarPermisoGestionMetas } from "../middlewares/permisos";
 
 const routerActividad = Router();
@@ -25,17 +27,16 @@ const routerActividad = Router();
 routerActividad.get ( 
     '/:idActividad',
     check('idActividad','Debe ingresar un id de actividad como parámetro').isNumeric(),
-    middleware(validarParametros), 
-    endpoint( ControllerActividad.verActividad ) 
+    validarParametros, 
+    verActividad 
 );
 
 routerActividad.post ( 
     '/',
     validarPermisoGestionMetas,
-    middleware(validarCamposActividad), 
-    endpoint( ControllerActividad.cargarActividad ) 
+    validarCamposActividad, 
+    cargarActividad 
 );
-
 routerActividad.put ( 
     '/',
     validarPermisoGestionMetas,
@@ -44,30 +45,29 @@ routerActividad.put (
         validarSchema,
       
     ], 
-    middleware(validarActividadExistente),
-    middleware(validarCamposActividad), 
-    endpoint( ControllerActividad.editarActividad ) 
-);
-
-routerActividad.put (
-    '/cancel',
-    middleware(validarActividadExistente),
-    middleware(validarMotivoSuspension),
-    endpoint( ControllerActividad.suspenderActividad)
+    validarActividadExistente,
+    validarCamposActividad, 
+    editarActividad 
 );
 
 routerActividad.put (
     '/restore',
-    middleware(validarActividadSuspendida),
-    endpoint( ControllerActividad.restaurarActividad)
+    validarActividadSuspendida,
+    restaurarActividad
 );
 
+routerActividad.put (
+    '/cancel',
+    validarActividadExistente,
+    validarMotivoSuspension,
+    suspenderActividad
+);
 
 routerActividad.delete (
     '/',
     validarPermisoGestionMetas,
-    middleware(validarActividadExistente),
-    endpoint( ControllerActividad.darDeBajaActividad)
+    validarActividadExistente,
+    darDeBajaActividad
 );
 
 export default routerActividad;

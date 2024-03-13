@@ -1,10 +1,19 @@
-import { Transaction } from "sequelize";
 import { BD } from "../config/dbConfig";
 import { INVALIDO } from "../logs/validaciones";
+import { request, response, NextFunction } from "express";
 
-export const validarIdArea = async(data : {idArea : string}, transaction ?: Transaction,transactionInsituciones ?: Transaction)=>{
-    if(! await BD.Area.findByPk(data.idArea,{transaction}) ){
-        throw INVALIDO.ID_AREA_ACT;
+export const validarIdArea =  async(req : typeof request, resp : typeof response , next : NextFunction)=>{
+    
+    const data = req.params;
+  
+    if( await BD.Area.findByPk(data.idArea) ){
+       next();
+    } else {
+        resp.status(INVALIDO.ID_AREA_ACT.status).json({
+            ok : false,
+            data : null,
+            error : INVALIDO.ID_AREA_ACT.message
+        })
     }
 }
 

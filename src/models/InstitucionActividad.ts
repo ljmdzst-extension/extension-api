@@ -16,17 +16,7 @@ export class InstitucionActividad extends Model<InstitucionActividadAttributes, 
   idActividad!: number;
   idInstitucion!: number;
 
-  // InstitucionActividad belongsTo Actividad via idActividad
-  idActividadActividad!: Actividad;
-  getIdActividadActividad!: Sequelize.BelongsToGetAssociationMixin<Actividad>;
-  setIdActividadActividad!: Sequelize.BelongsToSetAssociationMixin<Actividad, ActividadId>;
-  createIdActividadActividad!: Sequelize.BelongsToCreateAssociationMixin<Actividad>;
-  // InstitucionActividad belongsTo Institucion via idInstitucion
-  idInstitucionInstitucion!: Institucion;
-  getIdInstitucionInstitucion!: Sequelize.BelongsToGetAssociationMixin<Institucion>;
-  setIdInstitucionInstitucion!: Sequelize.BelongsToSetAssociationMixin<Institucion, InstitucionId>;
-  createIdInstitucionInstitucion!: Sequelize.BelongsToCreateAssociationMixin<Institucion>;
-
+ 
   static initModel(sequelize: Sequelize.Sequelize): typeof InstitucionActividad {
     return InstitucionActividad.init({
     idActividad: {

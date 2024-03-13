@@ -1,4 +1,5 @@
 import { Router } from "express";
+
 import { 
     authUsuario, 
     loginUsuario, 
@@ -6,23 +7,31 @@ import {
     validarRegistro, 
     verListaUsuarios
 } from "../controllers/usuario";
-import { endpoint } from "../controllers/endpoint";
-import { chequearUsuarioNoExistente, validarCamposRegistro, validarCorreoYContraseña, validarSchema } from "../middlewares/usuario";
-import { middleware } from "../middlewares/middleware";
-import { extraerToken } from "../middlewares/auth";
+
+import { 
+    chequearUsuarioNoExistente, 
+    obtenerDataUsuario, 
+    validarCamposRegistro, 
+    validarCorreoYContraseña, 
+    validarPass, 
+    validarSchema, 
+    validarUsuarioNoPendiente 
+} from "../middlewares/usuario";
+
+import { extraerToken, validarToken } from "../middlewares/auth";
 
 
 
 const usuarioRouter = Router();
 
-usuarioRouter.post('/login', [...validarCorreoYContraseña,validarSchema], endpoint( loginUsuario ) );
+usuarioRouter.post('/login', [...validarCorreoYContraseña,validarSchema], obtenerDataUsuario,validarPass,validarUsuarioNoPendiente,loginUsuario );
 
-usuarioRouter.post('/register',[...validarCamposRegistro, validarSchema ],middleware(chequearUsuarioNoExistente), endpoint(registerUsuario) );
+usuarioRouter.post('/register',[...validarCamposRegistro, validarSchema ],chequearUsuarioNoExistente, registerUsuario );
 
-usuarioRouter.post('/auth', extraerToken , endpoint(authUsuario) );
+usuarioRouter.post('/auth', extraerToken, validarToken, authUsuario );
 
 usuarioRouter.put('/validar/:idUsuario', validarRegistro );
 
-usuarioRouter.get('/', endpoint(verListaUsuarios) );
+usuarioRouter.get('/',verListaUsuarios );
 
 export default usuarioRouter;

@@ -1,11 +1,21 @@
 import { Transaction } from "sequelize";
 import { INVALIDO } from "../logs/validaciones";
 import { AreaPrograma } from "../models/AreaPrograma";
+import { request, response, NextFunction } from "express";
 
 
-export const validarAnio = async(data : {idAnio : string}, transaction ?: Transaction,transactionInsituciones ?: Transaction)=>{
-    if( Number(data.idAnio) < 2022 ) throw INVALIDO.ANIO_PROG;
-    if(! await AreaPrograma.findOne({where : {anio : data.idAnio},transaction}) ){
-        throw INVALIDO.ANIO_PROG;
-    }
+export const validarAnio =  async(req : typeof request, resp : typeof response , next : NextFunction)=>{
+   const data = req.params;
+   
+   
+   
+   if( Number(data.idAnio) > 2021 && await AreaPrograma.findOne({where : {anio : data.idAnio}})  ){
+       next();
+   } else {
+     resp.status(INVALIDO.ANIO_PROG.status).json({ 
+        ok : false, 
+        error : INVALIDO.ANIO_PROG.message, 
+        data : null
+    });
+   }
 }

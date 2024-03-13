@@ -19,6 +19,8 @@ export const endpoint = <ENTRADA,SALIDA >( _servicio : servicio<ENTRADA,SALIDA>)
             
             let data : any = undefined;
 
+            
+
             if(req.usuario) {
                 data = {usuario : req.usuario}
             }
@@ -28,6 +30,8 @@ export const endpoint = <ENTRADA,SALIDA >( _servicio : servicio<ENTRADA,SALIDA>)
             else if(req.method !== 'GET'){
                 data =  {...data, ...req.body};
             }
+
+
             const salida = await _servicio(data,transaction);
             
             await transaction.commit();

@@ -8,45 +8,109 @@ import {checkSchema,body, validationResult} from 'express-validator'
 
 
 
-export const validarCamposActividad = async(data : IActividad, transaction ?: Transaction, transactionInsituciones ?: Transaction)=> {
+export const validarCamposActividad =  async(req : typeof request, resp : typeof response , next : NextFunction)=>{
+    
+    try {
+        const data = req.body;
+
+        console.log('validando campos actividad ..');
+
+        await Actividad.validar(data);
+        
+        next();
+    } catch (error : any) {
+        if(!error.status) console.log(error);
+
+        resp.status(error.status || 500).json({
+            ok : false,
+            data : null,
+            error : error.message || 'error de servidor'
+        })
+    }
+}
+
+export const validarActividadExistente =  async(req : typeof request, resp : typeof response , next : NextFunction)=>{
+    const data = req.body;
+
+    if(await BD.Actividad.findByPk(Number(data.idActividad),{attributes : ['idActividad']})){
+        next();
+    } else {
+        resp.status(ERROR.ACTIVIDAD_INEXISTENTE.status).json({
+            ok : false,
+            data : null,
+            error : ERROR.ACTIVIDAD_INEXISTENTE.message
+        })
+    }
+}
+
+export const validarActividadSuspendida = async(req : typeof request, resp : typeof response , next : NextFunction)=>{
+        
+        let error = undefined;
+
+        const {idActividad} = req.body;
+
+        if(!idActividad) error = {status : 400, message : 'no se recibió idActividad'}
+
+        if(idActividad){
+            const iActividad = await BD.Actividad.findByPk(Number(idActividad),{attributes : ['idActividad','motivoCancel']})
+
+       
+            if(!iActividad){
+                error =  ERROR.ACTIVIDAD_INEXISTENTE;
+            } 
+    
+            if(iActividad && !iActividad.motivoCancel) {
+                error =  ERROR.ACTIVIDAD_NO_SUSPENDIDA;
+            }
+        }
+       
+
+        if(!error) { 
+            next();
+
+        } else {
+            resp.status(error.status || 500).json({
+                ok : false,
+                error : error.message || 'error de servidor',
+                data: null
+            })
+        }
+
+
+  
+}
+
+export const validarParametros =  async(req : typeof request, resp : typeof response , next : NextFunction)=>{
  
-    console.log('validando campos actividad ..')
-    await Actividad.validar(data,transaction);
-}
+   const data = req.params;
 
-export const validarActividadExistente = async(data : IActividad, transaction ?: Transaction,transactionInsituciones ?: Transaction)=>{
-    if(!await BD.Actividad.findByPk(Number(data.idActividad),{attributes : ['idActividad'], transaction})){
-        throw ERROR.ACTIVIDAD_INEXISTENTE;
-    }
-}
-
-export const validarActividadSuspendida = async(data : IActividad, transaction ?: Transaction,transactionInsituciones ?: Transaction)=>{
-    const iActividad = await BD.Actividad.findByPk(Number(data.idActividad),{attributes : ['idActividad','motivoCancel'], transaction})
-    if(!iActividad){
-        throw ERROR.ACTIVIDAD_INEXISTENTE;
-    }
-
-    if(!iActividad.motivoCancel) {
-        throw ERROR.ACTIVIDAD_NO_SUSPENDIDA;
-    }
-
-}
-
-export const validarParametros = async( data : {idActividad : string}, transaction ?: Transaction, transactionInsituciones ?: Transaction) => {
- 
-    if((!Number(data.idActividad)) || (Number(data.idActividad) < 1)) throw INVALIDO.ID_ACT;
+   if((Number(data.idActividad)) && (Number(data.idActividad) > 0)) {
+    next();
+   } else {
+     resp.status(INVALIDO.ID_ACT.status).json({
+        ok : false,
+        data : null,
+        error : INVALIDO.ID_ACT.message
+     })
+   }
    
 }
 
-export const validarMotivoSuspension = async( data : IActividad,  transaction ?: Transaction, transactionInsituciones ?: Transaction )=>{
+export const validarMotivoSuspension =  async(req : typeof request, resp : typeof response , next : NextFunction)=>{
 
-    console.log('validando motivo cancel');
+    const data = req.body;
 
-    if( ! data.motivoCancel) throw INVALIDO.MOT_CANCEL_ACT;
+    if( data.motivoCancel && data.motivoCancel.length > 0 && data.motivoCancel.length < 501  ) {
+        next();
 
-    if( data.motivoCancel.length < 1 || data.motivoCancel.length > 500  ) {
-        throw INVALIDO.MOT_CANCEL_ACT;
+    } else {
+        resp.status(INVALIDO.MOT_CANCEL_ACT.status).json({
+            ok : false,
+            error : INVALIDO.MOT_CANCEL_ACT.message
+        })
     }
+
+
 
 }
 

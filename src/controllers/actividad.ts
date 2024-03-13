@@ -1,105 +1,150 @@
-import {  Transaction } from "sequelize";
+
+import cli from 'cli-color'
 import Actividad, { ACTIVIDAD_NULA, IResponseActividad } from "../classes/Actividad";
 import { ESTADO_BD } from "../types/general";
-import { DataDeleteActividad, DataGetActividad, DataPostActividad, DataPutActividad } from "../types/actividad";
-
- 
-
-class ControllerActividad {
+import { request, response } from "express";
+import { HttpHelpers } from '../helpers/general';
 
 
-    public static async cargarActividad ( data : DataPostActividad , transaction : Transaction ) 
-    : Promise<IResponseActividad>
+export const cargarActividad =  async ( req : typeof request , resp : typeof response) =>
     {
         
-        let salida : IResponseActividad = ACTIVIDAD_NULA;
-        
-        const iActividad = new Actividad(data); 
+       try {
+            let salida : IResponseActividad = ACTIVIDAD_NULA;
+            
+            const data = req.body;
 
-        await iActividad.guardarEnBD(transaction);
-        
-        salida = iActividad.verDatos();
+            const iActividad = new Actividad(data); 
+            
+            await iActividad.guardarEnBD();
+            
+            salida = iActividad.verDatos();
 
-        return salida;
+            HttpHelpers.responderPeticionOk(resp, salida);
+
+       } catch (error : any) {
+            if(!error.status) console.log(cli.red(error));
+            
+            HttpHelpers.responderPeticionError(resp, error.message,error.status );
+       }
+
+        
     }
 
-    public static async verActividad( data : DataGetActividad, transaction : Transaction ) 
-    : Promise<IResponseActividad> 
+export const verActividad = async ( req : typeof request , resp : typeof response)  =>
     {
-        let salida : IResponseActividad = ACTIVIDAD_NULA;
+        try {
+            let salida : IResponseActividad = ACTIVIDAD_NULA;
 
-        const iActividad = await Actividad.buscarPorIDBD(data.idActividad,transaction);
+            const {idActividad} = req.params;
 
-        salida = iActividad.verDatos();
+            const iActividad = await Actividad.buscarPorIDBD(Number(idActividad));
 
-        return salida;
+            salida = iActividad.verDatos();
+
+            HttpHelpers.responderPeticionOk(resp, salida);
+
+         } catch (error : any) {
+            if(!error.status) console.log(cli.red(error));
+            
+            HttpHelpers.responderPeticionError(resp, error.message,error.status );
+       }
+
+
     }
 
-    public static async editarActividad ( data : DataPutActividad, transaction : Transaction, transactionInsituciones ?: Transaction ) 
-    : Promise<IResponseActividad> 
+export const editarActividad = async ( req : typeof request , resp : typeof response)  =>
     {
 
+        try {
         let salida : IResponseActividad = ACTIVIDAD_NULA;
 
-        const iActividad = await Actividad.buscarPorIDBD(data.idActividad,transaction) ;
+        const data = req.body;
+
+        const iActividad = await Actividad.buscarPorIDBD(data.idActividad) ;
 
         iActividad.editar(data);
         
-        await iActividad.guardarEnBD(transaction,transactionInsituciones);
+        await iActividad.guardarEnBD();
 
         salida = iActividad.verDatos();
 
        
-        
-        return salida;
+        HttpHelpers.responderPeticionOk(resp, salida);
+         } catch (error : any) {
+            if(!error.status) console.log(cli.red(error));
+            
+            HttpHelpers.responderPeticionError(resp, error.message,error.status );
+       }
     }
 
-    public static async darDeBajaActividad ( data : DataDeleteActividad, transaction : Transaction )
-    : Promise<boolean> 
+export const darDeBajaActividad = async ( req : typeof request , resp : typeof response)=>
     {
 
+        try {
 
-        const iActividad = await Actividad.buscarPorIDBD( data.idActividad, transaction );
+            const {idActividad} = req.body;
 
-        iActividad.estadoEnBD = ESTADO_BD.B;
+            const iActividad = await Actividad.buscarPorIDBD( idActividad );
 
-        await iActividad.guardarEnBD(transaction);
+            iActividad.estadoEnBD = ESTADO_BD.B;
 
-        return true;
-    }
+            await iActividad.guardarEnBD();
 
-    public static async suspenderActividad ( data : DataPutActividad, transaction  : Transaction,  transactionInsituciones ?: Transaction)
-    : Promise<IResponseActividad> 
-    {
-        let salida : IResponseActividad = ACTIVIDAD_NULA;
-
-        const iActividad = await Actividad.buscarPorIDBD(data.idActividad,transaction) ;
-
-
-        if(data.motivoCancel) {
-            iActividad.editar(iActividad.verDatos())
-            iActividad.cancelar(data.motivoCancel);
+            HttpHelpers.responderPeticionOk(resp, '');
+            
+        } catch (error : any) {
+            if(!error.status) console.log(cli.red(error));
+            
+            HttpHelpers.responderPeticionError(resp, error.message,error.status );
         }
-        
-        await iActividad.guardarEnBD(transaction,transactionInsituciones);
+    }
 
-        salida = iActividad.verDatos();
+export const suspenderActividad =async ( req : typeof request , resp : typeof response) =>
+    {
+        try {
+            let salida : IResponseActividad = ACTIVIDAD_NULA;
+            
+            const {idActividad,motivoCancel} = req.body;
+
+            const iActividad = await Actividad.buscarPorIDBD(idActividad) ;
+
+
+            if(motivoCancel) {
+                iActividad.editar(iActividad.verDatos())
+                iActividad.cancelar(motivoCancel);
+            }
+            
+            await iActividad.guardarEnBD();
+
+            salida = iActividad.verDatos();
+
+            HttpHelpers.responderPeticionOk(resp, salida);
         
-        return salida;
+         } catch (error : any) {
+            if(!error.status) console.log(cli.red(error));
+            
+            HttpHelpers.responderPeticionError(resp, error.message,error.status );
+       }
     }
     
-    public static async restaurarActividad( data : DataPutActividad, transaction : Transaction )
-    : Promise<IResponseActividad> {
+export const restaurarActividad = async ( req : typeof request , resp : typeof response) => {
 
-        const iActividad = await Actividad.buscarPorIDBD(data.idActividad);
+        try {
 
-        iActividad.editar(iActividad.verDatos());
-        iActividad.restaurar();
+            const {idActividad} = req.body;
 
-        await iActividad.guardarEnBD(transaction);
+            const iActividad = await Actividad.buscarPorIDBD(idActividad);
+            iActividad.editar(iActividad.verDatos());
+            iActividad.restaurar();
 
-        return iActividad.verDatos();
+            await iActividad.guardarEnBD();
+
+            HttpHelpers.responderPeticionOk(resp, '');
+
+        } catch (error : any) {
+            if(!error.status) console.log(cli.red(error));
+            
+            HttpHelpers.responderPeticionError(resp, error.message,error.status );
+        }
     }
-}
-
-export default ControllerActividad;

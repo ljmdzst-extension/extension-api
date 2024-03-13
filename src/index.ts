@@ -29,7 +29,6 @@ const app = express();
 
 app.use(cors());
 
-
 app.use(express.json());
 
 app.use(express.static(path.join(__dirname,'public')));
@@ -37,8 +36,8 @@ app.use(express.static(path.join(__dirname,'public')));
 // login de cada request
 app.use(informarPeticion);
 
-const BASE_PATH = '/api/v2';
 
+const BASE_PATH = '/api/v2';
 
 app.use( `${BASE_PATH}/usr`, usuarioRouter  ) 
 app.use( `${BASE_PATH}/usr/bases`, RouterBases  ) 

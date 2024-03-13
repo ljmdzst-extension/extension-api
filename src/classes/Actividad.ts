@@ -17,6 +17,8 @@ import { INVALIDO } from '../logs/validaciones';
 import { ESTADO_BD } from '../types/general';
 
 
+const ACTIVIDAD_NULA = {idActividad : 0, idArea : 0, nro : 0 , desc : ''};
+  
 
 type ID_ACT = number;
 
@@ -49,8 +51,6 @@ type IItemActividad = {
     desc : string
 }
 
-const ACTIVIDAD_NULA = {idActividad : 0, idArea : 0, nro : 0 , desc : ''};
-  
 
 class Actividad  {
 
@@ -161,7 +161,8 @@ class Actividad  {
 
     private cargarProgramasSIPPE( listaIds : Array<ID_PROG_SIPPE>)
     {   
-        if( !listaIds.length ) { console.log(cli.white(' lista prog SIPPE vacía - omitiendo...')); return; }
+        if( !listaIds.length ) { 
+            if(process.env.NODE_ENV === 'development') console.log(cli.white(' lista prog SIPPE vacía - omitiendo...')); return; }
 
         Array.from(this.data.listaProgramasSIPPE?.keys() || [])?.forEach( clave => this.data.listaProgramasSIPPE?.set(clave,ESTADO_BD.B) );
         if(listaIds.length > 0){
@@ -173,7 +174,8 @@ class Actividad  {
     };
     private cargarRelaciones( listaIds : Array<ID_RELACION> )
     {
-        if( !listaIds.length ) { console.log(cli.white(' lista relaciones vacía - omitiendo...')); return; }
+        if( !listaIds.length ) { 
+            if(process.env.NODE_ENV === 'development') console.log(cli.white(' lista relaciones vacía - omitiendo...')); return; }
       
         Array.from(this.data.listaRelaciones?.keys() || [])
             ?.forEach( clave => this.data.listaRelaciones?.set(clave,ESTADO_BD.B) );
@@ -186,7 +188,8 @@ class Actividad  {
     };
     private cargarObjetivos( listaIds : Array<ID_OBJETIVO> )
     {
-        if( !listaIds.length ) { console.log(cli.white(' lista objetivos vacía - omitiendo...')); return; }
+        if( !listaIds.length ) { 
+            if(process.env.NODE_ENV === 'development') console.log(cli.white(' lista objetivos vacía - omitiendo...')); return; }
         
         Array.from(this.data.listaObjetivos?.keys() || [])?.forEach( clave => this.data.listaObjetivos?.set(clave,ESTADO_BD.B) );
 
@@ -232,7 +235,9 @@ class Actividad  {
     private cargarInstituciones( listaInstituciones ?: Array< IInstitucion> )
     {
 
-        if( !listaInstituciones) { console.log(cli.white(' lista instituciones vacía - omitiendo...')); return; }
+        if( !listaInstituciones) {
+            if(process.env.NODE_ENV === 'development') console.log(cli.white(' lista instituciones vacía - omitiendo...')); 
+            return; }
         if(listaInstituciones.length < 1){
             this.listaInstituciones.forEach( item => {item.darDeBajaBD();});
             return;
@@ -269,7 +274,9 @@ class Actividad  {
     
     private cargarMetas(listaMetas ?: Array<IMeta> )
     {
-        if( !listaMetas) { console.log(cli.white(' lista metas vacía - omitiendo...')); return; }
+        if( !listaMetas) {
+            if(process.env.NODE_ENV === 'development') console.log(cli.white(' lista metas vacía - omitiendo...')); 
+            return; }
         if( listaMetas.length < 1) {
             this.listaMetas.forEach( item => {item.estadoEnBD = ESTADO_BD.B;});
             return;
@@ -308,7 +315,9 @@ class Actividad  {
     };
     private cargarUbicaciones( listaUbicaciones ?: Array<IUbicacion>)
     {
-       if( !listaUbicaciones ){console.log(cli.white(' lista ubicaciones vacía - omitiendo...')); return; }
+       if( !listaUbicaciones ){
+        if(process.env.NODE_ENV === 'development') console.log(cli.white(' lista ubicaciones vacía - omitiendo...')); 
+        return; }
        if( listaUbicaciones.length < 1) { 
         this.listaUbicaciones.forEach( item => {item.estadoEnBD = ESTADO_BD.B;} );
         return;
@@ -344,7 +353,9 @@ class Actividad  {
     };
     private cargarEnlaces(listaEnlaces ?: Array<IEnlace>)
     {
-        if( !listaEnlaces ) {console.log(cli.white(' lista enlaces vacía - omitiendo...')); return;}
+        if( !listaEnlaces ) {
+            if(process.env.NODE_ENV === 'development') console.log(cli.white(' lista enlaces vacía - omitiendo...')); 
+            return;}
         if( listaEnlaces.length < 1) { 
             this.listaEnlaces.forEach( item => {item.estadoEnBD = ESTADO_BD.B; }) ;
             return;
@@ -396,37 +407,37 @@ class Actividad  {
            } 
         } 
         if(data.listaEnlaces){
-            console.log("validando enlaces..")
+            if(process.env.NODE_ENV === 'development')console.log("validando enlaces..")
            await Promise.all( data.listaEnlaces.map( async enlace =>await Enlace.validar(enlace)))
         }
         if(data.listaInstituciones){
-            console.log("validando instituciones..")
+            if(process.env.NODE_ENV === 'development')console.log("validando instituciones..")
             data.listaInstituciones.forEach(institucion => Institucion.validar(institucion))
         }
         if(data.listaMetas){
-            console.log("validando metas..")
+            if(process.env.NODE_ENV === 'development')console.log("validando metas..")
            await Promise.all( data.listaMetas.map( async meta =>await Meta.validar(meta)))
         }
         if(data.listaObjetivos){
-            console.log("validando objetivos..")
+            if(process.env.NODE_ENV === 'development')console.log("validando objetivos..")
             await Promise.all( Array.from(data.listaObjetivos.values()).map( async (id: any) => await Objetivo.validar({idObjetivo : id},transaction) ) )
         }
         if(data.listaProgramasSIPPE){
-            console.log("validando programas sippe..")
+            if(process.env.NODE_ENV === 'development')console.log("validando programas sippe..")
             await Promise.all( Array.from(data.listaProgramasSIPPE.values()).map( async (id: any) => await ProgramaSIPPE.validar({idProgramaSippe : id},transaction) ) )
         }
         if(data.listaRelaciones){
-            console.log("validando relaciones..")
+           if(process.env.NODE_ENV === 'development') console.log("validando relaciones..")
             await Promise.all( Array.from(data.listaRelaciones.values()).map( async (id: any) => await Relacion.validar({idRelacion : id},transaction) ) )
         }
 
         if(data.listaUbicaciones){
-            console.log("validando ubicaciones..")
+           if(process.env.NODE_ENV === 'development')console.log("validando ubicaciones..")
             await Promise.all(data.listaUbicaciones.map( async ubi => await Ubicacion.validar(ubi)))
         }
         
         if(data.listaFechasPuntuales ){
-            console.log("validando fechas puntuales..")
+           if(process.env.NODE_ENV === 'development') console.log("validando fechas puntuales..")
            
             data.listaFechasPuntuales.forEach( fecha => 
                 FechaPuntual.validar(

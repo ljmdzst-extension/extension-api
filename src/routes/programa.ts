@@ -1,11 +1,11 @@
 
 import { Router } from "express";
-import { ControllerPrograma } from "../controllers/programa";
-import { endpoint } from "../controllers/endpoint";
+import { verListaProgramasConAreas } from "../controllers/programa";
+
 
 
 const routerPrograma = Router();
 
-routerPrograma.get( '/:anio', endpoint( ControllerPrograma.verListaProgramasConAreas ) );
+routerPrograma.get( '/:anio',verListaProgramasConAreas);
 
 export default routerPrograma;

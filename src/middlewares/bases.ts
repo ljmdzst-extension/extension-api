@@ -17,5 +17,6 @@ export const informarPeticion = ( req : typeof request, res : typeof response, n
         default:
             break;
     }
+    console.log(req.body.idActividad);
     next();
 }
