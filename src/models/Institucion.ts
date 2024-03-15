@@ -1,8 +1,6 @@
 import * as Sequelize from 'sequelize';
 import { DataTypes, Model, Optional } from 'sequelize';
-import type { InstitucionActividad, InstitucionActividadId } from './InstitucionActividad';
-import type { PropuestaInstitucion, PropuestaInstitucionId } from './PropuestaInstitucion';
-import type { Responsable, ResponsableId } from './Responsable';
+import type { InstitucionActividad } from './InstitucionActividad';
 import { BD } from '../config/dbConfig';
 import { ESTADO_BD } from '../types/general';
 import { Actividad } from './Actividad';
