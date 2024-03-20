@@ -147,6 +147,7 @@ class Relacion{
 
         return salida;
     } ;
+    
     public static async guardarPorActBD( iActividad :Actividad , listaIds : Map<ID_RELACION,ESTADO_BD>, transaction ?: Transaction) : Promise<void> {
 
         if( listaIds.size < 0) {
