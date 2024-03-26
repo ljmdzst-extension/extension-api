@@ -1,4 +1,4 @@
-import { Transaction } from "sequelize";
+import { Transaction, where } from "sequelize";
 import { BD } from "../config/dbConfig";
 import Actividad from "./Actividad";
 import { ERROR } from "../logs/errores";
@@ -94,28 +94,25 @@ class FechaPuntual{
         if(!bdFechaPuntual ) throw ERROR.FECHA_PUNTUAL_INEXISTENTE;
         return new FechaPuntual(bdFechaPuntual.dataValues);
     } ;
-    public static async buscarPorActBD(iAct: Actividad, transaction?: Transaction | undefined): Promise<Array<FechaPuntual>> {
 
-        let salida : FechaPuntual[] = [];
-
-        const bdFechasPuntualesActividad = await BD.FechaPuntualActividad.findAll({where : {idActividad : iAct.verID()},transaction});
-
-        if(bdFechasPuntualesActividad.length > 0) {
-
-           await Promise.all(
-            bdFechasPuntualesActividad.map( async bdFechaPuntualActividad => {
-                const bdFechaPuntual = await BD.FechaPuntual.findByPk(bdFechaPuntualActividad.idFecha,{transaction});
-                if(bdFechaPuntual){
-                    salida.push( new FechaPuntual(bdFechaPuntual.dataValues,iAct) )
-                } else 
-                    console.log(`fecha puntual ${bdFechaPuntualActividad.idFecha} no existe en bd`);
-            } )
-           )
+    public static async buscarAsociadasPorActBD(listaIds : ID_FECHA[], iAct : Actividad, transaction?: Transaction | undefined ) {
         
+        if(process.env.NODE_ENV === "development")console.log('buscando fechas puntuales asociadas..');
+
+        await BD.FechaPuntualActividad.findAll({where : {idActividad : iAct.verID()},transaction}).then( fechasAsociadas =>{
+            if(fechasAsociadas.length > 0){
+                listaIds.push(...fechasAsociadas.map( fecha => fecha.idActividad));
+            }
+        });
+    }
+    public static async buscarPorActBD(listaIds : ID_FECHA[], iAct: Actividad, transaction?: Transaction | undefined): Promise<void> {
+
+        if(listaIds.length > 0) {
+            const fechasPuntuales = await BD.FechaPuntual.findAll({where : {idFecha : listaIds},transaction})
+           iAct.cargarFechasPuntuales( fechasPuntuales );
         }
 
-        return salida;
-
+        return;
     }
 }
 

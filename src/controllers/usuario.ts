@@ -14,7 +14,7 @@ type DataListaUsuarios = { usuarios :{ idUsuario : string , email : string }[] }
 export const loginUsuario =  async( req : any, resp : typeof response  ) => {
 
     try {
-        const { usuario } = req;
+        const { usuario } = req.usuario;
     
         const persona = await BD.Persona.findOne({
             attributes : ['ape','nom'],
@@ -34,7 +34,8 @@ export const loginUsuario =  async( req : any, resp : typeof response  ) => {
             token : token
         });
     } catch (error : any) {
-        HttpHelpers.responderPeticionError(resp,error.status,error.message)
+
+        HttpHelpers.responderPeticionError(resp,error.status || 500,error.message || error)
     }
 
 }
@@ -42,7 +43,9 @@ export const loginUsuario =  async( req : any, resp : typeof response  ) => {
 export const authUsuario = async( req : any, resp : typeof response  )  => {
    
    try {
-       const _token = jwt.sign( {idUsuario : req.usuario.idUsuario},process.env.HASH_KEY || '', {expiresIn : 60 * 60} );
+        const {idUsuario}  = req.usuario.usuario;
+        
+       const _token = jwt.sign( {idUsuario} ,process.env.HASH_KEY || '', {expiresIn : 60 * 60} );
         
         HttpHelpers.responderPeticionOk(resp,{token : _token});
 

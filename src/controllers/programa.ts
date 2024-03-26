@@ -3,24 +3,30 @@
 import { Transaction } from "sequelize";
 import Programa, { IPrograma } from "../classes/Programa";
 import { DataGetProgramas } from "../types/programa";
-import { request, response } from "express";
-import transaction from "sequelize/types/transaction";
 
+import cli from 'cli-color'
+import { request, response } from "express";
+import { HttpHelpers } from "../helpers/general";
 
 export const verListaProgramasConAreas = async( req : any, resp : typeof response) => {
+    try {
+        let salida : IPrograma[] = [];
 
-    let salida : IPrograma[] = [];
+        const { anio } = req.params;
+        const { categoria } = req.usuario;
 
-    const { anio } = req.params;
-    const { usuario } = req;
+        const listaProgramas = await Programa.verTodosConAreas( Number(anio), categoria.idCategoria  );
 
+        if(listaProgramas.length) {
+            salida = listaProgramas.map( prog => prog.verDatos());
+        }
 
-    const listaProgramas = await Programa.verTodosConAreas( Number(anio), usuario?.categoria.idCategoria  );
+         HttpHelpers.responderPeticionOk(resp, salida);
 
-    if(listaProgramas.length) {
-        salida = listaProgramas.map( prog => prog.verDatos());
-    }
-
-    return salida;
+        } catch (error : any) {
+            if(!error.status) console.log(cli.red(error));
+            
+            HttpHelpers.responderPeticionError(resp, error.message,error.status );
+        }
 
 }

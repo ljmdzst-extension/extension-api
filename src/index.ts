@@ -21,8 +21,8 @@ import routerActividad from './routes/actividad';
 import usuarioRouter from './routes/usuario';
 import RouterProyecto from './routes/proyecto';
 import { informarPeticion } from './middlewares/bases';
-import { extraerToken, obtenerDataUsuario, validarToken } from './middlewares/auth';
-
+import { extraerToken, validarToken } from './middlewares/auth';
+import { obtenerDataUsuario } from './middlewares/usuario';
 
 
 const app = express();

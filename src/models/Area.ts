@@ -38,81 +38,81 @@ export class Area extends Model<AreaAttributes, AreaCreationAttributes> implemen
   idArea!: number;
   nom!: string;
 
-  private listaActividades !: Array<Actividad>;
+  // private listaActividades !: Array<Actividad>;
 
-  public verActividaesPorEjeTrans()
-  {
+  // public verActividaesPorEjeTrans()
+  // {
 
-  }
-  public verActividadesPorObjEst( )
-  {
+  // }
+  // public verActividadesPorObjEst( )
+  // {
 
-  }
-  public verIndiceRelacionConAreasInternas()
-  {
+  // }
+  // public verIndiceRelacionConAreasInternas()
+  // {
 
-  }
-  public verActividadesPorLie()
-  {
+  // }
+  // public verActividadesPorLie()
+  // {
 
-  }
-  public verDatos() : TArea 
-  {
-      let salida : TArea = {
-          ...this.dataValues,
+  // }
+  // public verDatos() : TArea 
+  // {
+  //     let salida : TArea = {
+  //         ...this.dataValues,
          
-      };
+  //     };
 
-      if(this.listaActividades?.length) {
-          salida = {...salida ,  listaActividades : this.listaActividades?.map(iAct => iAct.verDatos())}
-      }
+  //     // if(this.listaActividades?.length) {
+  //     //     salida = {...salida ,  listaActividades : this.listaActividades?.map(iAct => iAct.verDatos())}
+  //     // }
 
-      return salida; 
-  }
+  //     return salida; 
+  // }
 
-  public verID() : AreaId {
-      return this.idArea;
-  }
+  // public verID() : AreaId {
+  //     return this.idArea;
+  // }
 
-  /**Conexion BD */
+  // /**Conexion BD */
 
-  public static async buscarPorID(idArea : AreaId):Promise<Area>{
-      let salida : Area = new Area({idArea:0,nom:''});
+  // public static async buscarPorID(idArea : AreaId):Promise<Area>{
+  //     let salida : Area = new Area({idArea:0,nom:''});
 
-      const bdArea = await BD.Area.findByPk(idArea);
+  //     const bdArea = await BD.Area.findByPk(idArea);
 
-      if(!bdArea) throw ERROR.AREA_INEXISTENTE;
+  //     if(!bdArea) throw ERROR.AREA_INEXISTENTE;
 
-      salida = new Area(bdArea.dataValues);
+  //     salida = new Area(bdArea.dataValues);
 
-      return salida;
-  }
+  //     return salida;
+  // }
 
-  public static async buscarPorListaID(ids : AreaId[]):Promise<Area[]>{
-      let salida : Area[] = [];
+  // public static async buscarPorListaID(ids : AreaId[]):Promise<Area[]>{
+  //     let salida : Area[] = [];
 
-      const bdAreas = await BD.Area.findAll({ where : { idArea : ids }});
+  //     const bdAreas = await BD.Area.findAll({ where : { idArea : ids }});
 
-      if(bdAreas.length) {
+  //     if(bdAreas.length) {
 
-          salida = bdAreas.map( item => new Area(item.dataValues));
-      }
+  //         salida = bdAreas.map( item => new Area(item.dataValues));
+  //     }
 
 
-      return salida;
-  }
+  //     return salida;
+  // }
   
-  public static async buscarPorIDConAct (idArea : AreaId): Promise<TItemActividad[]>{
-      let salida : TItemActividad[] = [];
+  // // public static async buscarPorIDConAct (idArea : AreaId): Promise<TItemActividad[]>{
+  // //     let salida : TItemActividad[] = [];
 
-      const bdActividades = await BD.Actividad.buscarPorAreaID(idArea);
+  // //     const bdActividades = await BD.Actividad.buscarPorAreaID(idArea);
 
-      if(bdActividades.length){
-         salida = bdActividades;
-      }
+  // //     if(bdActividades.length){
+  // //        salida = bdActividades;
+  // //     }
 
-      return salida;
-  }
+  // //     return salida;
+  // // }
 
 
   static initModel(sequelize: Sequelize.Sequelize): typeof Area {

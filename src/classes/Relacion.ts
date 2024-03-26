@@ -103,28 +103,19 @@ class Relacion{
 
         return new Relacion({...bdRelacion.dataValues, tipoRelacion : iTipoRelacion.verDatos()},iTipoRelacion) ;
     } ;
-    public static async buscarPorActBD(iAct: Actividad, transaction?: Transaction | undefined): Promise<number[]> 
+    public static async buscarPorActBD(iAct: Actividad, transaction?: Transaction | undefined): Promise<void> 
     {
 
-        let salida : number[] = [];
-
-        const bdRelacionesActividad = await BD.RelacionActividad.findAll({where : {idActividad : iAct.verID()},transaction});
-
-        if(bdRelacionesActividad.length > 0) {
-
-            await Promise.all(
-                bdRelacionesActividad.map( async bdRelAct => {
-                    const dbRel = await BD.Relacion.findByPk(bdRelAct.idRelacion,{transaction});
-                    if(dbRel){
-                        salida.push( dbRel.idRelacion );
-                    }
-                   
-                } )
-            )
+        if(process.env.NODE_ENV === "development")console.log('cargando relaciones ..')
         
-        }
+        await BD.RelacionActividad.findAll({where : {idActividad : iAct.verID()},transaction}).then( asociados =>{
 
-        return salida;
+                if(asociados.length > 0) {
+
+                    iAct.cargarRelaciones( asociados.map( asoc => asoc.idRelacion) );
+                
+                }});
+
 
     }
     public static async verListaBD(transaction?: Transaction | undefined): Promise<IRelacion[]> 

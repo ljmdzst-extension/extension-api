@@ -5,13 +5,14 @@ import validator from "validator";
 import { INVALIDO } from "../logs/validaciones";
 import { ESTADO_BD } from "../types/general";
 import { ERROR } from "../logs/errores";
+import { ID_RELACION } from "./Relacion";
 
 export type ID_INSTITUCION = number;
 
 export interface IInstitucion {
     idInstitucion : ID_INSTITUCION,
     nom : string,
-    ubicacion : string
+    ubicacion ?: string | undefined
 }
 
 /* 
@@ -39,7 +40,7 @@ class Institucion {
     } 
     public static validar( data : IInstitucion) : void {
         if(!(validator.isLength(data.nom,{ min : 1, max : 256 }))) throw INVALIDO.NOM_INSTITUCION;
-        if(!(validator.isURL(data.ubicacion))) throw INVALIDO.UBIC_INSTITUCION;
+        if(!(validator.isURL(data.ubicacion || ""))) throw INVALIDO.UBIC_INSTITUCION;
     }
     /** Conexion BD */
      public darDeAltaBD()
@@ -54,35 +55,35 @@ class Institucion {
         return this.estadoEnBD === ESTADO_BD.B;
     }
  
-    public async guardarEnBD(transaction ?: Transaction,transactionInstituciones ?: Transaction ) : 
+    public async guardarEnBD(transaction ?: Transaction  ) : 
     Promise<void> {
          console.log('Institucion.guardarEnBD..');
          
          switch (this.estadoEnBD) {
              case ESTADO_BD.A:
-                 await this.darDeAlta(transaction,transactionInstituciones);
+                 await this.darDeAlta(transaction);
                  break;
              case ESTADO_BD.B:
-                 await this.darDeBaja(transaction,transactionInstituciones);
+                 await this.darDeBaja(transaction);
                  break;
              default:
                  break;
          }
      }
 
-    private async darDeAlta(transaction?: Transaction | undefined, transactionInstituciones ?: Transaction | undefined) : 
+    private async darDeAlta(transaction?: Transaction | undefined) : 
     Promise<void>{
        
         if(!this.iActividad) throw {status : 500 , msg :'Error - la institucion no tiene actividad asociada'};
 
-        const institucionCargada = await BD.Institucion.findOne({ where : { nom : this.data.nom}, transaction : transactionInstituciones});
+        const institucionCargada = await BD.Institucion.findOne({ where : { nom : this.data.nom}, transaction });
         
         if(institucionCargada){
 
            
             this.data.idInstitucion = institucionCargada.dataValues.idInstitucion;
         } else {
-            this.data.idInstitucion = (await BD.Institucion.create(this.data,{transaction : transactionInstituciones})).dataValues.idInstitucion;
+            this.data.idInstitucion = (await BD.Institucion.create(this.data,{transaction })).dataValues.idInstitucion;
            
         }
         
@@ -102,7 +103,7 @@ class Institucion {
 
 
     };
-    private async darDeBaja(transaction?: Transaction | undefined, transactionInstituciones ?: Transaction | undefined): Promise<void>{
+    private async darDeBaja(transaction?: Transaction | undefined): Promise<void>{
         if(!this.iActividad) throw {status : 500 , msg :'Error - la institucion no tiene actividad asociada'};
         await BD.InstitucionActividad.destroy(
             {
@@ -128,33 +129,43 @@ class Institucion {
             ubicacion : institucion.ubicacion || '#'
         });
     };
+
+    public static async buscarAsociadasPorActBD( listaIDs : ID_INSTITUCION[], iAct: Actividad, transaction?: Transaction | undefined)
+    :Promise<void> {
+        
+        if(process.env.NODE_ENV === "development")console.log('buscando instituciones asociads ..');
+
+        const asociadas = await BD.InstitucionActividad.findAll({where : {idActividad : iAct.verID()},transaction});
+
+        if(asociadas.length > 0) {
+            listaIDs.push(...asociadas.map( asoc => asoc.idInstitucion ));
+        }
+    } 
     
-    public static async buscarPorActBD(iAct: Actividad, transaction?: Transaction | undefined, transactionInstituciones ?: Transaction | undefined): 
-    Promise<Institucion[]>{
+    
+    public static async buscarPorActBD(listaIDs : ID_INSTITUCION[], iAct: Actividad, transaction?: Transaction | undefined): 
+    Promise<void>{
         // buscar en db_Institucionsv2 si existen relaciones
         // obtener de firestore cada institucion por id encontrado
-        let salida : Institucion[] = [];
-        const relaciones = await BD.InstitucionActividad.findAll({where : {idActividad : iAct.verID()},transaction});
-        if(!relaciones.length){
-            console.log('no se encontraron instituciones relacionadas, omitiendo...');
-            return salida;
-        }
-     
+
+        if(process.env.NODE_ENV === "development")console.log('cargando instituciones ..');
+        
         const instituciones = await BD.Institucion.findAll({ 
             attributes : ['idInstitucion','nom','ubicacion'],
-            where : { idInstitucion : { [Op.or] :  relaciones.map(rel => rel.idInstitucion)} }, 
-            transaction : transactionInstituciones})
+            where : { idInstitucion : { [Op.in] : listaIDs }}, 
+            transaction 
+        })
      
-        if(!instituciones.length) throw {status : 500, msg : 'no existen insituciones con esos ids'}
         
-        instituciones.forEach(async institucion => salida.push(
-            new Institucion({...institucion.dataValues, ubicacion : institucion.dataValues.ubicacion || '#'},iAct))
-        )
-
-        return salida;
+        iAct.cargarInstituciones(instituciones.map( inst => ({
+            idInstitucion : inst.idInstitucion,
+            nom : inst.nom,
+            ubicacion : inst.ubicacion
+        })))
+        
     };
 
-    public static async buscarPorPalabraClave ( query ?: string, offset ?: number, limit ?: number, transactionInstituciones ?: Transaction ) : 
+    public static async buscarPorPalabraClave ( query ?: string, offset ?: number, limit ?: number, transaction ?: Transaction ) : 
     Promise<Institucion[]> { 
 
         
@@ -165,7 +176,7 @@ class Institucion {
             attributes : ['idInstitucion','nom','ubicacion'],
             offset : Number(offset) || 0,
             limit : Number(limit) || 10, 
-            transaction : transactionInstituciones
+            transaction 
         };
 
         if(query?.length) {

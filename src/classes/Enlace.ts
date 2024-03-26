@@ -90,23 +90,13 @@ class Enlace {
             desc : bdEnlace.dataValues.desc
         });
     } ;
-    public static async buscarPorActBD(idAct: ID_ACT, transaction?: Transaction | undefined): Promise<Array<Enlace>> {
 
-        let salida : Enlace[] = [];
+    public static async buscarPorActBD(iActividad : Actividad, transaction?: Transaction | undefined): Promise<void> {
 
-        const bdEnlaces = await BD.Enlace.findAll({where : {idActividad : idAct},transaction});
+        if(process.env.NODE_ENV === "development")console.log('cargando enlaces..');
+        const enlaces = await BD.Enlace.findAll({where : {idActividad : iActividad.verID()},transaction} );
+        iActividad.cargarEnlaces( enlaces );
 
-        if(bdEnlaces.length > 0) {
-
-            bdEnlaces.forEach( bdEnlace => salida.push( new Enlace({
-                idEnlace : bdEnlace.dataValues.idEnlace,
-                link : bdEnlace.dataValues.link,
-                desc : bdEnlace.dataValues.desc
-            }) ) )
-        
-        }
-
-        return salida;
 
     }
     public static async modificarPorActBD( iActividad : Actividad ,listaEnlaces : Enlace[], transaction ?: Transaction ): Promise<void> {

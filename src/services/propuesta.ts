@@ -56,7 +56,7 @@ export default class ServiciosPropuesta implements IServiciosModelo {
         this.lServiciosModelo.set('INTEG',new ServiciosIntegrantes());
         this.lServiciosModelo.set('OBJESP',new ServiciosObjetivoEspecifico());
         this.lServiciosModelo.set('ACTOBJESP',new ServiciosActividadObjetivoEspecifico());
-        this.lServiciosModelo.set('INST',new ServiciosInstitucion());
+        // this.lServiciosModelo.set('INST',new ServiciosInstitucion());
         this.lServiciosModelo.set('PALCLA',new SPalabraClave());
         this.lServiciosModelo.set('CAPAC',new SCapacitacion());
         this.lServiciosModelo.set('SIPPE',new SProgramaExtension());
@@ -128,8 +128,8 @@ export default class ServiciosPropuesta implements IServiciosModelo {
        }
        if(data.instituciones && data.instituciones.length) {
            const SIntituciones =this.lServiciosModelo.get('INST') as IServiciosInstitucion;
-           const lInstituciones = data.instituciones.map( (inst : any)=> SIntituciones.crearInstitucion(inst))
-           this.cargarInstituciones(iPropuesta,lInstituciones);
+        //    const lInstituciones = data.instituciones.map( (inst : any)=> SIntituciones.crearInstitucion(inst))
+        //    this.cargarInstituciones(iPropuesta,lInstituciones);
        }
        if(data.objetivosEspecificos && data.objetivosEspecificos.length) {
            const SObjetivos = this.lServiciosModelo.get('OBJESP') as iServiciosObjetivoEspecifico;
@@ -392,11 +392,11 @@ export default class ServiciosPropuesta implements IServiciosModelo {
             });
               // :Institucion.getResponsable()
             await iPropuesta.sequelize.transaction( async transaction => {
-                await Promise.all(iPropuesta.propuestaInstituciones.map( propInst => SInstituciones?.leerDatosResponsable(propInst.institucion,transaction)) )
+                // await Promise.all(iPropuesta.propuestaInstituciones.map( propInst => SInstituciones?.leerDatosResponsable(propInst.institucion,transaction)) )
             });
                // :Responsable.getPersona()
             await iPropuesta.sequelize.transaction( async transaction => {
-                await Promise.all(iPropuesta.propuestaInstituciones.map( propInst => SInstituciones?.leerDatosPersonalesResponsable(propInst.institucion,transaction)) )
+                // await Promise.all(iPropuesta.propuestaInstituciones.map( propInst => SInstituciones?.leerDatosPersonalesResponsable(propInst.institucion,transaction)) )
             });
         }
     }
@@ -545,8 +545,8 @@ export default class ServiciosPropuesta implements IServiciosModelo {
             await iPropuesta.sequelize.transaction( async transaction => {
                 await Promise.all([
                     ...iPropuesta.propuestaInstituciones.map( propInst => SInstituciones?.definirPersistencia(propInst,transaction)),
-                    ...iPropuesta.propuestaInstituciones.map( propInst => SInstituciones?.definirPersistenciaPersonaResp(propInst,transaction)),
-                    ...iPropuesta.propuestaInstituciones.map( propInst => SInstituciones?.definirPersistenciaResponsable(propInst,transaction))
+                    // ...iPropuesta.propuestaInstituciones.map( propInst => SInstituciones?.definirPersistenciaPersonaResp(propInst,transaction)),
+                    // ...iPropuesta.propuestaInstituciones.map( propInst => SInstituciones?.definirPersistenciaResponsable(propInst,transaction))
 
                 ] )
             });
@@ -556,11 +556,11 @@ export default class ServiciosPropuesta implements IServiciosModelo {
             });
             // propInst -> Inst -> Resp -> Pers.save()
             await iPropuesta.sequelize.transaction( async transaction => {
-                await Promise.all(iPropuesta.propuestaInstituciones.map( propInst => SInstituciones?.guardarDatosPersonalesResponsable(propInst.institucion,transaction)) )
+                // await Promise.all(iPropuesta.propuestaInstituciones.map( propInst => SInstituciones?.guardarDatosPersonalesResponsable(propInst.institucion,transaction)) )
             });
             // propInst -> Inst -> Resp.save()
             await iPropuesta.sequelize.transaction( async transaction => {
-                await Promise.all(iPropuesta.propuestaInstituciones.map( propInst => SInstituciones?.guardarDatosResponsable(propInst.institucion,transaction)) )
+                // await Promise.all(iPropuesta.propuestaInstituciones.map( propInst => SInstituciones?.guardarDatosResponsable(propInst.institucion,transaction)) )
             });
             await PropuestaInstitucion.destroy({
                 where : {

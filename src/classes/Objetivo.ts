@@ -109,28 +109,21 @@ class Objetivo {
  
          return new Objetivo(bdObjetivo.dataValues,iTipoObjetivo) ;
      } ;
-     public static async buscarPorActBD(iAct: Actividad, transaction?: Transaction | undefined): Promise<number[]> 
+     public static async buscarPorActBD(iAct: Actividad, transaction?: Transaction | undefined): Promise<void> 
      {
- 
-         let salida : number[] = [];
- 
-         const bdObjetivosActividad = await BD.ObjetivoActividad.findAll({where : {idActividad : iAct.verID()},transaction});
         
-         if(bdObjetivosActividad.length > 0) {
+        if(process.env.NODE_ENV === "development")console.log('cargando objetivos ..')
+         
  
-             await Promise.all(
-                 bdObjetivosActividad.map( async bdRelAct => {
-                     const dbObj = await BD.Objetivo.findByPk(bdRelAct.idObjetivo,{transaction});
-                     if(dbObj){
-                         salida.push( dbObj.idObjetivo );
-                     }
-                    
-                 } )
-             )
+        await BD.ObjetivoActividad.findAll({where : {idActividad : iAct.verID()},transaction}).then( objetivosAsociados =>{
+
+         if(objetivosAsociados.length > 0) {
+ 
+             iAct.cargarObjetivos( objetivosAsociados.map( obj => obj.idObjetivo) )
          
          }
+        });
  
-         return salida;
  
      }
      public static async verListaBD(transaction?: Transaction | undefined): Promise<IObjetivo[]> 

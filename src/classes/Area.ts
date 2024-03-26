@@ -1,9 +1,10 @@
 
 
 import { Transaction } from "sequelize";
-import { BD } from "../config/dbConfig";
+import sequelizeExtension, { BD } from "../config/dbConfig";
 import { ERROR } from "../logs/errores";
-import  Actividad, { IItemActividad }  from "./Actividad";
+import  Actividad, { IItemActividad, IRequestActividad, IResponseActividad }  from "./Actividad";
+import { ColaDeTareas } from "../helpers/tareas";
 
 
 export type ID_AREA = number;
@@ -61,6 +62,28 @@ class Area {
 
     /**Conexion BD */
 
+
+    public static async verResumen( idArea : ID_AREA, anio : number ) : Promise<IResponseActividad[]>{
+
+        let salida : IResponseActividad[] = [];
+
+        const listaActividades = await Area.buscarPorIDConAct(Number(idArea), Number(anio) );
+        
+        if(listaActividades.length > 0){
+
+            const cola = new ColaDeTareas();
+
+            listaActividades.forEach( act => 
+                    cola.push( ()=> Actividad.buscarPorIDBD(act.idActividad)
+                                              .then( act => salida.push(act.verDatos() ) )
+                              ));
+            
+            await cola.resolverConDelay(500);
+        }
+
+        return salida;
+    }
+
     public static async buscarPorID(idArea : ID_AREA,transaction ?: Transaction):Promise<Area>{
         let salida : Area = new Area({idArea:0,nom:''});
 
@@ -87,10 +110,10 @@ class Area {
         return salida;
     }
     
-    public static async buscarPorIDConAct (idArea : ID_AREA,transaction ?: Transaction): Promise<IItemActividad[]>{
+    public static async buscarPorIDConAct (idArea : ID_AREA,anio : number,transaction ?: Transaction): Promise<IItemActividad[]>{
         let salida : IItemActividad[] = [];
 
-        const bdActividades = await Actividad.buscarPorAreaID(idArea,transaction);
+        const bdActividades = await Actividad.buscarPorAreaID(idArea,anio,transaction);
 
         if(bdActividades.length){
            salida = bdActividades;
@@ -98,7 +121,9 @@ class Area {
 
         return salida;
     }
-   
+
+
+    
 }
 
 

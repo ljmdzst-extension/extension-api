@@ -1,7 +1,5 @@
 import * as Sequelize from 'sequelize';
-import { DataTypes, Model, Optional } from 'sequelize';
-import type { Actividad, ActividadId } from './Actividad';
-import type { Ubicacion, UbicacionId } from './Ubicacion';
+import { DataTypes, Model } from 'sequelize';
 
 export interface UbicacionActividadAttributes {
   idActividad: number;
@@ -33,18 +31,20 @@ const CONSTRAINT_ATTRIBUTES = {
   }
 }
 
-const CONSTRAINT_OPTIONS = ()
+
+const CONSTRAINT_OPTIONS = (sequelize : Sequelize.Sequelize )=>({
+  sequelize,
+  tableName: 'UbicacionActividad',
+  timestamps: true,
+  paranoid: true
+})
+
 export class UbicacionActividad extends Model<UbicacionActividadAttributes, UbicacionActividadCreationAttributes> implements UbicacionActividadAttributes {
   idActividad!: number;
   idUbicacion!: number;
 
  
   static initModel(sequelize: Sequelize.Sequelize): typeof UbicacionActividad {
-    return UbicacionActividad.init(, {
-    sequelize,
-    tableName: 'UbicacionActividad',
-    timestamps: true,
-    paranoid: true
-  });
+    return UbicacionActividad.init(CONSTRAINT_ATTRIBUTES, CONSTRAINT_OPTIONS(sequelize));
   }
 }
