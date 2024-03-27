@@ -577,8 +577,6 @@ class Actividad  {
         let listaIdsInstitucionesAsociadas : ID_INSTITUCION[] = [];
         let listaIdsFechasPuntualesAsociadas : ID_FECHA[] = [];
 
-
-
         await BD.Actividad.sequelize?.transaction( {},async transaction=>{
             
             await Promise.all([
@@ -596,24 +594,14 @@ class Actividad  {
 
         await BD.Actividad.sequelize?.transaction( {},async transaction=>{
         
-            const colaDeTareas = new ColaDeTareas();
-            
-            colaDeTareas.push( ()=>Enlace.buscarPorActBD(salida,transaction) );
 
-            colaDeTareas.push( ()=>FechaPuntual.buscarPorActBD(listaIdsFechasPuntualesAsociadas,salida,transaction));
-
-            colaDeTareas.push( ()=>Institucion.buscarPorActBD(listaIdsInstitucionesAsociadas,salida,transaction));
-            
-                        
-            colaDeTareas.push( ()=> Meta.buscarPorActBD(salida,transaction));
-
-
-            colaDeTareas.push( ()=> Ubicacion.buscarPorActBD(listaIdsUbicacionesAsociadas,salida,transaction));
-
-            
-            
-            await colaDeTareas.resolverConDelay(500);
-        
+            await Promise.all([
+                Enlace.buscarPorActBD(salida,transaction), 
+                FechaPuntual.buscarPorActBD(listaIdsFechasPuntualesAsociadas,salida,transaction),
+                Institucion.buscarPorActBD(listaIdsInstitucionesAsociadas,salida,transaction),
+                Meta.buscarPorActBD(salida,transaction),
+                Ubicacion.buscarPorActBD(listaIdsUbicacionesAsociadas,salida,transaction)
+            ]);
         });
 
 
@@ -621,10 +609,18 @@ class Actividad  {
 
         return salida;
     } ;
-    public static async buscarPorAreaID(id : ID_AREA, anio: number ,transaction ?: Transaction) : Promise<IItemActividad[]>{
+    public static async buscarPorAreaID(id : ID_AREA, anio: number,offset ?: number, limit ?: number ,transaction ?: Transaction) : Promise<IItemActividad[]>{
         let salida : IItemActividad[] = [];
 
-        salida = (await BD.Actividad.findAll({  where : {idArea : id , createdAt : {[Op.gt] : new Date(`${anio}-01-01`) }} , transaction}))
+        salida = (await BD.Actividad.findAll({  
+            where : {
+                idArea : id , 
+                createdAt : {[Op.gt] : new Date(`${anio}-01-01`) }
+            } , 
+            offset,
+            limit,
+            transaction
+        }))
             .map( (data : any)=> ({
                 idActividad : data.idActividad, 
                 desc : data.desc

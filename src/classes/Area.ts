@@ -63,22 +63,21 @@ class Area {
     /**Conexion BD */
 
 
-    public static async verResumen( idArea : ID_AREA, anio : number ) : Promise<IResponseActividad[]>{
+    public static async verResumen( idArea : ID_AREA, anio : number, offset ?: number, limit ?: number ) : Promise<IResponseActividad[]>{
 
         let salida : IResponseActividad[] = [];
 
-        const listaActividades = await Area.buscarPorIDConAct(Number(idArea), Number(anio) );
+        const listaActividades = await Area.buscarPorIDConAct(Number(idArea), Number(anio) ,offset,limit);
         
         if(listaActividades.length > 0){
 
             const cola = new ColaDeTareas();
 
             listaActividades.forEach( act => 
-                    cola.push( ()=> Actividad.buscarPorIDBD(act.idActividad)
-                                              .then( act => salida.push(act.verDatos() ) )
-                              ));
+                    cola.push( ()=> Actividad.buscarPorIDBD(act.idActividad).then( act => salida.push(act.verDatos() ) ) )
+            );
             
-            await cola.resolverConDelay(500);
+            await cola.resolverSinDelay();
         }
 
         return salida;
@@ -110,10 +109,10 @@ class Area {
         return salida;
     }
     
-    public static async buscarPorIDConAct (idArea : ID_AREA,anio : number,transaction ?: Transaction): Promise<IItemActividad[]>{
+    public static async buscarPorIDConAct (idArea : ID_AREA,anio : number, offset ?: number, limit ?: number, transaction ?: Transaction): Promise<IItemActividad[]>{
         let salida : IItemActividad[] = [];
 
-        const bdActividades = await Actividad.buscarPorAreaID(idArea,anio,transaction);
+        const bdActividades = await Actividad.buscarPorAreaID(idArea,anio,offset,limit,transaction);
 
         if(bdActividades.length){
            salida = bdActividades;

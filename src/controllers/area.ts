@@ -43,7 +43,7 @@ export const  verListaActividades = async (  req : typeof request , resp : typeo
 
             const { idArea, anio} = req.params;
             const listaActividades = await sequelizeExtension.transaction({},async transaction=>{
-                const listaActividades  = await Area.buscarPorIDConAct(Number(idArea), Number(anio) , transaction);
+                const listaActividades  = await Area.buscarPorIDConAct(Number(idArea), Number(anio),undefined,undefined , transaction);
                 return listaActividades;
             })
 
@@ -67,9 +67,9 @@ export const  verResumenArea = async (  req : typeof request , resp : typeof res
         try {
                 let salida : IResponseActividad[] = []
     
-                const { idArea, anio} = req.params;
+                const { idArea, anio,offset,limit} = req.params;
     
-                salida = await Area.verResumen(Number(idArea),Number(anio))
+                salida = await Area.verResumen(Number(idArea),Number(anio),Number(offset),Number(limit))
                 
                 HttpHelpers.responderPeticionOk(resp,salida) 
     

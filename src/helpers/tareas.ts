@@ -1,4 +1,3 @@
-import { rejections } from "winston";
 
 export class ColaDeTareas {
 
@@ -35,6 +34,27 @@ export class ColaDeTareas {
                 }  );
         
             return this.resolverConDelay(ms);
+        }
+    } 
+
+    public async resolverSinDelay() : Promise<any> {
+        if(this.cola.length < 1) return;
+
+        const front = this.cola.pop();
+
+        if(front){
+            await new Promise(
+                (resolve,reject) => {
+                    try {
+                        resolve(front())
+                    
+                    } catch (error : any) {
+                        reject(console.log(error))
+                    }
+                    
+                }  );
+        
+            return this.resolverSinDelay();
         }
     } 
 

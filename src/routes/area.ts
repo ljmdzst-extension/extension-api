@@ -13,5 +13,5 @@ routerArea.get(
     validarIdArea,
     verListaActividades
 );
-routerArea.get('/resumen/:idArea/:anio',verResumenArea);
+routerArea.get('/resumen/:idArea/:anio/:offset/:limit',verResumenArea);
 export default routerArea;
