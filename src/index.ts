@@ -2,7 +2,7 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
-import express from 'express';
+import express, { request, response } from 'express';
 import cors from 'cors';
 import path from 'path';
 import RouterPropuesta from './routes/propuesta';
@@ -31,13 +31,15 @@ app.use(cors());
 
 app.use(express.json());
 
-app.use(express.static(path.join(__dirname,'public')));
+app.use(express.static(path.join(__dirname,'./public')));
 
 // login de cada request
-app.use(informarPeticion);
+
 
 
 const BASE_PATH = '/api/v2';
+
+app.use(informarPeticion);
 
 app.use( `${BASE_PATH}/usr`, usuarioRouter  ) 
 app.use( `${BASE_PATH}/usr/bases`, RouterBases  ) 
@@ -68,6 +70,9 @@ app.use(`${BASE_PATH_PROPUESTAS}/bases`,RouterBases);
 app.use(`${BASE_PATH_PROPUESTAS}/instituciones`,RouterInstituciones);
 app.use(`${BASE_PATH_PROPUESTAS}/planificacion`,RouterPlanificacion);
 
+app.use('*', async(req : typeof request , res : typeof response) => {
+    res.sendFile(path.join(__dirname , './public/index.html'));
+});
 
 app.listen( process.env.PORT , async()=>{
     try {
