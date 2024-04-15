@@ -36,8 +36,17 @@ export const chequearUsuarioNoExistente =  async(req : typeof request, resp : ty
 export const obtenerDataUsuario = async(req : any, resp : typeof response, next : NextFunction) =>{
         
     try {
-        console.log(req.body.idActividad)
-        const iUsuario = await BD.Usuario.findByPk(req.usuario.idUsuario);
+
+        let iUsuario : Usuario | null= null;
+
+        if(req.body && req.body.email){
+
+            iUsuario = await BD.Usuario.findOne({where : {email : req.body.email}});
+        }
+        if(req.usuario && req.usuario.idUsuario){
+
+            iUsuario = await BD.Usuario.findByPk(req.usuario.idUsuario);
+        } 
     
         if(!iUsuario) throw {status : 400 , message: 'no existe un usuario con ese id'}
         
@@ -57,13 +66,15 @@ export const obtenerDataUsuario = async(req : any, resp : typeof response, next 
     } catch (error : any) {
         let status = 500;
         let message = 'error de servidor';
+
         if(error.status && error.message) {
             status = error.status
             message = error.message
-        }
-        if(status === 500) {
+        } else {
+            console.log(error);
             console.log(`ERROR : ${req.method}-${req.path}-${message}`)
         }
+        
         resp.status(status).json({
             ok : false,
             data : null,

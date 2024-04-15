@@ -1,6 +1,6 @@
 import { request, response } from "express";
 import sequelizeExtension from "../config/dbConfig";
-import logger from "../config/logsConfig";
+
 
 
 export const editarPlanificacion = async( req : typeof request, res : typeof response )=>{
@@ -12,7 +12,7 @@ export const editarPlanificacion = async( req : typeof request, res : typeof res
       
     } catch (error : any) {
         await transaction.rollback();
-        logger.log('error',error.status,' - ',error.message);
+       console.log('error',error.status,' - ',error.message);
         res.status(error.status || 500).json({
             ok : false,
             data : null,

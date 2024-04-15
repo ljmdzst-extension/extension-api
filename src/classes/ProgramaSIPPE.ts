@@ -93,28 +93,20 @@ class ProgramaSIPPE{
 
         return new ProgramaSIPPE(bdProgramaSIPPE.dataValues) ;
     } ;
-    public static async buscarPorActBD(iAct: Actividad, transaction?: Transaction | undefined): Promise<number[]> 
+    public static async buscarPorActBD(iAct: Actividad, transaction?: Transaction | undefined): Promise<void> 
     {
 
-        let salida : number[] = [];
-
-        const bdProgramaSIPPEesActividad = await BD.ProgramaSippeActividad.findAll({where : {idActividad : iAct.verID()},transaction});
-
-        if(bdProgramaSIPPEesActividad.length > 0) {
-
-            await Promise.all(
-                bdProgramaSIPPEesActividad.map( async dbProgAct => {
-                    const dbProg = await BD.ProgramaSippe.findByPk(dbProgAct.idProgramaSippe,{transaction});
-                    if(dbProg){
-                        salida.push( dbProg.idProgramaSippe );
-                    }
-                   
-                } )
-            )
+        if(process.env.NODE_ENV === "development")console.log('cargando programas ..')
         
-        }
 
-        return salida;
+        await BD.ProgramaSippeActividad.findAll({where : {idActividad : iAct.verID()},transaction}).then( programasSIPPPEAsociados =>{
+
+            if(programasSIPPPEAsociados.length > 0) {
+
+                iAct.cargarProgramasSIPPE( programasSIPPPEAsociados.map( asoc => asoc.idProgramaSippe) )
+            
+            }
+        });
 
     }
     public static async verListaBD(transaction?: Transaction | undefined): Promise<IProgramaSIPPE[]> 

@@ -17,7 +17,7 @@ export type EnlaceId = Enlace[EnlacePk];
 export type EnlaceOptionalAttributes = "idEnlace" ;
 export type EnlaceCreationAttributes = Optional<EnlaceAttributes, EnlaceOptionalAttributes>;
 
-export type TEnlace = EnlaceAttributes
+// export type TEnlace = EnlaceAttributes
 
 const ENLACE_ATTRIBUTES = {
   idEnlace: {
@@ -50,124 +50,124 @@ export class Enlace extends Model<EnlaceAttributes, EnlaceCreationAttributes> im
   link!: string;
   idActividad !: number;
   
-  private iActividad !: Actividad;
+//   private iActividad !: Actividad;
 
-  public estadoEnBD !: number;
+//   public estadoEnBD !: number;
 
-  public verDatos() : TEnlace 
-  { 
-      return this.dataValues;
-  }
+//   public verDatos() : TEnlace 
+//   { 
+//       return this.dataValues;
+//   }
 
-  public static crear( data : TEnlace, _iActividad : Actividad ) {
-     const enlace = BD.Enlace.build(data);
-     enlace.iActividad = _iActividad;
-     return enlace;
-  }
+//   public static crear( data : TEnlace, _iActividad : Actividad ) {
+//      const enlace = BD.Enlace.build(data);
+//      enlace.iActividad = _iActividad;
+//      return enlace;
+//   }
 
-  public static async validar( data : TEnlace) : Promise<void> {
-      await new BD.Enlace({...data,idActividad : 0}).validate({ skip : ['createdAt','updatedAt','deletedAt']})
-  }
-  public editarDatos( data : TEnlace){
-      this.dataValues = data;
-      this.estadoEnBD = ESTADO_BD.M;
-  }
-  public estaDeBaja() : boolean 
-  { 
-      return this.estadoEnBD === ESTADO_BD.B;
-  }
-  private async darDeAltaBD( registro : TEnlace & {idActividad :number}, transaction ?: Transaction)
-  {
+//   public static async validar( data : TEnlace) : Promise<void> {
+//       await new BD.Enlace({...data,idActividad : 0}).validate({ skip : ['createdAt','updatedAt','deletedAt']})
+//   }
+//   public editarDatos( data : TEnlace){
+//       this.dataValues = data;
+//       this.estadoEnBD = ESTADO_BD.M;
+//   }
+//   public estaDeBaja() : boolean 
+//   { 
+//       return this.estadoEnBD === ESTADO_BD.B;
+//   }
+//   private async darDeAltaBD( registro : TEnlace & {idActividad :number}, transaction ?: Transaction)
+//   {
       
-      this.idEnlace = (await BD.Enlace.create(registro, { transaction})).dataValues.idEnlace;
-  }
-  private async darDeBajaBD( transaction ?: Transaction)
-  {
-      await BD.Enlace.destroy({where : {idEnlace : this.idEnlace} , transaction });
-  }
-  private async modificarBD( registro : TEnlace & {idActividad :number},transaction ?: Transaction)
-  {   
-      if(!await BD.Enlace.findByPk(registro.idEnlace, { transaction})){
-          console.log(`enlace ${this.idEnlace} posiblemente dado de baja, restaurando...`)
-          await BD.Enlace.restore({where : {idEnlace : registro.idEnlace}, transaction});
-      }
-      await BD.Enlace.update(registro,{where : {idEnlace : registro.idEnlace}, transaction});
+//       this.idEnlace = (await BD.Enlace.create(registro, { transaction})).dataValues.idEnlace;
+//   }
+//   private async darDeBajaBD( transaction ?: Transaction)
+//   {
+//       await BD.Enlace.destroy({where : {idEnlace : this.idEnlace} , transaction });
+//   }
+//   private async modificarBD( registro : TEnlace & {idActividad :number},transaction ?: Transaction)
+//   {   
+//       if(!await BD.Enlace.findByPk(registro.idEnlace, { transaction})){
+//           console.log(`enlace ${this.idEnlace} posiblemente dado de baja, restaurando...`)
+//           await BD.Enlace.restore({where : {idEnlace : registro.idEnlace}, transaction});
+//       }
+//       await BD.Enlace.update(registro,{where : {idEnlace : registro.idEnlace}, transaction});
      
-  }
+//   }
 
-  public async guardarEnBD(transaction ?: Transaction ) : Promise<void> {
-      console.log('Enlace.guardarEnBD');
+//   public async guardarEnBD(transaction ?: Transaction ) : Promise<void> {
+//       console.log('Enlace.guardarEnBD');
 
-      if(!this.iActividad) throw { status : 500, msg : `La Enlace ${this.idEnlace} no tienne una actividad asociada`}
-      const registro = { ...this, idActividad : this.iActividad.verID() }
+//       if(!this.iActividad) throw { status : 500, msg : `La Enlace ${this.idEnlace} no tienne una actividad asociada`}
+//       const registro = { ...this, idActividad : this.iActividad.verID() }
 
-      switch (this.estadoEnBD) {
-          case ESTADO_BD.A:
-              await this.darDeAltaBD(registro,transaction);
-              break;
-          case ESTADO_BD.M:
-              await this.modificarBD(registro,transaction);
-              break;
-          case ESTADO_BD.B:
-              await this.darDeBajaBD(transaction)
-              break;
-          default:
-              break;
-      }
-  }
-  public static async buscarPorIDBD(id: number, transaction?: Transaction | undefined): Promise<Enlace> { 
-      const bdEnlace = await BD.Enlace.findByPk(id,{transaction});
-      if(!bdEnlace ) throw ERROR.ENLACE_INEXISTENTE;
-      return bdEnlace;
-  } ;
-  public static async buscarPorActBD(idAct: ActividadId, transaction?: Transaction | undefined): Promise<Array<Enlace>> {
+//       switch (this.estadoEnBD) {
+//           case ESTADO_BD.A:
+//               await this.darDeAltaBD(registro,transaction);
+//               break;
+//           case ESTADO_BD.M:
+//               await this.modificarBD(registro,transaction);
+//               break;
+//           case ESTADO_BD.B:
+//               await this.darDeBajaBD(transaction)
+//               break;
+//           default:
+//               break;
+//       }
+//   }
+//   public static async buscarPorIDBD(id: number, transaction?: Transaction | undefined): Promise<Enlace> { 
+//       const bdEnlace = await BD.Enlace.findByPk(id,{transaction});
+//       if(!bdEnlace ) throw ERROR.ENLACE_INEXISTENTE;
+//       return bdEnlace;
+//   } ;
+//   public static async buscarPorActBD(idAct: ActividadId, transaction?: Transaction | undefined): Promise<Array<Enlace>> {
 
-      let salida : Enlace[] = [];
+//       let salida : Enlace[] = [];
 
-      const bdEnlaces = await BD.Enlace.findAll({where : {idActividad : idAct},transaction});
+//       const bdEnlaces = await BD.Enlace.findAll({where : {idActividad : idAct},transaction});
 
-      if(bdEnlaces.length > 0) {
+//       if(bdEnlaces.length > 0) {
 
-          bdEnlaces.forEach( bdEnlace => salida.push( bdEnlace ) )
+//           bdEnlaces.forEach( bdEnlace => salida.push( bdEnlace ) )
       
-      }
+//       }
 
-      return salida;
+//       return salida;
 
-  }
-  public static async modificarPorActBD( iActividad : Actividad ,listaEnlaces : Enlace[], transaction ?: Transaction ): Promise<void> {
+//   }
+//   public static async modificarPorActBD( iActividad : Actividad ,listaEnlaces : Enlace[], transaction ?: Transaction ): Promise<void> {
 
 
-      const listaBajaEnlaces = iActividad.verDatos().listaEnlaces?.filter( 
-          TEnlace => listaEnlaces.every( nEnlace => nEnlace.idEnlace !== TEnlace.idEnlace  
-      ) ) || [];
+//       const listaBajaEnlaces = iActividad.verDatos().listaEnlaces?.filter( 
+//           TEnlace => listaEnlaces.every( nEnlace => nEnlace.idEnlace !== TEnlace.idEnlace  
+//       ) ) || [];
       
-      if(listaBajaEnlaces.length){
-          const idEnlaceOptions =  { 
-              [Sequelize.Op.or] : listaBajaEnlaces.map( enlace => enlace.idEnlace)  
-          } 
-          const whereOptions =  { 
-              idActividad : iActividad.verID(), 
-              idEnlace : idEnlaceOptions
-          } ;
-          await BD.Enlace.destroy( {  where : whereOptions, transaction} )
-      }
+//       if(listaBajaEnlaces.length){
+//           const idEnlaceOptions =  { 
+//               [Sequelize.Op.or] : listaBajaEnlaces.map( enlace => enlace.idEnlace)  
+//           } 
+//           const whereOptions =  { 
+//               idActividad : iActividad.verID(), 
+//               idEnlace : idEnlaceOptions
+//           } ;
+//           await BD.Enlace.destroy( {  where : whereOptions, transaction} )
+//       }
 
-      await Promise.all( 
-          listaEnlaces.map( async enlace => {
-              const whereOptions = { idActividad : iActividad.verID(), idEnlace : enlace.idEnlace};
-              const defaultOptions = {...enlace.verDatos(), idActividad : iActividad.verID()};
-              const [TEnlace, creado ] = await BD.Enlace.findOrCreate( { where : whereOptions, defaults : defaultOptions, transaction } );
-              if(!creado){
-                  await TEnlace.update(enlace.verDatos(),{transaction : transaction});
-              }
-          })
-       )
+//       await Promise.all( 
+//           listaEnlaces.map( async enlace => {
+//               const whereOptions = { idActividad : iActividad.verID(), idEnlace : enlace.idEnlace};
+//               const defaultOptions = {...enlace.verDatos(), idActividad : iActividad.verID()};
+//               const [TEnlace, creado ] = await BD.Enlace.findOrCreate( { where : whereOptions, defaults : defaultOptions, transaction } );
+//               if(!creado){
+//                   await TEnlace.update(enlace.verDatos(),{transaction : transaction});
+//               }
+//           })
+//        )
 
 
      
 
-  }
+//   }
 
 
   static initModel(sequelize: Sequelize.Sequelize): typeof Enlace {

@@ -46,7 +46,8 @@ class Ubicacion {
     public async guardarEnBD(transaction ?: Transaction ) : Promise<void> 
     {
         console.log('Ubicacion.guardarEnBD');
-
+        console.log(this.data.idUbicacion)
+        console.log(this.estadoEnBD === ESTADO_BD.M);
         switch (this.estadoEnBD) {
             case ESTADO_BD.A:
                 await this.darDeAltaBD(transaction);
@@ -64,45 +65,71 @@ class Ubicacion {
     private async darDeAltaBD(transaction ?: Transaction )
     {
         if(!this.iActividad) throw ERROR.ACTIVIDAD_UBICACION;
-        const registro = { ...this.verDatos(), idActividad : this.iActividad.verID() }
 
-        this.data.idUbicacion = (await BD.Ubicacion.create(registro,{transaction})).dataValues.idUbicacion;
+        this.data.idUbicacion = (await BD.Ubicacion.create(this.verDatos(),{transaction})).dataValues.idUbicacion;
+        
+        const registro = { idUbicacion : this.data.idUbicacion, idActividad : this.iActividad.verID() }
+
+        if(await BD.UbicacionActividad.findOne({where : registro, paranoid : false,transaction})){
+            await BD.UbicacionActividad.restore({where : registro, transaction });
+        }else {
+            await BD.UbicacionActividad.create(registro,{ transaction });
+        }
+        
     }
     private async darDeBajaBD(transaction ?: Transaction)
     {
-       const resp =  await BD.Ubicacion.destroy({where : {idUbicacion : this.data.idUbicacion} , transaction });
+
+       const resp =  await BD.UbicacionActividad.destroy({where : {
+            idUbicacion : this.data.idUbicacion , 
+            idActividad : this.iActividad?.verID()
+        } , transaction });
        if(resp < 1) throw ERROR.UBICACION_BAJA_BD;
     }
     private async modificarBD(transaction ?: Transaction)
     {
         if(!this.iActividad) throw ERROR.ACTIVIDAD_UBICACION;
-        const registro = { ...this.verDatos(), idActividad : this.iActividad.verID() }
-        if(!await BD.Ubicacion.findByPk(this.data.idUbicacion, { transaction})){
-            console.log(`ubicacion ${this.data.idUbicacion} posiblemente dada de baja, restaurando...`)
-            await BD.Ubicacion.restore({where : { idUbicacion : this.data.idUbicacion}, transaction});
+
+        if(!await BD.Ubicacion.findByPk(this.data.idUbicacion, { transaction })){
+            throw ERROR.UBICACION_INEXISTENTE;
         }
-        const resp = await BD.Ubicacion.update(registro,{where : {idUbicacion : registro.idUbicacion}, transaction});
-        if(resp[0] < 1) throw ERROR.UBICACION_MOD_BD;
+        await BD.Ubicacion.update(this.verDatos(),{where : {idUbicacion : this.data.idUbicacion}, transaction});
+        
+                
+        const registro = { idUbicacion : this.data.idUbicacion, idActividad : this.iActividad.verID() }
+
+        if(await BD.UbicacionActividad.findOne({where : registro, paranoid : false,transaction})){
+            await BD.UbicacionActividad.restore({where : registro, transaction });
+        }else {
+            await BD.UbicacionActividad.create(registro,{ transaction });
+        }
+
     }
     
     public estaDeBaja() : boolean 
     { 
         return this.estadoEnBD === ESTADO_BD.B;
     }
-
-    public static async buscarPorActBD(idAct: ID_ACT, transaction?: Transaction | undefined): Promise<Array<Ubicacion>> {
-
-        let salida : Ubicacion[] = [];
-
-        const bdUbicaciones = await BD.UbicacionActividad.findAll({where : {idActividad : idAct},transaction});
-
-        if(bdUbicaciones.length > 0) {
-            const ubicaciones = await BD.Ubicacion.findAll({where : {idUbicacion : bdUbicaciones.map(ubic => ubic.idUbicacion)}}) ;
-            salida.push( ...ubicaciones.map( ubic => new Ubicacion(ubic.dataValues)) ) 
+    public static async buscarAsociadasPorActBD( iActividad : Actividad, transaction?: Transaction | undefined)
+    : Promise<ID_UBICACION[]> {
         
-        }
+        let salida : ID_UBICACION[] = [];
 
-        return salida;
+       const asociadas = await BD.UbicacionActividad.findAll({where : {idActividad : iActividad.verID()},transaction});
+
+       if(asociadas.length > 0){
+        salida.push(...asociadas.map(ubic => ubic.idUbicacion))
+       }
+       return salida;
+    
+    }
+    public static async buscarPorActBD(listaIds : ID_UBICACION[], iActividad : Actividad, transaction?: Transaction | undefined): Promise<void> {
+
+        if(process.env.NODE_ENV === "development")console.log('cargando ubicaciones')
+        const ubicaciones = await BD.Ubicacion.findAll({where : {idUbicacion : listaIds}});
+        iActividad.cargarUbicaciones ( ubicaciones );
+    
+
 
     }
     public static async buscarPorIDBD(id: ID_UBICACION, transaction?: Transaction | undefined): Promise<Ubicacion> {

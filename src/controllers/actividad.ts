@@ -4,6 +4,7 @@ import Actividad, { ACTIVIDAD_NULA, IResponseActividad } from "../classes/Activi
 import { ESTADO_BD } from "../types/general";
 import { request, response } from "express";
 import { HttpHelpers } from '../helpers/general';
+import sequelizeExtension from '../config/dbConfig';
 
 
 export const cargarActividad =  async ( req : typeof request , resp : typeof response) =>
@@ -38,14 +39,17 @@ export const verActividad = async ( req : typeof request , resp : typeof respons
 
             const {idActividad} = req.params;
 
-            const iActividad = await Actividad.buscarPorIDBD(Number(idActividad));
+            await Actividad.buscarPorIDBD(Number(idActividad)).then(
+                iActividad => {
+                    console.log("consulta terminada ..");
+                    salida = iActividad.verDatos();
 
-            salida = iActividad.verDatos();
-
-            HttpHelpers.responderPeticionOk(resp, salida);
+                    HttpHelpers.responderPeticionOk(resp, salida);
+                }
+            )
 
          } catch (error : any) {
-            if(!error.status) console.log(cli.red(error));
+            if( (!error.status) || error.status === 500  ) console.log(cli.red(JSON.stringify(error)));
             
             HttpHelpers.responderPeticionError(resp, error.message,error.status );
        }

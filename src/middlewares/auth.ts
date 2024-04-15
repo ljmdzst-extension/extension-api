@@ -21,6 +21,7 @@ export const extraerToken = (req : any, resp : typeof response, next : NextFunct
 export const validarToken = async(req : any, resp : typeof response, next : NextFunction) =>{
     try {
         if(!req.token) throw {status : 400 , message : 'token inexistente o inválido'}
+        
         const { idUsuario }= jwt.verify(req.token,process.env.HASH_KEY || '' ) as jwt.JwtPayload;
 
         if(!idUsuario) throw {status : 500, message : ' No se pudo obtener el idUsuario'}
@@ -41,6 +42,8 @@ export const validarToken = async(req : any, resp : typeof response, next : Next
             message = error.message;
         }
         
+        if(error.status) status = error.status;
+
         if(status === 500) {
             console.log(`ERROR : ${req.method}-${req.path}-${message}`)
         }

@@ -107,18 +107,15 @@ class Meta {
         if(!bdMeta ) throw ERROR.META_INEXISTENTE;
         return new Meta(bdMeta.dataValues);
     } ;
-     public static async buscarPorActBD(iAct: Actividad, transaction?: Transaction | undefined): Promise<Array<Meta>> {
+     public static async buscarPorActBD(iAct: Actividad, transaction?: Transaction | undefined): Promise<void> {
 
-        let salida : Meta[] = [];
+        if(process.env.NODE_ENV === "development")console.log('cargando metas ..')
 
-        const bdMetas = await BD.Meta.findAll({where : {idActividad : iAct.verID()},transaction});
+        const metas = await BD.Meta.findAll({where : {idActividad : iAct.verID()},transaction})
+        iAct.cargarMetas( metas.map( meta => meta.dataValues) );
 
-        if(bdMetas.length > 0) {
+        
 
-            bdMetas.forEach(async bdMeta => salida.push( new Meta({...bdMeta.dataValues,valoracion : bdMeta.idValoracion},iAct )) ) 
-        }
-
-        return salida;
 
     }
     

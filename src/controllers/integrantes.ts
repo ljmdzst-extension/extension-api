@@ -1,5 +1,5 @@
 import { request, response } from "express";
-import logger from "../config/logsConfig";
+
 import sequelizeExtension from "../config/dbConfig";
 
 
@@ -14,7 +14,7 @@ export const verIntegrates = async (req : typeof request , res : typeof response
     } catch (error : any) {
         await transaction.rollback();
 
-        logger.log('error',error.status,' - ',error.message);
+        console.log('error',error.status,' - ',error.message);
 
         res.status(error.status || 500).json({
             ok : false,
@@ -35,7 +35,7 @@ export const editarIntegrantes = async (req : typeof request , res : typeof resp
 
 
     } catch (error : any) {
-        logger.log('error',error.status,' - ',error.message);
+        console.log('error',error.status,' - ',error.message);
         console.log(error)
         res.status(500).json({
             ok : false,
@@ -53,7 +53,7 @@ export const bajaIntegrante = async (req : typeof request , res : typeof respons
 
 
     } catch (error : any) {
-        logger.log('error',error.status,' - ',error.message);
+        console.log('error',error.status,' - ',error.message);
         console.log(error)
         res.status(500).json({
             ok : false,
