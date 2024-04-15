@@ -609,12 +609,13 @@ class Actividad  {
 
         return salida;
     } ;
-    public static async buscarPorAreaID(id : ID_AREA, anio: number,offset ?: number, limit ?: number ,transaction ?: Transaction) : Promise<IItemActividad[]>{
+    public static async buscarPorAreaID(id : ID_AREA, anio: number,offset ?: number, limit ?: number,keyword ?: string ,transaction ?: Transaction) : Promise<IItemActividad[]>{
         let salida : IItemActividad[] = [];
 
         salida = (await BD.Actividad.findAll({  
             where : {
                 idArea : id , 
+                desc :  keyword ? { [Op.like] : `${keyword}%`} : undefined,
                 createdAt : {[Op.gt] : new Date(`${anio}-01-01`) }
             } , 
             offset,

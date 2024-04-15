@@ -63,11 +63,11 @@ class Area {
     /**Conexion BD */
 
 
-    public static async verResumen( idArea : ID_AREA, anio : number, offset ?: number, limit ?: number ) : Promise<IResponseActividad[]>{
+    public static async verResumen( idArea : ID_AREA, anio : number, offset ?: number, limit ?: number, keyword ?: string ) : Promise<IResponseActividad[]>{
 
         let salida : IResponseActividad[] = [];
 
-        const listaActividades = await Area.buscarPorIDConAct(Number(idArea), Number(anio) ,offset,limit);
+        const listaActividades = await Area.buscarPorIDConAct(Number(idArea), Number(anio) ,offset,limit,keyword);
         
         if(listaActividades.length > 0){
 
@@ -109,10 +109,10 @@ class Area {
         return salida;
     }
     
-    public static async buscarPorIDConAct (idArea : ID_AREA,anio : number, offset ?: number, limit ?: number, transaction ?: Transaction): Promise<IItemActividad[]>{
+    public static async buscarPorIDConAct (idArea : ID_AREA,anio : number, offset ?: number, limit ?: number, keyword ?: string , transaction ?: Transaction): Promise<IItemActividad[]>{
         let salida : IItemActividad[] = [];
 
-        const bdActividades = await Actividad.buscarPorAreaID(idArea,anio,offset,limit,transaction);
+        const bdActividades = await Actividad.buscarPorAreaID(idArea,anio,offset,limit,keyword,transaction);
 
         if(bdActividades.length){
            salida = bdActividades;

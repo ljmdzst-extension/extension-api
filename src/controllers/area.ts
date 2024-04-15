@@ -2,12 +2,11 @@
 import cli from 'cli-color'
 import { request, response } from "express";
 
-import Actividad, {  IItemActividad, IResponseActividad } from "../classes/Actividad";
+import {  IItemActividad, IResponseActividad } from "../classes/Actividad";
 import Area, { IArea } from "../classes/Area";
 import Programa from "../classes/Programa";
 import { HttpHelpers } from "../helpers/general";
 import sequelizeExtension from '../config/dbConfig';
-import { ColaDeTareas } from '../helpers/tareas';
 
 
  export const  verListaAreas = async(  req : typeof request , resp : typeof response) => {
@@ -43,7 +42,7 @@ export const  verListaActividades = async (  req : typeof request , resp : typeo
 
             const { idArea, anio} = req.params;
             const listaActividades = await sequelizeExtension.transaction({},async transaction=>{
-                const listaActividades  = await Area.buscarPorIDConAct(Number(idArea), Number(anio),undefined,undefined , transaction);
+                const listaActividades  = await Area.buscarPorIDConAct(Number(idArea), Number(anio),undefined,undefined,undefined , transaction);
                 return listaActividades;
             })
 
@@ -67,9 +66,9 @@ export const  verResumenArea = async (  req : typeof request , resp : typeof res
         try {
                 let salida : IResponseActividad[] = []
     
-                const { idArea, anio,offset,limit} = req.params;
+                const { idArea, anio,offset,limit,keyword} = req.params;
     
-                salida = await Area.verResumen(Number(idArea),Number(anio),Number(offset),Number(limit))
+                salida = await Area.verResumen(Number(idArea),Number(anio),Number(offset),Number(limit),keyword)
                 
                 HttpHelpers.responderPeticionOk(resp,salida) 
     
