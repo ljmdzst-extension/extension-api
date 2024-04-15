@@ -66,9 +66,9 @@ export const  verResumenArea = async (  req : typeof request , resp : typeof res
         try {
                 let salida : IResponseActividad[] = []
     
-                const { idArea, anio,offset,limit,keyword} = req.params;
-    
-                salida = await Area.verResumen(Number(idArea),Number(anio),Number(offset),Number(limit),keyword)
+                const { idArea, anio,offset,limit} = req.params;
+                console.log(req.params.keyword)
+                salida = await Area.verResumen(Number(idArea),Number(anio),Number(offset),Number(limit),req.params.keyword)
                 
                 HttpHelpers.responderPeticionOk(resp,salida) 
     

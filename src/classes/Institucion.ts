@@ -130,17 +130,18 @@ class Institucion {
         });
     };
 
-    public static async buscarAsociadasPorActBD( listaIDs : ID_INSTITUCION[], iAct: Actividad, transaction?: Transaction | undefined)
-    :Promise<void> {
+    public static async buscarAsociadasPorActBD( iAct: Actividad, transaction?: Transaction | undefined)
+    :Promise<ID_INSTITUCION[]> {
         
         if(process.env.NODE_ENV === "development")console.log('buscando instituciones asociads ..');
-
+        let salida : ID_INSTITUCION[] = [];
         const asociadas = await BD.InstitucionActividad.findAll({where : {idActividad : iAct.verID()},transaction});
-
+     
         if(asociadas.length > 0) {
-            listaIDs.push(...asociadas.map( asoc => asoc.idInstitucion ));
+            salida.push (...asociadas.map( asoc => asoc.idInstitucion ));
         }
-    } 
+        return salida;
+    }   
     
     
     public static async buscarPorActBD(listaIDs : ID_INSTITUCION[], iAct: Actividad, transaction?: Transaction | undefined): 

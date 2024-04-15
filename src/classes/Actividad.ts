@@ -577,32 +577,48 @@ class Actividad  {
         let listaIdsInstitucionesAsociadas : ID_INSTITUCION[] = [];
         let listaIdsFechasPuntualesAsociadas : ID_FECHA[] = [];
 
-        await BD.Actividad.sequelize?.transaction( {},async transaction=>{
-            
-            await Promise.all([
-                FechaPuntual.buscarAsociadasPorActBD(listaIdsFechasPuntualesAsociadas,salida,transaction) ,
-                Institucion.buscarAsociadasPorActBD(listaIdsInstitucionesAsociadas,salida,transaction) ,
-                Ubicacion.buscarAsociadasPorActBD(listaIdsUbicacionesAsociadas,salida,transaction),
-                Objetivo.buscarPorActBD(salida,transaction),
-                ProgramaSIPPE.buscarPorActBD(salida,transaction),
-                Relacion.buscarPorActBD(salida,transaction)
-            ]);
+        const cola = new ColaDeTareas();
+        cola.push(
+            ()=> BD.Actividad.sequelize?.transaction( {logging : process.env.NODE_ENV === "development" ? console.log : undefined},async transaction=>{
+                
+                await Promise.all([
+                    Objetivo.buscarPorActBD(salida,transaction),
+                    ProgramaSIPPE.buscarPorActBD(salida,transaction),
+                    Relacion.buscarPorActBD(salida,transaction)
+                ]);
 
-            
-        })
+                
+            })
+        );
+        cola.push(
+            ()=> BD.Actividad.sequelize?.transaction( {logging : process.env.NODE_ENV === "development" ? console.log : undefined},async transaction=>{
+                await Promise.all([
+                    FechaPuntual.buscarAsociadasPorActBD(salida,transaction).then(resp => listaIdsFechasPuntualesAsociadas.push(...resp)) ,
+                    Institucion.buscarAsociadasPorActBD(salida,transaction).then(resp => listaIdsInstitucionesAsociadas.push(...resp)) ,
+                    Ubicacion.buscarAsociadasPorActBD(salida,transaction).then(resp => listaIdsUbicacionesAsociadas.push(...resp))
+                ])
+            })
+        );
 
 
-        await BD.Actividad.sequelize?.transaction( {},async transaction=>{
+        await cola.resolverSinDelay();
         
 
-            await Promise.all([
-                Enlace.buscarPorActBD(salida,transaction), 
-                FechaPuntual.buscarPorActBD(listaIdsFechasPuntualesAsociadas,salida,transaction),
-                Institucion.buscarPorActBD(listaIdsInstitucionesAsociadas,salida,transaction),
-                Meta.buscarPorActBD(salida,transaction),
-                Ubicacion.buscarPorActBD(listaIdsUbicacionesAsociadas,salida,transaction)
-            ]);
-        });
+        cola.push(
+            ()=> BD.Actividad.sequelize?.transaction( {logging : process.env.NODE_ENV === "development" ? console.log : undefined},async transaction=>{
+            
+                
+                await Promise.all([
+                    Enlace.buscarPorActBD(salida,transaction), 
+                    FechaPuntual.buscarPorActBD(listaIdsFechasPuntualesAsociadas,salida,transaction),
+                    Institucion.buscarPorActBD(listaIdsInstitucionesAsociadas,salida,transaction),
+                    Meta.buscarPorActBD(salida,transaction),
+                    Ubicacion.buscarPorActBD(listaIdsUbicacionesAsociadas,salida,transaction)
+                ]);
+            })
+        );
+        await cola.resolverSinDelay();
+        
 
 
         salida.estadoEnBD = ESTADO_BD.M;
@@ -611,13 +627,18 @@ class Actividad  {
     } ;
     public static async buscarPorAreaID(id : ID_AREA, anio: number,offset ?: number, limit ?: number,keyword ?: string ,transaction ?: Transaction) : Promise<IItemActividad[]>{
         let salida : IItemActividad[] = [];
-
+        let opcionesBusqueda : {} = {
+            idArea : id , 
+            createdAt : {[Op.gt] : new Date(`${anio}-01-01`) }
+        };
+        if(keyword){
+            opcionesBusqueda = {
+                ...opcionesBusqueda,
+                desc :  { [Op.like] : `%${keyword}%`}
+            }
+        }
         salida = (await BD.Actividad.findAll({  
-            where : {
-                idArea : id , 
-                desc :  keyword ? { [Op.like] : `${keyword}%`} : undefined,
-                createdAt : {[Op.gt] : new Date(`${anio}-01-01`) }
-            } , 
+            where : opcionesBusqueda , 
             offset,
             limit,
             transaction

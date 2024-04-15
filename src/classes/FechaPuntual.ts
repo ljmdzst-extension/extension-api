@@ -95,15 +95,16 @@ class FechaPuntual{
         return new FechaPuntual(bdFechaPuntual.dataValues);
     } ;
 
-    public static async buscarAsociadasPorActBD(listaIds : ID_FECHA[], iAct : Actividad, transaction?: Transaction | undefined ) {
+    public static async buscarAsociadasPorActBD( iAct : Actividad, transaction?: Transaction | undefined ) {
         
         if(process.env.NODE_ENV === "development")console.log('buscando fechas puntuales asociadas..');
-
+        let salida : ID_FECHA[] = [];
         await BD.FechaPuntualActividad.findAll({where : {idActividad : iAct.verID()},transaction}).then( fechasAsociadas =>{
             if(fechasAsociadas.length > 0){
-                listaIds.push(...fechasAsociadas.map( fecha => fecha.idActividad));
+                salida.push(...fechasAsociadas.map( fecha => fecha.idActividad));
             }
         });
+        return salida;
     }
     public static async buscarPorActBD(listaIds : ID_FECHA[], iAct: Actividad, transaction?: Transaction | undefined): Promise<void> {
 

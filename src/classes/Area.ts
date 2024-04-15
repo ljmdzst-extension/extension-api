@@ -70,14 +70,14 @@ class Area {
         const listaActividades = await Area.buscarPorIDConAct(Number(idArea), Number(anio) ,offset,limit,keyword);
         
         if(listaActividades.length > 0){
-
-            const cola = new ColaDeTareas();
-
-            listaActividades.forEach( act => 
-                    cola.push( ()=> Actividad.buscarPorIDBD(act.idActividad).then( act => salida.push(act.verDatos() ) ) )
-            );
             
-            await cola.resolverSinDelay();
+           const cola = new ColaDeTareas();
+           listaActividades.forEach( act =>
+                cola.push(()=> Actividad.buscarPorIDBD(act.idActividad).then( act => salida.push(act.verDatos() ) ))
+             )
+
+           await cola.resolverSinDelay();
+
         }
 
         return salida;

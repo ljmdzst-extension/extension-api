@@ -1,5 +1,4 @@
 import { Transaction } from "sequelize";
-import { Transaction } from "sequelize";
 import Objetivo, { IObjetivo } from "../classes/Objetivo";
 import ProgramaSIPPE, { IProgramaSIPPE } from "../classes/ProgramaSIPPE";
 import Relacion, { IRelacion } from "../classes/Relacion";
@@ -8,19 +7,19 @@ import Institucion, { IInstitucion } from "../classes/Institucion";
 import { DataGetInstituciones } from "../types/base";
 
 export type TBases = {
-    listaObjetivos : TObjetivo[],
-    listaProgramasSIPPE : TProgramaSIPPE[]
-    listaRelaciones : TRelacion[],
-    listaValoraciones : TValoracion[],
+    listaObjetivos : IObjetivo[],
+    listaProgramasSIPPE : IProgramaSIPPE[]
+    listaRelaciones : IRelacion[],
+    listaValoraciones : IValoracion[],
     unidadesAcademicas : ({idUnidadAcademica : number, nom : string})[]
 }
 
 
 export default class SBases {
     public static async mostrarBases( data : any, transaction ?: Transaction) 
-    : Promise<IBases> 
+    : Promise<TBases> 
     {
-        let salida : IBases = {
+        let salida : TBases = {
             listaObjetivos : [],
             listaProgramasSIPPE : [],
             listaRelaciones : [],
@@ -42,9 +41,9 @@ export default class SBases {
     }
 
     public static async verInstituciones( data : DataGetInstituciones, transaction ?: Transaction ) 
-    : Promise<TInstitucion[]>
+    : Promise<IInstitucion[]>
     {
-        let salida : TInstitucion[] = [];
+        let salida : IInstitucion[] = [];
 
         // implementar con db_instituciones
 

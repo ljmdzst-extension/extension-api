@@ -110,13 +110,17 @@ class Ubicacion {
     { 
         return this.estadoEnBD === ESTADO_BD.B;
     }
-    public static async buscarAsociadasPorActBD(listaIds : ID_UBICACION[], iActividad : Actividad, transaction?: Transaction | undefined): Promise<void> {
+    public static async buscarAsociadasPorActBD( iActividad : Actividad, transaction?: Transaction | undefined)
+    : Promise<ID_UBICACION[]> {
         
-       return BD.UbicacionActividad.findAll({where : {idActividad : iActividad.verID()},transaction}).then(
-         ubicacionesAsociadas => {
-            listaIds.push(...ubicacionesAsociadas.map( ubic => ubic.idUbicacion));
-         }
-       )
+        let salida : ID_UBICACION[] = [];
+
+       const asociadas = await BD.UbicacionActividad.findAll({where : {idActividad : iActividad.verID()},transaction});
+
+       if(asociadas.length > 0){
+        salida.push(...asociadas.map(ubic => ubic.idUbicacion))
+       }
+       return salida;
     
     }
     public static async buscarPorActBD(listaIds : ID_UBICACION[], iActividad : Actividad, transaction?: Transaction | undefined): Promise<void> {
