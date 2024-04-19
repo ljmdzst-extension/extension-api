@@ -43,7 +43,7 @@ export const loginUsuario =  async( req : any, resp : typeof response  ) => {
 export const authUsuario = async( req : any, resp : typeof response  )  => {
    
    try {
-        const {idUsuario}  = req.usuario.usuario;
+        const {idUsuario}  = req.usuario;
         
        const _token = jwt.sign( {idUsuario} ,process.env.HASH_KEY || '', {expiresIn : 60 * 60} );
         

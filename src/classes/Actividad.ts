@@ -118,7 +118,8 @@ class Actividad  {
         if(data.listaRelaciones){
             this.cargarRelaciones(data.listaRelaciones);
         }
-        this.cargarFechasPuntuales( data.listaFechasPuntuales || []);
+        console.log(data.listaFechasPuntuales)
+        this.cargarFechasPuntuales( data.listaFechasPuntuales);
         
         this.cargarInstituciones(data.listaInstituciones);
 
@@ -143,6 +144,7 @@ class Actividad  {
     }
     public verDatos() : IResponseActividad 
     {
+        console.log(this.listaFechasPuntuales.filter(item => !item.estaDeBaja()).map( item => item.verDatos()))
         return {
             ...this.data,
             listaObjetivos : this.data.listaObjetivos? Array.from(this.data.listaObjetivos.keys()).filter( item => this.data.listaObjetivos?.get(item) === ESTADO_BD.A).sort( (a,b) => a-b) : [],
@@ -159,7 +161,10 @@ class Actividad  {
     public cargarProgramasSIPPE( listaIds : Array<ID_PROG_SIPPE>)
     {   
         if( !listaIds.length ) { 
-            if(process.env.NODE_ENV === 'development') if(process.env.NODE_ENV === "development")console.log(cli.white(' lista prog SIPPE vacía - omitiendo...')); return; }
+            if(process.env.NODE_ENV === 'development') 
+                    console.log(cli.white(' lista prog SIPPE vacía - omitiendo...')); 
+            return; 
+        }
 
         Array.from(this.data.listaProgramasSIPPE?.keys() || [])?.forEach( clave => this.data.listaProgramasSIPPE?.set(clave,ESTADO_BD.B) );
         if(listaIds.length > 0){
@@ -198,7 +203,7 @@ class Actividad  {
     public cargarFechasPuntuales( listaFechas ?: Array<IFecha> )
     {
 
-        if( !listaFechas) {if(process.env.NODE_ENV === "development")console.log(cli.white(' lista fechas puntuales vacía - omitiendo...')); return;}
+        if( !listaFechas?.length) {if(process.env.NODE_ENV === "development")console.log(cli.white(' lista fechas puntuales vacía - omitiendo...')); return;}
         if((!this.data.fechaDesde) || (!this.data.fechaHasta)) {console.log("rango no asignado.. omitiendo"); return;}
         if( listaFechas.length < 1) { 
             this.listaFechasPuntuales.forEach( item => {item.darDeBajaBD();});
@@ -474,6 +479,7 @@ class Actividad  {
             if(process.env.NODE_ENV === "development")console.log('guardando enlaces..')
             await Promise.all( this.listaEnlaces.map( async enlace => await enlace.guardarEnBD(transaction) ) )
         }
+       
         if(this.listaFechasPuntuales.length){
             if(process.env.NODE_ENV === "development")console.log('guardando fecha puntuales..')
             await Promise.all( this.listaFechasPuntuales.map( async fechaPuntual => await fechaPuntual.guardarEnBD(transaction) ) )

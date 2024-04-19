@@ -99,11 +99,14 @@ class FechaPuntual{
         
         if(process.env.NODE_ENV === "development")console.log('buscando fechas puntuales asociadas..');
         let salida : ID_FECHA[] = [];
-        await BD.FechaPuntualActividad.findAll({where : {idActividad : iAct.verID()},transaction}).then( fechasAsociadas =>{
-            if(fechasAsociadas.length > 0){
-                salida.push(...fechasAsociadas.map( fecha => fecha.idActividad));
-            }
+        const asociadas = await BD.FechaPuntualActividad.findAll({
+            where : {idActividad : iAct.verID()
+
+            },transaction
         });
+        if(asociadas.length) {
+            salida.push( ... asociadas.map( fecha => fecha.idFecha))
+        }
         return salida;
     }
     public static async buscarPorActBD(listaIds : ID_FECHA[], iAct: Actividad, transaction?: Transaction | undefined): Promise<void> {
