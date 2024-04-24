@@ -23,9 +23,9 @@ services:
   volumes:
    - ./db_estension_backup:/var/lib/mysql
   expose:
-   - "3306"
+   - "33061"
   ports:
-   - "3306:3306"
+   - "33061:3306"
   environment:
     MYSQL_ROOT_PASSWORD: extension_1234
     MYSQL_DATABASE: db_extension

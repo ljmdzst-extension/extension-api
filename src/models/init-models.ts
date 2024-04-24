@@ -105,8 +105,10 @@ import { RegistroPropuestaInstancia as _RegistroPropuestaInstancia } from "./Reg
 import type { RegistroPropuestaInstanciaAttributes, RegistroPropuestaInstanciaCreationAttributes } from "./RegistroPropuestaInstancia";
 import { AreaPrograma as _AreaPrograma } from "./AreaPrograma";
 import type { AreaProgramaAttributes, AreaProgramaCreationAttributes } from "./AreaPrograma";
-import { AreaProgramaCategoria as _AreaProgramaCategoria } from "./AreaProgramaCategoria";
-import type { AreaProgramaCategoriaAttributes, AreaProgramaCategoriaCreationAttributes } from "./AreaProgramaCategoria";
+import { AreaProgramaCategoriaUsuario as _AreaProgramaCategoriaUsuario } from "./AreaProgramaCategoriaUsuario";
+import type { AreaProgramaCategoriaUsuarioAttributes, AreaProgramaCategoriaUsuarioCreationAttributes } from "./AreaProgramaCategoriaUsuario";
+import { CategoriaUsuario, CategoriaUsuario as _CategoriaUsuario } from "./CategoriaUsuario";
+import type { CategoriaUsuarioAttributes, CategoriaUsuarioCreationAttributes } from "./CategoriaUsuario";
 
 export {
   _Actividad as Actividad,
@@ -114,10 +116,11 @@ export {
   _ActividadParticipanteSocial as ActividadParticipanteSocial,
   _Area as Area,
   _AreaPrograma as AreaPrograma,
-  _AreaProgramaCategoria as AreaProgramaCategoria,
+  _AreaProgramaCategoriaUsuario as AreaProgramaCategoriaUsuario,
   _Capacitacion as Capacitacion,
   _Carrera as Carrera,
   _Categoria as Categoria,
+  _CategoriaUsuario as CategoriaUsuario,
   _CronogramaActividad as CronogramaActividad,
   _Enlace as Enlace,
   _Evaluacion as Evaluacion,
@@ -176,14 +179,16 @@ export type {
   AreaCreationAttributes,
   AreaProgramaAttributes,
   AreaProgramaCreationAttributes,
-  AreaProgramaCategoriaAttributes,
-  AreaProgramaCategoriaCreationAttributes,
+  AreaProgramaCategoriaUsuarioAttributes,
+  AreaProgramaCategoriaUsuarioCreationAttributes,
   CapacitacionAttributes,
   CapacitacionCreationAttributes,
   CarreraAttributes,
   CarreraCreationAttributes,
   CategoriaAttributes,
   CategoriaCreationAttributes,
+  CategoriaUsuarioAttributes,
+  CategoriaUsuarioCreationAttributes,
   CronogramaActividadAttributes,
   CronogramaActividadCreationAttributes,
   EnlaceAttributes,
@@ -282,10 +287,11 @@ export function initModels(sequelize: Sequelize) {
   const ActividadParticipanteSocial = _ActividadParticipanteSocial.initModel(sequelize);
   const Area = _Area.initModel(sequelize);
   const AreaPrograma = _AreaPrograma.initModel(sequelize);
-  const AreaProgramaCategoria = _AreaProgramaCategoria.initModel(sequelize);
+  const AreaProgramaCategoriaUsuario = _AreaProgramaCategoriaUsuario.initModel(sequelize);
   const Capacitacion = _Capacitacion.initModel(sequelize);
   const Carrera = _Carrera.initModel(sequelize);
   const Categoria = _Categoria.initModel(sequelize);
+  const CategoriaUsuario = _CategoriaUsuario.initModel(sequelize);
   const CronogramaActividad = _CronogramaActividad.initModel(sequelize);
   const Enlace = _Enlace.initModel(sequelize);
   const Evaluacion = _Evaluacion.initModel(sequelize);
@@ -489,7 +495,6 @@ export function initModels(sequelize: Sequelize) {
   UbicacionActividad.belongsTo(Actividad, { foreignKey: "idActividad"});
   UbicacionProblematica.belongsTo(Propuesta, { foreignKey: "codigoPropuesta"});
   Usuario.belongsTo(Persona, { as : 'persona', foreignKey: "nroDoc"});
-  Usuario.belongsTo(Categoria, { as: 'categoria',  foreignKey: "idCategoria" });
   Usuario.belongsToMany(Evaluacion, { as: 'idEvaluacionEvaluacions', through: EvaluacionItem, foreignKey: "idUsuario", otherKey: "idEvaluacion" });
   Usuario.hasMany(Actividad, { foreignKey: "idUsuario"});
   Usuario.hasMany(EvaluacionItem, { foreignKey: "idUsuario"});
@@ -501,10 +506,11 @@ export function initModels(sequelize: Sequelize) {
     ActividadParticipanteSocial: ActividadParticipanteSocial,
     Area: Area,
     AreaPrograma : AreaPrograma,
-    AreaProgramaCategoria : AreaProgramaCategoria,
+    AreaProgramaCategoriaUsuario : AreaProgramaCategoriaUsuario,
     Capacitacion: Capacitacion,
     Carrera: Carrera,
     Categoria: Categoria,
+    CategoriaUsuario : CategoriaUsuario,
     CronogramaActividad: CronogramaActividad,
     Enlace: Enlace,
     Evaluacion: Evaluacion,

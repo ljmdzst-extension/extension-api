@@ -52,19 +52,25 @@ export interface IPrograma {
         return salida;
     }
 
-    public static async verTodosConAreas( anio : number, idCategoriaUsuario ?: number ,transaction ?: Transaction) : Promise<Programa[]>{
+    public static async verTodosConAreas( anio : number, idUsuario ?: string ,idCategoriaUsuario ?: number ,transaction ?: Transaction) : Promise<Programa[]>{
         let salida : Programa[] = [];
 
         let areasProgramas = await BD.AreaPrograma.findAll({where : {anio}, transaction});
   
         if(idCategoriaUsuario) {
-            const areasDeUsuario  = await BD.AreaProgramaCategoria.findAll({where : {idCategoria : idCategoriaUsuario , anio}, transaction});
+            const areasDeUsuario  = await BD.AreaProgramaCategoriaUsuario.findAll({
+                where : {
+                    idCategoria : idCategoriaUsuario , 
+                    idUsuario : idUsuario,
+                    anio
+                }, 
+                transaction});
             areasProgramas = areasProgramas.filter( areaProg => 
-                areasDeUsuario.find( ({idArea,idPrograma,anio}) => 
-                    idArea === areaProg.idArea && 
-                    idPrograma === areaProg.idPrograma && 
-                    anio === areaProg.anio 
-                ));
+                    areasDeUsuario.find( ({idArea,idPrograma,anio}) => 
+                        idArea === areaProg.idArea && 
+                        idPrograma === areaProg.idPrograma && 
+                        anio === areaProg.anio 
+                    ));
         }
 
         const programas = await BD.Programa.findAll({ 

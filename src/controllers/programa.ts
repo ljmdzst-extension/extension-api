@@ -1,11 +1,11 @@
 
 
-import { Transaction } from "sequelize";
+
 import Programa, { IPrograma } from "../classes/Programa";
-import { DataGetProgramas } from "../types/programa";
+
 
 import cli from 'cli-color'
-import { request, response } from "express";
+import {  response } from "express";
 import { HttpHelpers } from "../helpers/general";
 
 export const verListaProgramasConAreas = async( req : any, resp : typeof response) => {
@@ -13,9 +13,9 @@ export const verListaProgramasConAreas = async( req : any, resp : typeof respons
         let salida : IPrograma[] = [];
 
         const { anio } = req.params;
-        const { categoria } = req.usuario;
+        const { categorias,usuario } = req.usuario;
 
-        const listaProgramas = await Programa.verTodosConAreas( Number(anio), categoria.idCategoria  );
+        const listaProgramas = await Programa.verTodosConAreas( Number(anio), usuario.idUsuario ,categorias[0].idCategoria  );
 
         if(listaProgramas.length) {
             salida = listaProgramas.map( prog => prog.verDatos());

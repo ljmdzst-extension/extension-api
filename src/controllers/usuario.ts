@@ -82,7 +82,6 @@ export  const registerUsuario = async( req : any, resp : typeof response  ) => {
 
         const usuarioPendiente = await Usuario.initModel(sequelizeExtension).create({
             idUsuario : nuevoId,
-            idCategoria : 5,
             nroDoc :dbPersona.nroDoc,
             idUnidadAcademica : idUnidadAcademica,
             email,

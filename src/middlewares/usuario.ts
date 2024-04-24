@@ -50,15 +50,18 @@ export const obtenerDataUsuario = async(req : any, resp : typeof response, next 
     
         if(!iUsuario) throw {status : 400 , message: 'no existe un usuario con ese id'}
         
-        const categoria = await BD.Categoria.findByPk(iUsuario.idCategoria);
+        const lCategoriasUsuario = await BD.CategoriaUsuario.findAll({where : {idUsuario : iUsuario.idUsuario}});
         
-        if(!categoria) throw { status : 500 , message : 'usuario sin categoría'}
+        if(!lCategoriasUsuario) throw { status : 500 , message : 'usuario sin categoría'}
+
+        const categorias = await BD.Categoria.findAll({where : {idCategoria : lCategoriasUsuario.map( cu => cu.idCategoria)}});
+
 
         console.log(` USR : ${iUsuario.idUsuario}`)
 
         req.usuario = {
             usuario : iUsuario,
-            categoria : categoria
+            categorias : categorias.map( c => c.dataValues)
         }
 
         next();

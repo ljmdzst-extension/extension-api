@@ -11,6 +11,11 @@ import {
 } from "../middlewares/actividad";
 
 import { 
+    validarPermisoAccesoMetas,
+    validarPermisoEdicionMetas 
+} from "../middlewares/permisos";
+
+import { 
     cargarActividad, 
     darDeBajaActividad, 
     editarActividad, 
@@ -20,26 +25,26 @@ import {
 } from "../controllers/actividad";
 
 import {check} from 'express-validator';
-import { validarPermisoGestionMetas } from "../middlewares/permisos";
 
 const routerActividad = Router();
 
 routerActividad.get ( 
     '/:idActividad',
     check('idActividad','Debe ingresar un id de actividad como parámetro').isNumeric(),
+    validarPermisoAccesoMetas,
     validarParametros, 
     verActividad 
 );
 
 routerActividad.post ( 
     '/',
-    validarPermisoGestionMetas,
+    validarPermisoAccesoMetas,
     validarCamposActividad, 
     cargarActividad 
 );
 routerActividad.put ( 
     '/',
-    validarPermisoGestionMetas,
+    validarPermisoEdicionMetas,
     [
         ...validarCampos,
         validarSchema,
@@ -52,12 +57,14 @@ routerActividad.put (
 
 routerActividad.put (
     '/restore',
+    validarPermisoEdicionMetas,
     validarActividadSuspendida,
     restaurarActividad
 );
 
 routerActividad.put (
     '/cancel',
+    validarPermisoEdicionMetas,
     validarActividadExistente,
     validarMotivoSuspension,
     suspenderActividad
@@ -65,7 +72,7 @@ routerActividad.put (
 
 routerActividad.delete (
     '/',
-    validarPermisoGestionMetas,
+    validarPermisoEdicionMetas,
     validarActividadExistente,
     darDeBajaActividad
 );
