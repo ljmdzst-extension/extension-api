@@ -166,7 +166,8 @@ class Actividad  {
             return; 
         }
 
-        Array.from(this.data.listaProgramasSIPPE?.keys() || [])?.forEach( clave => this.data.listaProgramasSIPPE?.set(clave,ESTADO_BD.B) );
+        Array.from(this.data.listaProgramasSIPPE?.keys() || [])
+            ?.forEach( clave => this.data.listaProgramasSIPPE?.set(clave,ESTADO_BD.B) );
         if(listaIds.length > 0){
 
             listaIds.forEach( id => this.data.listaProgramasSIPPE?.set(id,ESTADO_BD.A));
@@ -177,7 +178,10 @@ class Actividad  {
     public cargarRelaciones( listaIds : Array<ID_RELACION> )
     {
         if( !listaIds.length ) { 
-            if(process.env.NODE_ENV === 'development') if(process.env.NODE_ENV === "development")console.log(cli.white(' lista relaciones vacía - omitiendo...')); return; }
+            if(process.env.NODE_ENV === "development")
+                console.log(cli.white(' lista relaciones vacía - omitiendo...'));
+         return; 
+        }
       
         Array.from(this.data.listaRelaciones?.keys() || [])
             ?.forEach( clave => this.data.listaRelaciones?.set(clave,ESTADO_BD.B) );
@@ -191,9 +195,13 @@ class Actividad  {
     public cargarObjetivos( listaIds : Array<ID_OBJETIVO> )
     {
         if( !listaIds.length ) { 
-            if(process.env.NODE_ENV === 'development') if(process.env.NODE_ENV === "development")console.log(cli.white(' lista objetivos vacía - omitiendo...')); return; }
+             if(process.env.NODE_ENV === "development")
+                console.log(cli.white(' lista objetivos vacía - omitiendo...')); 
+             return; 
+        }
         
-        Array.from(this.data.listaObjetivos?.keys() || [])?.forEach( clave => this.data.listaObjetivos?.set(clave,ESTADO_BD.B) );
+        Array.from(this.data.listaObjetivos?.keys() || [])
+            ?.forEach( clave => this.data.listaObjetivos?.set(clave,ESTADO_BD.B) );
 
         if(listaIds.length > 0){
             listaIds.forEach( id => this.data.listaObjetivos?.set(id,ESTADO_BD.A))
