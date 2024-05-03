@@ -16,6 +16,7 @@ import { ID_AREA } from './Area';
 import { INVALIDO } from '../logs/validaciones';
 import { ESTADO_BD } from '../types/general';
 import { ColaDeTareas } from '../helpers/tareas';
+import * as HelpersGeneral from '../helpers/general';
 
 
 const ACTIVIDAD_NULA = {idActividad : 0, idArea : 0, nro : 0 , desc : ''};
@@ -118,16 +119,16 @@ class Actividad  {
         if(data.listaRelaciones){
             this.cargarRelaciones(data.listaRelaciones);
         }
-        console.log(data.listaFechasPuntuales)
-        this.cargarFechasPuntuales( data.listaFechasPuntuales);
         
-        this.cargarInstituciones(data.listaInstituciones);
-
-        this.cargarMetas(data.listaMetas);
+        this.cargarFechasPuntuales( data.listaFechasPuntuales || []);
         
-        this.cargarUbicaciones(data.listaUbicaciones);
+        this.cargarInstituciones(data.listaInstituciones || []);
 
-        this.cargarEnlaces(data.listaEnlaces);
+        this.cargarMetas(data.listaMetas || []);
+        
+        this.cargarUbicaciones(data.listaUbicaciones || []);
+
+        this.cargarEnlaces(data.listaEnlaces || []);
     };
     public cancelar( motCancel : string){
         this.data.motivoCancel = motCancel;
@@ -144,7 +145,7 @@ class Actividad  {
     }
     public verDatos() : IResponseActividad 
     {
-        console.log(this.listaFechasPuntuales.filter(item => !item.estaDeBaja()).map( item => item.verDatos()))
+        
         return {
             ...this.data,
             listaObjetivos : this.data.listaObjetivos? Array.from(this.data.listaObjetivos.keys()).filter( item => this.data.listaObjetivos?.get(item) === ESTADO_BD.A).sort( (a,b) => a-b) : [],
@@ -162,8 +163,8 @@ class Actividad  {
     {   
         if( !listaIds.length ) { 
             if(process.env.NODE_ENV === 'development') 
-                    console.log(cli.white(' lista prog SIPPE vacía - omitiendo...')); 
-            return; 
+                    console.log(cli.white(' lista prog SIPPE vacía ...')); 
+          
         }
 
         Array.from(this.data.listaProgramasSIPPE?.keys() || [])
@@ -179,8 +180,8 @@ class Actividad  {
     {
         if( !listaIds.length ) { 
             if(process.env.NODE_ENV === "development")
-                console.log(cli.white(' lista relaciones vacía - omitiendo...'));
-         return; 
+                console.log(cli.white(' lista relaciones vacía ...'));
+        
         }
       
         Array.from(this.data.listaRelaciones?.keys() || [])
@@ -196,8 +197,8 @@ class Actividad  {
     {
         if( !listaIds.length ) { 
              if(process.env.NODE_ENV === "development")
-                console.log(cli.white(' lista objetivos vacía - omitiendo...')); 
-             return; 
+                console.log(cli.white(' lista objetivos vacía ...')); 
+            
         }
         
         Array.from(this.data.listaObjetivos?.keys() || [])
@@ -208,198 +209,186 @@ class Actividad  {
         }
 
     };
-    public cargarFechasPuntuales( listaFechas ?: Array<IFecha> )
+    public cargarFechasPuntuales( listaFechas : Array<IFecha> )
     {
-
-        if( !listaFechas?.length) {if(process.env.NODE_ENV === "development")console.log(cli.white(' lista fechas puntuales vacía - omitiendo...')); return;}
-        if((!this.data.fechaDesde) || (!this.data.fechaHasta)) {console.log("rango no asignado.. omitiendo"); return;}
-        if( listaFechas.length < 1) { 
-            this.listaFechasPuntuales.forEach( item => {item.darDeBajaBD();});
+        if((!this.data.fechaDesde) || (!this.data.fechaHasta)) {
+            console.log("periodo de ejecución de actividad no asignado."); 
             return;
-         }
-
-        listaFechas.sort( (a,b) => a.idFecha < 1 ? 1 : a.idFecha - b.idFecha )
-        
-        if(listaFechas[listaFechas.length -1].idFecha < 1) {
-            const fechasNuevas = listaFechas
-                .splice( listaFechas.findIndex( fecha => fecha.idFecha < 1 ))
-                .map( fecha => new FechaPuntual(fecha,this));
-            
-            this.listaFechasPuntuales = [...this.listaFechasPuntuales , ...fechasNuevas]
         }
+        this.listaFechasPuntuales.forEach( item => {item.darDeBajaBD();});
 
-        listaFechas.forEach( fecha => {
-            const fechaCargada = this.listaFechasPuntuales.find( item => item.verDatos().idFecha === fecha.idFecha);
-            if( !fechaCargada ){
-                const iFechaPuntual = new FechaPuntual(fecha,this);
-                if(!iFechaPuntual.estaEnRango(new Date(this.data.fechaDesde || Date.now()),new Date(this.data.fechaHasta || Date.now()))) throw ERROR.FECHA_FUERA_DE_RANGO;
-                this.listaFechasPuntuales.push(iFechaPuntual);
-            } 
-        });
+        if( listaFechas.length < 1) {
+            
+            if(process.env.NODE_ENV === "development")
+                console.log(cli.white(' lista fechas puntuales vacía ...'));
+        } 
+        if( listaFechas.length > 0) {
 
-        this.listaFechasPuntuales.forEach( item => {
-            if( item.verDatos().idFecha > 0 && listaFechas.every( fecha => fecha.idFecha !== item.verDatos().idFecha) ){
-                item.darDeBajaBD();
+            const {NUEVOS,VIEJOS} = HelpersGeneral.splitNuevosRegistros( listaFechas, 'idFecha' );
+        
+            if(VIEJOS.length > 0){
+                VIEJOS.forEach( fechaConId => {
+                    const fechaCargada = this.listaFechasPuntuales.find( item => item.verDatos().idFecha === fechaConId.idFecha);
+                    if( fechaCargada ) {
+                        fechaCargada.darDeAltaBD();
+                    }
+                    if( !fechaCargada ){
+                        const fechaNueva = new FechaPuntual(fechaConId,this);
+    
+                        if(!fechaNueva.estaEnRango()) throw ERROR.FECHA_FUERA_DE_RANGO;
+    
+                        this.listaFechasPuntuales.push(fechaNueva);
+                        
+                    } 
+                    
+                });
             }
-        });
+            if(NUEVOS.length > 0) {
+                const fechasNuevas = NUEVOS.map( fecha => new FechaPuntual(fecha,this));
+                
+                this.listaFechasPuntuales = [...this.listaFechasPuntuales , ...fechasNuevas]
+            }
+        }
       
     };
-    public cargarInstituciones( listaInstituciones ?: Array< IInstitucion> )
+    public cargarInstituciones( listaInstituciones : Array< IInstitucion> )
     {
 
-        if( !listaInstituciones) {
-            if(process.env.NODE_ENV === 'development') if(process.env.NODE_ENV === "development")console.log(cli.white(' lista instituciones vacía - omitiendo...')); 
-            return; }
+        
+        this.listaInstituciones.forEach( item => {item.darDeBajaBD();});
+
         if(listaInstituciones.length < 1){
-            this.listaInstituciones.forEach( item => {item.darDeBajaBD();});
-            return;
+            if(process.env.NODE_ENV === "development")
+                console.log(cli.white(' lista instituciones vacía ...')); 
+      
         }
 
-        listaInstituciones.sort( (a,b) => a.idInstitucion < 1 ? 1 : a.idInstitucion - b.idInstitucion )
-        
-        if(listaInstituciones[listaInstituciones.length -1].idInstitucion < 1) {
-            const insitucionesNuevas = listaInstituciones
-                .splice( listaInstituciones.findIndex( institucion => institucion.idInstitucion < 1 ))
-                .map( institucion => new Institucion(institucion,this));
-            
-            this.listaInstituciones = [...this.listaInstituciones , ...insitucionesNuevas]
-        }
-
-
-        listaInstituciones.forEach( institucion => {
-            const instCargada = this.listaInstituciones.find( item => item.verDatos().idInstitucion === institucion.idInstitucion)
-            if( !instCargada){
-               this.listaInstituciones.push(new Institucion(institucion,this));
-            }else {
-                instCargada.editarDatos(institucion);
+        if(listaInstituciones.length > 0) {
+            const {NUEVOS,VIEJOS} = HelpersGeneral.splitNuevosRegistros(listaInstituciones,'idInstitucion');
+            if(VIEJOS.length > 0) {
+                VIEJOS.forEach( institucion => {
+                    const instCargada = this.listaInstituciones.find( item => item.verDatos().idInstitucion === institucion.idInstitucion)
+                    if( !instCargada){
+                       this.listaInstituciones.push(new Institucion(institucion,this));
+                    }else {
+                        instCargada.editarDatos(institucion);
+                        instCargada.darDeAltaBD();
+                    }
+                });
             }
-        });
-        this.listaInstituciones.forEach( item => {
-            if(item.verDatos().idInstitucion > 0 && listaInstituciones.every( inst => inst.idInstitucion !== item.verDatos().idInstitucion)){ 
-                item.darDeBajaBD();
+            if( NUEVOS.length > 0){
+                const instNuevas = NUEVOS.map( inst => new Institucion(inst,this));
+                this.listaInstituciones = [ ...this.listaInstituciones, ...instNuevas ];
             }
         }
-           
-        );
+
+
+       
+       
         
     };
     
-    public cargarMetas(listaMetas ?: Array<IMeta> )
+    public cargarMetas(listaMetas : Array<IMeta> )
     {
-        if( !listaMetas) {
-            if(process.env.NODE_ENV === 'development') if(process.env.NODE_ENV === "development")console.log(cli.white(' lista metas vacía - omitiendo...')); 
-            return; }
+        
+        this.listaMetas.forEach( item => item.darDeBaja());
+
         if( listaMetas.length < 1) {
-            this.listaMetas.forEach( item => {item.estadoEnBD = ESTADO_BD.B;});
-            return;
+            if(process.env.NODE_ENV === "development")
+                console.log(cli.white(' lista metas vacía ...')); 
         }
-        listaMetas.sort( (a,b) => a.idMeta < 1 ? 1 : a.idMeta - b.idMeta )
         
-        if(listaMetas[listaMetas.length -1].idMeta < 1) {
-            const metasNuevas = listaMetas
-                .splice( listaMetas.findIndex( meta => meta.idMeta < 1 ))
-                .map( meta => new Meta(meta,this));
-            
-            this.listaMetas = [...this.listaMetas , ...metasNuevas]
+        if( listaMetas.length > 0){
+            const {NUEVOS,VIEJOS} = HelpersGeneral.splitNuevosRegistros(listaMetas,'idMeta'); 
+        
+            if(VIEJOS.length > 0){
+                VIEJOS.forEach( dataMeta => {
+                    const metaCargada = this.listaMetas.find( item => item.verDatos().idMeta === dataMeta.idMeta );
+                    if( ! metaCargada ) {
+        
+                        const nuevaMeta = new Meta(dataMeta,this);
+        
+                        this.listaMetas.push(nuevaMeta);
+        
+                    } else {
+                        metaCargada.editarDatos(dataMeta);
+                    }
+                   
+                });
+            }
+            if(NUEVOS.length > 0){
+                const nuevasMetas = NUEVOS.map( meta => new Meta(meta,this) );
+                this.listaMetas = [ ...this.listaMetas, ...nuevasMetas];
+            }
         }
 
-        listaMetas.forEach( dataMeta => {
-            const metaCargada = this.listaMetas.find( item => item.verDatos().idMeta === dataMeta.idMeta );
-            if( ! metaCargada ) {
-
-                const nuevaMeta = new Meta(dataMeta,this);
-
-                this.listaMetas.push(nuevaMeta);
-
-            } else {
-
-                metaCargada.editarDatos(dataMeta);
-            }
-           
-        });
-
-        this.listaMetas.forEach( item => {
-            if( item.verDatos().idMeta > 0 && listaMetas.every(  meta => meta.idMeta !== item.verDatos().idMeta) ){
-               item.estadoEnBD = ESTADO_BD.B;
-            }
-        });
+       
         
     };
-    public cargarUbicaciones( listaUbicaciones ?: Array<IUbicacion>)
+    public cargarUbicaciones( listaUbicaciones : Array<IUbicacion>)
     {
-       if( !listaUbicaciones ){
-            if(process.env.NODE_ENV === 'development') if(process.env.NODE_ENV === "development")console.log(cli.white(' lista ubicaciones vacía - omitiendo...')); 
-            return; 
-        }
-       if( listaUbicaciones.length < 1) { 
-            this.listaUbicaciones.forEach( item => {item.estadoEnBD = ESTADO_BD.B;} );
-            return;
-       }
-       
-       listaUbicaciones.sort( (a,b) => a.idUbicacion < 1 ? 1 : a.idUbicacion - b.idUbicacion )
-       
-       if(listaUbicaciones[listaUbicaciones.length -1].idUbicacion < 1) {
-            const ubicacionesNuevas = listaUbicaciones
-                .splice( listaUbicaciones.findIndex( ubicacion => ubicacion.idUbicacion < 1 ))
-                .map( ubicacion => new Ubicacion(ubicacion,this));
+       if( listaUbicaciones.length < 1 ){
+            if(process.env.NODE_ENV === "development")
+                console.log(cli.white(' lista ubicaciones vacía ...')); 
             
-            this.listaUbicaciones = [...this.listaUbicaciones , ...ubicacionesNuevas]
+        }
+        this.listaUbicaciones.forEach( item => {item.estadoEnBD = ESTADO_BD.B;} );
+       
+        if(listaUbicaciones.length > 0) {
+            const {NUEVOS,VIEJOS} = HelpersGeneral.splitNuevosRegistros( listaUbicaciones, 'idUbicacion' );
+            if(VIEJOS.length > 0){
+                VIEJOS.forEach( dataUbicacion => {
+                    const ubicacionCargada = this.listaUbicaciones.find( item => item.verDatos().idUbicacion === dataUbicacion.idUbicacion );
+                    if(!ubicacionCargada){
+                        const nuevaUbicacion = new Ubicacion(dataUbicacion,this);
+                        this.listaUbicaciones.push(nuevaUbicacion);
+                    }else {
+                        ubicacionCargada.editarDatos(dataUbicacion);
+            
+                    }
+                })
+            }
+            if(NUEVOS.length > 0){
+                const nuevasUbicaciones = NUEVOS.map( ubic => new Ubicacion(ubic,this) );
+                this.listaUbicaciones = [ ...this.listaUbicaciones, ...nuevasUbicaciones];
+            }
         }
 
-       listaUbicaciones.forEach( dataUbicacion => {
-            const ubicacionCargada = this.listaUbicaciones.find( item => item.verDatos().idUbicacion === dataUbicacion.idUbicacion );
-            if(!ubicacionCargada){
-                const nuevaUbicacion = new Ubicacion(dataUbicacion,this);
-                this.listaUbicaciones.push(nuevaUbicacion);
-            }else {
-                ubicacionCargada.editarDatos(dataUbicacion);
-    
-            }
-        })
+      
        
-        this.listaUbicaciones.forEach( item => {
-            if(item.verDatos().idUbicacion > 0 &&  listaUbicaciones.every( ubicacion => ubicacion.idUbicacion !== item.verDatos().idUbicacion) ){
-                item.estadoEnBD = ESTADO_BD.B;
-            }
-        } );
+        
        
     };
-    public cargarEnlaces(listaEnlaces ?: Array<IEnlace>)
+    public cargarEnlaces(listaEnlaces : Array<IEnlace>)
     {
-        if( !listaEnlaces ) {
-            if(process.env.NODE_ENV === 'development') if(process.env.NODE_ENV === "development")console.log(cli.white(' lista enlaces vacía - omitiendo...')); 
-            return;}
-        if( listaEnlaces.length < 1) { 
-            this.listaEnlaces.forEach( item => {item.estadoEnBD = ESTADO_BD.B; }) ;
-            return;
-         }
-
-        listaEnlaces.sort( (a,b) => a.idEnlace < 1 ? 1 : a.idEnlace - b.idEnlace )
-       
-        if(listaEnlaces[listaEnlaces.length -1].idEnlace < 1) {
-             const enlacesNuevos = listaEnlaces
-                 .splice( listaEnlaces.findIndex( meta => meta.idEnlace < 1 ))
-                 .map( enlace => new Enlace(enlace,this));
-             
-             this.listaEnlaces = [...this.listaEnlaces , ...enlacesNuevos]
-         }
- 
-
-        listaEnlaces.forEach( dataEnlace => {
-            const enlaceCargado = this.listaEnlaces.find( item => item.verDatos().idEnlace === dataEnlace.idEnlace );
-            if(!enlaceCargado){
-                this.listaEnlaces.push(new Enlace(dataEnlace,this));
-            }else {
-                enlaceCargado.editarDatos(dataEnlace);
-        
+        if( listaEnlaces.length < 0 ) {
+            if(process.env.NODE_ENV === "development")
+                console.log(cli.white(' lista enlaces vacía ...')); 
             }
-        })
-        this.listaEnlaces.forEach( item => {
-            if(item.verDatos().idEnlace && listaEnlaces.every( enlace => enlace.idEnlace !== item.verDatos().idEnlace) ){
-                item.estadoEnBD = ESTADO_BD.B; 
-               }
-        }) ;
         
+        this.listaEnlaces.forEach( item => {item.estadoEnBD = ESTADO_BD.B; }) ;
+        
+        if(listaEnlaces.length > 0){
+            const {NUEVOS,VIEJOS} = HelpersGeneral.splitNuevosRegistros(listaEnlaces,'idEnlace');
+
+            if(VIEJOS.length > 0){
+                VIEJOS.forEach( dataEnlace => {
+                    const enlaceCargado = this.listaEnlaces.find( item => item.verDatos().idEnlace === dataEnlace.idEnlace );
+                    if(!enlaceCargado){
+                        this.listaEnlaces.push(new Enlace(dataEnlace,this));
+                    }else {
+                        enlaceCargado.editarDatos(dataEnlace);
+                
+                    }
+                });
+            }
+            if(NUEVOS.length > 0){
+                const nuevosEnlaces = NUEVOS.map( dataEnlace => new Enlace(dataEnlace,this));
+                this.listaEnlaces = [...this.listaEnlaces, ...nuevosEnlaces];
+            }
+        }   
+      
+
     }
 
     public static async validar ( data : IActividad & {
@@ -450,7 +439,8 @@ class Actividad  {
         }
         
         if(data.listaFechasPuntuales ){
-           if(process.env.NODE_ENV === 'development') if(process.env.NODE_ENV === "development")console.log("validando fechas puntuales..")
+           if(process.env.NODE_ENV === "development")
+                console.log("validando fechas puntuales..")
            
             data.listaFechasPuntuales.forEach( fecha => 
                 FechaPuntual.validar(

@@ -35,18 +35,27 @@ export const indexarAsociacion = ( registros : Array<any>, indice : string )=> r
 ,{});
 
 
-export const splitNuevosRegistros = ( registros : Array<any>, indice : string ) => registros.reduce(
-    (salida , registro) => (
-        registro[indice] === 0
-        ? {
-        ...salida,
-            NUEVOS : [...salida.NUEVOS , registro]
-        }
-        :{
-            ...salida,
-            VIEJOS : [...salida.VIEJOS , registro]
+export const splitNuevosRegistros = ( registros : Array<any>, indice : string ) : {
+    NUEVOS : any[],
+    VIEJOS : any[]
+} => {
+    let salida = {
+        VIEJOS : <any>[],
+        NUEVOS : <any>[]
+    }
+
+    if(registros.length){
+        registros.forEach( registro => {
+            if( registro[indice] !== 0 ){
+                salida.VIEJOS.push( registro );
+            } else {
+                salida.NUEVOS.push( registro);
+            }
         })
-    ,{NUEVOS : [], VIEJOS : []});
+    }
+
+    return salida;
+}
 
 
 export namespace HttpHelpers {

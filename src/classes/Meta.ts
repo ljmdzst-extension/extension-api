@@ -31,7 +31,12 @@ class Meta {
         this.estadoEnBD = ESTADO_BD.A;
         
     }
-
+    public darDeBaja() {
+        this.estadoEnBD = ESTADO_BD.B;
+    }
+    public darDeAlta() {
+        this.estadoEnBD = ESTADO_BD.A;
+    }
     public estaDeBaja() : boolean { 
         return this.estadoEnBD === ESTADO_BD.B;
     }
@@ -47,16 +52,11 @@ class Meta {
         };
     }
 
-    public valorar( valoracion : number ){
-        this.data.valoracion = valoracion;
-    }
-
+    
     public editarDatos( data : IMeta ){
-        const {valoracion, ...dataMeta} = data;
-        this.data = dataMeta;
-        if(valoracion){
-            this.valorar(valoracion);
-        }
+  
+        this.data = data;
+       
         this.estadoEnBD = ESTADO_BD.M;
     }
 

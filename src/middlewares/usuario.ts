@@ -219,7 +219,7 @@ export const validarUsuarioNoPendiente = async( req : any , resp : typeof respon
     if( ! usuario.pendiente ) {
         next();
     } else {
-        HttpHelpers.responderPeticionError(resp, 'Contraseña errónea' ,403 );
+        HttpHelpers.responderPeticionError(resp, 'Usuario pendiente de confirmación de registro' ,403 );
     }
 }
 

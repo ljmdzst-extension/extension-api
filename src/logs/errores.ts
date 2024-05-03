@@ -13,6 +13,7 @@ export namespace ERROR {
    export const ENLACE_MOD_BD : ERROR_LOG = { status : 500, message : ' No se pudo modificar el enlace, no existe el registro '}
    export const FECHA_PUNTUAL_INEXISTENTE : ERROR_LOG =  { status : 500 , message : ' - No existe fecha puntual con ese id' }
    export const FECHA_FUERA_DE_RANGO : ERROR_LOG =  { status : 500 , message : ' - La fecha esta fuera del rango definido' }
+   export const ACT_FECHA_PUNTUAL : ERROR_LOG =  { status : 500 , message : ' - La fecha no tiene actividad asignada' }
    export const FIREBASE_NO_INSTITUCION : ERROR_LOG = { status : 500 , message : ' No existe institución con ese id' }
    export const FIREBASE_CONEXION : ERROR_LOG = { status : 500 , message : ' Error al conectar con el servidor' }
    export const META_INEXISTENTE : ERROR_LOG =  { status : 500 , message : ' - No existe meta con ese id' }
