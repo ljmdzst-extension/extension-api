@@ -14,5 +14,6 @@ routerArea.get(
     verListaActividades
 );
 
-routerArea.get('/resumen/:idArea/:anio/:offset/:limit/:keyword?',verResumenArea); 
+routerArea.get('/resumen/:idArea/:anio/:offset/:limit/:keyword?',verResumenArea);
+ 
 export default routerArea;

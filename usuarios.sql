@@ -1,9 +1,1 @@
-('4bafb46c-7990-4ded-b5cb-0544dcf572af','programaalimentos@unl.edu.ar','123456','0000005',0,0,CURRENT_TIMESTAMP(),CURRENT_TIMESTAMP(),NULL),
-('dd5f14f7-ac75-49d5-8b2a-c8ca71d984d8','ambienteysociedad@unl.edu.ar','123456','0000002',0,0,CURRENT_TIMESTAMP(),CURRENT_TIMESTAMP(),NULL),
-('d1a7016b-6e4e-4196-954a-979e8ef78249','delitoysociedad@unl.edu.ar','123456','0000004',0,0,CURRENT_TIMESTAMP(),CURRENT_TIMESTAMP(),NULL),
-('6158701e-edcf-41ef-b9c0-ebdd8be85148','derechoshumanos@unl.edu.ar','123456','0000003',0,0,CURRENT_TIMESTAMP(),CURRENT_TIMESTAMP(),NULL),
-('16ea2c71-42e8-4bf1-8769-fe407af5e0ed','genero@unl.edu.ar','123456','0000006',0,0,CURRENT_TIMESTAMP(),CURRENT_TIMESTAMP(),NULL),
-('398a0808-8d08-4eb4-b779-77488e22d37c','economiasocial@unl.edu.ar','123456','0000008',0,0,CURRENT_TIMESTAMP(),CURRENT_TIMESTAMP(),NULL),
-('3123530e-1601-4849-b1da-abd2d95f6409','equidadensalud@unl.edu.ar','123456','0000001',0,0,CURRENT_TIMESTAMP(),CURRENT_TIMESTAMP(),NULL),
-('3c0f562e-53fa-4ea7-9683-54acf7f3d005','educacionysociedad@fhuc.unl.edu.ar','123456','0000007',0,0,CURRENT_TIMESTAMP(),CURRENT_TIMESTAMP(),NULL),
-('f337ccfe-8032-4761-a80a-f469c3a0eeb5','historiaymemoria@unl.edu.ar','123456','0000009',0,0,CURRENT_TIMESTAMP(),CURRENT_TIMESTAMP(),NULL)
+,('2e28cc23-032e-4f0d-917a-757fd8affc24','lia.bentolila1@gmail.com','lbento','00000010',2,0,CURRENT_TIMESTAMP(),CURRENT_TIMESTAMP()),('445af78a-5a48-46f8-a9c2-764777d04ace','mceciliafarias@gmail.com','mcfari','00000010',2,0,CURRENT_TIMESTAMP(),CURRENT_TIMESTAMP()),('2cb481d5-e17b-4226-99a2-3794610509ea','estefania.vschneider@gmail.com','es1234','34827115',24,0,CURRENT_TIMESTAMP(),CURRENT_TIMESTAMP()),('47c283fd-f697-4a2d-bbb6-8ee4ed14348a','ivimorelli@gmail.com','ivi123','32621200',21,0,CURRENT_TIMESTAMP(),CURRENT_TIMESTAMP()),('fb085a8f-2c91-4a59-aee8-ada16b394bbb','caneva.ana@gmail.com','caneva','24509623',2,0,CURRENT_TIMESTAMP(),CURRENT_TIMESTAMP())

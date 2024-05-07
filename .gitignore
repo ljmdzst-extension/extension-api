@@ -66,3 +66,5 @@ dist/
 package-lock.json
 db_estension_backup/*
 *__test__
+*.js
+*.sql
