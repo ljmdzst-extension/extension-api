@@ -1,12 +1,9 @@
-('35c9646a-8da1-4e9e-bce8-a1dc2b7144f0','jbailone@unl.edu.ar','Gest0r','33123456',2,0,CURRENT_TIMESTAMP(),CURRENT_TIMESTAMP()),
-('224380f8-3889-4ad0-b083-d2ba49e81b59','m1boffelli@gmail.com','219789','30123456',2,0,CURRENT_TIMESTAMP(),CURRENT_TIMESTAMP()),
-('c0f663c2-f968-4fec-ab7c-fb11be1ed88a','lilivoisard@gmail.com','terapi','32456778',18,0,CURRENT_TIMESTAMP(),CURRENT_TIMESTAMP()),
-('bb66b9e2-eecf-4639-beea-85f6be107743','paumantica@gmail.com','PM1234','31123345',21,0,CURRENT_TIMESTAMP(),CURRENT_TIMESTAMP()),
-('a8c40d9b-301c-436e-8c12-a224ed88196f','federicogrignafini@gmail.com','seyc22','34123456',2,0,CURRENT_TIMESTAMP(),CURRENT_TIMESTAMP()),
-('c4fd4bf8-3e24-40fc-9afc-cb9bc2b6b098','msanchez@rectorado.unl.edu.ar','Ringo0','20345678',1,0,CURRENT_TIMESTAMP(),CURRENT_TIMESTAMP()),
-('2dbd7464-6266-4e88-8939-cbcbb7c7e1e0','julieta.theiler@gmail.com ','juliet','33122891',1,0,CURRENT_TIMESTAMP(),CURRENT_TIMESTAMP()),
-('5f0c62be-f793-4e3c-adb6-31086adaca38','sabrirebollo28@gmail.com ','sabri1','34302050',21,0,CURRENT_TIMESTAMP(),CURRENT_TIMESTAMP())
-
-
-
-
+('4bafb46c-7990-4ded-b5cb-0544dcf572af','programaalimentos@unl.edu.ar','123456','0000005',0,0,CURRENT_TIMESTAMP(),CURRENT_TIMESTAMP(),NULL),
+('dd5f14f7-ac75-49d5-8b2a-c8ca71d984d8','ambienteysociedad@unl.edu.ar','123456','0000002',0,0,CURRENT_TIMESTAMP(),CURRENT_TIMESTAMP(),NULL),
+('d1a7016b-6e4e-4196-954a-979e8ef78249','delitoysociedad@unl.edu.ar','123456','0000004',0,0,CURRENT_TIMESTAMP(),CURRENT_TIMESTAMP(),NULL),
+('6158701e-edcf-41ef-b9c0-ebdd8be85148','derechoshumanos@unl.edu.ar','123456','0000003',0,0,CURRENT_TIMESTAMP(),CURRENT_TIMESTAMP(),NULL),
+('16ea2c71-42e8-4bf1-8769-fe407af5e0ed','genero@unl.edu.ar','123456','0000006',0,0,CURRENT_TIMESTAMP(),CURRENT_TIMESTAMP(),NULL),
+('398a0808-8d08-4eb4-b779-77488e22d37c','economiasocial@unl.edu.ar','123456','0000008',0,0,CURRENT_TIMESTAMP(),CURRENT_TIMESTAMP(),NULL),
+('3123530e-1601-4849-b1da-abd2d95f6409','equidadensalud@unl.edu.ar','123456','0000001',0,0,CURRENT_TIMESTAMP(),CURRENT_TIMESTAMP(),NULL),
+('3c0f562e-53fa-4ea7-9683-54acf7f3d005','educacionysociedad@fhuc.unl.edu.ar','123456','0000007',0,0,CURRENT_TIMESTAMP(),CURRENT_TIMESTAMP(),NULL),
+('f337ccfe-8032-4761-a80a-f469c3a0eeb5','historiaymemoria@unl.edu.ar','123456','0000009',0,0,CURRENT_TIMESTAMP(),CURRENT_TIMESTAMP(),NULL)
