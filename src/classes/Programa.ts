@@ -9,7 +9,7 @@ export type ID_PROG = number;
 export interface IPrograma {
     idPrograma : number,
     nom : string,
-    listaAreas ?: IArea[]
+    listaAreas : IArea[]
 }
 
  class Programa {
@@ -41,13 +41,13 @@ export interface IPrograma {
     }
 
     public static async buscarPorID(idPrograma : ID_PROG , transaction ?: Transaction) : Promise<Programa> {
-        let salida : Programa = new Programa({idPrograma : 0,nom : ''});
+        let salida : Programa = new Programa({idPrograma : 0,nom : '', listaAreas : []});
 
         const bdPrograma = await BD.Programa.findByPk(idPrograma,{transaction});
 
         if(!bdPrograma) throw ERROR.PROGRAMA_INEXISTENTE;
 
-        salida = new Programa(bdPrograma.dataValues);
+        salida = new Programa({...bdPrograma.dataValues, listaAreas : []});
 
         return salida;
     }
@@ -83,7 +83,7 @@ export interface IPrograma {
         if(programas.length) {
          
             programas.forEach( iProg => {
-                salida.push( new Programa(iProg.dataValues) );
+                salida.push( new Programa({...iProg.dataValues , listaAreas: []}) );
             })
 
             await Promise.all(  

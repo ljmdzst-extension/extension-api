@@ -23,6 +23,7 @@ import RouterProyecto from './routes/proyecto';
 import { informarPeticion } from './middlewares/bases';
 import { extraerToken, validarToken } from './middlewares/auth';
 import { obtenerDataUsuario } from './middlewares/usuario';
+import routerGraficos from './routes/graficos';
 
 
 const app = express();
@@ -52,6 +53,7 @@ app.use(`${BASE_PATH_METAS}/programas`,routerPrograma);
 app.use(`${BASE_PATH_METAS}/areas`,routerArea);
 app.use(`${BASE_PATH_METAS}/bases`,RouterBases);
 app.use(`${BASE_PATH_METAS}/actividad`,routerActividad);
+app.use(`${BASE_PATH_METAS}/graficos`,routerGraficos);
 
 
 // propuestas
