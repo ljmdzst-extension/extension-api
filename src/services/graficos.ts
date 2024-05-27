@@ -1,4 +1,4 @@
-import { Transaction } from "sequelize";
+import { Op, Transaction } from "sequelize";
 import sequelizeExtension, { BD } from "../config/dbConfig";
 import { Actividad } from "../models/Actividad";
 import { AreaPrograma } from "../models/AreaPrograma"
@@ -18,14 +18,19 @@ export const verGraficosDeAnio = async( anio : number)=>{
 
     const areasPrograma = await  BD.AreaPrograma.findAll({where : {anio}, transaction : t});
     
-    const cActividad = await BD.Actividad.findAll({where : { idArea : areasPrograma.map( ap => ap.idArea) }, transaction : t});
+    const cActividad = await BD.Actividad.findAll({
+        where : { 
+            idArea : areasPrograma.map( ap => ap.idArea) , 
+            createdAt : {[Op.gt] : new Date(`${anio}-01-01`)} 
+        }, transaction : t});
+   
     await t.commit();
     
     // objetivos 
        salida = {...salida , ...(await calcularCrucesObjetivos(cActividad))}
 
-       // uuaa
-       salida = {...salida,...(await calcularCrucesUUAA())}
+    // uuaa
+    salida = {...salida,...(await calcularCrucesUUAA())}
     
 
   
