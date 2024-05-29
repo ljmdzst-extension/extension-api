@@ -14,8 +14,8 @@ type DataListaUsuarios = { usuarios :{ idUsuario : string , email : string }[] }
 export const loginUsuario =  async( req : any, resp : typeof response  ) => {
 
     try {
-        const { usuario } = req.usuario;
-    
+        const { usuario,permisos } = req.usuario;
+        console.log(req.usuario);
         const persona = await BD.Persona.findOne({
             attributes : ['ape','nom'],
             where : { nroDoc : usuario.nroDoc }
@@ -31,6 +31,7 @@ export const loginUsuario =  async( req : any, resp : typeof response  ) => {
             email : usuario.email,
             ape : persona.ape,
             nom : persona.nom,
+            permisos : permisos,
             token : token
         });
     } catch (error : any) {

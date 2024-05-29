@@ -52,7 +52,55 @@ export interface IPrograma {
         return salida;
     }
 
-    public static async verTodosConAreas( anio : number, idUsuario ?: string ,idCategoriaUsuario ?: number ,transaction ?: Transaction) : Promise<Programa[]>{
+    public static async verHabilitadosConAreas (anio : number, idUsuario ?: string ,idCategoriaUsuario ?: number ,transaction ?: Transaction): Promise<Programa[]>{
+        let salida : Programa[] = [];
+
+        let areasProgramas = await BD.AreaPrograma.findAll({where : {anio}, transaction});
+  
+        if(idCategoriaUsuario) {
+            const areasDeUsuario  = await BD.AreaProgramaCategoriaUsuario.findAll({
+                where : {
+                    idCategoria : idCategoriaUsuario , 
+                    idUsuario : idUsuario,
+                    anio
+                }, 
+                transaction});
+            areasProgramas = areasProgramas.filter( areaProg => 
+                    areasDeUsuario.find( ({idArea,idPrograma,anio}) => 
+                        idArea === areaProg.idArea && 
+                        idPrograma === areaProg.idPrograma && 
+                        anio === areaProg.anio 
+                    ));
+        }
+
+        const programas = await BD.Programa.findAll({ 
+            where : {
+                idPrograma : areasProgramas.map( areaProg => areaProg.idPrograma)
+            }, 
+            transaction
+        });
+
+        if(programas.length) {
+         
+            programas.forEach( iProg => {
+                salida.push( new Programa({...iProg.dataValues , listaAreas: []}) );
+            })
+
+            await Promise.all(  
+                salida.map( prog => prog.leerAreasDeBD(
+                    areasProgramas.filter(areaProg => areaProg.idPrograma === prog.verDatos().idPrograma)
+                                .map( areaProg => areaProg.idArea )
+                    ),
+                    transaction 
+                )  
+            );
+
+       }
+       
+       return salida;
+    }
+
+    public static async verTodosConAreas( anio : number ,transaction ?: Transaction) : Promise<Programa[]>{
         let salida : Programa[] = [];
 
         const areasProgramas = await BD.AreaPrograma.findAll({where : {anio}, transaction});

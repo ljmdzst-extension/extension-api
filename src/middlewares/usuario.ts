@@ -1,6 +1,6 @@
 import { NextFunction, request, response } from "express";
 import { checkSchema, validationResult } from "express-validator";
-import { BD } from "../config/dbConfig";
+import sequelizeExtension, { BD } from "../config/dbConfig";
 import { HttpHelpers } from "../helpers/general";
 import { Usuario } from "../models/Usuario";
 
@@ -34,39 +34,44 @@ export const chequearUsuarioNoExistente =  async(req : typeof request, resp : ty
 
 
 export const obtenerDataUsuario = async(req : any, resp : typeof response, next : NextFunction) =>{
-        
+    const transaction = await sequelizeExtension.transaction({ logging : process.env.NODE_ENV === 'development' ? sql => console.log(sql) : undefined});
     try {
 
         let iUsuario : Usuario | null= null;
 
         if(req.body && req.body.email){
 
-            iUsuario = await BD.Usuario.findOne({where : {email : req.body.email}});
+            iUsuario = await BD.Usuario.findOne({where : {email : req.body.email}, transaction});
         }
         if(req.usuario && req.usuario.idUsuario){
 
-            iUsuario = await BD.Usuario.findByPk(req.usuario.idUsuario);
+            iUsuario = await BD.Usuario.findByPk(req.usuario.idUsuario, {transaction});
         } 
     
         if(!iUsuario) throw {status : 400 , message: 'no existe un usuario con ese id'}
         
-        const lCategoriasUsuario = await BD.CategoriaUsuario.findAll({where : {idUsuario : iUsuario.idUsuario}});
+        const lCategoriasUsuario = await BD.CategoriaUsuario.findAll({where : {idUsuario : iUsuario.idUsuario}, transaction});
         
         if(!lCategoriasUsuario) throw { status : 500 , message : 'usuario sin categoría'}
 
-        const categorias = await BD.Categoria.findAll({where : {idCategoria : lCategoriasUsuario.map( cu => cu.idCategoria)}});
-
-
-        console.log(` USR : ${iUsuario.idUsuario}`)
+        const categorias = await BD.Categoria.findAll({where : {idCategoria : lCategoriasUsuario.map( cu => cu.idCategoria)} , transaction});
+        
+        const permisosCategorias = await BD.PermisoCategoria.findAll({ where : {idCategoria : lCategoriasUsuario.map(cu => cu.idCategoria)} , transaction});
+        if(permisosCategorias.length < 1) throw { status : 500 , message : 'usuario sin permisos asignados'}
+        const permisos = await BD.Permiso.findAll({where : { idPermiso : permisosCategorias.map( pc => pc.idPermiso) } , transaction});
+        
+        await transaction.commit();
 
         req.usuario = {
             usuario : iUsuario,
-            categorias : categorias.map( c => c.dataValues)
+            categorias : categorias.map( c => c.dataValues),
+            permisos : permisos.map( p => p.nombre)
         }
 
         next();
         
     } catch (error : any) {
+        await transaction.rollback();
         let status = 500;
         let message = 'error de servidor';
 
