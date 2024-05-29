@@ -235,7 +235,9 @@ class Actividad  {
                     if( !fechaCargada ){
                         const fechaNueva = new FechaPuntual(fechaConId,this);
     
-                        if(!fechaNueva.estaEnRango()) throw ERROR.FECHA_FUERA_DE_RANGO;
+                        if(!fechaNueva.estaEnRango()) {
+                            throw ERROR.FECHA_FUERA_DE_RANGO;
+                        }
     
                         this.listaFechasPuntuales.push(fechaNueva);
                         
@@ -404,9 +406,10 @@ class Actividad  {
     }, transaction ?: Transaction) : Promise<void> {
         await new BD.Actividad(data).validate({ skip : ['createdAt','updatedAt','deletedAt']});
         if(data.fechaDesde && data.fechaHasta  ){
-           if(Date.parse(data.fechaDesde.toString()) > Date.parse(data.fechaHasta.toString()) ){
-            throw INVALIDO.RANGO_ACT;
-           } 
+            const fechaDesde = new Date(data.fechaDesde);
+            const fechaHasta = new Date(data.fechaHasta);
+      
+           if(fechaDesde > fechaHasta ){ throw INVALIDO.RANGO_ACT;  } 
         } 
         if(data.listaEnlaces){
             if(process.env.NODE_ENV === 'development')if(process.env.NODE_ENV === "development")console.log("validando enlaces..")
@@ -447,7 +450,8 @@ class Actividad  {
                     fecha,
                     new Date(data.fechaDesde || ''),
                     new Date(data.fechaHasta || '')
-                ))
+                )
+            )
         }
         
         

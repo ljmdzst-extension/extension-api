@@ -38,7 +38,7 @@ routerActividad.get (
 
 routerActividad.post ( 
     '/',
-    validarPermisoAccesoMetas,
+    validarPermisoEdicionMetas,
     validarCamposActividad, 
     cargarActividad 
 );

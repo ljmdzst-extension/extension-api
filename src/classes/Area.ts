@@ -3,7 +3,7 @@
 import { Transaction } from "sequelize";
 import sequelizeExtension, { BD } from "../config/dbConfig";
 import { ERROR } from "../logs/errores";
-import  Actividad, { IItemActividad, IRequestActividad, IResponseActividad }  from "./Actividad";
+import  Actividad, { ID_ACT, IItemActividad, IRequestActividad, IResponseActividad }  from "./Actividad";
 import { ColaDeTareas } from "../helpers/tareas";
 
 
@@ -26,22 +26,6 @@ class Area {
         this.listaActividades = [];
     }
 
-    public verActividaesPorEjeTrans()
-    {
-
-    }
-    public verActividadesPorObjEst( )
-    {
-
-    }
-    public verIndiceRelacionConAreasInternas()
-    {
-
-    }
-    public verActividadesPorLie()
-    {
-
-    }
     public verDatos() : IArea 
     {
         let salida = {

@@ -30,8 +30,8 @@ class FechaPuntual{
         if(!desde || !hasta ) throw INVALIDO.RANGO_ACT;
         const msDesde = Date.parse(desde.toString());
         const msHasta = Date.parse(hasta.toString());
-        const msFecha = Date.parse(this.data.fecha.toString());
-        return  msDesde <= msFecha && msFecha <= msHasta;
+        const msFecha = Date.parse(this.data.fecha);
+        return ! (  msFecha < msDesde  && msHasta < msFecha);
     }
     
     public verDatos (): IFecha 
@@ -40,7 +40,8 @@ class FechaPuntual{
     }
     public static validar( data : IFecha, desde : Date, hasta : Date ){
         
-        const fecha = new Date(Date.parse(data.fecha)); 
+        const fecha = new Date(data.fecha); 
+        console.log(fecha.toISOString())
         if(fecha < desde || hasta < fecha) {
             throw INVALIDO.RANGO_ACT;
         }
@@ -109,13 +110,9 @@ class FechaPuntual{
         
         if(process.env.NODE_ENV === "development")console.log('buscando fechas puntuales asociadas..');
         let salida : ID_FECHA[] = [];
-        const asociadas = await BD.FechaPuntualActividad.findAll({
-            where : {idActividad : iAct.verID()
-
-            },transaction
-        });
+        const asociadas = await BD.FechaPuntualActividad.findAll({ where : {idActividad : iAct.verID()},transaction });
         if(asociadas.length) {
-            salida.push( ... asociadas.map( fecha => fecha.idFecha))
+            salida.push( ... asociadas.map( fecha => fecha.idFecha) )
         }
         return salida;
     }
@@ -123,7 +120,7 @@ class FechaPuntual{
 
         if(listaIds.length > 0) {
             const fechasPuntuales = await BD.FechaPuntual.findAll({where : {idFecha : listaIds},transaction})
-           iAct.cargarFechasPuntuales( fechasPuntuales );
+           iAct.cargarFechasPuntuales( fechasPuntuales.map( f => f.dataValues) );
         }
 
         return;
