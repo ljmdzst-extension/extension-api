@@ -7,6 +7,7 @@ import { Persona} from '../models/Persona'
 import { generarEmailValidaciónRegistro, smtpService } from '../config/smtpConfig';
 import { v4 as uuidv4 } from 'uuid';
 import { HttpHelpers } from '../helpers/general';
+import { PermisoAttributes } from '../models/Permiso';
 
 
 type DataListaUsuarios = { usuarios :{ idUsuario : string , email : string }[] }
@@ -15,7 +16,7 @@ export const loginUsuario =  async( req : any, resp : typeof response  ) => {
 
     try {
         const { usuario,permisos } = req.usuario;
-        console.log(req.usuario);
+
         const persona = await BD.Persona.findOne({
             attributes : ['ape','nom'],
             where : { nroDoc : usuario.nroDoc }
@@ -31,7 +32,7 @@ export const loginUsuario =  async( req : any, resp : typeof response  ) => {
             email : usuario.email,
             ape : persona.ape,
             nom : persona.nom,
-            permisos : permisos,
+            permisos : permisos.map((p : PermisoAttributes) => p.nombre),
             token : token
         });
     } catch (error : any) {

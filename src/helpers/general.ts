@@ -1,5 +1,4 @@
 import { response } from "express";
-import { Model } from "sequelize";
 
 export const indexarJsons = (lista : Array<any>, indice : string) => lista.reduce(
     (salida , elemento : any )=>({

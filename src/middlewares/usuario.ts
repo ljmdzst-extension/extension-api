@@ -57,37 +57,25 @@ export const obtenerDataUsuario = async(req : any, resp : typeof response, next 
         const categorias = await BD.Categoria.findAll({where : {idCategoria : lCategoriasUsuario.map( cu => cu.idCategoria)} , transaction});
         
         const permisosCategorias = await BD.PermisoCategoria.findAll({ where : {idCategoria : lCategoriasUsuario.map(cu => cu.idCategoria)} , transaction});
-        if(permisosCategorias.length < 1) throw { status : 500 , message : 'usuario sin permisos asignados'}
+        if(permisosCategorias.length < 1) throw { status : 403 , message : 'usuario sin permisos asignados'}
         const permisos = await BD.Permiso.findAll({where : { idPermiso : permisosCategorias.map( pc => pc.idPermiso) } , transaction});
         
         await transaction.commit();
-
+       
         req.usuario = {
-            usuario : iUsuario,
+            usuario : iUsuario.dataValues,
             categorias : categorias.map( c => c.dataValues),
-            permisos : permisos.map( p => p.nombre)
+            permisos : permisos.map( p => p.dataValues)
         }
 
         next();
         
     } catch (error : any) {
         await transaction.rollback();
-        let status = 500;
-        let message = 'error de servidor';
-
-        if(error.status && error.message) {
-            status = error.status
-            message = error.message
-        } else {
-            console.log(error);
-            console.log(`ERROR : ${req.method}-${req.path}-${message}`)
+        if(error.status === 500) {
+            console.log(`ERROR : ${req.method}-${req.path}-${error.message}`)
         }
-        
-        resp.status(status).json({
-            ok : false,
-            data : null,
-            error : message
-        })
+        HttpHelpers.responderPeticionError(resp,error.message,error.status || 500);
     }
 }
 
@@ -129,14 +117,14 @@ export const validarCorreoYContraseña = checkSchema({
 export const validarCamposRegistro = checkSchema({
     nroDoc : { 
         exists : {
-            errorMessage : 'nroDoc obligatorio'
+            errorMessage : 'dni obligatorio'
         },
         isNumeric: {
-            errorMessage : 'nroDoc inválido' 
+            errorMessage : 'dni inválido' 
         }, 
         isLength: { 
             options : {min : 8, max : 8}, 
-            errorMessage : 'nroDoc de 8 dígitos sin puntos, con 0 adelante si tiene 7 dígitos'
+            errorMessage : 'dni de 8 dígitos sin puntos, con 0 adelante si tiene 7 dígitos'
         }
         
     },
@@ -232,14 +220,16 @@ export const validarSchema = (req : typeof request, resp : typeof response, next
 
     const errores = validationResult(req);
 
-    if( ! errores.isEmpty() ) {
+    if( errores.isEmpty() ) {
+        next();
+    } 
+    else {
         const listaErrores = errores.mapped();
-        return resp.status(400).json({
-            ok: false,
-            data : null,
-            error : Object.keys(listaErrores).map( campo => listaErrores[campo].msg ),
-        })
+        HttpHelpers.responderPeticionError(
+            resp,
+            Object.keys(listaErrores).map( campo => listaErrores[campo].msg ).toString(),
+            400
+        )
     }
 
-    next();
 }

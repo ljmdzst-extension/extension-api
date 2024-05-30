@@ -19,7 +19,7 @@ export const verListaProgramasConAreas = async( req : any, resp : typeof respons
         HttpHelpers.responderPeticionOk(resp, salida);
 
     } catch (error : any) {
-            if(!error.status) console.log(cli.red(error));
+            if(!error.status || error.status === 500) console.log(cli.red(error));
             
             HttpHelpers.responderPeticionError(resp, error.message,error.status );
         }
