@@ -152,11 +152,11 @@ class Relacion{
         if( listaRelacions.length > 0) {
             listaRelacions.forEach( iRelacion => {
                 iRelacion.cargarActividad(iActividad);
-                if(listaIds.get(iRelacion.verID()) === ESTADO_BD.A ){
-                    iRelacion.darDeAltaBD(); 
-                }else {
-                    iRelacion.darDeBajaBD();
-                }
+                switch(listaIds.get(iRelacion.verID())){
+                    case ESTADO_BD.A : iRelacion.darDeAltaBD(); break;
+                    case ESTADO_BD.B : iRelacion.darDeBajaBD(); break;
+                    default: break;
+                } 
             
             } )
             

@@ -1,10 +1,11 @@
-import { Transaction } from "sequelize";
+
 import { INVALIDO } from "../logs/validaciones";
 import { AreaPrograma } from "../models/AreaPrograma";
-import { request, response, NextFunction } from "express";
+import { response, NextFunction } from "express";
 
 
-export const validarAnio =  async(req : typeof request, resp : typeof response , next : NextFunction)=>{
+
+export const validarAnio =  async(req : any, resp : typeof response , next : NextFunction)=>{
    const data = req.params;
    
    

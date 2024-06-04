@@ -1,48 +1,58 @@
 
 import { response, NextFunction } from "express";
-import { BD } from "../config/dbConfig";
+import { CategoriaAttributes } from "../models/Categoria";
+import { PermisoAttributes } from "../models/Permiso";
+import { HttpHelpers } from "../helpers/general";
 
-export const validarPermisoGestionMetas = async( req : any, resp : typeof response, next : NextFunction)=>{
-    try {
-        const {categoria} = req.usuario;
+
+export const determinarAreasHabilitadas = (req : any, resp : typeof response , next : NextFunction)=>{
+    const {categorias}: {categorias : CategoriaAttributes[]} = req.usuario;
+
+    const categoriasHabilitadas = ['ADMIN','EYC','GESTION_EYC','EYC_ECO_FINAN','PROG_EXT' ];
     
-        if(categoria.nombre === 'admin')  {
-            
-            next();
-    
-        } else {
-    
-            const permisosAsignados = await BD.PermisoCategoria.findAll({where : { idCategoria : categoria.idCategoria}});
-    
-            if(!permisosAsignados.length)  throw { status : 500 , message : 'la categoría del usuario no tiene permisos asignados'}
-    
-            const permisos = await BD.Permiso.findAll({where : { idPermiso : permisosAsignados.map(permisoAsignado => permisoAsignado.idPermiso)}});
-    
-            if( ! permisos.some( permiso => permiso.nombre === 'METAS_GESTION') ) throw { status : 403 , message : 'no posee permisos para realizar esta acción'}
-    
-            next();
-    
-        }
-    
-    } catch (error :  any) {
-        let status = 500;
-        let message = '';
-        if(error.status) {
-            status = error.status
-        }
-        if(error.message){
-            message = error.message
-        }
-        if(status === 500) {
-            console.log(`ERROR : ${req.method}-${req.path}-${message}`)
-        }
-        resp.status(status).json({
-            ok : false,
-            data : null,
-            error : status === 500 ? 'error de servidor' : message
-        })
+    const categEncontrada = categorias.find( c => categoriasHabilitadas.some( nombre => c.nombre !== nombre) ) ;
+
+    if( ! categEncontrada  ) {
+
+        HttpHelpers.responderPeticionError(resp,'Usuario no habilitado para acceder a planificaciones' ,403);
     }
-    
-    
-    
+    else {
+        req.usuario.areas = categEncontrada.nombre === 'PROG_EXT' ? 'PROG_EXT' : 'TODAS';
+       
+        next();
     }
+
+}   
+
+
+export const validarPermisoAccesoMetas = async( req : any, resp : typeof response, next : NextFunction)=>{
+    const {categorias, permisos}: {categorias : CategoriaAttributes[], permisos : PermisoAttributes[]} = req.usuario;
+      
+    if(  categorias.every( c => c.nombre !== 'ADMIN') && permisos.every( permiso => permiso.nombre !== 'METAS_LECTURA') )  {
+
+        HttpHelpers.responderPeticionError(   resp,  'no posee permisos para acceder a planificaciones',  403  );
+        
+    } 
+    else  {
+       
+        next();
+
+    }
+  
+}
+
+export const validarPermisoEdicionMetas = async( req : any, resp : typeof response, next : NextFunction)=>{
+    const {categorias,permisos}: {categorias : CategoriaAttributes[], permisos : PermisoAttributes[]} = req.usuario;
+    
+    if( categorias.every( c => c.nombre !== 'ADMIN') && permisos.every( permiso => permiso.nombre !== 'METAS_EDICION') )  {
+        
+        HttpHelpers.responderPeticionError(  resp, 'no posee permisos para realizar esta acción', 403  );
+
+    } 
+    
+    else {
+        next();
+    }
+
+        
+}

@@ -23,11 +23,15 @@ class FechaPuntual{
         this.estadoEnBD = ESTADO_BD.A;
     }
 
-    public estaEnRango(desde : Date, hasta : Date) : boolean {
+    public estaEnRango() : boolean {
+        if(!this.iActividad) throw ERROR.ACT_FECHA_PUNTUAL;
+        const desde = this.iActividad.data.fechaDesde;
+        const hasta = this.iActividad.data.fechaHasta;
+        if(!desde || !hasta ) throw INVALIDO.RANGO_ACT;
         const msDesde = Date.parse(desde.toString());
         const msHasta = Date.parse(hasta.toString());
-        const msFecha = Date.parse(this.data.fecha.toString());
-        return  msDesde <= msFecha && msFecha <= msHasta;
+        const msFecha = Date.parse(this.data.fecha);
+        return ! (  msFecha < msDesde  && msHasta < msFecha);
     }
     
     public verDatos (): IFecha 
@@ -35,20 +39,27 @@ class FechaPuntual{
         return this.data;
     }
     public static validar( data : IFecha, desde : Date, hasta : Date ){
-        const fecha = new FechaPuntual(data);
-        if(! fecha.estaEnRango(desde,hasta) ) throw INVALIDO.RANGO_FECHA_PUNTUAL ;
+        
+        const fecha = new Date(data.fecha); 
+        console.log(fecha.toISOString())
+        if(fecha < desde || hasta < fecha) {
+            throw INVALIDO.RANGO_ACT;
+        }
+
+        // if(! fecha.estaEnRango() ) throw INVALIDO.RANGO_FECHA_PUNTUAL ;
     }
 
     /** Conexion BD */
     public darDeAltaBD()
-     {
-         this.estadoEnBD = ESTADO_BD.A;
-     }
-     public darDeBajaBD()
-     {
-        this.estadoEnBD = ESTADO_BD.B;
-     }
-     public estaDeBaja() : boolean { 
+    {
+        this.estadoEnBD = ESTADO_BD.A;
+    }
+    public darDeBajaBD()
+    {
+    this.estadoEnBD = ESTADO_BD.B;
+    }
+    
+    public estaDeBaja() : boolean { 
         return this.estadoEnBD === ESTADO_BD.B;
     }
  
@@ -99,18 +110,17 @@ class FechaPuntual{
         
         if(process.env.NODE_ENV === "development")console.log('buscando fechas puntuales asociadas..');
         let salida : ID_FECHA[] = [];
-        await BD.FechaPuntualActividad.findAll({where : {idActividad : iAct.verID()},transaction}).then( fechasAsociadas =>{
-            if(fechasAsociadas.length > 0){
-                salida.push(...fechasAsociadas.map( fecha => fecha.idActividad));
-            }
-        });
+        const asociadas = await BD.FechaPuntualActividad.findAll({ where : {idActividad : iAct.verID()},transaction });
+        if(asociadas.length) {
+            salida.push( ... asociadas.map( fecha => fecha.idFecha) )
+        }
         return salida;
     }
     public static async buscarPorActBD(listaIds : ID_FECHA[], iAct: Actividad, transaction?: Transaction | undefined): Promise<void> {
 
         if(listaIds.length > 0) {
             const fechasPuntuales = await BD.FechaPuntual.findAll({where : {idFecha : listaIds},transaction})
-           iAct.cargarFechasPuntuales( fechasPuntuales );
+           iAct.cargarFechasPuntuales( fechasPuntuales.map( f => f.dataValues) );
         }
 
         return;

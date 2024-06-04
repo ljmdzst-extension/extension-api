@@ -7,6 +7,9 @@ import { Persona} from '../models/Persona'
 import { generarEmailValidaciónRegistro, smtpService } from '../config/smtpConfig';
 import { v4 as uuidv4 } from 'uuid';
 import { HttpHelpers } from '../helpers/general';
+import { PermisoAttributes } from '../models/Permiso';
+import { CategoriaAttributes } from '../models/Categoria';
+import { AreaAttributes } from '../models/Area';
 
 
 type DataListaUsuarios = { usuarios :{ idUsuario : string , email : string }[] }
@@ -14,8 +17,8 @@ type DataListaUsuarios = { usuarios :{ idUsuario : string , email : string }[] }
 export const loginUsuario =  async( req : any, resp : typeof response  ) => {
 
     try {
-        const { usuario } = req.usuario;
-    
+        const { usuario,permisos,areas,categorias } = req.usuario;
+
         const persona = await BD.Persona.findOne({
             attributes : ['ape','nom'],
             where : { nroDoc : usuario.nroDoc }
@@ -31,6 +34,9 @@ export const loginUsuario =  async( req : any, resp : typeof response  ) => {
             email : usuario.email,
             ape : persona.ape,
             nom : persona.nom,
+            permisos : permisos.map((p : PermisoAttributes) => p.nombre),
+            categorias : categorias.map( (c : CategoriaAttributes) => c.nombre),
+            areas : areas.map( (a:AreaAttributes ) => a.idArea ),
             token : token
         });
     } catch (error : any) {
@@ -43,7 +49,7 @@ export const loginUsuario =  async( req : any, resp : typeof response  ) => {
 export const authUsuario = async( req : any, resp : typeof response  )  => {
    
    try {
-        const {idUsuario}  = req.usuario.usuario;
+        const {idUsuario}  = req.usuario;
         
        const _token = jwt.sign( {idUsuario} ,process.env.HASH_KEY || '', {expiresIn : 60 * 60} );
         
@@ -82,7 +88,6 @@ export  const registerUsuario = async( req : any, resp : typeof response  ) => {
 
         const usuarioPendiente = await Usuario.initModel(sequelizeExtension).create({
             idUsuario : nuevoId,
-            idCategoria : 5,
             nroDoc :dbPersona.nroDoc,
             idUnidadAcademica : idUnidadAcademica,
             email,

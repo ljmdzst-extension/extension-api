@@ -1,7 +1,6 @@
 import * as Sequelize from 'sequelize';
 import { DataTypes, Model, Optional } from 'sequelize';
 import type { Actividad, ActividadId } from './Actividad';
-import type { Categoria, CategoriaId } from './Categoria';
 import type { Evaluacion, EvaluacionId } from './Evaluacion';
 import type { EvaluacionItem, EvaluacionItemId } from './EvaluacionItem';
 import type { Persona, PersonaId } from './Persona';
@@ -9,7 +8,6 @@ import type { Propuesta, PropuestaId } from './Propuesta';
 
 export interface UsuarioAttributes {
   idUsuario: string;
-  idCategoria : number;
   nroDoc: string;
   email: string;
   pass: string;
@@ -24,7 +22,6 @@ export type UsuarioCreationAttributes = Optional<UsuarioAttributes, UsuarioOptio
 
 export class Usuario extends Model<UsuarioAttributes, UsuarioCreationAttributes> implements UsuarioAttributes {
   idUsuario!: string;
-  idCategoria !: number;
   nroDoc!: string;
   email!: string;
   pass!: string;
@@ -48,11 +45,7 @@ export class Usuario extends Model<UsuarioAttributes, UsuarioCreationAttributes>
   hasActividad!: Sequelize.HasManyHasAssociationMixin<Actividad, ActividadId>;
   hasActividads!: Sequelize.HasManyHasAssociationsMixin<Actividad, ActividadId>;
   countActividads!: Sequelize.HasManyCountAssociationsMixin;
-  // Usuario belongsTo Categoria via idCategoria
 
-  categoria!: Categoria;
-  getCategoria!: Sequelize.BelongsToGetAssociationMixin<Categoria>;
-  setCategoria!: Sequelize.BelongsToSetAssociationMixin<Categoria, CategoriaId>;
 
   // Usuario belongsToMany Evaluacion via idUsuario and idEvaluacion
   idEvaluacionEvaluacions!: Evaluacion[];
@@ -98,14 +91,6 @@ export class Usuario extends Model<UsuarioAttributes, UsuarioCreationAttributes>
       type: DataTypes.STRING(255),
       allowNull: false,
       primaryKey: true
-    },
-    idCategoria : {
-      type : DataTypes.NUMBER(),
-      allowNull : false,
-      references : {
-        model : 'Categoria',
-        key : 'idCategoria'
-      }
     },
     nroDoc: {
       type: DataTypes.STRING(9),

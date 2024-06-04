@@ -4,8 +4,6 @@ import Actividad, { ACTIVIDAD_NULA, IResponseActividad } from "../classes/Activi
 import { ESTADO_BD } from "../types/general";
 import { request, response } from "express";
 import { HttpHelpers } from '../helpers/general';
-import sequelizeExtension from '../config/dbConfig';
-
 
 export const cargarActividad =  async ( req : typeof request , resp : typeof response) =>
     {

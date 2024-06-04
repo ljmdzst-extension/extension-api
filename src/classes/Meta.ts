@@ -1,10 +1,7 @@
 import { Transaction } from "sequelize";
-import Actividad, { ID_ACT } from "./Actividad";
-import Valoracion, { IValoracion } from "./Valoracion";
+import Actividad from "./Actividad";
 import { BD } from "../config/dbConfig";
 import { ERROR } from "../logs/errores";
-import validator from "validator";
-import { INVALIDO } from "../logs/validaciones";
 import { ESTADO_BD } from "../types/general";
 
 
@@ -31,7 +28,12 @@ class Meta {
         this.estadoEnBD = ESTADO_BD.A;
         
     }
-
+    public darDeBaja() {
+        this.estadoEnBD = ESTADO_BD.B;
+    }
+    public darDeAlta() {
+        this.estadoEnBD = ESTADO_BD.A;
+    }
     public estaDeBaja() : boolean { 
         return this.estadoEnBD === ESTADO_BD.B;
     }
@@ -47,16 +49,11 @@ class Meta {
         };
     }
 
-    public valorar( valoracion : number ){
-        this.data.valoracion = valoracion;
-    }
-
+    
     public editarDatos( data : IMeta ){
-        const {valoracion, ...dataMeta} = data;
-        this.data = dataMeta;
-        if(valoracion){
-            this.valorar(valoracion);
-        }
+  
+        this.data = data;
+       
         this.estadoEnBD = ESTADO_BD.M;
     }
 
@@ -102,20 +99,20 @@ class Meta {
                  break;
          }
      }
-     public static async buscarPorIDBD(id: number, transaction?: Transaction | undefined): Promise<Meta> { 
+    
+    public static async buscarPorIDBD(id: number, transaction?: Transaction | undefined): Promise<Meta> { 
         const bdMeta = await BD.Meta.findByPk(id,{transaction});
         if(!bdMeta ) throw ERROR.META_INEXISTENTE;
-        return new Meta(bdMeta.dataValues);
+        return new Meta({...bdMeta.dataValues, valoracion : bdMeta.idValoracion});
     } ;
-     public static async buscarPorActBD(iAct: Actividad, transaction?: Transaction | undefined): Promise<void> {
 
-        if(process.env.NODE_ENV === "development")console.log('cargando metas ..')
+
+    public static async buscarPorActBD(iAct: Actividad, transaction?: Transaction | undefined): Promise<void> {
+
+        if(process.env.NODE_ENV === "development") console.log('cargando metas ..');
 
         const metas = await BD.Meta.findAll({where : {idActividad : iAct.verID()},transaction})
-        iAct.cargarMetas( metas.map( meta => meta.dataValues) );
-
-        
-
+        iAct.cargarMetas( metas.map( meta => ({...meta.dataValues, valoracion : meta.idValoracion})) );
 
     }
     
@@ -125,5 +122,191 @@ class Meta {
 
 export {IMeta,ID_META}
 export default Meta;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 

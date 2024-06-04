@@ -1,8 +1,9 @@
 import { NextFunction, request, response } from "express";
 import { checkSchema, validationResult } from "express-validator";
-import { BD } from "../config/dbConfig";
+import sequelizeExtension, { BD } from "../config/dbConfig";
 import { HttpHelpers } from "../helpers/general";
 import { Usuario } from "../models/Usuario";
+import { Area } from "../models/Area";
 
 
 
@@ -34,52 +35,63 @@ export const chequearUsuarioNoExistente =  async(req : typeof request, resp : ty
 
 
 export const obtenerDataUsuario = async(req : any, resp : typeof response, next : NextFunction) =>{
-        
+    const transaction = await sequelizeExtension.transaction({ logging : process.env.NODE_ENV === 'development' ? sql => console.log(sql) : undefined});
     try {
 
         let iUsuario : Usuario | null= null;
 
         if(req.body && req.body.email){
 
-            iUsuario = await BD.Usuario.findOne({where : {email : req.body.email}});
+            iUsuario = await BD.Usuario.findOne({where : {email : req.body.email}, transaction});
         }
         if(req.usuario && req.usuario.idUsuario){
 
-            iUsuario = await BD.Usuario.findByPk(req.usuario.idUsuario);
+            iUsuario = await BD.Usuario.findByPk(req.usuario.idUsuario, {transaction});
         } 
     
         if(!iUsuario) throw {status : 400 , message: 'no existe un usuario con ese id'}
         
-        const categoria = await BD.Categoria.findByPk(iUsuario.idCategoria);
+        const lCategoriasUsuario = await BD.CategoriaUsuario.findAll({where : {idUsuario : iUsuario.idUsuario}, transaction});
         
-        if(!categoria) throw { status : 500 , message : 'usuario sin categoría'}
+        if(!lCategoriasUsuario) throw { status : 500 , message : 'usuario sin categoría'}
 
-        console.log(` USR : ${iUsuario.idUsuario}`)
+        const categorias = await BD.Categoria.findAll({where : {idCategoria : lCategoriasUsuario.map( cu => cu.idCategoria)} , transaction});
+        
+        const permisosCategorias = await BD.PermisoCategoria.findAll({ where : {idCategoria : lCategoriasUsuario.map(cu => cu.idCategoria)} , transaction});
+        
+        if(permisosCategorias.length < 1) throw { status : 403 , message : 'usuario sin permisos asignados'}
+        
+        const permisos = await BD.Permiso.findAll({where : { idPermiso : permisosCategorias.map( pc => pc.idPermiso) } , transaction});
+        
+        const areasHabilitadas = await BD.AreaProgramaCategoriaUsuario.findAll({
+            where : {
+                idUsuario : iUsuario.idUsuario,
+                idCategoria : categorias.map(c => c.idCategoria),
+                anio : new Date().getFullYear(),
+            },
+            transaction
+        });
+        
+        const areas = await Area.findAll({where : {idArea : areasHabilitadas.map( ah => ah.idArea)},transaction});
 
+
+        await transaction.commit();
+       
         req.usuario = {
-            usuario : iUsuario,
-            categoria : categoria
+            usuario : iUsuario.dataValues,
+            categorias : categorias.map( c => c.dataValues),
+            areas : areas.map( a => a.dataValues),
+            permisos : permisos.map( p => p.dataValues)
         }
 
         next();
         
     } catch (error : any) {
-        let status = 500;
-        let message = 'error de servidor';
-
-        if(error.status && error.message) {
-            status = error.status
-            message = error.message
-        } else {
-            console.log(error);
-            console.log(`ERROR : ${req.method}-${req.path}-${message}`)
+        await transaction.rollback();
+        if(error.status === 500) {
+            console.log(`ERROR : ${req.method}-${req.path}-${error.message}`)
         }
-        
-        resp.status(status).json({
-            ok : false,
-            data : null,
-            error : message
-        })
+        HttpHelpers.responderPeticionError(resp,error.message,error.status || 500);
     }
 }
 
@@ -121,14 +133,14 @@ export const validarCorreoYContraseña = checkSchema({
 export const validarCamposRegistro = checkSchema({
     nroDoc : { 
         exists : {
-            errorMessage : 'nroDoc obligatorio'
+            errorMessage : 'dni obligatorio'
         },
         isNumeric: {
-            errorMessage : 'nroDoc inválido' 
+            errorMessage : 'dni inválido' 
         }, 
         isLength: { 
             options : {min : 8, max : 8}, 
-            errorMessage : 'nroDoc de 8 dígitos sin puntos, con 0 adelante si tiene 7 dígitos'
+            errorMessage : 'dni de 8 dígitos sin puntos, con 0 adelante si tiene 7 dígitos'
         }
         
     },
@@ -216,7 +228,7 @@ export const validarUsuarioNoPendiente = async( req : any , resp : typeof respon
     if( ! usuario.pendiente ) {
         next();
     } else {
-        HttpHelpers.responderPeticionError(resp, 'Contraseña errónea' ,403 );
+        HttpHelpers.responderPeticionError(resp, 'Usuario pendiente de confirmación de registro' ,403 );
     }
 }
 
@@ -224,14 +236,16 @@ export const validarSchema = (req : typeof request, resp : typeof response, next
 
     const errores = validationResult(req);
 
-    if( ! errores.isEmpty() ) {
+    if( errores.isEmpty() ) {
+        next();
+    } 
+    else {
         const listaErrores = errores.mapped();
-        return resp.status(400).json({
-            ok: false,
-            data : null,
-            error : Object.keys(listaErrores).map( campo => listaErrores[campo].msg ),
-        })
+        HttpHelpers.responderPeticionError(
+            resp,
+            Object.keys(listaErrores).map( campo => listaErrores[campo].msg ).toString(),
+            400
+        )
     }
 
-    next();
 }
