@@ -7,75 +7,52 @@ import { HttpHelpers } from "../helpers/general";
 
 export const determinarAreasHabilitadas = (req : any, resp : typeof response , next : NextFunction)=>{
     const {categorias}: {categorias : CategoriaAttributes[]} = req.usuario;
-   
-    if( categorias.some( c => ['ADMIN','EYC','GESTION_EYC','EYC_ECO_FINAN' ].some( nombre => c.nombre === nombre) )) {
-        req.usuario.areas = 'TODAS';
-        next();
-    }
-    else if(categorias.some(c => c.nombre === 'PROG_EXT')){
-        req.usuario.areas = 'PROG_EXT';
-        next();
-    }
-    else {
-        
+
+    const categoriasHabilitadas = ['ADMIN','EYC','GESTION_EYC','EYC_ECO_FINAN','PROG_EXT' ];
+    
+    const categEncontrada = categorias.find( c => categoriasHabilitadas.some( nombre => c.nombre !== nombre) ) ;
+
+    if( ! categEncontrada  ) {
+
         HttpHelpers.responderPeticionError(resp,'Usuario no habilitado para acceder a planificaciones' ,403);
     }
-   
+    else {
+        req.usuario.areas = categEncontrada.nombre === 'PROG_EXT' ? 'PROG_EXT' : 'TODAS';
+       
+        next();
+    }
+
 }   
 
 
 export const validarPermisoAccesoMetas = async( req : any, resp : typeof response, next : NextFunction)=>{
-    try {
-        const {categorias, permisos}: {categorias : CategoriaAttributes[], permisos : PermisoAttributes[]} = req.usuario;
+    const {categorias, permisos}: {categorias : CategoriaAttributes[], permisos : PermisoAttributes[]} = req.usuario;
       
-        if(categorias.some( c => c.nombre === 'ADMIN'))  {
-                
-            next();
-    
-        } 
-        else if(  ( permisos.length > 0 )  && permisos.some( permiso => permiso.nombre === 'METAS_LECTURA') ) {
-           
+    if(  categorias.every( c => c.nombre !== 'ADMIN') && permisos.every( permiso => permiso.nombre !== 'METAS_LECTURA') )  {
+
+        HttpHelpers.responderPeticionError(   resp,  'no posee permisos para acceder a planificaciones',  403  );
+        
+    } 
+    else  {
        
-            next();
-    
-        }
-        else throw { status : 403 , message : 'no posee permisos para acceder a planificaciones'}
-    
-    } catch (error :  any) {
-        if(error.status === 500) {
-            console.log(`ERROR : ${req.method}-${req.path}-${error.message}`)
-        }
-        HttpHelpers.responderPeticionError(resp,error.message,error.status);
+        next();
+
     }
-    
-    
-    
-    }
+  
+}
 
 export const validarPermisoEdicionMetas = async( req : any, resp : typeof response, next : NextFunction)=>{
-    try {
-        const {categorias,permisos}: {categorias : CategoriaAttributes[], permisos : PermisoAttributes[]} = req.usuario;
+    const {categorias,permisos}: {categorias : CategoriaAttributes[], permisos : PermisoAttributes[]} = req.usuario;
     
-        if(categorias.some( c => c.nombre === 'ADMIN'))  {
-            
-            next();
-    
-        } 
+    if( categorias.every( c => c.nombre !== 'ADMIN') && permisos.every( permiso => permiso.nombre !== 'METAS_EDICION') )  {
         
-        else if( permisos.length > 0 && permisos.some( permiso => permiso.nombre === 'METAS_EDICION') )  {
-            
-            next();
-    
-        }
+        HttpHelpers.responderPeticionError(  resp, 'no posee permisos para realizar esta acción', 403  );
 
-        else  throw { status : 403 , message : 'no posee permisos para realizar esta acción'}
-       
-    } catch (error :  any) {
-        
-        if(error.status === 500) {
-            console.log(`ERROR : ${req.method}-${req.path}-${error.message}`)
-        }
-         HttpHelpers.responderPeticionError(resp,error.message,error.status);
+    } 
+    
+    else {
+        next();
     }
+
         
 }

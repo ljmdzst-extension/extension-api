@@ -3,6 +3,7 @@ import { checkSchema, validationResult } from "express-validator";
 import sequelizeExtension, { BD } from "../config/dbConfig";
 import { HttpHelpers } from "../helpers/general";
 import { Usuario } from "../models/Usuario";
+import { Area } from "../models/Area";
 
 
 
@@ -57,14 +58,29 @@ export const obtenerDataUsuario = async(req : any, resp : typeof response, next 
         const categorias = await BD.Categoria.findAll({where : {idCategoria : lCategoriasUsuario.map( cu => cu.idCategoria)} , transaction});
         
         const permisosCategorias = await BD.PermisoCategoria.findAll({ where : {idCategoria : lCategoriasUsuario.map(cu => cu.idCategoria)} , transaction});
+        
         if(permisosCategorias.length < 1) throw { status : 403 , message : 'usuario sin permisos asignados'}
+        
         const permisos = await BD.Permiso.findAll({where : { idPermiso : permisosCategorias.map( pc => pc.idPermiso) } , transaction});
         
+        const areasHabilitadas = await BD.AreaProgramaCategoriaUsuario.findAll({
+            where : {
+                idUsuario : iUsuario.idUsuario,
+                idCategoria : categorias.map(c => c.idCategoria),
+                anio : new Date().getFullYear(),
+            },
+            transaction
+        });
+        
+        const areas = await Area.findAll({where : {idArea : areasHabilitadas.map( ah => ah.idArea)},transaction});
+
+
         await transaction.commit();
        
         req.usuario = {
             usuario : iUsuario.dataValues,
             categorias : categorias.map( c => c.dataValues),
+            areas : areas.map( a => a.dataValues),
             permisos : permisos.map( p => p.dataValues)
         }
 

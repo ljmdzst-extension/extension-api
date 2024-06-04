@@ -8,6 +8,8 @@ import { generarEmailValidaciónRegistro, smtpService } from '../config/smtpConf
 import { v4 as uuidv4 } from 'uuid';
 import { HttpHelpers } from '../helpers/general';
 import { PermisoAttributes } from '../models/Permiso';
+import { CategoriaAttributes } from '../models/Categoria';
+import { AreaAttributes } from '../models/Area';
 
 
 type DataListaUsuarios = { usuarios :{ idUsuario : string , email : string }[] }
@@ -15,7 +17,7 @@ type DataListaUsuarios = { usuarios :{ idUsuario : string , email : string }[] }
 export const loginUsuario =  async( req : any, resp : typeof response  ) => {
 
     try {
-        const { usuario,permisos } = req.usuario;
+        const { usuario,permisos,areas,categorias } = req.usuario;
 
         const persona = await BD.Persona.findOne({
             attributes : ['ape','nom'],
@@ -33,6 +35,8 @@ export const loginUsuario =  async( req : any, resp : typeof response  ) => {
             ape : persona.ape,
             nom : persona.nom,
             permisos : permisos.map((p : PermisoAttributes) => p.nombre),
+            categorias : categorias.map( (c : CategoriaAttributes) => c.nombre),
+            areas : areas.map( (a:AreaAttributes ) => a.idArea ),
             token : token
         });
     } catch (error : any) {
