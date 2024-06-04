@@ -1,6 +1,6 @@
 version: "3.9"
 services:
- extension_api:
+ server:
   build:
     context: .
     target: minimal
@@ -18,7 +18,7 @@ services:
    - DB_PORT=${DB_PORT}
    - DB_NAME=${DB_NAME}
    - NODE_ENV=${NODE_ENV}
- mysql:
+ db:
   image: mysql:5.7
   volumes:
    - ./db_estension_backup:/var/lib/mysql
