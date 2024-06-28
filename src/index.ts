@@ -24,6 +24,7 @@ import { informarPeticion } from './middlewares/bases';
 import { extraerToken, validarToken } from './middlewares/auth';
 import { obtenerDataUsuario } from './middlewares/usuario';
 import routerGraficos from './routes/graficos';
+import routerAdmin from './routes/admin';
 
 
 const app = express();
@@ -55,6 +56,7 @@ app.use(`${BASE_PATH_METAS}/bases`,RouterBases);
 app.use(`${BASE_PATH_METAS}/actividad`,routerActividad);
 app.use(`${BASE_PATH_METAS}/graficos`,routerGraficos);
 
+app.use(`${BASE_PATH_METAS}/admin`,routerAdmin);
 
 // propuestas
 
