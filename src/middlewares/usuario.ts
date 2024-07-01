@@ -72,7 +72,12 @@ export const obtenerDataUsuario = async(req : any, resp : typeof response, next 
             transaction
         });
         
-        const areas = await Area.findAll({where : {idArea : areasHabilitadas.map( ah => ah.idArea)},transaction});
+        const areas = await Area.findAll({
+            where : {
+                idArea : areasHabilitadas.map( ah => ah.idArea)
+            },
+            transaction
+        });
 
 
         await transaction.commit();

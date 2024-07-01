@@ -68,3 +68,4 @@ db_estension_backup/*
 *__test__
 *.js
 *.sql
+tsconfig.json

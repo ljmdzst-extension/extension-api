@@ -72,7 +72,8 @@ export class AreaProgramaCategoriaUsuario extends Model<AreaProgramaCategoriaUsu
   }, {
     sequelize,
     tableName: 'AreaProgramaCategoriaUsuario',
-    timestamps: false
+    timestamps: true,
+    paranoid : true
   });
   }
 }

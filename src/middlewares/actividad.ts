@@ -157,11 +157,11 @@ export const validarCampos = checkSchema({
         escape : true
        
     },
-    listaRelaciones : { isArray : { options : { min : 0, max: 60 } }, errorMessage : 'listaRelaciones debe ser lista de ids' },
+    listaRelaciones : { isArray : { options : { min : 0, max: 63 } }, errorMessage : 'listaRelaciones debe ser lista de ids' },
     'listaRelaciones.*' : { isInt : true},
-    listaObjetivos : { isArray : { options : { min : 0, max: 20 } }, errorMessage : 'listaObjetivos debe ser lista de ids' },
+    listaObjetivos : { isArray : { options : { min : 0, max: 22 } }, errorMessage : 'listaObjetivos debe ser lista de ids' },
     'listaObjetivos.*' : { isInt : true},
-    listaProgramasSIPPE : { isArray : { options : { min : 0, max: 8 } }, errorMessage : 'listaProgramasSIPPE debe ser lista de ids' },
+    listaProgramasSIPPE : { isArray : { options : { min : 0, max: 9 } }, errorMessage : 'listaProgramasSIPPE debe ser lista de ids' },
     'listaProgramasSIPPE.*' : { isInt : true},
     listaMetas : { isArray : true, errorMessage : 'listaMetas debe ser una lista' },
     'listaMetas.*.idMeta' : { isInt : true, isEmpty : { negated : true}, errorMessage : 'idMeta obligatorio, 0 si es nueva' },

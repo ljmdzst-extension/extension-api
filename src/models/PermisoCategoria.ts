@@ -1,5 +1,5 @@
 import * as Sequelize from 'sequelize';
-import { DataTypes, Model, Optional } from 'sequelize';
+import { DataTypes, Model } from 'sequelize';
 import type { Categoria, CategoriaId } from './Categoria';
 import type { Permiso, PermisoId } from './Permiso';
 
@@ -50,7 +50,8 @@ export class PermisoCategoria extends Model<PermisoCategoriaAttributes, PermisoC
   }, {
     sequelize,
     tableName: 'PermisoCategoria',
-    timestamps: false
+    timestamps: true,
+    paranoid : true
   });
   }
 }
