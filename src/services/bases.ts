@@ -67,26 +67,28 @@ export default class SBases {
             areasPrograma.forEach( ap => {
                 const p = lProgramas.get(ap.idPrograma);
                 if(p){
-                    _lProgramas.push(p)
+                    _lProgramas.push(p);
                 }
             });
 
             salida.lAreasProgramasAnios.push( {
                 anio : anio,
-                listaProgramas : _lProgramas.map( _p => {
-                    const _lAreas : Area[] = [];
-                    areasPrograma.filter(ap => ap.idPrograma === _p.idPrograma)
-                                .forEach( ap => {
-                                    const a = lAreas.get(ap.idArea);
-                                    if( a ){
-                                        _lAreas.push(a);
-                                    }
-                                }) 
-                    return {
-                        ..._p.dataValues,
-                        listaAreas : _lAreas
-                    }
-                })
+                listaProgramas : [...new Set([
+                    ..._lProgramas.map( _p => {
+                        const _lAreas : Area[] = [];
+                        areasPrograma.filter(ap => ap.idPrograma === _p.idPrograma)
+                                    .forEach( ap => {
+                                        const a = lAreas.get(ap.idArea);
+                                        if( a ){
+                                            _lAreas.push(a);
+                                        }
+                                    }) 
+                        return {
+                            ..._p.dataValues,
+                            listaAreas : _lAreas
+                        }
+                    })
+                ]).values()]
             } )
          } )
 
