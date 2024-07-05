@@ -39,6 +39,7 @@ export const loginUsuario =  async( req : any, resp : typeof response  ) => {
             areas : areas.map( (a:AreaAttributes ) => a.idArea ),
             token : token
         });
+        
     } catch (error : any) {
 
         HttpHelpers.responderPeticionError(resp,error.status || 500,error.message || error)

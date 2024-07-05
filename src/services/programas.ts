@@ -10,12 +10,11 @@ export const verListaProgramasConAreas = async( usuario : any, anio : number )=>
         let listaProgramas : Programa[] = []; 
 
         if(usuario.areas === 'TODAS') {
-
-        listaProgramas = await Programa.verTodosConAreas( anio);
+            listaProgramas = await Programa.verTodosConAreas( anio);
         }
 
         if(usuario.areas === 'PROG_EXT') {
-        listaProgramas = await Programa.verHabilitadosConAreas(anio , usuario.usuario.idUsuario, usuario.categorias[0].idCategoria,t  );
+            listaProgramas = await Programa.verHabilitadosConAreas(anio , usuario.usuario.idUsuario, usuario.categorias[0].idCategoria,t  );
         }
     
         if(listaProgramas.length) {
