@@ -66,6 +66,7 @@ dist/
 package-lock.json
 db_estension_backup/*
 *__test__
-*.js
+enviarCorreosUsuarios.js
+migrarUsuarios.js
 *.sql
 tsconfig.json
