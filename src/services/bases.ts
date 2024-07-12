@@ -46,52 +46,52 @@ export default class SBases {
         salida.unidadesAcademicas = salida.listaRelaciones.filter( rel => rel.tipoRelacion?.idTipoRelacion === 3 )
                                                           .map( rel => ({idUnidadAcademica : rel.idRelacion, nom : rel.nom || '-'}));
         
-        const lAreaProgramas : Map<number,AreaPrograma[]> = new Map();                                                  
+        const lAreaProgramas : AreaPrograma[] = [];                                                  
         const lProgramas : Map<number,Programa> = new Map();
         const lAreas : Map<number,Area> = new Map();
 
         await Promise.all([
-            BD.AreaPrograma.findAll({transaction}).then(resp => resp.forEach( ap => {
-                const _lAreaPrograma = lAreaProgramas.get(ap.anio);
-                if(_lAreaPrograma){
-                    lAreaProgramas.set(ap.anio,[ ..._lAreaPrograma, ap]);
-                }else {
-                    lAreaProgramas.set(ap.anio,[]);
-                }
-            } )),
+            BD.AreaPrograma.findAll({transaction}).then(resp => lAreaProgramas.push(...resp)),
             BD.Programa.findAll({transaction}).then(resp => resp.forEach( p => lProgramas.set( p.idPrograma, p ))),
             BD.Area.findAll({transaction}).then(resp => resp.forEach( a => lAreas.set(a.idArea,a)))
         ]);
-         lAreaProgramas.forEach( ( areasPrograma,anio )=> {
-            const _lProgramas : Programa[] = [];
-            areasPrograma.forEach( ap => {
-                const p = lProgramas.get(ap.idPrograma);
-                if(p){
-                    _lProgramas.push(p);
+        const anios : Set<number> = new Set();
+
+        lAreaProgramas.forEach( ap => anios.add(ap.anio));
+
+        anios.forEach( a => {
+            const apsDelAnio = lAreaProgramas.filter( ap => ap.anio === a);
+            const listaProgramas : IPrograma [ ] = [];
+            
+            apsDelAnio.forEach( apa => {
+                
+                let itemProg = listaProgramas.find( _p => _p.idPrograma === apa.idPrograma);
+                if(!itemProg) {
+                    itemProg = { 
+                        idPrograma : apa.idPrograma, 
+                        nom : `${lProgramas.get(apa.idPrograma)?.nom}` ,
+                        listaAreas : []  
+                    } 
+                    listaProgramas.push( itemProg )
+
                 }
+                const area = lAreas.get(apa.idArea);
+                if(area && itemProg.listaAreas.every( a => a.idArea !== area.idArea)) {
+                    itemProg.listaAreas.push(area.dataValues);
+                }
+               
+
             });
 
-            salida.lAreasProgramasAnios.push( {
-                anio : anio,
-                listaProgramas : [...new Set([
-                    ..._lProgramas.map( _p => {
-                        const _lAreas : Area[] = [];
-                        areasPrograma.filter(ap => ap.idPrograma === _p.idPrograma)
-                                    .forEach( ap => {
-                                        const a = lAreas.get(ap.idArea);
-                                        if( a ){
-                                            _lAreas.push(a);
-                                        }
-                                    }) 
-                        return {
-                            ..._p.dataValues,
-                            listaAreas : _lAreas
-                        }
-                    })
-                ]).values()]
-            } )
-         } )
-
+            salida.lAreasProgramasAnios = [ 
+                ...salida.lAreasProgramasAnios, 
+                {
+                    anio : a,
+                    listaProgramas : listaProgramas
+                }
+            ]  
+        })
+            
         return salida;
     }
 

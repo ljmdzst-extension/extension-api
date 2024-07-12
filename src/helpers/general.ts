@@ -64,11 +64,12 @@ export namespace HttpHelpers {
         error : null
     });
 
-    export const responderPeticionError = ( resp : typeof response, message ?: string,status ?: number) => resp.status(status || 500).json({
-        ok : false,
-        data : null,
-        error : message || 'error de servidor'
-    })
+    export const responderPeticionError = ( resp : typeof response, message ?: string,status ?: number) => 
+        resp.status(status ? status : 500).json({
+            ok : false,
+            data : null,
+            error : message  ? message : 'error de servidor'
+        })
 }
 
 

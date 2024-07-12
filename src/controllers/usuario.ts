@@ -25,7 +25,7 @@ export const loginUsuario =  async( req : any, resp : typeof response  ) => {
         })
 
         if( ! persona ) 
-            throw { status : 500 , msg : `No existe persona asociada a usuario : ${usuario.idUsuario}`}
+            throw { status : 500 , message : `No existe persona asociada a usuario : ${usuario.idUsuario}`}
 
         const token = jwt.sign( {idUsuario : usuario.idUsuario} , process.env.HASH_KEY || '',{expiresIn : 60 * 60} )
 
@@ -36,13 +36,13 @@ export const loginUsuario =  async( req : any, resp : typeof response  ) => {
             nom : persona.nom,
             permisos : permisos.map((p : PermisoAttributes) => p.nombre),
             categorias : categorias.map( (c : CategoriaAttributes) => c.nombre),
-            areas : areas.map( (a:AreaAttributes ) => a.idArea ),
+            areas : areas,
             token : token
         });
         
     } catch (error : any) {
 
-        HttpHelpers.responderPeticionError(resp,error.status || 500,error.message || error)
+        HttpHelpers.responderPeticionError(resp,error.message || error,error.status || 500)
     }
 
 }
