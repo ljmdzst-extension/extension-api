@@ -52,7 +52,7 @@ export const authUsuario = async( req : any, resp : typeof response  )  => {
    try {
         const {idUsuario}  = req.usuario;
         
-       const _token = jwt.sign( {idUsuario} ,process.env.HASH_KEY || '', {expiresIn : 60 * 60} );
+       const _token = jwt.sign( {idUsuario} ,process.env.HASH_KEY || '', {expiresIn : '4h'} );
         
         HttpHelpers.responderPeticionOk(resp,{token : _token});
 

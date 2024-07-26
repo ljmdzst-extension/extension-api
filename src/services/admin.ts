@@ -14,7 +14,7 @@ export const verListaUsuarios = async() => {
 
         usuarios.forEach( u => tareas.push( ()=> SUsuario.obtenerDataUsuario(u.idUsuario,u.email).then( data => salida.push(data)) ) )
         
-        await tareas.resolverConDelay(500);
+        await tareas.resolverSinDelay();
 
         return salida;
 
