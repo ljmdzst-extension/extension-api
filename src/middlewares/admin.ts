@@ -1,5 +1,7 @@
 import { NextFunction,  response } from "express";
 import { CategoriaAttributes } from "../models/init-models";
+import { BD } from "../config/dbConfig";
+import { HttpHelpers } from "../helpers/general";
 
 
 
@@ -14,4 +16,16 @@ export const validarUsuarioAdmin =  async(req : any, resp : typeof response , ne
     } else {
         next();
     }
+}
+
+export const validarUsuarioRepetidoPorNroDoc = async(req : any, resp : typeof response , next : NextFunction)=>{
+
+    const {nroDoc} = req.body;
+
+    if( (await BD.Usuario.findOne({where : {nroDoc}})) === null ) {
+        next();
+    } else {
+        HttpHelpers.responderPeticionError(resp,'ya existe un usuario con ese dni',400);
+    }
+
 }

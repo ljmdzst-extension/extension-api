@@ -3,8 +3,8 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "dev": "nodemon dist\\index.js",
-    "watch": "node_modules\\.bin\\tsc -w",
+    "dev": "nodemon src/index.js",
+    "watch": "node_modules/.bin/tsc -w",
     "test": "jest --detectOpenHandles"
   },
   "dependencies": {

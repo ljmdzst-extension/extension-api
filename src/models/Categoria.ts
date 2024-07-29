@@ -1,8 +1,5 @@
 import * as Sequelize from 'sequelize';
 import { DataTypes, Model, Optional } from 'sequelize';
-import type { Permiso, PermisoId } from './Permiso';
-import type { PermisoCategoria, PermisoCategoriaId } from './PermisoCategoria';
-import type { Usuario, UsuarioId } from './Usuario';
 
 export interface CategoriaAttributes {
   idCategoria: number;

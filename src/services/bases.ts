@@ -5,7 +5,6 @@ import Relacion, { IRelacion } from "../classes/Relacion";
 import Valoracion, { IValoracion } from "../classes/Valoracion";
 import Institucion, { IInstitucion } from "../classes/Institucion";
 import { DataGetInstituciones } from "../types/base";
-import { IArea } from "../classes/Area";
 import { BD } from "../config/dbConfig";
 import { AreaPrograma } from "../models/AreaPrograma";
 import { Programa } from "../models/Programa";
@@ -83,13 +82,12 @@ export default class SBases {
 
             });
 
-            salida.lAreasProgramasAnios = [ 
-                ...salida.lAreasProgramasAnios, 
+            salida.lAreasProgramasAnios.push(
                 {
                     anio : a,
                     listaProgramas : listaProgramas
                 }
-            ]  
+            )
         })
             
         return salida;

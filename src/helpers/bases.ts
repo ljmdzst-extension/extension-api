@@ -1,11 +1,11 @@
 import { IPrograma } from '../classes/Programa';
 import { Area } from '../models/Area';
-import { AreaProgramaCategoriaUsuario } from '../models/AreaProgramaCategoriaUsuario';
+import { AreaProgramaUsuario } from '../models/AreaProgramaUsuario';
 import { Programa } from '../models/Programa';
 
 
 
-export const mapearAnioProgramasAreas = (  programas : Programa[], areas : Area[], lAreaProgramas : AreaProgramaCategoriaUsuario[] )=>{
+export const mapearAnioProgramasAreas = (  programas : Programa[], areas : Area[], lAreaProgramas : AreaProgramaUsuario[] )=>{
     let salida : ({
         anio : number,
         listaProgramas : IPrograma[]

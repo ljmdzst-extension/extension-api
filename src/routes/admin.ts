@@ -1,12 +1,14 @@
 
 import { Router } from "express";
-import { getUsuarios } from "../controllers/admin";
+import { getUsuarios,postUsuario, putUsuario,getUsuario } from "../controllers/admin";
+import { validarUsuarioAdmin, validarUsuarioRepetidoPorNroDoc } from "../middlewares/admin";
 
 const routerAdmin = Router();
 
-routerAdmin.get('/usr',[],getUsuarios);
-routerAdmin.post('/usr',[],/** postUsuario */);
-routerAdmin.put('/usr/:id',/** putUsuario */);
+routerAdmin.get('/usr',[validarUsuarioAdmin],getUsuarios);
+routerAdmin.get('/usr/:idUsuario',[validarUsuarioAdmin],getUsuario);
+routerAdmin.post('/usr',[validarUsuarioAdmin,validarUsuarioRepetidoPorNroDoc],postUsuario);
+routerAdmin.put('/usr',[validarUsuarioAdmin],putUsuario);
 routerAdmin.get('/bases',[],/** getBases */);
 
  

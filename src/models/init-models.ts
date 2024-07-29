@@ -47,8 +47,6 @@ import { ParticipanteSocial as _ParticipanteSocial } from "./ParticipanteSocial"
 import type { ParticipanteSocialAttributes, ParticipanteSocialCreationAttributes } from "./ParticipanteSocial";
 import { Permiso as _Permiso } from "./Permiso";
 import type { PermisoAttributes, PermisoCreationAttributes } from "./Permiso";
-import { PermisoCategoria as _PermisoCategoria } from "./PermisoCategoria";
-import type { PermisoCategoriaAttributes, PermisoCategoriaCreationAttributes } from "./PermisoCategoria";
 import { Persona as _Persona } from "./Persona";
 import type { PersonaAttributes, PersonaCreationAttributes } from "./Persona";
 import { Programa as _Programa } from "./Programa";
@@ -105,10 +103,12 @@ import { RegistroPropuestaInstancia as _RegistroPropuestaInstancia } from "./Reg
 import type { RegistroPropuestaInstanciaAttributes, RegistroPropuestaInstanciaCreationAttributes } from "./RegistroPropuestaInstancia";
 import { AreaPrograma as _AreaPrograma } from "./AreaPrograma";
 import type { AreaProgramaAttributes, AreaProgramaCreationAttributes } from "./AreaPrograma";
-import { AreaProgramaCategoriaUsuario as _AreaProgramaCategoriaUsuario } from "./AreaProgramaCategoriaUsuario";
-import type { AreaProgramaCategoriaUsuarioAttributes, AreaProgramaCategoriaUsuarioCreationAttributes } from "./AreaProgramaCategoriaUsuario";
-import { CategoriaUsuario, CategoriaUsuario as _CategoriaUsuario } from "./CategoriaUsuario";
+import { CategoriaUsuario as _CategoriaUsuario } from "./CategoriaUsuario";
 import type { CategoriaUsuarioAttributes, CategoriaUsuarioCreationAttributes } from "./CategoriaUsuario";
+import {PermisoUsuario as _PermisoUsuario } from "./PermisoUsuario";
+import type { PermisoUsuarioAttributes,PermisoUsuarioCreationAttributes } from "./PermisoUsuario";
+import { AreaProgramaUsuario as _AreaProgramaUsuario } from "./AreaProgramaUsuario";
+import type { AreaProgramaUsuarioAttributes, AreaProgramaUsuarioCreationAttributes } from './AreaProgramaUsuario';
 
 export {
   _Actividad as Actividad,
@@ -116,7 +116,7 @@ export {
   _ActividadParticipanteSocial as ActividadParticipanteSocial,
   _Area as Area,
   _AreaPrograma as AreaPrograma,
-  _AreaProgramaCategoriaUsuario as AreaProgramaCategoriaUsuario,
+  _AreaProgramaUsuario as AreaProgramaUsuario,
   _Capacitacion as Capacitacion,
   _Carrera as Carrera,
   _Categoria as Categoria,
@@ -139,7 +139,7 @@ export {
   _PalabraClave as PalabraClave,
   _ParticipanteSocial as ParticipanteSocial,
   _Permiso as Permiso,
-  _PermisoCategoria as PermisoCategoria,
+  _PermisoUsuario as PermisoUsuario,
   _Persona as Persona,
   _Programa as Programa,
   _ProgramaSippe as ProgramaSippe,
@@ -179,8 +179,8 @@ export type {
   AreaCreationAttributes,
   AreaProgramaAttributes,
   AreaProgramaCreationAttributes,
-  AreaProgramaCategoriaUsuarioAttributes,
-  AreaProgramaCategoriaUsuarioCreationAttributes,
+  AreaProgramaUsuarioAttributes,
+  AreaProgramaUsuarioCreationAttributes,
   CapacitacionAttributes,
   CapacitacionCreationAttributes,
   CarreraAttributes,
@@ -225,8 +225,8 @@ export type {
   ParticipanteSocialCreationAttributes,
   PermisoAttributes,
   PermisoCreationAttributes,
-  PermisoCategoriaAttributes,
-  PermisoCategoriaCreationAttributes,
+  PermisoUsuarioAttributes,
+  PermisoUsuarioCreationAttributes,
   PersonaAttributes,
   PersonaCreationAttributes,
   ProgramaAttributes,
@@ -287,7 +287,7 @@ export function initModels(sequelize: Sequelize) {
   const ActividadParticipanteSocial = _ActividadParticipanteSocial.initModel(sequelize);
   const Area = _Area.initModel(sequelize);
   const AreaPrograma = _AreaPrograma.initModel(sequelize);
-  const AreaProgramaCategoriaUsuario = _AreaProgramaCategoriaUsuario.initModel(sequelize);
+  const AreaProgramaUsuario = _AreaProgramaUsuario.initModel(sequelize);
   const Capacitacion = _Capacitacion.initModel(sequelize);
   const Carrera = _Carrera.initModel(sequelize);
   const Categoria = _Categoria.initModel(sequelize);
@@ -310,7 +310,7 @@ export function initModels(sequelize: Sequelize) {
   const PalabraClave = _PalabraClave.initModel(sequelize);
   const ParticipanteSocial = _ParticipanteSocial.initModel(sequelize);
   const Permiso = _Permiso.initModel(sequelize);
-  const PermisoCategoria = _PermisoCategoria.initModel(sequelize);
+  const PermisoUsuario = _PermisoUsuario.initModel(sequelize);
   const Persona = _Persona.initModel(sequelize);
   const Programa = _Programa.initModel(sequelize);
   const ProgramaSippe = _ProgramaSippe.initModel(sequelize);
@@ -366,8 +366,7 @@ export function initModels(sequelize: Sequelize) {
   Capacitacion.hasMany(PropuestaCapacitacion, { foreignKey: "idCapacitacion"});
   Carrera.belongsTo(Relacion, { foreignKey: "idUnidadAcademica"});
   Carrera.hasMany(Integrante, { foreignKey: "idCarrera"});
-  Categoria.belongsToMany(Permiso, { as: 'idPermisoPermisos', through: PermisoCategoria, foreignKey: "idCategoria", otherKey: "idPermiso" });
-  Categoria.hasMany(PermisoCategoria, { as :'permisosCategorias', foreignKey: "idCategoria"});
+
   CronogramaActividad.belongsTo(ActividadObjetivoEspecifico, { foreignKey: "idActividadObjetivoEspecifico"});
   Enlace.belongsTo(Actividad, { foreignKey: "idActividad"});
   Evaluacion.hasMany(EvaluacionItem, { foreignKey: "idEvaluacion"});
@@ -406,10 +405,7 @@ export function initModels(sequelize: Sequelize) {
   ObjetivoEspecifico.belongsTo(Propuesta, { foreignKey: "codigoPropuesta"});
   Objetivo.hasMany(ObjetivoActividad, { foreignKey: "idObjetivo"});
   PalabraClave.belongsToMany(Propuesta, { as: 'codigoPropuestaPropuestaPropuestaPalabraClaves', through: PropuestaPalabraClave, foreignKey: "idPalabraClave", otherKey: "codigoPropuesta" });
-  Permiso.belongsToMany(Categoria, { as: 'idCategoriaCategoria', through: PermisoCategoria, foreignKey: "idPermiso", otherKey: "idCategoria" });
-  Permiso.hasMany(PermisoCategoria, {   foreignKey: "idPermiso"});
-  PermisoCategoria.belongsTo(Permiso, { as : 'permiso', foreignKey: "idPermiso"});
-  PermisoCategoria.belongsTo(Categoria, { as : 'categoria', foreignKey: "idCategoria"});
+
   Persona.belongsToMany(Institucion, { as: 'idInstitucionInstitucionResponsables', through: Responsable, foreignKey: "nroDoc", otherKey: "idInstitucion" });
   Persona.belongsToMany(Propuesta, { as: 'codigoPropuestaPropuesta', through: Integrante, foreignKey: "nroDoc", otherKey: "codigoPropuesta" });
   ProgramaSippe.belongsToMany(Actividad, { as: 'idActividadActividadProgramaSippeActividads', through: ProgramaSippeActividad, foreignKey: "idProgramaSippe", otherKey: "idActividad" });
@@ -506,7 +502,7 @@ export function initModels(sequelize: Sequelize) {
     ActividadParticipanteSocial: ActividadParticipanteSocial,
     Area: Area,
     AreaPrograma : AreaPrograma,
-    AreaProgramaCategoriaUsuario : AreaProgramaCategoriaUsuario,
+    AreaProgramaUsuario : AreaProgramaUsuario,
     Capacitacion: Capacitacion,
     Carrera: Carrera,
     Categoria: Categoria,
@@ -529,7 +525,7 @@ export function initModels(sequelize: Sequelize) {
     PalabraClave: PalabraClave,
     ParticipanteSocial: ParticipanteSocial,
     Permiso: Permiso,
-    PermisoCategoria: PermisoCategoria,
+    PermisoUsuario : PermisoUsuario,
     Persona: Persona,
     Programa: Programa,
     ProgramaSippe: ProgramaSippe,

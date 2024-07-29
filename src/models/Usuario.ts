@@ -33,6 +33,7 @@ export class Usuario extends Model<UsuarioAttributes, UsuarioCreationAttributes>
   getPersona!: Sequelize.BelongsToGetAssociationMixin<Persona>;
   setPersona!: Sequelize.BelongsToSetAssociationMixin<Persona, PersonaId>;
   createNroDocPersona!: Sequelize.BelongsToCreateAssociationMixin<Persona>;
+  
   // Usuario hasMany Actividad via idUsuario
   actividades!: Actividad[];
   getActividads!: Sequelize.HasManyGetAssociationsMixin<Actividad>;
@@ -46,7 +47,6 @@ export class Usuario extends Model<UsuarioAttributes, UsuarioCreationAttributes>
   hasActividads!: Sequelize.HasManyHasAssociationsMixin<Actividad, ActividadId>;
   countActividads!: Sequelize.HasManyCountAssociationsMixin;
 
-
   // Usuario belongsToMany Evaluacion via idUsuario and idEvaluacion
   idEvaluacionEvaluacions!: Evaluacion[];
   getIdEvaluacionEvaluacions!: Sequelize.BelongsToManyGetAssociationsMixin<Evaluacion>;
@@ -59,6 +59,7 @@ export class Usuario extends Model<UsuarioAttributes, UsuarioCreationAttributes>
   hasIdEvaluacionEvaluacion!: Sequelize.BelongsToManyHasAssociationMixin<Evaluacion, EvaluacionId>;
   hasIdEvaluacionEvaluacions!: Sequelize.BelongsToManyHasAssociationsMixin<Evaluacion, EvaluacionId>;
   countIdEvaluacionEvaluacions!: Sequelize.BelongsToManyCountAssociationsMixin;
+
   // Usuario hasMany EvaluacionItem via idUsuario
   evaluacionItems!: EvaluacionItem[];
   getEvaluacionItems!: Sequelize.HasManyGetAssociationsMixin<EvaluacionItem>;
@@ -71,6 +72,7 @@ export class Usuario extends Model<UsuarioAttributes, UsuarioCreationAttributes>
   hasEvaluacionItem!: Sequelize.HasManyHasAssociationMixin<EvaluacionItem, EvaluacionItemId>;
   hasEvaluacionItems!: Sequelize.HasManyHasAssociationsMixin<EvaluacionItem, EvaluacionItemId>;
   countEvaluacionItems!: Sequelize.HasManyCountAssociationsMixin;
+
   // Usuario hasMany Propuesta via idUsuario
   propuestas!: Propuesta[];
   getPropuestas!: Sequelize.HasManyGetAssociationsMixin<Propuesta>;

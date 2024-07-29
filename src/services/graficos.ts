@@ -1,6 +1,7 @@
 import { Op } from "sequelize";
 import sequelizeExtension, { BD } from "../config/dbConfig";
 import { Actividad } from "../models/Actividad";
+import { RelacionActividad } from "../models/RelacionActividad";
 
 
 export const verGraficosDeAnio = async( anio : number)=>{
@@ -45,13 +46,16 @@ const calcularCrucesUUAA = async( cActividad : Actividad[] ) => {
 
     const cUUAA = await BD.Relacion.findAll( {where : { idTipoRelacion : tipoUA.idTipoRelacion }, transaction : t});
 
-    const cRelacionActividad = await BD.RelacionActividad.findAll( {
-         where : { 
-            idRelacion : cUUAA.map( ua => ua.idRelacion) ,
-            idActividad : cActividad.map( a => a.idActividad)
-        }, 
-         transaction : t
-        });
+    const cRelacionActividad : RelacionActividad[] = [] ;
+    
+    await Promise.all(
+        cActividad.map( a =>  
+            BD.RelacionActividad
+            .findAll( { where : { idRelacion : cUUAA.map( ua => ua.idRelacion) ,idActividad : a.idActividad  },  transaction : t })
+            .then( resp => cRelacionActividad.push(...resp))
+            .catch( e => console.log(e))
+        )
+    );
 
     salida = {
    

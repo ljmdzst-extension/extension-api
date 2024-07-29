@@ -52,7 +52,8 @@ export class CategoriaUsuario extends Model<CategoriaUsuarioAttributes, Categori
   }, {
     sequelize,
     tableName: 'CategoriaUsuario',
-    timestamps: false
+    timestamps: true,
+    paranoid : true
   });
   }
 }

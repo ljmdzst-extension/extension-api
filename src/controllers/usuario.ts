@@ -9,7 +9,6 @@ import { v4 as uuidv4 } from 'uuid';
 import { HttpHelpers } from '../helpers/general';
 import { PermisoAttributes } from '../models/Permiso';
 import { CategoriaAttributes } from '../models/Categoria';
-import { AreaAttributes } from '../models/Area';
 
 
 type DataListaUsuarios = { usuarios :{ idUsuario : string , email : string }[] }
@@ -52,7 +51,7 @@ export const authUsuario = async( req : any, resp : typeof response  )  => {
    try {
         const {idUsuario}  = req.usuario;
         
-       const _token = jwt.sign( {idUsuario} ,process.env.HASH_KEY || '', {expiresIn : '4h'} );
+        const _token = jwt.sign( {idUsuario} ,process.env.HASH_KEY || '', {expiresIn : '4h'} );
         
         HttpHelpers.responderPeticionOk(resp,{token : _token});
 

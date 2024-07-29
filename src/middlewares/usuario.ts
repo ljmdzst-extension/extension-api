@@ -3,6 +3,7 @@ import { checkSchema, validationResult } from "express-validator";
 import { BD } from "../config/dbConfig";
 import { HttpHelpers } from "../helpers/general";
 import { Usuario } from "../models/Usuario";
+
 import * as SUsuario from '../services/usuario';
 
 export const chequearUsuarioNoExistente =  async(req : typeof request, resp : typeof response, next : NextFunction) =>{
@@ -35,19 +36,20 @@ export const chequearUsuarioNoExistente =  async(req : typeof request, resp : ty
 export const obtenerDataUsuario = async(req : any, resp : typeof response, next : NextFunction) =>{
     
     try {
-        if( req.usuario || req.body){
-            if(req.usuario) {
-                req.usuario = await SUsuario.obtenerDataUsuario(req.usuario.idUsuario,undefined)
-            }
-            else if( req.body){
-                req.usuario = await SUsuario.obtenerDataUsuario(undefined,req.body.email)
-            }
-            next();
-        
-        } else {
-            throw { status : 400 , message : 'No se pudo obtener data de la petición'}
+
+        if((!req.usuario) && (!req.body))  throw { status : 400 , message : 'No se pudo obtener data de la petición'}
+
+        if(req.usuario) {
+            req.usuario = await SUsuario.obtenerDataUsuario(req.usuario.idUsuario,undefined)
+           
         }
-       
+        else if( req.body){
+            req.usuario = await SUsuario.obtenerDataUsuario(undefined,req.body.email)
+           
+        
+        }
+        
+        next();
 
     } catch (error : any) {
         if(error.status === 500) {

@@ -9,7 +9,7 @@ import RouterPropuesta from './routes/propuesta';
 import RouterPropuestas from './routes/propuestas';
 import RouterEvaluacion from './routes/evaluacion';
 import RouterEvaluaciones from './routes/evaluaciones';
-import sequelizePropuestas from './config/dbConfig';
+import sequelizeExtension from './config/dbConfig';
 import RouterPersonas from './routes/personas';
 import RouterIntegrates from './routes/integrantes';
 import RouterBases from './routes/bases';
@@ -18,13 +18,14 @@ import RouterPlanificacion from './routes/planificacion';
 import routerPrograma from './routes/programa';
 import routerArea from './routes/area';
 import routerActividad from './routes/actividad';
+import routerAdmin from './routes/admin';
+
 import usuarioRouter from './routes/usuario';
-import RouterProyecto from './routes/proyecto';
+
+import routerGraficos from './routes/graficos';
 import { informarPeticion } from './middlewares/bases';
 import { extraerToken, validarToken } from './middlewares/auth';
 import { obtenerDataUsuario } from './middlewares/usuario';
-import routerGraficos from './routes/graficos';
-import routerAdmin from './routes/admin';
 
 
 const app = express();
@@ -43,8 +44,8 @@ const BASE_PATH = '/api/v2';
 
 app.use(informarPeticion);
 
-app.use( `${BASE_PATH}/usr`, usuarioRouter  ) 
-app.use( `${BASE_PATH}/usr/bases`, RouterBases  ) 
+app.use( `${BASE_PATH}/usr`, usuarioRouter  );
+app.use( `${BASE_PATH}/usr/bases`, RouterBases  ) ;
 
 const BASE_PATH_METAS=`${BASE_PATH}/metas`;
 
@@ -80,8 +81,8 @@ app.use('*', async(req : typeof request , res : typeof response) => {
 
 app.listen( process.env.PORT , async()=>{
     try {
-        await sequelizePropuestas.authenticate();
-        console.log('db_propuestas conectada..')
+        await sequelizeExtension.authenticate();
+        console.log(`${sequelizeExtension.getDatabaseName()} conectada`)
     } catch (error : any) {
         console.log(error);
     }
