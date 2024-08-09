@@ -20,9 +20,9 @@ export const validarUsuarioAdmin =  async(req : any, resp : typeof response , ne
 
 export const validarUsuarioRepetidoPorNroDoc = async(req : any, resp : typeof response , next : NextFunction)=>{
 
-    const {nroDoc} = req.body;
+    const {persona} = req.body;
 
-    if( (await BD.Usuario.findOne({where : {nroDoc}})) === null ) {
+    if( persona && (await BD.Usuario.findOne({where : {nroDoc : persona.nroDoc}})) === null ) {
         next();
     } else {
         HttpHelpers.responderPeticionError(resp,'ya existe un usuario con ese dni',400);

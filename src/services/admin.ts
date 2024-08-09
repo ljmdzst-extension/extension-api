@@ -28,28 +28,41 @@ type  TDataPrograma = {
     listaAreas : TDataArea []
 }
 
-type TDataPostUsuario = {
+type TDataPersona = {
     nroDoc : string,
     ape : string,
     nom : string,
+    tel ?: string,
+    dom ?: string,
+    email ?: string,
+    ciudad ?: string,
+    provincia ?: string,
+    pais ?: string
+}
+
+type TDataUsuario = {
+    idUsuario : string, 
+    nroDoc : string,
     email : string,
-    idUnidadAcademica : number,
     pass : string,
+    idUnidadAcademica : number,
+    pendiente : number,
+}
+
+type TDataPostUsuario = {
+    usuario : TDataUsuario,
+    persona : TDataPersona,
     categorias : TDataCategoria[],
     permisos : TDataPermiso[],
     areas : { anio : number , listaProgramas : TDataPrograma[]}[]
 }
 
-type TDataPutUsuario = TDataPostUsuario & {
-    idUsuario : string
-}
+type TDataPutUsuario = TDataPostUsuario 
 
-type TDataGetUsuario = TDataPutUsuario;
 
 export const verUsuario = async(idUsuario : string)=>{
     try {
-       
-        
+
         const usuario = await BD.Usuario.findByPk(idUsuario);
         
         if(!usuario) throw { status : 400 , message : `No existe usuario con ese id : ${idUsuario}`}
@@ -68,8 +81,8 @@ export const verUsuario = async(idUsuario : string)=>{
 
 export const verListaUsuarios = async() => {
    
-    
     try {
+
         let salida : any = [];
         
         const usuarios = await BD.Usuario.findAll();
@@ -95,16 +108,15 @@ export const altaUsuario = async( data : TDataPostUsuario)=>{
     const transaction = await sequelizeExtension.transaction({logging : process.env.NODE_ENV === 'development' ? sql => console.log(sql) : undefined})
     
     try {
-        let persona = await BD.Persona.findOne({where : { nroDoc : data.nroDoc },transaction});    
+
+        let persona = await BD.Persona.findOne({where : { nroDoc : data.persona.nroDoc },transaction});    
         
         if(!persona) {
+
             persona = BD.Persona.build(
                 {
-                    nroDoc : data.nroDoc,
-                    ape : data.ape,
-                    nom : data.nom, 
+                    ...data.persona, 
                     tipoDoc : 1
-
                 },
                 {isNewRecord : true}
             );
@@ -122,11 +134,8 @@ export const altaUsuario = async( data : TDataPostUsuario)=>{
 
         const usuario = BD.Usuario.build(
             {
+                ...data.usuario,
                 idUsuario : nuevoId,
-                nroDoc :persona.nroDoc,
-                idUnidadAcademica : data.idUnidadAcademica,
-                email : data.email,
-                pass : data.pass,
                 pendiente : 0
             },
             {
@@ -203,14 +212,14 @@ export const editarUsuario = async( data : TDataPutUsuario )=>{
     const transaction = await sequelizeExtension.transaction({logging : process.env.NODE_ENV === 'development' ? sql => console.log(sql) : undefined})
     
     try {
-        let persona = await BD.Persona.findOne({where : { nroDoc : data.nroDoc },transaction});    
+
+        let persona = await BD.Persona.findOne({where : { nroDoc : data.persona.nroDoc },transaction});    
         
         if(!persona) {
+
             persona = BD.Persona.build(
                 {
-                    nroDoc : data.nroDoc,
-                    ape : data.ape,
-                    nom : data.nom, 
+                    ...data.persona,
                     tipoDoc : 1
 
                 },
@@ -221,16 +230,11 @@ export const editarUsuario = async( data : TDataPutUsuario )=>{
             
         } 
 
-        const usuario = await BD.Usuario.findByPk(data.idUsuario,{transaction});
+        const usuario = await BD.Usuario.findByPk(data.usuario.idUsuario,{transaction});
 
-        if(!usuario) throw { status : 400 , message : `No se encontro el usuario con id ${data.idUsuario}`}
+        if(!usuario) throw { status : 400 , message : `No se encontro el usuario con id ${data.usuario.idUsuario}`}
 
-        usuario.set({
-            nroDoc : data.nroDoc,
-            email : data.email,
-            pass : data.pass,
-            idUnidadAcademica : data.idUnidadAcademica
-        });
+        usuario.set(data.usuario);
 
         await usuario.save({transaction});
 
