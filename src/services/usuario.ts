@@ -50,6 +50,7 @@ export const obtenerDataUsuario = async( idUsuario ?: string, email ?: string)=>
             idArea : [...new Set([...areasHabilitadas.map( ah => ah.idArea)]).values()]
         },
         transaction
+        
     });
     
     await transaction.commit();
