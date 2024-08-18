@@ -5,11 +5,12 @@ export default class GestionDeActividades {
     async altaActividad ( data : domain.TDataActividad, MActividad : domain.IModelActividad , VActividad : domain.IValidatorActividad ) : Promise<domain.Actividad> {
         
         
-        VActividad.validar(data) ;
+        VActividad.validar(data);
 
         let nuevaActividad = new domain.Actividad(data);
 
-        nuevaActividad = await MActividad.save(nuevaActividad);
+        nuevaActividad = await MActividad.guardarDatos(nuevaActividad);
+
 
      
         return nuevaActividad ;
@@ -83,11 +84,11 @@ export default class GestionDeActividades {
 
         VActividad.validarIdActividad(idActividad);
 
-        const actividad = await MActividad.findByPk(idActividad);
+        const actividad = await MActividad.buscarPorId(idActividad);
 
         if(!actividad) throw new Error(`No existe actividad con ese id : ${idActividad}`)
 
-        return MActividad.destroy(actividad);
+        return MActividad.darDeBaja(actividad.verDatos().idActividad);
 
     } 
 

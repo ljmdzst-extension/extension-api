@@ -1,18 +1,9 @@
 import * as Sequelize from 'sequelize';
-import cli from 'cli-color';
 import { DataTypes, Model, Optional, Transaction } from 'sequelize';
-// import { AreaId } from './Area';
-// import { Enlace, TEnlace } from './Enlace';
-// import { FechaPuntual, TFecha } from './FechaPuntual';
-// import { Institucion } from './Institucion';
-// import { Meta } from './Meta';
-// import { Objetivo, ObjetivoId } from './Objetivo';
-// import { ProgramaSippeId } from './ProgramaSippe';
-// import { Relacion, RelacionId } from './Relacion';
-// import { Ubicacion } from './Ubicacion';
-// import { ESTADO_BD } from '../types/general';
-// import { BD } from '../config/dbConfig';
-// import { ERROR } from '../logs/errores';
+import {domain} from '../../../domain'
+import Actividad, { ID_ACT, TDataActividad } from '../../../domain/classes/Actividad';
+import ITransaction from '../../../domain/models/transaction';
+import { Meta } from './Meta';
 
 export interface ActividadAttributes {
   idActividad: number;
@@ -31,18 +22,7 @@ export type ActividadId = Actividad[ActividadPk];
 export type ActividadOptionalAttributes = "idActividad" | "idUsuario" | "nro" | "motivoCancel" | "fechaDesde" | "fechaHasta" ;
 export type ActividadCreationAttributes = Optional<ActividadAttributes, ActividadOptionalAttributes>;
 
-// type TRequestActividad = ActividadAttributes & {
-//   listaRelaciones      ?: Array<RelacionId>,
-//   listaObjetivos       ?: Array<ObjetivoId>,
-//   listaProgramasSIPPE  ?: Array<ProgramaSippeId>,
-//   listaMetas           ?: Array<TMeta>,
-//   listaUbicaciones     ?: Array<TUbicacion>,
-//   listaInstituciones   ?: Array<TInstitucion>,
-//   listaFechasPuntuales ?: Array<TFecha>,
-//   listaEnlaces         ?: Array<TEnlace>
-// }
 
-// type TResponseActividad = TRequestActividad;
 
 export type TItemActividad = {
   idActividad : ActividadId,
@@ -101,7 +81,9 @@ const ATRIBUTOS_TABLA_ACTIVIDAD_CONFIG = {
 const ACTIVIDAD_NULA = {idActividad : 0, idArea : 0, nro : 0 , desc : ''};
   
 
-export class Actividad extends Model<ActividadAttributes, ActividadCreationAttributes> implements ActividadAttributes {
+export class Actividad extends Model<ActividadAttributes, ActividadCreationAttributes> implements ActividadAttributes , domain.IModelActividad {
+  
+
   idActividad!: number;
   idArea!: number;
   idUsuario?: string;
@@ -112,7 +94,39 @@ export class Actividad extends Model<ActividadAttributes, ActividadCreationAttri
   fechaHasta?: string;
   createdAt?: string;
 
+  async buscarPorId(idActividad: ID_ACT, transaction?: ITransaction): Promise<domain.Actividad | null> {
+    let salida : domain.Actividad | null = null;
 
+    const dbAct = await Actividad.findByPk(idActividad, {transaction});
+
+    if(dbAct) {
+      let data : domain.TDataActividad = {...dbAct.dataValues};
+
+      salida = new domain.Actividad( dbAct );
+
+      await Meta.initModel(this.sequelize)
+                .findAll({where : { idActividad : dbAct.idActividad }, transaction})
+                .then( resp => resp.forEach( meta => data.listaMetas = {...data.listaMetas, ...meta.dataValues} ))
+    }
+
+    return salida;
+  }
+  async buscarPor(parametros: TDataActividad, transaction?: ITransaction): Promise<domain.Actividad | null> {
+    throw new Error('Method not implemented.');
+  }
+  async verLista(params: TDataActividad, transaction?: ITransaction): Promise<domain.Actividad[]> {
+    throw new Error('Method not implemented.');
+  }
+  async guardarDatos(transaction?: ITransaction): Promise<domain.Actividad> {
+    throw new Error('Method not implemented.');
+  }
+  async leerDatos(transaction?: ITransaction): Promise<boolean> {
+    throw new Error('Method not implemented.');
+  }
+  async darDeBaja(idActividad: ID_ACT, transaction?: ITransaction): Promise<boolean> {
+    throw new Error('Method not implemented.');
+  }
+  
   static initModel(sequelize: Sequelize.Sequelize): typeof Actividad {
     return Actividad.init(ATRIBUTOS_TABLA_ACTIVIDAD_CONFIG, {
     sequelize,

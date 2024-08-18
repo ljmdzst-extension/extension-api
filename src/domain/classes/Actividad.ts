@@ -15,6 +15,7 @@ const ACTIVIDAD_NULA = {idActividad : 0, idArea : 0, nro : 0 , desc : ''};
 type ID_ACT = number;
 
 type TDataActividad = {
+
     idActividad : number,
     idArea : number,
     desc : string,
@@ -76,13 +77,13 @@ class Actividad  {
 
     }
     
-    public altaEnlace( e : Enlace){ this.cEnlaces.push( e )}
-    public altaFechaPuntual( fp : FechaPuntual){ this.cFechasPuntuales.push(fp)}
-    public altaInstitucion( i : Institucion){ this.cInstituciones.push(i)}
-    public altaMeta(m : Meta){ this.cMetas.push( m)}
-    public altaObjetivo( o : Objetivo){ this.cObjetivos.push(o)}
-    public altaProgramaSIPPPE( ps : ProgramaSIPPE){ this.cProgSIPPPE.push(ps)}
-    public altaUbicacion( u : Ubicacion ){ this.cUbicaciones.push(u)}
+    public altaEnlace( e : Enlace){ this.cEnlaces.push( e ) ; }
+    public altaFechaPuntual( fp : FechaPuntual){ this.cFechasPuntuales.push(fp);  }
+    public altaInstitucion( i : Institucion){ this.cInstituciones.push(i) ; }
+    public altaMeta(m : Meta){ this.cMetas.push( m);  }
+    public altaObjetivo( o : Objetivo){ this.cObjetivos.push(o);  }
+    public altaProgramaSIPPPE( ps : ProgramaSIPPE){ this.cProgSIPPPE.push(ps);  }
+    public altaUbicacion( u : Ubicacion ){ this.cUbicaciones.push(u);  }
     
     public bajaEnlace( id : number)  {  
         this.cEnlaces = this.cEnlaces.filter( e => e.verDatos().idEnlace !== id) 
