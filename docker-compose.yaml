@@ -1,0 +1,31 @@
+services:
+ server:
+  build:
+    context: .
+  image: extension_api:v2
+  ports:
+   - ${PORT}:${PORT}
+  volumes:
+   - ./dist:/extension_api/src
+   - /extension_api/node_modules
+  restart: unless-stopped
+  environment:
+   - DB_HOST=${DB_HOST}
+   - DB_USER=${DB_USER}
+   - DB_PASS=${DB_PASS}
+   - DB_PORT=${DB_PORT}
+   - DB_NAME=${DB_NAME}
+   - NODE_ENV=${NODE_ENV}
+ db:
+  image: mysql:5.7
+  volumes:
+   - ./db_estension_backup:/var/lib/mysql
+  expose:
+   - "33061"
+  ports:
+   - "33061:3306"
+  environment:
+   - MYSQL_ROOT_PASSWORD=${DB_PASS}
+   - MYSQL_DATABASE=${DB_NAME}
+
+    
