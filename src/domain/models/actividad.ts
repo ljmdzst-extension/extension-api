@@ -1,12 +1,12 @@
 import Actividad, { ID_ACT, TDataActividad } from "../classes/Actividad";
-import ITransaction from "./transaction";
+
 
 export default interface IModelActividad {
     
-    buscarPorId( idActividad : ID_ACT , transaction ?: ITransaction ) : Promise<Actividad | null>;
-    buscarPor( parametros : TDataActividad , transaction ?: ITransaction) : Promise<Actividad | null>;
-    verLista( params : TDataActividad , transaction ?: ITransaction) : Promise<Actividad[]>;
-    guardarDatos( actividad : Actividad, transaction ?: ITransaction) : Promise<Actividad>;
+    buscarPorId( idActividad : ID_ACT  ) : Promise<Actividad | null>;
+    buscarPor( parametros : TDataActividad ) : Promise<Actividad | null>;
+    verLista( params : TDataActividad ) : Promise<Actividad[]>;
+    guardarDatos( actividad : Actividad) : Promise<Actividad>;
 
-    darDeBaja( idActividad : ID_ACT , transaction ?: ITransaction) : Promise<boolean>;
+    darDeBaja( idActividad : ID_ACT ) : Promise<boolean>;
 }   

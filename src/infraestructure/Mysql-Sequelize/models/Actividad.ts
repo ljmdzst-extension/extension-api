@@ -1,9 +1,13 @@
 import * as Sequelize from 'sequelize';
-import { DataTypes, Model, Optional, Transaction } from 'sequelize';
+import { DataTypes, Model, Optional } from 'sequelize';
 import {domain} from '../../../domain'
-import Actividad, { ID_ACT, TDataActividad } from '../../../domain/classes/Actividad';
-import ITransaction from '../../../domain/models/transaction';
 import { Meta } from './Meta';
+import { Enlace } from './Enlace';
+import { ObjetivoActividad } from './ObjetivoActividad';
+import { ProgramaSippeActividad } from './ProgramaSippeActividad';
+import { InstitucionActividad } from './InstitucionActividad';
+import { UbicacionActividad } from './UbicacionActividad';
+import { FechaPuntualActividad } from './FechaPuntualActividad';
 
 export interface ActividadAttributes {
   idActividad: number;
@@ -94,36 +98,40 @@ export class Actividad extends Model<ActividadAttributes, ActividadCreationAttri
   fechaHasta?: string;
   createdAt?: string;
 
-  async buscarPorId(idActividad: ID_ACT, transaction?: ITransaction): Promise<domain.Actividad | null> {
+  async buscarPorId(idActividad: number ): Promise<domain.Actividad | null> {
     let salida : domain.Actividad | null = null;
-
-    const dbAct = await Actividad.findByPk(idActividad, {transaction});
+    const transaction = await this.sequelize.transaction({logging : process.env.NODE_ENV === 'development' ? sql => console.log(sql) : undefined});
+    const dbAct = await Actividad.findByPk(idActividad );
 
     if(dbAct) {
+
       let data : domain.TDataActividad = {...dbAct.dataValues};
 
-      salida = new domain.Actividad( dbAct );
+      salida = new domain.Actividad(data);
 
-      await Meta.initModel(this.sequelize)
-                .findAll({where : { idActividad : dbAct.idActividad }, transaction})
-                .then( resp => resp.forEach( meta => data.listaMetas = {...data.listaMetas, ...meta.dataValues} ))
+      data.listaMetas = await Meta.buscarPorActividad( salida,transaction );
+      data.listaEnlaces = await Enlace.buscarPorActividad(salida,transaction);
+      data.listaInstituciones = await InstitucionActividad.buscarPorActividad(salida,transaction);
+      data.listaFechaPuntuales = await FechaPuntualActividad.buscarPorActividad(salida,transaction);
+      data.listaObjetivos = await ObjetivoActividad.buscarPorActividad(salida,transaction);
+      data.listaProgramaSIPPPEs = await ProgramaSippeActividad.buscarPorActividad(salida,transaction);
+      data.listaUbicaciones = await UbicacionActividad.buscarPorActividad(salida,transaction);
+
     }
 
     return salida;
   }
-  async buscarPor(parametros: TDataActividad, transaction?: ITransaction): Promise<domain.Actividad | null> {
+  async buscarPor(parametros: TDataActividad ): Promise<domain.Actividad | null> {
     throw new Error('Method not implemented.');
   }
-  async verLista(params: TDataActividad, transaction?: ITransaction): Promise<domain.Actividad[]> {
+  async verLista(params: TDataActividad ): Promise<domain.Actividad[]> {
     throw new Error('Method not implemented.');
   }
-  async guardarDatos(transaction?: ITransaction): Promise<domain.Actividad> {
+  async guardarDatos( ): Promise<domain.Actividad> {
     throw new Error('Method not implemented.');
   }
-  async leerDatos(transaction?: ITransaction): Promise<boolean> {
-    throw new Error('Method not implemented.');
-  }
-  async darDeBaja(idActividad: ID_ACT, transaction?: ITransaction): Promise<boolean> {
+
+  async darDeBaja(idActividad: ID_ACT ): Promise<boolean> {
     throw new Error('Method not implemented.');
   }
   
