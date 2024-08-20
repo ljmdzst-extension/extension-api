@@ -1,5 +1,5 @@
-import { ID_AREA } from "../classes/Area";
-import { ID_PROG } from "../classes/Programa";
+import { ID_AREA } from "../domain/classes/Area";
+import { ID_PROG } from "../domain/classes/Programa";
 
 
 export type DataGetAreas = {idPrograma : ID_PROG};

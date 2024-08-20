@@ -5,17 +5,17 @@ dotenv.config();
 
 const nodemailer = require ('nodemailer');
 const transport = nodemailer.createTransport({
-    service : 'gmail',
+    host : process.env.SMTP_HOST,
+    name : process.env.SMTP_NAME,
+    port : process.env.SMTP_PORT,
+    secure : true,
     pool : true,
     maxMessages : 'Infinity',
     maxConnections : 5,
     auth : {
-        type : 'OAuth2',
         user: process.env.SMTP_USER,
         pass: process.env.SMTP_PASS,
-        clientId : process.env.SMTP_CLIENT_ID,
-        clientSecret : process.env.SMTP_SECRET,
-        refreshToken : process.env.SMTP_REFRESH_TOKEN
+        
     }
 
 });
@@ -23,6 +23,7 @@ const transport = nodemailer.createTransport({
 const testTransport = nodemailer.createTransport({
     host : 'localhost',
     port : process.env.SMTP_TEST_PORT,
+    name : process.env.SMTP_TEST_NAME,
     pool : true,
     maxMessages : 'Infinity',
     maxConnections : 5,
@@ -61,6 +62,50 @@ const plantillaTexto = (email = '', pass = '')=> `
     Contraseña: ${pass}
  
 `;
+
+const plantillaTexto2 = `
+    Buen día. 
+    Nos comunicamos para informar que estamos realizando un proceso de migración de servidor de la plataforma de Planificaciones y Memorias. 
+    El objetivo es mejorar la calidad de conexión, a la vez que asegurar mayor seguridad informática. Esta etapa requerirá un tiempo de trabajo en que el acceso a la plataforma no estará disponible, por lo que en cuanto se complete el proceso estaremos informando por este medio para que puedan acceder nuevamente. 
+
+    La información que fue cargada está disponible en los respaldos realizados por el área, con el objetivo de que esté disponible en la plataforma una vez resuelto el nuevo servidor. 
+
+    Quedamos a disposición por cualquier consulta. 
+    Saludos cordiales.
+
+
+
+    --
+    Área de Planeamiento y Evaluación de la Secretaría de Extensión y Cultura.
+    Universidad Nacional del  Litoral 
+`
+
+const plantillaHTML2 = `
+     <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Plataforma de planificaciones y memoria SEyC </title>
+    </head>
+    <body>
+    <p>Buen día.</p> 
+    <p>Nos comunicamos para informar que estamos realizando un proceso de migración de servidor de la plataforma de Planificaciones y Memorias. </p>
+    <p>El objetivo es mejorar la calidad de conexión, a la vez que asegurar mayor seguridad informática. Esta etapa requerirá un tiempo de trabajo en que el acceso a la plataforma no estará disponible, por lo que en cuanto se complete el proceso estaremos informando por este medio para que puedan acceder nuevamente. </p>
+
+    <p>La información que fue cargada está disponible en los respaldos realizados por el área, con el objetivo de que esté disponible en la plataforma una vez resuelto el nuevo servidor. </p>
+
+    <p>Quedamos a disposición por cualquier consulta.</p> 
+    <p>Saludos cordiales.</p>
+
+
+    <p> Área de Planeamiento y Evaluación de la Secretaría de Extensión y Cultura.</p>
+    <p>Universidad Nacional del  Litoral </p>
+      
+    </body>
+    </html>
+`
 
 
 const plantillaHTML = (email = '', pass = '')=> `
@@ -101,11 +146,14 @@ const plantillaHTML = (email = '', pass = '')=> `
 `;
 
 const mail = (email = '', pass = '')=>({
-    from : 'evaluacion.extension@gmail.com',
+    from : {
+        name : 'Planeamiento y Evaluación',
+        address : 'proyectos-extension@unl.edu.ar'
+    },
     to : email,
-    subject : 'Actualización e instructivo - Plataforma de planificaciones y memoria SEyC',
-    text : plantillaTexto(email,pass),
-    html : plantillaHTML(email,pass)
+    subject : 'Migración de Plataforma - Plataforma de planificaciones y memoria SEyC',
+    text :plantillaTexto2,
+    html : plantillaHTML2
 })
 
 
@@ -119,24 +167,22 @@ const enviarMail = async( )  =>{
 
         console.log('smtp ok!');
 
-    const emails = usuarios.map( usr => mail(usr.email,usr.pass));
+
     try {
 
                 transport.on('idle',()=>{
 
-            while( transport.isIdle() && emails.length){
-                transport.sendMail(emails.shift(),(error,resp)=>{
-                    if(error){
-                        console.log(error);
+            transport.sendMail(mail('ljmdzst@gmail.com'),(error,resp)=>{
+                if(error){
+                    console.log(error);
+                } else {
+                    if(resp.rejected.length) {
+                        console.log(`rechazado : ${resp.envelope.to}`);
                     } else {
-                        if(resp.rejected.length) {
-                            console.log(`rechazado : ${resp.envelope.to}`);
-                        } else {
-                            console.log(`enviado : ${resp.envelope.to}`)
-                        }
+                        console.log(`enviado : ${resp.envelope.to}`)
                     }
-                });
-            }
+                }
+            });
             
             // const envios = emails.map( email => testTransport.sendMail(email));
             // const respuestas = await Promise.all(envios.slice(index, index + 10));
