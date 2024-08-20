@@ -63,6 +63,7 @@ const plantillaTexto = (email = '', pass = '')=> `
 `;
 
 
+
 const plantillaHTML = (email = '', pass = '')=> `
     <!DOCTYPE html>
     <html lang="en">
@@ -117,12 +118,12 @@ const enviarMail = async( )  =>{
 
     try {   await transport.verify(); } catch (error) { console.log(error); }
 
-    console.log('smtp ok!');
+        console.log('smtp ok!');
 
     const emails = usuarios.map( usr => mail(usr.email,usr.pass));
     try {
 
-        transport.on('idle',()=>{
+                transport.on('idle',()=>{
 
             while( transport.isIdle() && emails.length){
                 transport.sendMail(emails.shift(),(error,resp)=>{
@@ -153,7 +154,7 @@ const enviarMail = async( )  =>{
       
     
         
-
+        
     } catch (error) {
         console.log(error);
     }
