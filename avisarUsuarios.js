@@ -63,7 +63,6 @@ const plantillaTexto = (email = '', pass = '')=> `
 `;
 
 
-
 const plantillaHTML = (email = '', pass = '')=> `
     <!DOCTYPE html>
     <html lang="en">
