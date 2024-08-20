@@ -3,10 +3,11 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "dev": "nodemon src/index.js",
+    "dev-lin": "nodemon src/index.js",
+    "dev-win": "nodemon dist\\index.js",
     "watch-lin": "node_modules/.bin/tsc -w",
     "watch-win": "node_modules\\.bin\\tsc -w",
-    "test": "jest --detectOpenHandles"
+    "unit-test": "jest --detectOpenHandles"
   },
   "dependencies": {
     "cli-color": "^2.0.3",
