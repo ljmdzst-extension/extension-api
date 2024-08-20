@@ -9,7 +9,7 @@ import RouterPropuesta from './routes/propuesta';
 import RouterPropuestas from './routes/propuestas';
 import RouterEvaluacion from './routes/evaluacion';
 import RouterEvaluaciones from './routes/evaluaciones';
-import sequelizeExtension from '../../Mysql-Sequelize/config/dbConfig';
+import sequelizeExtension from '../../db/Mysql-Sequelize/config/dbConfig';
 import RouterPersonas from './routes/personas';
 import RouterIntegrates from './routes/integrantes';
 import RouterBases from './routes/bases';

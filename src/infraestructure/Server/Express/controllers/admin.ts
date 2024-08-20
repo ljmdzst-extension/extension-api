@@ -1,7 +1,7 @@
 
 
 import { request, response } from "express";
-import * as SAdmin from '../../../Mysql-Sequelize/services/admin';
+import * as SAdmin from '../../../db/Mysql-Sequelize/services/admin';
 import { HttpHelpers } from "../helpers/general";
 
 

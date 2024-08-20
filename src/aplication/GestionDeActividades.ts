@@ -2,26 +2,23 @@ import {domain} from '../domain';
 
 export default class GestionDeActividades {
 
-    async altaActividad ( data : domain.TDataActividad, MActividad : domain.IModelActividad , VActividad : domain.IValidatorActividad ) : Promise<domain.Actividad> {
+    static async altaActividad ( data : domain.TDataActividad, MActividad : domain.IModelActividad , VActividad : domain.IValidatorActividad ) : Promise<domain.Actividad> {
         
         
-        VActividad.validar(data);
+        if(!VActividad.validar(data)) throw new Error('data actividad inválida, revise los campos');
 
         let nuevaActividad = new domain.Actividad(data);
 
         nuevaActividad = await MActividad.guardarDatos(nuevaActividad);
-
-
-     
         return nuevaActividad ;
 
     } 
 
-    async editarActividad( data : domain.TDataActividad , MActividad : domain.IModelActividad , VActividad : domain.IValidatorActividad ) : Promise<domain.Actividad> {
+    static async editarActividad( data : domain.TDataActividad , MActividad : domain.IModelActividad , VActividad : domain.IValidatorActividad ) : Promise<domain.Actividad> {
 
         VActividad.validar(data);
 
-        const actividad = await MActividad.findByPk(data.idActividad);
+        const actividad = await MActividad.buscarPorId(data.idActividad);
 
         if(!actividad) throw new Error(`No existe actividad de id ${data.idActividad}`);
 
@@ -57,8 +54,10 @@ export default class GestionDeActividades {
         }
         if(data.listaObjetivos) {
             data.listaObjetivos.forEach( dataObjetivo => {
-                if(!actividad.findObjetivo(dataObjetivo.idObjetivo)){
+                if((!actividad.findObjetivo(dataObjetivo.idObjetivo) ) && dataObjetivo.tipoObjetivo){
                     actividad.altaObjetivo(new domain.Objetivo(dataObjetivo,new domain.TipoObjetivo(dataObjetivo.tipoObjetivo)));
+                } else {
+                    console.log(`Objetivo ${dataObjetivo.nom} sin tipo objetivo, omitiendo ..`)
                 }
             })
         }
@@ -80,7 +79,7 @@ export default class GestionDeActividades {
         return actividad;
     }
 
-    async bajaActividad( idActividad : number, MActividad : domain.IModelActividad, VActividad : domain.IValidatorActividad) : Promise<boolean> {
+    static async bajaActividad( idActividad : number, MActividad : domain.IModelActividad, VActividad : domain.IValidatorActividad) : Promise<boolean> {
 
         VActividad.validarIdActividad(idActividad);
 

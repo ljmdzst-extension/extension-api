@@ -1,6 +1,6 @@
 import { NextFunction,  response } from "express";
 import { CategoriaAttributes } from "../../../models/init-models";
-import { BD } from "../../../Mysql-Sequelize/config/dbConfig";
+import { BD } from "../../../db/Mysql-Sequelize/config/dbConfig";
 import { HttpHelpers } from "../helpers/general";
 
 

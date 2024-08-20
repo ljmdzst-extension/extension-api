@@ -1,5 +1,5 @@
-import sequelizeExtension from "../../../Mysql-Sequelize/config/dbConfig";
-import SBases from "../../../Mysql-Sequelize/services/bases";
+import sequelizeExtension from "../../../db/Mysql-Sequelize/config/dbConfig";
+import SBases from "../../../db/Mysql-Sequelize/services/bases";
 import { request, response } from "express";
 import { Relacion as ModelRelacion } from "../../../models/Relacion";
 

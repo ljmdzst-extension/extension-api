@@ -11,9 +11,18 @@ import Relacion, { TDataRelacion } from './classes/Relacion';
 import TipoObjetivo, { TDataTipoObjetivo } from './classes/TipoObjetivo';
 import TipoRelacion, { TDataTipoRelacion } from './classes/TipoRelacion';
 import Ubicacion, { TDataUbicacion } from './classes/Ubicacion';
-
+import Persona, {TDataPersona} from './classes/Persona';
+import Permiso, {TDataPermiso} from './classes/Permiso';
+import Categoria, {TDataCategoria} from './classes/Categoria';
+import Usuario, { TDataUsuario } from './classes/Usuario';
 import IModelActividad from './models/actividad'
-import IValidatorActividad from './validators/actividad';
+import IModelPermiso from './models/permiso';
+import IModelCategoria from './models/categoria';
+import IModelUsuario from './models/usuario';
+
+import IValidatorActividad from '../aplication/validators/actividad';
+import IValidatorUsuario from '../aplication/validators/usuario';
+
 
 type _TDataActividad = TDataActividad;
 type _TDataArea = TDataArea;
@@ -28,8 +37,14 @@ type _TDataRelacion = TDataRelacion;
 type _TDataTipoObjetivo = TDataTipoObjetivo;
 type _TDataTipoRelacion = TDataTipoRelacion;
 type _TDataUbicacion = TDataUbicacion;
-
+type _TDataPersona = TDataPersona;
+type _TDataCategoria = TDataCategoria;
+type _TDataPermiso = TDataPermiso;
+type _TDataUsuario = TDataUsuario;
 interface MActividad extends IModelActividad {};
+interface MPermiso extends IModelPermiso {}
+interface MCategoria extends IModelCategoria {}
+interface MUsuario extends IModelUsuario {}
 
 const _Actividad = Actividad;
 const _Area = Area;
@@ -44,9 +59,13 @@ const _Relacion = Relacion;
 const _TipoObjetivo = TipoObjetivo;
 const _TipoRelacion = TipoRelacion;
 const _Ubicacion = Ubicacion;
+const _Persona = Persona;
+const _Categoria = Categoria;
+const _Permiso = Permiso;
+const _Usuario = Usuario;
 
 interface VActividad extends IValidatorActividad {}
-
+interface VUsuario extends IValidatorUsuario{}
 
 export namespace domain {
     export class Actividad extends _Actividad {};
@@ -62,6 +81,10 @@ export namespace domain {
     export class TipoObjetivo extends _TipoObjetivo {};
     export class TipoRelacion extends _TipoRelacion {};
     export class Ubicacion extends _Ubicacion {};
+    export class Persona extends _Persona {};
+    export class Permiso extends _Permiso {};
+    export class Usuario extends _Usuario {};
+    export class Categoria extends _Categoria {};
     export type TDataActividad = _TDataActividad;
     export type TDataArea = _TDataArea;
     export type TDataEnlace = _TDataEnlace;
@@ -75,7 +98,16 @@ export namespace domain {
     export type TDataTipoObjetivo = _TDataTipoObjetivo;
     export type TDataTipoRelacion = _TDataTipoRelacion;
     export type TDataUbicacion = _TDataUbicacion;  
+    export type TDataPersona =_TDataPersona;
+    export type TDataUsuario = _TDataUsuario;
+    export type TDataCategoria = _TDataCategoria;
+    export type TDataPermiso = _TDataPermiso;
     export interface IModelActividad extends MActividad{};
+    export interface IModelPermiso extends MPermiso {};
+    export interface IModelCategoria extends MCategoria {};
+    export interface IModelUsuario extends MUsuario {};
+    
     export interface IValidatorActividad extends VActividad {};
+    export interface IValidatorUsuario extends VUsuario {};
 }
 

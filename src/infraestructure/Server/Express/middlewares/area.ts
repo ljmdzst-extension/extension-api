@@ -1,4 +1,4 @@
-import { BD } from "../../../Mysql-Sequelize/config/dbConfig";
+import { BD } from "../../../db/Mysql-Sequelize/config/dbConfig";
 import { INVALIDO } from "../logs/validaciones";
 import { request, response, NextFunction } from "express";
 

@@ -1,6 +1,6 @@
 import Actividad, { IActividad } from "../../../../domain/classes/Actividad";
 import { INVALIDO } from "../logs/validaciones";
-import { BD } from "../../../Mysql-Sequelize/config/dbConfig";
+import { BD } from "../../../db/Mysql-Sequelize/config/dbConfig";
 import { Transaction } from 'sequelize';
 import { ERROR } from "../logs/errores";
 import { NextFunction, request, response } from "express";

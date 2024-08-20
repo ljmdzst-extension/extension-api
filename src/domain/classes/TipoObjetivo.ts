@@ -1,5 +1,5 @@
 import { Transaction } from "sequelize";
-import { BD } from "../../infraestructure/Mysql-Sequelize/config/dbConfig";
+import { BD } from "../../infraestructure/db/Mysql-Sequelize/config/dbConfig";
 import { ERROR } from "../../infraestructure/Server/Express/logs/errores";
 import { INVALIDO } from "../../infraestructure/Server/Express/logs/validaciones";
 

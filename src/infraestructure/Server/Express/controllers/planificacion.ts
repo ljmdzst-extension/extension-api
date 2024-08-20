@@ -1,5 +1,5 @@
 import { request, response } from "express";
-import sequelizeExtension from "../../../Mysql-Sequelize/config/dbConfig";
+import sequelizeExtension from "../../../db/Mysql-Sequelize/config/dbConfig";
 
 
 

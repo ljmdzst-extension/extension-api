@@ -1,6 +1,6 @@
 import { response } from "express";
 
-import * as SGraficos from '../../../Mysql-Sequelize/services/graficos'
+import * as SGraficos from '../../../db/Mysql-Sequelize/services/graficos'
 
 
 export const verGraficosDeAnio = async(req : any , resp : typeof response)=>{

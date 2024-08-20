@@ -1,10 +1,10 @@
 import { NextFunction, request, response } from "express";
 import { checkSchema, validationResult } from "express-validator";
-import { BD } from "../../../Mysql-Sequelize/config/dbConfig";
+import { BD } from "../../../db/Mysql-Sequelize/config/dbConfig";
 import { HttpHelpers } from "../helpers/general";
 import { Usuario } from "../../../models/Usuario";
 
-import * as SUsuario from '../../../Mysql-Sequelize/services/usuario';
+import * as SUsuario from '../../../db/Mysql-Sequelize/services/usuario';
 
 export const chequearUsuarioNoExistente =  async(req : typeof request, resp : typeof response, next : NextFunction) =>{
 

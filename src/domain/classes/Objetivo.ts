@@ -7,7 +7,7 @@ type ID_OBJETIVO= number;
 type TDataObjetivo =  {
     idObjetivo : ID_OBJETIVO,
     nom : string,
-    tipoObjetivo : TDataTipoObjetivo,
+    tipoObjetivo ?: TDataTipoObjetivo,
     detalle ?: string,
 }
 

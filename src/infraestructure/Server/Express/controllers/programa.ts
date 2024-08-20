@@ -7,7 +7,7 @@ import Programa, { IPrograma } from "../../../../domain/classes/Programa";
 import cli from 'cli-color'
 import {  response } from "express";
 import { HttpHelpers } from "../helpers/general";
-import * as SProgramas from '../../../Mysql-Sequelize/services/programas'
+import * as SProgramas from '../../../db/Mysql-Sequelize/services/programas'
 
 export const verListaProgramasConAreas = async( req : any, resp : typeof response) => {
     try {

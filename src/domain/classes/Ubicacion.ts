@@ -1,5 +1,5 @@
 import { Transaction, where } from "sequelize";
-import { BD } from "../../infraestructure/Mysql-Sequelize/config/dbConfig";
+import { BD } from "../../infraestructure/db/Mysql-Sequelize/config/dbConfig";
 import Actividad, { ID_ACT } from "./Actividad";
 import { ERROR } from "../../infraestructure/Server/Express/logs/errores";
 import validator from "validator";

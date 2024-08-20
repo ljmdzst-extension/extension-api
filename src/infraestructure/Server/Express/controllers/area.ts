@@ -6,7 +6,7 @@ import {  IItemActividad, IResponseActividad } from "../../../../domain/classes/
 import Area, { IArea } from "../../../../domain/classes/Area";
 import Programa from "../../../../domain/classes/Programa";
 import { HttpHelpers } from "../helpers/general";
-import sequelizeExtension from '../../../Mysql-Sequelize/config/dbConfig';
+import sequelizeExtension from '../../../db/Mysql-Sequelize/config/dbConfig';
 
 
  export const  verListaAreas = async(  req : typeof request , resp : typeof response) => {

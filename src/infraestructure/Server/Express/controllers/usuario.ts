@@ -1,6 +1,6 @@
 
 import jwt from 'jsonwebtoken';
-import sequelizeExtension, { BD } from "../../../Mysql-Sequelize/config/dbConfig";
+import sequelizeExtension, { BD } from "../../../db/Mysql-Sequelize/config/dbConfig";
 import { response } from 'express';
 import { Usuario } from "../../../models/Usuario"
 import { Persona} from '../../../models/Persona'
