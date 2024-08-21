@@ -1,6 +1,9 @@
-import {ServerExpress} from './Express/index';
+import IDataBase from "../db/IDataBase";
 
-class Server extends ServerExpress.Server {}
+export default abstract class Server {
+    
 
+    constructor ( protected db : IDataBase ) {}
 
-export default Server;
+    public abstract iniciar( puerto : number) : void;
+}

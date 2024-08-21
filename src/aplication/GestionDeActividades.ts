@@ -81,15 +81,17 @@ export default class GestionDeActividades {
     }
 
     static async bajaActividad( idActividad : number, MActividad : domain.IModelActividad, VActividad : domain.IValidatorActividad) : Promise<boolean> {
-
+        let salida = false;
+        
         if(!VActividad.validarIdActividad(idActividad)) throw new Error('data actividad inválida, revise los campos');
 
         const actividad = await MActividad.buscarPorId(idActividad);
 
         if(!actividad) throw new Error(`No existe actividad con ese id : ${idActividad}`)
 
-        return MActividad.darDeBaja(actividad.verDatos().idActividad);
-
+        salida = await  MActividad.darDeBaja(actividad.verDatos().idActividad);
+        
+        return salida;
     } 
 
 }
