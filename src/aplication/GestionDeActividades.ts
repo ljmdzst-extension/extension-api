@@ -16,7 +16,7 @@ export default class GestionDeActividades {
 
     static async editarActividad( data : domain.TDataActividad , MActividad : domain.IModelActividad , VActividad : domain.IValidatorActividad ) : Promise<domain.Actividad> {
 
-        VActividad.validar(data);
+        if(!VActividad.validar(data)) throw new Error('data actividad inválida, revise los campos');
 
         const actividad = await MActividad.buscarPorId(data.idActividad);
 
@@ -75,13 +75,14 @@ export default class GestionDeActividades {
                 }
             })
         }
+       
 
-        return actividad;
+        return  await MActividad.guardarDatos(actividad);
     }
 
     static async bajaActividad( idActividad : number, MActividad : domain.IModelActividad, VActividad : domain.IValidatorActividad) : Promise<boolean> {
 
-        VActividad.validarIdActividad(idActividad);
+        if(!VActividad.validarIdActividad(idActividad)) throw new Error('data actividad inválida, revise los campos');
 
         const actividad = await MActividad.buscarPorId(idActividad);
 

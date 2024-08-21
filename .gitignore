@@ -63,9 +63,9 @@ typings/
 # ignorar dist
 dist/
 
-# tests
-__tests__/
-__mocks__/
+# # tests
+# __tests__/
+# __mocks__/
 
 package-lock.json
 db_estension_backup/
