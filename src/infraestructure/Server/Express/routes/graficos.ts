@@ -1,9 +1,9 @@
-import { Router } from "express";
-import { verGraficosDeAnio } from "../controllers/graficos";
+// import { Router } from "express";
+// import { verGraficosDeAnio } from "../controllers/graficos";
 
-const routerGraficos = Router();
+// const routerGraficos = Router();
 
-routerGraficos.get('/general/:anio',[],verGraficosDeAnio);
+// routerGraficos.get('/general/:anio',[],verGraficosDeAnio);
 
 
-export default routerGraficos;
+// export default routerGraficos;

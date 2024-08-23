@@ -1,5 +1,6 @@
 import * as Sequelize from 'sequelize';
 import { DataTypes, Model } from 'sequelize';
+import { AreaPrograma } from './AreaPrograma';
 
 export interface AreaProgramaUsuarioAttributes {
   idArea: number;
@@ -17,6 +18,17 @@ export class AreaProgramaUsuario extends Model<AreaProgramaUsuarioAttributes, Ar
   idPrograma!: number;
   anio !: number;
   idUsuario !: string;
+
+  static async buscarPorUsuario( idUsuario : number , transaction ?: Sequelize.Transaction ) : Promise<AreaPrograma[]> {
+    let salida : AreaPrograma[] = [];
+
+    await AreaProgramaUsuario.findAll({where : {idUsuario }, transaction});
+
+    await AreaPrograma.findAll({where : {  }})
+
+
+    return salida;
+  }
 
 
   static initModel(sequelize: Sequelize.Sequelize): typeof AreaProgramaUsuario {

@@ -1,4 +1,5 @@
 
+import AreaPrograma from "./AreaPrograma"
 import Categoria, { TDataCategoria } from "./Categoria"
 import Permiso, { TDataPermiso } from "./Permiso"
 import Persona, { TDataPersona } from "./Persona"
@@ -24,8 +25,9 @@ export default class Usuario {
     private iPersona !: Persona;
     private iCategoria !: Categoria;
     private cPermisos !: Permiso[];
+    private cAreaPrograma !: AreaPrograma[];
 
-    constructor( data : TDataUsuario, p : Persona , c : Categoria, cPermisos : Permiso[] ) {
+    constructor( data : TDataUsuario, p : Persona , c : Categoria, cPermisos : Permiso[],cAreaPrograma ?: AreaPrograma[] ) {
         this.idUsuario = data.idUsuario;
         this.email = data.email;
         this.pass = data.pass;
@@ -34,6 +36,8 @@ export default class Usuario {
         this.iCategoria = c;
         this.cPermisos = cPermisos;
         this.iPersona = p;
+        this.cAreaPrograma = [];
+        if(cAreaPrograma) this.cAreaPrograma.push(...cAreaPrograma);
     }
 
     public editar( _data : Partial<TDataUsuario>) {
@@ -57,6 +61,19 @@ export default class Usuario {
 
     public buscarPermiso( idPermiso : number ) : Permiso | undefined {
         return this.cPermisos.find( permiso => permiso.verDatos().idPermiso === idPermiso );
+    }
+
+    public altaAreaPrograma( ap : AreaPrograma  ) {
+        if(
+            this.cAreaPrograma.every( 
+                _ap => 
+                    _ap.verAnio() !== ap.verAnio() &&
+                    _ap.verIdArea() !== ap.verIdArea() &&
+                    _ap.verIdPrograma() !== ap.verIdPrograma()
+            )
+        ){
+            this.cAreaPrograma.push(ap);
+        }
     }
 
     public altaPermiso ( p : Permiso) {

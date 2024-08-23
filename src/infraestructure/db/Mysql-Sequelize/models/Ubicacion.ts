@@ -1,8 +1,6 @@
 import * as Sequelize from 'sequelize';
 import { DataTypes, Model, Optional } from 'sequelize';
-import type { Actividad, ActividadId } from './Actividad';
-import type { UbicacionActividad, UbicacionActividadId } from './UbicacionActividad';
-import type { UbicacionProblematica, UbicacionProblematicaCreationAttributes, UbicacionProblematicaId } from './UbicacionProblematica';
+import { domain } from '../../../../domain';
 
 export interface UbicacionAttributes {
   idUbicacion: number;
@@ -19,37 +17,9 @@ export class Ubicacion extends Model<UbicacionAttributes, UbicacionCreationAttri
   idUbicacion!: number;
   enlace!: string;
   desc?: string;
-
-  // Ubicacion belongsToMany Actividad via idUbicacion and idActividad
-  idActividadActividadUbicacionActividads!: Actividad[];
-  getIdActividadActividadUbicacionActividads!: Sequelize.BelongsToManyGetAssociationsMixin<Actividad>;
-  setIdActividadActividadUbicacionActividads!: Sequelize.BelongsToManySetAssociationsMixin<Actividad, ActividadId>;
-  addIdActividadActividadUbicacionActividad!: Sequelize.BelongsToManyAddAssociationMixin<Actividad, ActividadId>;
-  addIdActividadActividadUbicacionActividads!: Sequelize.BelongsToManyAddAssociationsMixin<Actividad, ActividadId>;
-  createIdActividadActividadUbicacionActividad!: Sequelize.BelongsToManyCreateAssociationMixin<Actividad>;
-  removeIdActividadActividadUbicacionActividad!: Sequelize.BelongsToManyRemoveAssociationMixin<Actividad, ActividadId>;
-  removeIdActividadActividadUbicacionActividads!: Sequelize.BelongsToManyRemoveAssociationsMixin<Actividad, ActividadId>;
-  hasIdActividadActividadUbicacionActividad!: Sequelize.BelongsToManyHasAssociationMixin<Actividad, ActividadId>;
-  hasIdActividadActividadUbicacionActividads!: Sequelize.BelongsToManyHasAssociationsMixin<Actividad, ActividadId>;
-  countIdActividadActividadUbicacionActividads!: Sequelize.BelongsToManyCountAssociationsMixin;
-  // Ubicacion hasMany UbicacionActividad via idUbicacion
-  ubicacionActividads!: UbicacionActividad[];
-  getUbicacionActividads!: Sequelize.HasManyGetAssociationsMixin<UbicacionActividad>;
-  setUbicacionActividads!: Sequelize.HasManySetAssociationsMixin<UbicacionActividad, UbicacionActividadId>;
-  addUbicacionActividad!: Sequelize.HasManyAddAssociationMixin<UbicacionActividad, UbicacionActividadId>;
-  addUbicacionActividads!: Sequelize.HasManyAddAssociationsMixin<UbicacionActividad, UbicacionActividadId>;
-  createUbicacionActividad!: Sequelize.HasManyCreateAssociationMixin<UbicacionActividad>;
-  removeUbicacionActividad!: Sequelize.HasManyRemoveAssociationMixin<UbicacionActividad, UbicacionActividadId>;
-  removeUbicacionActividads!: Sequelize.HasManyRemoveAssociationsMixin<UbicacionActividad, UbicacionActividadId>;
-  hasUbicacionActividad!: Sequelize.HasManyHasAssociationMixin<UbicacionActividad, UbicacionActividadId>;
-  hasUbicacionActividads!: Sequelize.HasManyHasAssociationsMixin<UbicacionActividad, UbicacionActividadId>;
-  countUbicacionActividads!: Sequelize.HasManyCountAssociationsMixin;
-  // Ubicacion hasOne UbicacionProblematica via idUbicacion
-  ubicacionProblematica!: UbicacionProblematica;
-  getUbicacionProblematica!: Sequelize.HasOneGetAssociationMixin<UbicacionProblematica>;
-  setUbicacionProblematica!: Sequelize.HasOneSetAssociationMixin<UbicacionProblematica, UbicacionProblematicaId>;
-  createUbicacionProblematica!: Sequelize.HasOneCreateAssociationMixin<UbicacionProblematica>;
-
+  public static async buscarPorListaIds( ids : UbicacionId[] , transaction ?: Sequelize.Transaction) : Promise<domain.TDataUbicacion[]> {
+    return (await Ubicacion.findAll({where : { idUbicacion : ids}, transaction})).map( u => u.dataValues);
+  }
   static initModel(sequelize: Sequelize.Sequelize): typeof Ubicacion {
     return Ubicacion.init({
     idUbicacion: {

@@ -1,7 +1,7 @@
 import * as Sequelize from 'sequelize';
-import { DataTypes, Model, Optional } from 'sequelize';
-import type { Actividad, ActividadId } from './Actividad';
-import type { FechaPuntual, FechaPuntualId } from './FechaPuntual';
+import { DataTypes, Model } from 'sequelize';
+import { domain } from '../../../../domain';
+import { FechaPuntual } from './FechaPuntual';
 
 export interface FechaPuntualActividadAttributes {
   idFecha: number;
@@ -16,16 +16,17 @@ export class FechaPuntualActividad extends Model<FechaPuntualActividadAttributes
   idFecha!: number;
   idActividad!: number;
 
-  // FechaPuntualActividad belongsTo Actividad via idActividad
-  idActividadActividad!: Actividad;
-  getIdActividadActividad!: Sequelize.BelongsToGetAssociationMixin<Actividad>;
-  setIdActividadActividad!: Sequelize.BelongsToSetAssociationMixin<Actividad, ActividadId>;
-  createIdActividadActividad!: Sequelize.BelongsToCreateAssociationMixin<Actividad>;
-  // FechaPuntualActividad belongsTo FechaPuntual via idFecha
-  idFechaFechaPuntual!: FechaPuntual;
-  getIdFechaFechaPuntual!: Sequelize.BelongsToGetAssociationMixin<FechaPuntual>;
-  setIdFechaFechaPuntual!: Sequelize.BelongsToSetAssociationMixin<FechaPuntual, FechaPuntualId>;
-  createIdFechaFechaPuntual!: Sequelize.BelongsToCreateAssociationMixin<FechaPuntual>;
+  public static async buscarPorActividad( actividad : domain.Actividad, transaction ?: Sequelize.Transaction) : Promise<domain.TDataFechaPuntual[]> {
+    let salida : domain.TDataFechaPuntual[] = [];
+
+    const fechasAsociadas = await FechaPuntualActividad.findAll({where : { idActividad : actividad.verDatos().idActividad}, transaction});
+
+    if(fechasAsociadas.length > 0) {
+        salida = await FechaPuntual.buscarPorListaIds( fechasAsociadas.map( fa => fa.dataValues.idFecha), transaction);
+    }
+
+    return salida;
+  }
 
   static initModel(sequelize: Sequelize.Sequelize): typeof FechaPuntualActividad {
     return FechaPuntualActividad.init({

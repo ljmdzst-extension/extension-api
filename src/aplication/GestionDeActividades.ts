@@ -14,13 +14,17 @@ export default class GestionDeActividades {
 
     } 
 
-    static async editarActividad( data : domain.TDataActividad , MActividad : domain.IModelActividad , VActividad : domain.IValidatorActividad ) : Promise<domain.Actividad> {
+    static async editarActividad( data : Partial<domain.TDataActividad> , MActividad : domain.IModelActividad , VActividad : domain.IValidatorActividad ) : Promise<domain.Actividad> {
 
+        if(!data.idActividad) throw new Error('idActividad obligatorio');
+        
         if(!VActividad.validar(data)) throw new Error('data actividad inválida, revise los campos');
 
         const actividad = await MActividad.buscarPorId(data.idActividad);
 
         if(!actividad) throw new Error(`No existe actividad de id ${data.idActividad}`);
+
+        actividad.editar(data);
 
         if( data.listaEnlaces ) {
             data.listaEnlaces.forEach( dataEnlace => {

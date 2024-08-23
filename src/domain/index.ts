@@ -19,9 +19,11 @@ import IModelActividad from './models/actividad'
 import IModelPermiso from './models/permiso';
 import IModelCategoria from './models/categoria';
 import IModelUsuario from './models/usuario';
-
+import IModelPersona from './models/persona';
 import IValidatorActividad from '../aplication/validators/actividad';
 import IValidatorUsuario from '../aplication/validators/usuario';
+import { IModelPrograma } from './models/programa';
+import IModelArea from './models/area';
 
 
 type _TDataActividad = TDataActividad;
@@ -41,10 +43,14 @@ type _TDataPersona = TDataPersona;
 type _TDataCategoria = TDataCategoria;
 type _TDataPermiso = TDataPermiso;
 type _TDataUsuario = TDataUsuario;
+
 interface MActividad extends IModelActividad {};
 interface MPermiso extends IModelPermiso {}
 interface MCategoria extends IModelCategoria {}
 interface MUsuario extends IModelUsuario {}
+interface MPersona extends IModelPersona{}
+interface MPrograma extends IModelPrograma { }
+interface MArea extends IModelArea {}
 
 const _Actividad = Actividad;
 const _Area = Area;
@@ -85,6 +91,7 @@ export namespace domain {
     export class Permiso extends _Permiso {};
     export class Usuario extends _Usuario {};
     export class Categoria extends _Categoria {};
+
     export type TDataActividad = _TDataActividad;
     export type TDataArea = _TDataArea;
     export type TDataEnlace = _TDataEnlace;
@@ -102,11 +109,15 @@ export namespace domain {
     export type TDataUsuario = _TDataUsuario;
     export type TDataCategoria = _TDataCategoria;
     export type TDataPermiso = _TDataPermiso;
+
     export interface IModelActividad extends MActividad{};
     export interface IModelPermiso extends MPermiso {};
     export interface IModelCategoria extends MCategoria {};
     export interface IModelUsuario extends MUsuario {};
-    
+    export interface IModelPersona extends MPersona {};
+    export interface IModelPrograma extends MPrograma {};
+    export interface IModelArea extends MArea {};
+
     export interface IValidatorActividad extends VActividad {};
     export interface IValidatorUsuario extends VUsuario {};
 }

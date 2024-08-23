@@ -22,6 +22,7 @@ export namespace ERROR {
    export const OBJETIVO_INEXISTENTE : ERROR_LOG = { status : 500 , message : ' - No existe objetivo con ese id' } 
    export const OBJETIVO_BAJA_BD : ERROR_LOG = { status : 500, message : ' No se pudo dar de baja el objetivo, no existe el registro '}
    export const OBJETIVO_MOD_BD : ERROR_LOG = { status : 500, message : ' No se pudo modificar el objetivo, no existe el registro '}
+   export const PERSONA_INEXISTENTE : ERROR_LOG = { status : 400, message : ' No existe persona cargada con ese nroDoc' }
    export const PROGRAMA_INEXISTENTE : ERROR_LOG =  { status : 500 , message : ' - No existe programa con ese id' }
    export const PROGRAMA_SIPPE_INEXISTENTE : ERROR_LOG =  { status : 500 , message : ' - No existe prog SIPPE con ese id' }
    export const PROGRAMA_SIPPE_BAJA_BD : ERROR_LOG = { status : 500, message : ' No se pudo dar de baja el programa, no existe el registro '}
@@ -40,4 +41,10 @@ export namespace ERROR {
    export const ACTIVIDAD_UBICACION : ERROR_LOG = { status : 500, message : `La Ubicacion no tienne una actividad asociada`}
    export const VALORACION_INEXISTENTE : ERROR_LOG =  { status : 500 , message : ' - No existe valoración con ese id' }
    export const INSTITUCION_INEXISTENTE : ERROR_LOG =  { status : 500 , message : ' - No existe insitucion con ese id' }
+   export const MAIL_REGISTRO_RECHAZADO : ERROR_LOG = { status : 403 , message : 'Envío de correo de confirmación rechazado'}
+   export const USUARIO_INEXISTENTE : ERROR_LOG = { status : 400, message : 'No existe usuario con ese id' }
+   export const USUARIO_PENDIENTE_EXISTENTE : ERROR_LOG = { status : 400 , message : 'Hay un usuario pendiente con ese correo, verifique su bandeja de entrada para confirmar el registro.' }
+   export const USUARIO_REGISTRADO_EXISTENTE : ERROR_LOG = { status : 400 , message : 'Ya existe un usuario registrado con ese correo ' }
+   export const TOKEN_INVALIDO : ERROR_LOG = { status : 401 , message : 'Token de usuario inválido o inexistente' }
+   
 }

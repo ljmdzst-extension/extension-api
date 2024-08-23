@@ -1,12 +1,11 @@
 import * as Sequelize from 'sequelize';
+import { domain } from '../../../../domain';
 import { DataTypes, Model } from 'sequelize';
-import type { Usuario, UsuarioId } from './Usuario';
-import type { Categoria, CategoriaId } from './Categoria';
+import { Categoria } from './Categoria';
 
 export interface CategoriaUsuarioAttributes {
   idUsuario: string;
   idCategoria: number;
-
 }
 
 export type CategoriaUsuarioPk = "idUsuario" | "idCategoria" ;
@@ -17,17 +16,18 @@ export class CategoriaUsuario extends Model<CategoriaUsuarioAttributes, Categori
   idUsuario!: string;
   idCategoria!: number;
 
-  // CategoriaUsuario belongsTo Usuario via idUsuario
-  usuario!: Usuario;
-  getUsuario!: Sequelize.BelongsToGetAssociationMixin<Usuario>;
-  setUsuario!: Sequelize.BelongsToSetAssociationMixin<Usuario, UsuarioId>;
-  createUsuario!: Sequelize.BelongsToCreateAssociationMixin<Usuario>;
-
-  // CategoriaUsuario belongsTo Categoria via idCategoria
-  categoria!: Categoria;
-  getCategoria!: Sequelize.BelongsToGetAssociationMixin<Categoria>;
-  setCategoria!: Sequelize.BelongsToSetAssociationMixin<Categoria, CategoriaId>;
-  createCategoria!: Sequelize.BelongsToCreateAssociationMixin<Categoria>;
+  static async verCategoria( idUsuario : string, transaction ?: Sequelize.Transaction ) : Promise<domain.Categoria | null > {
+    let salida : domain.Categoria | null  = null;
+    const dbCategAsoc = await CategoriaUsuario.findOne({where : { idUsuario : idUsuario },transaction});
+    
+    if(dbCategAsoc) {
+       const dbCateg = await Categoria.findByPk(dbCategAsoc.idCategoria,{transaction});
+       if(dbCateg) {
+        salida = new domain.Categoria(dbCateg.dataValues);
+       }
+    }
+    return salida;
+  }
 
   static initModel(sequelize: Sequelize.Sequelize): typeof CategoriaUsuario {
     return CategoriaUsuario.init({

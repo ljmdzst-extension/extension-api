@@ -1,8 +1,8 @@
-import express from 'express';
-import { buscar } from '../controllers/personas';
+// import express from 'express';
+// import { buscar } from '../controllers/personas';
 
-const RouterPersonas = express.Router();
+// const RouterPersonas = express.Router();
 
-RouterPersonas.get('/:nroDoc', buscar);
+// RouterPersonas.get('/:nroDoc', buscar);
 
-export default RouterPersonas;
+// export default RouterPersonas;

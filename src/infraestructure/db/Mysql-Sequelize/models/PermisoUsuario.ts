@@ -1,7 +1,7 @@
 import * as Sequelize from 'sequelize';
 import { DataTypes, Model } from 'sequelize';
-import type { Usuario, UsuarioId } from './Usuario';
-import type { Permiso, PermisoId } from './Permiso';
+import  { Permiso, PermisoId } from './Permiso';
+import { domain } from '../../../../domain';
 
 export interface PermisoUsuarioAttributes {
   idUsuario: string;
@@ -17,17 +17,19 @@ export class PermisoUsuario extends Model<PermisoUsuarioAttributes, PermisoUsuar
   idUsuario!: string;
   idPermiso!: number;
 
-  // PermisoUsuario belongsTo Usuario via idUsuario
-  usuario!: Usuario;
-  getUsuario!: Sequelize.BelongsToGetAssociationMixin<Usuario>;
-  setUsuario!: Sequelize.BelongsToSetAssociationMixin<Usuario, UsuarioId>;
-  createUsuario!: Sequelize.BelongsToCreateAssociationMixin<Usuario>;
+  static async verPermisos( idUsuario : string, transaction ?: Sequelize.Transaction ) : Promise<domain.Permiso[]> {
+    let salida : domain.Permiso[] = [];
+    const cDbAsociaciones = await PermisoUsuario.findAll({where : { idUsuario : idUsuario },transaction});
+    
+    if(cDbAsociaciones.length > 0) {
+       const cDbPermisos = await Permiso.findAll({where : { idPermiso : cDbAsociaciones.map( p => p.idPermiso) },transaction});
+       if(cDbPermisos) {
+        salida = cDbPermisos.map( dbP =>  new domain.Permiso(dbP.dataValues) ) ;
+       }
+    }
+    return salida;
+  }
 
-  // PermisoUsuario belongsTo Permiso via idPermiso
-  Permiso!: Permiso;
-  getPermiso!: Sequelize.BelongsToGetAssociationMixin<Permiso>;
-  setPermiso!: Sequelize.BelongsToSetAssociationMixin<Permiso, PermisoId>;
-  createPermiso!: Sequelize.BelongsToCreateAssociationMixin<Permiso>;
 
   static initModel(sequelize: Sequelize.Sequelize): typeof PermisoUsuario {
     return PermisoUsuario.init({

@@ -1,9 +1,5 @@
 import * as Sequelize from 'sequelize';
 import { DataTypes, Model, Optional } from 'sequelize';
-import type { Objetivo, ObjetivoId } from './Objetivo';
-import { INVALIDO } from '../infraestructure/Express/logs/validaciones';
-import { ERROR } from '../infraestructure/Express/logs/errores';
-
 export interface TipoObjetivoAttributes {
   idTipoObj: number;
   nom: string;
@@ -37,33 +33,7 @@ export class TipoObjetivo extends Model<TipoObjetivoAttributes, TipoObjetivoCrea
   idTipoObj!: number;
   nom!: string;
 
-  public verDatos () : TTipoObjetivo {
-      return {
-        idTipoObj : this.idTipoObj,
-        nom : this.nom
-      };
-  }
-
-  public static async validar(data : TipoObjetivoAttributes, transaction ?: Sequelize.Transaction) : Promise<void> {
-      if(data.idTipoObj < 1 ) throw INVALIDO.ID_TIPO_OBJ; 
-      if(! await this.findByPk(data.idTipoObj,{transaction}) ) throw INVALIDO.ID_TIPO_OBJ;
-    }
-
-  public static async verListaBD(transaction?: Sequelize.Transaction | undefined): Promise<TTipoObjetivo[]> { 
-      let salida : TTipoObjetivo[] = [];
-
-      salida = await this.findAll({transaction});
-
-      return salida;
-  } ;
-  public static async buscarPorIDBD(id: TipoObjetivoId, transaction?: Sequelize.Transaction | undefined): Promise<TipoObjetivo> {
-      const bdTipoObjetivo = await this.findByPk(id,{transaction}) ;
-
-      if(!bdTipoObjetivo ) throw ERROR.TIPO_OBJ_INEXISTENTE;
-
-      return TipoObjetivo.build(bdTipoObjetivo.dataValues) ;   
-  }
-  
+ 
   static initModel(sequelize: Sequelize.Sequelize): typeof TipoObjetivo {
     return TipoObjetivo.init(CONSTRAINT_ATTRIBUTES,CONSTRAINT_OPTIONS(sequelize) );
   }

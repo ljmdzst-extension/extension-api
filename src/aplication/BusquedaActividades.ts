@@ -1,11 +1,9 @@
 import { domain } from "../domain";
-import IModelActividad from "../domain/models/actividad";
-import IValidatorActividad from "./validators/actividad";
 
 export default class BusquedaActividades {
 
 
-    public static async buscarPorId( idActividad : number , MActividad : IModelActividad, VActividad : IValidatorActividad) : Promise<domain.Actividad | null> {
+    public static async buscarPorId( idActividad : number , MActividad : domain.IModelActividad, VActividad : domain.IValidatorActividad) : Promise<domain.Actividad | null> {
         let salida : domain.Actividad | null = null;
 
         if(VActividad.validarIdActividad(idActividad)) {
@@ -16,4 +14,14 @@ export default class BusquedaActividades {
 
         return salida;
     } 
+
+    public static async buscarPor( parametros : Partial<domain.TDataActividad> ,  MActividad : domain.IModelActividad, VActividad : domain.IValidatorActividad ) : Promise<domain.Actividad[]> {
+        let salida : domain.Actividad[] = [];
+
+        if(!VActividad.validar(parametros)) throw new Error('Revise los parámetros ingresados');
+
+        salida = await MActividad.verLista();
+
+        return salida;
+    }
 }

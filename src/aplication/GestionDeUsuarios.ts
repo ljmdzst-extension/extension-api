@@ -2,12 +2,15 @@ import { domain } from "../domain";
 
 export default class GestionDeUsuarios {
 
+
     static async altaUsuario( data : domain.TDataUsuario, p : domain.Persona , MUsuario : domain.IModelUsuario, VUsuario : domain.IValidatorUsuario ) {
 
-        if(! VUsuario.validar(data) ) throw new Error('Revise los campos ingresados del usuario');
+        if(!VUsuario.validar(data) ) throw new Error('Revise los campos ingresados del usuario');
         if(!data.categoria ) throw new Error('El usuario debe tener una categoría');
         if(!data.listaPermisos) throw new Error('El usuario debe tener una lista de permisos');
+        
         const c = new domain.Categoria(data.categoria);
+
         const cPermisos = data.listaPermisos.map( dataPermiso => new domain.Permiso(dataPermiso));
 
         let u = new domain.Usuario( data , p, c, cPermisos );
@@ -33,5 +36,6 @@ export default class GestionDeUsuarios {
 
         return u;
     }
+
 
 }

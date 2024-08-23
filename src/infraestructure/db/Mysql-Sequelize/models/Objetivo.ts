@@ -1,6 +1,7 @@
 import * as Sequelize from 'sequelize';
 import { DataTypes, Model, Optional } from 'sequelize';
 import { TipoObjetivo, TipoObjetivoAttributes } from './TipoObjetivo';
+import { domain } from '../../../../domain';
 
 export interface ObjetivoAttributes {
   idObjetivo: number;
@@ -57,30 +58,18 @@ export class Objetivo extends Model<ObjetivoAttributes, ObjetivoCreationAttribut
   detalle?: string;
   tipoObjId!: number;
 
-  tipoObjetivo !: TipoObjetivo;
+  public static async buscarPorListaIds( ids : ObjetivoId[] , transaction ?: Sequelize.Transaction) : Promise<domain.TDataObjetivo[]> {
+    let salida: domain.TDataObjetivo[] = [];
+    const objetivos = await Objetivo.findAll({where : { idObjetivo : ids}, transaction});
+    if(objetivos.length > 0){
+      const cTiposObjetivos = await TipoObjetivo.findAll({transaction});
 
-  static crear( data : ObjetivoCreationAttributes, tipoObj : TipoObjetivo ) : Objetivo {
-    const objetivo = this.build(data);
-    
-    objetivo.tipoObjetivo = tipoObj;
-  
-    return objetivo;
-  } 
-
-  public verDatos() {
-    return {
-      idObjetivo : this.idObjetivo,
-      nom : this.nom,
-      tipoObjetivo : this.tipoObjetivo.verDatos() 
+      salida = objetivos.map( o => ({ ...o.dataValues, tipoObjetivo : cTiposObjetivos.find( to => to.idTipoObj === o.tipoObjId )?.dataValues }));
     }
+
+    return salida ;
   }
 
-  public async leerTipoObjetivoBD( transaction?: Sequelize.Transaction ) : Promise<void> {
-    return TipoObjetivo.initModel(this.sequelize).findByPk(this.tipoObjId,{transaction})
-                       .then( resp => {if(resp !== null) { this.tipoObjetivo = resp; }} )
-                       .catch( error => console.log(error) )
-  }
- 
   static initModel(sequelize: Sequelize.Sequelize): typeof Objetivo {
     return Objetivo.init(CONSTRAINT_ATTRIBUTES,CONSTRAINT_OPTIONS(sequelize) );
   }

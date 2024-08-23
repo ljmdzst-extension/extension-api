@@ -27,12 +27,6 @@ export type ActividadOptionalAttributes = "idActividad" | "idUsuario" | "nro" | 
 export type ActividadCreationAttributes = Optional<ActividadAttributes, ActividadOptionalAttributes>;
 
 
-
-export type TItemActividad = {
-  idActividad : ActividadId,
-  desc : string
-} 
-
 const ATRIBUTOS_TABLA_ACTIVIDAD_CONFIG = {
   idActividad: {
     autoIncrement: true,
@@ -82,11 +76,7 @@ const ATRIBUTOS_TABLA_ACTIVIDAD_CONFIG = {
   }
 }
 
-const ACTIVIDAD_NULA = {idActividad : 0, idArea : 0, nro : 0 , desc : ''};
-  
-
-export class Actividad extends Model<ActividadAttributes, ActividadCreationAttributes> implements ActividadAttributes , domain.IModelActividad {
-  
+export class Actividad extends Model<ActividadAttributes, ActividadCreationAttributes> implements ActividadAttributes {
 
   idActividad!: number;
   idArea!: number;
@@ -98,43 +88,7 @@ export class Actividad extends Model<ActividadAttributes, ActividadCreationAttri
   fechaHasta?: string;
   createdAt?: string;
 
-  async buscarPorId(idActividad: number ): Promise<domain.Actividad | null> {
-    let salida : domain.Actividad | null = null;
-    const transaction = await this.sequelize.transaction({logging : process.env.NODE_ENV === 'development' ? sql => console.log(sql) : undefined});
-    const dbAct = await Actividad.findByPk(idActividad );
 
-    if(dbAct) {
-
-      let data : domain.TDataActividad = {...dbAct.dataValues};
-
-      salida = new domain.Actividad(data);
-
-      data.listaMetas = await Meta.buscarPorActividad( salida,transaction );
-      data.listaEnlaces = await Enlace.buscarPorActividad(salida,transaction);
-      data.listaInstituciones = await InstitucionActividad.buscarPorActividad(salida,transaction);
-      data.listaFechaPuntuales = await FechaPuntualActividad.buscarPorActividad(salida,transaction);
-      data.listaObjetivos = await ObjetivoActividad.buscarPorActividad(salida,transaction);
-      data.listaProgramaSIPPPEs = await ProgramaSippeActividad.buscarPorActividad(salida,transaction);
-      data.listaUbicaciones = await UbicacionActividad.buscarPorActividad(salida,transaction);
-
-    }
-
-    return salida;
-  }
-  async buscarPor(parametros: TDataActividad ): Promise<domain.Actividad | null> {
-    throw new Error('Method not implemented.');
-  }
-  async verLista(params: TDataActividad ): Promise<domain.Actividad[]> {
-    throw new Error('Method not implemented.');
-  }
-  async guardarDatos( ): Promise<domain.Actividad> {
-    throw new Error('Method not implemented.');
-  }
-
-  async darDeBaja(idActividad: ID_ACT ): Promise<boolean> {
-    throw new Error('Method not implemented.');
-  }
-  
   static initModel(sequelize: Sequelize.Sequelize): typeof Actividad {
     return Actividad.init(ATRIBUTOS_TABLA_ACTIVIDAD_CONFIG, {
     sequelize,
@@ -143,4 +97,117 @@ export class Actividad extends Model<ActividadAttributes, ActividadCreationAttri
     paranoid: true
   });
   }
+}
+
+export class Mactividad implements domain.IModelActividad { 
+  constructor( private sequelize : Sequelize.Sequelize ){}
+  
+  async buscarPorId(idActividad: number ): Promise<domain.Actividad | null> {
+    let salida : domain.Actividad | null = null;
+    const transaction = await this.sequelize.transaction({logging : process.env.NODE_ENV === 'development' ? sql => console.log(sql) : undefined});
+    try {
+        
+        const dbAct = await Actividad.initModel(this.sequelize).findByPk(idActividad );
+
+        if(dbAct) {
+    
+          let data : domain.TDataActividad = {...dbAct.dataValues};
+    
+          salida = new domain.Actividad(data);
+    
+          data.listaMetas = await Meta.initModel(this.sequelize).buscarPorActividad( salida,transaction );
+          data.listaEnlaces = await Enlace.initModel(this.sequelize).buscarPorActividad(salida,transaction);
+          data.listaInstituciones = await InstitucionActividad.initModel(this.sequelize).buscarPorActividad(salida,transaction);
+          data.listaFechaPuntuales = await FechaPuntualActividad.initModel(this.sequelize).buscarPorActividad(salida,transaction);
+          data.listaObjetivos = await ObjetivoActividad.initModel(this.sequelize).buscarPorActividad(salida,transaction);
+          data.listaProgramaSIPPPEs = await ProgramaSippeActividad.initModel(this.sequelize).buscarPorActividad(salida,transaction);
+          data.listaUbicaciones = await UbicacionActividad.initModel(this.sequelize).buscarPorActividad(salida,transaction);
+          
+          await transaction.commit();
+
+          salida.editar(data);
+        
+        }
+      } catch (error : any ) {
+
+        await transaction.rollback();
+
+        if(error instanceof Sequelize.Error) {
+          console.log(`${error.name} : ${error.message}`);
+          console.log(error.stack);
+        }
+      }
+    return salida;
+  }
+  async buscarPor(parametros: domain.TDataActividad ): Promise<domain.Actividad[]> {
+    let salida : domain.Actividad[] = [];
+    let cDbActividades : Actividad[] = [];
+    try { 
+      cDbActividades = await Actividad.initModel(this.sequelize).findAll({where : {...parametros}});  
+    } catch (error : any) {
+      console.log(error);
+    }
+        
+    if(cDbActividades.length > 0) {
+      salida = cDbActividades.map( dbAct => new domain.Actividad(dbAct.dataValues));
+    }
+
+    return salida;
+  }
+  async verLista(offset ?: number, limit ?: number): Promise<domain.Actividad[]> {
+    let salida : domain.Actividad[] = [];
+    let cDbActividades : Actividad[] = [];
+    try { 
+      cDbActividades = await Actividad.initModel(this.sequelize).findAll({offset, limit});  
+    } catch (error : any) {
+      console.log(error);
+    }
+        
+    if(cDbActividades.length > 0) {
+      salida = cDbActividades.map( dbAct => new domain.Actividad(dbAct.dataValues));
+    }
+
+    return salida;
+  }
+  async guardarDatos( actividad : domain.Actividad ): Promise<domain.Actividad> {
+    const dbAct = Actividad.initModel(this.sequelize).build(actividad.verDatos());
+    try {
+      await dbAct.save();
+    } catch (error) {
+      console.log(error);
+    }
+    actividad.editar({idActividad : dbAct.dataValues.idActividad});
+    return actividad;
+  }
+
+  async darDeBaja(idActividad: number ): Promise<boolean> {
+    let salida = false;
+    try {
+      const cant = await Actividad.initModel(this.sequelize).destroy({where : { idActividad }});
+
+      salida = cant > 0;
+      
+    } catch (error : any) {
+      console.log(error);
+    }
+
+    return salida;
+  }
+
+  async buscarPorArea(idArea: number): Promise<domain.Actividad[]> {
+    let salida : domain.Actividad[] = [];
+    let cDbActividades : Actividad[] = [];
+    try { 
+      cDbActividades = await Actividad.initModel(this.sequelize).findAll({where : {idArea }});  
+    } catch (error : any) {
+      console.log(error);
+    }
+        
+    if(cDbActividades.length > 0) {
+      salida = cDbActividades.map( dbAct => new domain.Actividad(dbAct.dataValues));
+    }
+    return salida;
+  }
+
+  
 }

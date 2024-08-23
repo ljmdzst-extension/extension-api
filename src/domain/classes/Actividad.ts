@@ -77,6 +77,15 @@ class Actividad  {
 
     }
     
+    public editar( data : Partial<TDataActividad> ) {
+        if(data.desc) { this.desc = data.desc;}
+        if(data.nro) { this.nro = data.nro;}
+        if(data.idUsuario) { this.idUsuario = data.idUsuario;}
+        if(data.fechaDesde) { this.fechaDesde = new Date( data.fechaDesde );}
+        if(data.fechaHasta) { this.fechaHasta = new Date(data.fechaHasta);}
+        if(data.motivoCancel) { this.motivoCancel = data.motivoCancel;}
+    }
+
     public altaEnlace( e : Enlace){ this.cEnlaces.push( e ) ; }
     public altaFechaPuntual( fp : FechaPuntual){ this.cFechasPuntuales.push(fp);  }
     public altaInstitucion( i : Institucion){ this.cInstituciones.push(i) ; }

@@ -1,80 +1,80 @@
 
-import { Router } from "express";
-import { 
-    validarActividadExistente,
-    validarActividadSuspendida,
-    validarCampos,
-    validarCamposActividad, 
-    validarMotivoSuspension, 
-    validarParametros, 
-    validarSchema
-} from "../middlewares/actividad";
+// import { Router } from "express";
+// import { 
+//     validarActividadExistente,
+//     validarActividadSuspendida,
+//     validarCampos,
+//     validarCamposActividad, 
+//     validarMotivoSuspension, 
+//     validarParametros, 
+//     validarSchema
+// } from "../middlewares/actividad";
 
-import { 
-    validarPermisoAccesoMetas,
-    validarPermisoEdicionMetas 
-} from "../middlewares/permisos";
+// import { 
+//     validarPermisoAccesoMetas,
+//     validarPermisoEdicionMetas 
+// } from "../middlewares/permisos";
 
-import { 
-    cargarActividad, 
-    darDeBajaActividad, 
-    editarActividad, 
-    restaurarActividad, 
-    suspenderActividad, 
-    verActividad 
-} from "../controllers/actividad";
+// import { 
+//     cargarActividad, 
+//     darDeBajaActividad, 
+//     editarActividad, 
+//     restaurarActividad, 
+//     suspenderActividad, 
+//     verActividad 
+// } from "../controllers/actividad";
 
-import {check} from 'express-validator';
+// import {check} from 'express-validator';
 
-const routerActividad = Router();
+// const routerActividad = Router();
 
-routerActividad.get ( 
-    '/:idActividad',
-    check('idActividad','Debe ingresar un id de actividad como parámetro').isNumeric(),
-    validarPermisoAccesoMetas,
-    validarParametros, 
-    verActividad 
-);
+// routerActividad.get ( 
+//     '/:idActividad',
+//     check('idActividad','Debe ingresar un id de actividad como parámetro').isNumeric(),
+//     validarPermisoAccesoMetas,
+//     validarParametros, 
+//     verActividad 
+// );
 
-routerActividad.post ( 
-    '/',
-    validarPermisoEdicionMetas,
-    validarCamposActividad, 
-    cargarActividad 
-);
-routerActividad.put ( 
-    '/',
-    validarPermisoEdicionMetas,
-    [
-        ...validarCampos,
-        validarSchema,
+// routerActividad.post ( 
+//     '/',
+//     validarPermisoEdicionMetas,
+//     validarCamposActividad, 
+//     cargarActividad 
+// );
+// routerActividad.put ( 
+//     '/',
+//     validarPermisoEdicionMetas,
+//     [
+//         ...validarCampos,
+//         validarSchema,
       
-    ], 
-    validarActividadExistente,
-    validarCamposActividad, 
-    editarActividad 
-);
+//     ], 
+//     validarActividadExistente,
+//     validarCamposActividad, 
+//     editarActividad 
+// );
 
-routerActividad.put (
-    '/restore',
-    validarPermisoEdicionMetas,
-    validarActividadSuspendida,
-    restaurarActividad
-);
+// routerActividad.put (
+//     '/restore',
+//     validarPermisoEdicionMetas,
+//     validarActividadSuspendida,
+//     restaurarActividad
+// );
 
-routerActividad.put (
-    '/cancel',
-    validarPermisoEdicionMetas,
-    validarActividadExistente,
-    validarMotivoSuspension,
-    suspenderActividad
-);
+// routerActividad.put (
+//     '/cancel',
+//     validarPermisoEdicionMetas,
+//     validarActividadExistente,
+//     validarMotivoSuspension,
+//     suspenderActividad
+// );
 
-routerActividad.delete (
-    '/',
-    validarPermisoEdicionMetas,
-    validarActividadExistente,
-    darDeBajaActividad
-);
+// routerActividad.delete (
+//     '/',
+//     validarPermisoEdicionMetas,
+//     validarActividadExistente,
+//     darDeBajaActividad
+// );
 
-export default routerActividad;
+// export default routerActividad;

@@ -1,6 +1,7 @@
 import * as Sequelize from 'sequelize';
 import { DataTypes, Model } from 'sequelize';
-import { ESTADO_BD } from '../types/general';
+import { domain } from '../../../../domain';
+import { Objetivo } from './Objetivo';
 
 export interface ObjetivoActividadAttributes {
   idObjetivo: number;
@@ -42,37 +43,19 @@ export class ObjetivoActividad extends Model<ObjetivoActividadAttributes, Objeti
   idObjetivo!: number;
   idActividad!: number;
   
-  estadoEnBD !: ESTADO_BD;
+  public static async buscarPorActividad( actividad : domain.Actividad, transaction ?: Sequelize.Transaction) : Promise<domain.TDataObjetivo[]> {
+    let salida : domain.TDataObjetivo[] = [];
 
-  
+    const objetivosAsociados = await ObjetivoActividad.findAll({where : { idActividad : actividad.verDatos().idActividad}, transaction});
 
-  public verID() : number 
-  {
-      return this.idObjetivo;
-  }
-
-  public verDatos() 
-  {
-      return this.dataValues;
-  }
-
-  public guardarEnBD(transaction ?: Sequelize.Transaction ) : Promise<any>[] {
-
-    if(process.env.NODE_ENV === 'development') console.log('ObjetivoActividad.guardarEnBD()');
-
-    let salida :  Promise<any>[] = [];
-
-    if(this.estadoEnBD === ESTADO_BD.B) {
-      salida = [...salida,this.destroy({transaction})];
-    }
-
-    if(this.estadoEnBD === ESTADO_BD.A || this.estadoEnBD === ESTADO_BD.M) {
-      salida = [...salida,this.save({transaction})]
+    if(objetivosAsociados.length > 0) {
+        salida = await Objetivo.buscarPorListaIds( objetivosAsociados.map( oasoc => oasoc.dataValues.idObjetivo), transaction);
     }
 
     return salida;
   }
-  
+
+
   static initModel(sequelize: Sequelize.Sequelize): typeof ObjetivoActividad {
     return ObjetivoActividad.init(CONSTRAINT_ATTRIBUTES,CONSTRAINT_OPTIONS(sequelize) );
   }

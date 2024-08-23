@@ -1,5 +1,6 @@
 import * as Sequelize from 'sequelize';
 import { DataTypes, Model, Optional } from 'sequelize';
+import { domain } from '../../../../domain';
 
 
 export interface ProgramaAttributes {
@@ -12,10 +13,20 @@ export type ProgramaId = Programa[ProgramaPk];
 export type ProgramaOptionalAttributes = "idPrograma";
 export type ProgramaCreationAttributes = Optional<ProgramaAttributes, ProgramaOptionalAttributes>;
 
-export class Programa extends Model<ProgramaAttributes, ProgramaCreationAttributes> implements ProgramaAttributes {
+export class Programa extends Model<ProgramaAttributes, ProgramaCreationAttributes> implements ProgramaAttributes , domain.IModelPrograma{
+  
   idPrograma!: number;
   nom!: string;
 
+  async buscarPor(parametros: Partial<domain.TDataPrograma>): Promise<domain.Programa[]> {
+    throw new Error('Method not implemented.');
+  }
+  async verLista(anio: number): Promise<domain.Programa[]> {
+    throw new Error('Method not implemented.');
+  }
+  async verListaConAreas(anio: number): Promise<domain.Programa[]> {
+    throw new Error('Method not implemented.');
+  }
 
   static initModel(sequelize: Sequelize.Sequelize): typeof Programa {
     return Programa.init({

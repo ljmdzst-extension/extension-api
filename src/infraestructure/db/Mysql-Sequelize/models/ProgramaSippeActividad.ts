@@ -1,7 +1,7 @@
 import * as Sequelize from 'sequelize';
-import { DataTypes, Model, Optional } from 'sequelize';
-import type { Actividad, ActividadId } from './Actividad';
-import type { ProgramaSippe, ProgramaSippeId } from './ProgramaSippe';
+import { DataTypes, Model } from 'sequelize';
+import { ProgramaSippe } from './ProgramaSippe';
+import { domain } from '../../../../domain';
 
 export interface ProgramaSippeActividadAttributes {
   idProgramaSippe: number;
@@ -16,17 +16,19 @@ export class ProgramaSippeActividad extends Model<ProgramaSippeActividadAttribut
   idProgramaSippe!: number;
   idActividad!: number;
 
-  // ProgramaSippeActividad belongsTo Actividad via idActividad
-  idActividadActividad!: Actividad;
-  getIdActividadActividad!: Sequelize.BelongsToGetAssociationMixin<Actividad>;
-  setIdActividadActividad!: Sequelize.BelongsToSetAssociationMixin<Actividad, ActividadId>;
-  createIdActividadActividad!: Sequelize.BelongsToCreateAssociationMixin<Actividad>;
-  // ProgramaSippeActividad belongsTo ProgramaSippe via idProgramaSippe
-  idProgramaSippeProgramaSippe!: ProgramaSippe;
-  getIdProgramaSippeProgramaSippe!: Sequelize.BelongsToGetAssociationMixin<ProgramaSippe>;
-  setIdProgramaSippeProgramaSippe!: Sequelize.BelongsToSetAssociationMixin<ProgramaSippe, ProgramaSippeId>;
-  createIdProgramaSippeProgramaSippe!: Sequelize.BelongsToCreateAssociationMixin<ProgramaSippe>;
+  public static async buscarPorActividad( actividad : domain.Actividad, transaction ?: Sequelize.Transaction) : Promise<domain.TDataProgramaSIPPE[]> {
+    let salida : domain.TDataProgramaSIPPE[] = [];
 
+    const programasSippesAsociados = await ProgramaSippeActividad.findAll({where : { idActividad : actividad.verDatos().idActividad}, transaction});
+
+    if(programasSippesAsociados.length > 0) {
+        salida = await ProgramaSippe.buscarPorListaIds( programasSippesAsociados.map( pasoc => pasoc.dataValues.idProgramaSippe), transaction);
+    }
+
+    return salida;
+  }
+
+  
   static initModel(sequelize: Sequelize.Sequelize): typeof ProgramaSippeActividad {
     return ProgramaSippeActividad.init({
     idProgramaSippe: {

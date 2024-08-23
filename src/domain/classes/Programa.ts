@@ -1,4 +1,5 @@
 import Area, { ID_AREA,TDataArea }  from "./Area";
+import AreaPrograma from "./AreaPrograma";
 
 export type ID_PROG = number;
 
@@ -11,25 +12,26 @@ export type TDataPrograma = {
  class Programa {
     private idPrograma !: number;
     private nom !: string;
-    private listaAreas !: Area[];
+    private cAreaPrograma !: AreaPrograma[];
 
     constructor(  _data : TDataPrograma ){
         
         this.idPrograma = _data.idPrograma;
         this.nom = _data.nom;
-        this.listaAreas = [];
+        this.cAreaPrograma = [];
     }
 
     public verListaAreas (  ) : Area[]{
    
-        return this.listaAreas;
+        return this.cAreaPrograma.map( ap => ap.verArea());
     }
+    public verID(){return this.idPrograma;}
     
-    public verDatos () : TDataPrograma{
+    public verDatos ( anio : number) : TDataPrograma{
         return {
             idPrograma : this.idPrograma,
             nom : this.nom,
-            listaAreas :  this.listaAreas.map(iArea => iArea.verDatos())
+            listaAreas :  this.cAreaPrograma.filter( ap => ap.verAnio() === anio).map(ap => ap.verArea().verDatos())
         }
     }
 

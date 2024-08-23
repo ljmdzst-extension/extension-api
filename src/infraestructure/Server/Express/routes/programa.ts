@@ -1,17 +1,17 @@
 
-import { Router } from "express";
-import { verListaProgramasConAreas } from "../controllers/programa";
-import { determinarAreasHabilitadas, validarPermisoAccesoMetas } from "../middlewares/permisos";
+// import { Router } from "express";
+// import { verListaProgramasConAreas } from "../controllers/programa";
+// import { determinarAreasHabilitadas, validarPermisoAccesoMetas } from "../middlewares/permisos";
 
 
 
-const routerPrograma = Router();
+// const routerPrograma = Router();
 
-routerPrograma.get( 
-    '/:anio',
-    validarPermisoAccesoMetas,
-    determinarAreasHabilitadas,
-    verListaProgramasConAreas
-);
+// routerPrograma.get( 
+//     '/:anio',
+//     validarPermisoAccesoMetas,
+//     determinarAreasHabilitadas,
+//     verListaProgramasConAreas
+// );
 
-export default routerPrograma;
+// export default routerPrograma;

@@ -1,7 +1,5 @@
 import * as Sequelize from 'sequelize';
 import { DataTypes, Model } from 'sequelize';
-import { Actividad } from './Actividad';
-import { ESTADO_BD } from '../types/general';
 
 
 export interface RelacionActividadAttributes {
@@ -44,9 +42,6 @@ const CONSTRAINT_OPTIONS = ( sequelize : Sequelize.Sequelize)=>({
 export class RelacionActividad extends Model<RelacionActividadAttributes, RelacionActividadCreationAttributes> implements RelacionActividadAttributes {
   idRelacion!: number;
   idActividad!: number;
-  
-  estadoEnBD !: ESTADO_BD;
-
   static initModel(sequelize: Sequelize.Sequelize): typeof RelacionActividad {
     return RelacionActividad.init(CONSTRAINT_ATTRIBUTES, CONSTRAINT_OPTIONS(sequelize));
   }

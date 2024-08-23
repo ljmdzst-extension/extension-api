@@ -1,10 +1,9 @@
 import * as Sequelize from 'sequelize';
 import { DataTypes, Model, Optional } from 'sequelize';
-import type { Actividad, ActividadId } from './Actividad';
-import type { Evaluacion, EvaluacionId } from './Evaluacion';
-import type { EvaluacionItem, EvaluacionItemId } from './EvaluacionItem';
-import type { Persona, PersonaId } from './Persona';
-import type { Propuesta, PropuestaId } from './Propuesta';
+import { domain } from '../../../../domain';
+import { Persona } from './Persona';
+import { CategoriaUsuario } from './CategoriaUsuario';
+import { PermisoUsuario } from './PermisoUsuario';
 
 export interface UsuarioAttributes {
   idUsuario: string;
@@ -21,67 +20,13 @@ export type UsuarioOptionalAttributes = "pendiente" ;
 export type UsuarioCreationAttributes = Optional<UsuarioAttributes, UsuarioOptionalAttributes>;
 
 export class Usuario extends Model<UsuarioAttributes, UsuarioCreationAttributes> implements UsuarioAttributes {
+
   idUsuario!: string;
   nroDoc!: string;
   email!: string;
   pass!: string;
   idUnidadAcademica!: number;
   pendiente!: number;
-
-  // Usuario belongsTo Persona via nroDoc
-  persona!: Persona;
-  getPersona!: Sequelize.BelongsToGetAssociationMixin<Persona>;
-  setPersona!: Sequelize.BelongsToSetAssociationMixin<Persona, PersonaId>;
-  createNroDocPersona!: Sequelize.BelongsToCreateAssociationMixin<Persona>;
-  
-  // Usuario hasMany Actividad via idUsuario
-  actividades!: Actividad[];
-  getActividads!: Sequelize.HasManyGetAssociationsMixin<Actividad>;
-  setActividads!: Sequelize.HasManySetAssociationsMixin<Actividad, ActividadId>;
-  addActividad!: Sequelize.HasManyAddAssociationMixin<Actividad, ActividadId>;
-  addActividads!: Sequelize.HasManyAddAssociationsMixin<Actividad, ActividadId>;
-  createActividad!: Sequelize.HasManyCreateAssociationMixin<Actividad>;
-  removeActividad!: Sequelize.HasManyRemoveAssociationMixin<Actividad, ActividadId>;
-  removeActividads!: Sequelize.HasManyRemoveAssociationsMixin<Actividad, ActividadId>;
-  hasActividad!: Sequelize.HasManyHasAssociationMixin<Actividad, ActividadId>;
-  hasActividads!: Sequelize.HasManyHasAssociationsMixin<Actividad, ActividadId>;
-  countActividads!: Sequelize.HasManyCountAssociationsMixin;
-
-  // Usuario belongsToMany Evaluacion via idUsuario and idEvaluacion
-  idEvaluacionEvaluacions!: Evaluacion[];
-  getIdEvaluacionEvaluacions!: Sequelize.BelongsToManyGetAssociationsMixin<Evaluacion>;
-  setIdEvaluacionEvaluacions!: Sequelize.BelongsToManySetAssociationsMixin<Evaluacion, EvaluacionId>;
-  addIdEvaluacionEvaluacion!: Sequelize.BelongsToManyAddAssociationMixin<Evaluacion, EvaluacionId>;
-  addIdEvaluacionEvaluacions!: Sequelize.BelongsToManyAddAssociationsMixin<Evaluacion, EvaluacionId>;
-  createIdEvaluacionEvaluacion!: Sequelize.BelongsToManyCreateAssociationMixin<Evaluacion>;
-  removeIdEvaluacionEvaluacion!: Sequelize.BelongsToManyRemoveAssociationMixin<Evaluacion, EvaluacionId>;
-  removeIdEvaluacionEvaluacions!: Sequelize.BelongsToManyRemoveAssociationsMixin<Evaluacion, EvaluacionId>;
-  hasIdEvaluacionEvaluacion!: Sequelize.BelongsToManyHasAssociationMixin<Evaluacion, EvaluacionId>;
-  hasIdEvaluacionEvaluacions!: Sequelize.BelongsToManyHasAssociationsMixin<Evaluacion, EvaluacionId>;
-  countIdEvaluacionEvaluacions!: Sequelize.BelongsToManyCountAssociationsMixin;
-
-  // Usuario hasMany EvaluacionItem via idUsuario
-  evaluacionItems!: EvaluacionItem[];
-  getEvaluacionItems!: Sequelize.HasManyGetAssociationsMixin<EvaluacionItem>;
-  setEvaluacionItems!: Sequelize.HasManySetAssociationsMixin<EvaluacionItem, EvaluacionItemId>;
-  addEvaluacionItem!: Sequelize.HasManyAddAssociationMixin<EvaluacionItem, EvaluacionItemId>;
-  addEvaluacionItems!: Sequelize.HasManyAddAssociationsMixin<EvaluacionItem, EvaluacionItemId>;
-  createEvaluacionItem!: Sequelize.HasManyCreateAssociationMixin<EvaluacionItem>;
-  removeEvaluacionItem!: Sequelize.HasManyRemoveAssociationMixin<EvaluacionItem, EvaluacionItemId>;
-  removeEvaluacionItems!: Sequelize.HasManyRemoveAssociationsMixin<EvaluacionItem, EvaluacionItemId>;
-  hasEvaluacionItem!: Sequelize.HasManyHasAssociationMixin<EvaluacionItem, EvaluacionItemId>;
-  hasEvaluacionItems!: Sequelize.HasManyHasAssociationsMixin<EvaluacionItem, EvaluacionItemId>;
-  countEvaluacionItems!: Sequelize.HasManyCountAssociationsMixin;
-
-  // Usuario hasMany Propuesta via idUsuario
-  propuestas!: Propuesta[];
-  getPropuestas!: Sequelize.HasManyGetAssociationsMixin<Propuesta>;
-  setPropuestas!: Sequelize.HasManySetAssociationsMixin<Propuesta, PropuestaId>;
-  addPropuestas!: Sequelize.HasManyAddAssociationsMixin<Propuesta, PropuestaId>;
-  removePropuestas!: Sequelize.HasManyRemoveAssociationsMixin<Propuesta, PropuestaId>;
-  hasPropuestas!: Sequelize.HasManyHasAssociationsMixin<Propuesta, PropuestaId>;
-  countPropuestas!: Sequelize.HasManyCountAssociationsMixin;
-
 
   public static async verlistaIdsUsados ( db :Sequelize.Sequelize, transaction ?: Sequelize.Transaction ) : Promise<string[]> {
     return (await Usuario.initModel(db).findAll({ attributes : ['idUsuario'], transaction})).map( usr => usr.idUsuario )
@@ -126,4 +71,43 @@ export class Usuario extends Model<UsuarioAttributes, UsuarioCreationAttributes>
     paranoid: true
   });
   }
+}
+
+
+export class MUsuario implements domain.IModelUsuario { 
+  
+  constructor( private sequelize : Sequelize.Sequelize){}
+
+  async buscarPorId(idUsuario: string): Promise<domain.Usuario | null> {
+    let salida : domain.Usuario | null = null;
+    const transaction = await this.sequelize.transaction();
+
+    const dbUsr = await Usuario.initModel(this.sequelize).findByPk(idUsuario,{transaction});
+    if(!dbUsr) throw {status : 400 , message: 'no existe usuario con ese id'};
+    
+    const p = await Persona.initModel(this.sequelize).buscarPorUsuario( dbUsr.nroDoc );
+    if(!p) throw {status : 400 , message: 'no existe persona con ese nroDoc'};
+
+    const c = await CategoriaUsuario.initModel(this.sequelize).verCategoria( dbUsr.idUsuario,transaction )
+    if(!c) throw {status : 400 , message: 'no existe categoria asociada a ese usuario'};
+    
+    const cPermisos = await PermisoUsuario.initModel(this.sequelize).verPermisos(dbUsr.idUsuario,transaction);
+
+    salida = new domain.Usuario(dbUsr.dataValues,p,c,cPermisos);
+     
+    return salida;
+  }
+  buscarPor(parametros: Partial<domain.TDataUsuario>, offset?: number, limit?: number): Promise<domain.Usuario[]> {
+    throw new Error('Method not implemented.');
+  }
+  verLista(offset?: number, limit?: number): Promise<domain.Usuario[]> {
+    throw new Error('Method not implemented.');
+  }
+  guardarDatos(usuario: domain.Usuario): Promise<domain.Usuario> {
+    throw new Error('Method not implemented.');
+  }
+  darDeBaja(usuario: domain.Usuario): Promise<boolean> {
+    throw new Error('Method not implemented.');
+  }
+
 }

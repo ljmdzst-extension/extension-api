@@ -1,22 +1,24 @@
 
 import { INVALIDO } from "../logs/validaciones";
-import { AreaPrograma } from "../../../models/AreaPrograma";
-import { response, NextFunction } from "express";
+import {  NextFunction, Request, Response } from "express";
+import IMiddleware from "./middleware";
+import { HttpHelpers } from "../helpers/general";
 
 
 
-export const validarAnio =  async(req : any, resp : typeof response , next : NextFunction)=>{
-   const data = req.params;
-   
-   
-   
-   if( Number(data.idAnio) > 2021 && await AreaPrograma.findOne({where : {anio : data.idAnio}})  ){
-       next();
-   } else {
-     resp.status(INVALIDO.ANIO_PROG.status).json({ 
-        ok : false, 
-        error : INVALIDO.ANIO_PROG.message, 
-        data : null
-    });
-   }
-}
+export class MiddlewareValidarAnio implements IMiddleware {
+    constructor(){}
+    
+    public usar() {
+        return async(req : Request, resp : Response , next : NextFunction)=>{
+            if( Number(req.params.idAnio) <= new Date().getFullYear() ){
+                next();
+            } else {
+                HttpHelpers.responderPeticionError(resp,INVALIDO.ANIO_PROG.message,INVALIDO.ANIO_PROG.status);
+            }
+         }
+    }
+} 
+
+
+
