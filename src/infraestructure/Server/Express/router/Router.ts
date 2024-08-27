@@ -1,7 +1,7 @@
 
-import ServerExpress from '../server/ServerExpress';
+import {ServerExpress} from '..';
 
 
 export default interface IRouter {
- usar( server : ServerExpress  ) : Promise<void>
+ usar( server : ServerExpress.Server  ) : Promise<void>
 }

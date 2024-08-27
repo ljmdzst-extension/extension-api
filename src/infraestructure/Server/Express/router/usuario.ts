@@ -89,13 +89,10 @@ export default class RouterUsuario implements IRouter {
                     p = await aplication.GestionDePersonas.altaPersona({...data,tipoDoc : 1},this.MPersona,this.VPersona);
                 } 
                 const usuarioPendiente = await aplication.GestionDeUsuarios.altaUsuario({...data , pendiente : 1}, p , this.MUsuario,this.VUsuario); 
-                    
-                const respSmtp =  await smtpService.sendMail( 
-                    generarEmailValidaciónRegistro ( 
-                        usuarioPendiente.verDatos().email , 
-                        usuarioPendiente.verDatos().idUsuario
-                    ) 
-                );
+
+                const {email,idUsuario} = usuarioPendiente.verDatos();
+
+                const respSmtp =  await smtpService.sendMail( generarEmailValidaciónRegistro (  email,   idUsuario )   );
                 
                 if( respSmtp.rejected.length > 0 ) throw ERROR.MAIL_REGISTRO_RECHAZADO;
                 
