@@ -239,9 +239,7 @@ export const editarUsuario = async( data : TDataPutUsuario )=>{
         } 
 
         const usuario = await BD.Usuario.findByPk(data.usuario.idUsuario,{transaction});
-        const usuario = await BD.Usuario.findByPk(data.usuario.idUsuario,{transaction});
 
-        if(!usuario) throw { status : 400 , message : `No se encontro el usuario con id ${data.usuario.idUsuario}`}
         if(!usuario) throw { status : 400 , message : `No se encontro el usuario con id ${data.usuario.idUsuario}`}
 
         usuario.set({

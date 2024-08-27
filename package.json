@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "dev": "nodemon -r src/index.js",
+    "dev": "nodemon -L src/index.js",
     "watch-lin": "node_modules/.bin/tsc -w",
     "watch-win": "node_modules\\.bin\\tsc -w",
     "test": "jest --detectOpenHandles"
