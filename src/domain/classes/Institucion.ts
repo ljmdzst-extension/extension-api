@@ -1,7 +1,3 @@
-import Actividad from "./Actividad";
-import validator from "validator";
-import { INVALIDO } from "../../infraestructure/Server/Express/logs/validaciones";
-import { ESTADO_BD } from "../../types/general";
 
 export type ID_INSTITUCION = number;
 
