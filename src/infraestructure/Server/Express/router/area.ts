@@ -4,7 +4,7 @@ import { HttpHelpers } from "../helpers/general";
 import { ERROR } from "../logs/errores";
 import { MiddlewareDeterminarAreasHabilitadas, MiddlewareValidarPermisoAccesoMetas } from "../middlewares/permisos";
 import { MiddlewareValidarAnio } from "../middlewares/programa";
-import ServerExpress from "../server/ServerExpress";
+import {ServerExpress} from "..";
 import IRouter from "./Router";
 import express,{Request,Response} from 'express'
 
@@ -14,14 +14,14 @@ export default class RouterArea implements IRouter {
         private MArea : domain.IModelArea,
         private MActividad : domain.IModelActividad
     ){}
-    async usar(server: ServerExpress): Promise<void> {
+    async usar(server: ServerExpress.Server): Promise<void> {
         const router = express.Router();
 
         router.get( '/:anio', [new MiddlewareValidarPermisoAccesoMetas().usar()],  this.getArea());
         
         router.get('/resumen/:idArea/:anio/:offset/:limit/:keyword?',/** verResumenArea */);
  
-        server.express.use(this.basePath,router);
+        server.verApp().use(this.basePath,router);
     }
 
     private getArea( ) {

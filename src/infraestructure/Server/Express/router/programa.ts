@@ -1,9 +1,10 @@
 import { aplication } from "../../../../aplication";
 import { domain } from "../../../../domain";
 import { HttpHelpers } from "../helpers/general";
+import {ServerExpress} from "..";
 import { MiddlewareDeterminarAreasHabilitadas, MiddlewareValidarPermisoAccesoMetas } from "../middlewares/permisos";
 import { MiddlewareValidarAnio } from "../middlewares/programa";
-import ServerExpress from "../server/ServerExpress";
+
 import IRouter from "./Router";
 import express,{Request,Response} from 'express'
 
@@ -12,7 +13,7 @@ export default class RouterProgramas implements IRouter {
         private basePath : string,
         private MProgramas : domain.IModelPrograma
     ){}
-    async usar(server: ServerExpress): Promise<void> {
+    async usar(server: ServerExpress.Server): Promise<void> {
         const router = express.Router();
 
         router.get(
@@ -24,7 +25,7 @@ export default class RouterProgramas implements IRouter {
             ],
             this.getProgramas());
 
-        server.express.use(this.basePath,router);
+        server.verApp().use(this.basePath,router);
     }
 
     private getProgramas( ) {

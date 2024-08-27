@@ -1,9 +1,7 @@
-import express, { Request, Response }  from 'express'
-import ServerExpress from "../server/ServerExpress";
-import IRouter from "./Router";
-
+import express, { Request, Response }  from 'express';
 import jwt from 'jsonwebtoken';
-
+import {ServerExpress} from "..";
+import IRouter from "./Router";
 import { aplication } from "../../../../aplication";
 import { domain } from "../../../../domain";
 import { HttpHelpers } from "../helpers/general";
@@ -65,7 +63,7 @@ export default class RouterUsuario implements IRouter {
                     email : usuario.verDatos().email,
                     ape : usuario.verDatos().persona?.ape,
                     nom : usuario.verDatos().persona?.nom,
-                    permisos : usuario.verDatos().listaPermisos?.map( p => p.nombre),
+                    permisos : usuario.verDatos().permisos?.map( p => p.nombre),
                     categorias : [usuario.verDatos().categoria?.nombre],
                     areas : [], 
                     token : token
@@ -151,7 +149,7 @@ export default class RouterUsuario implements IRouter {
           }
     }
    
-    public async usar(server: ServerExpress): Promise<void> {
+    public async usar(server: ServerExpress.Server): Promise<void> {
         const router = express.Router();
         const middValidarCamposUsuario =  new MiddlewareValidarCamposUsuario(this.VUsuario);
         const middValidarUsuarioNoPendiente = new MiddlewareValidarUsuarioNoPendiente();
@@ -185,7 +183,7 @@ export default class RouterUsuario implements IRouter {
         router.put( '/validar/:idUsuario', [ ],  this.putValidarRegistro());
         router.get('/',[],this.getUsuarios());
  
-        server.express.use(this.basePath,router);
+        server.verApp().use(this.basePath,router);
      }
  
     

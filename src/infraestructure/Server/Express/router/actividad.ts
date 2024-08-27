@@ -1,6 +1,9 @@
 import express, { Request, Response } from "express";
 import { HttpHelpers } from "../helpers/general";
+
+import { ServerExpress } from "..";
 import IRouter from "./Router";
+
 import { aplication } from "../../../../aplication";
 import { domain } from "../../../../domain";
 import { 
@@ -10,10 +13,8 @@ import {
     MiddlewareValidarMotivoSuspension 
 } from "../middlewares/actividad";
 import {
-    MiddlewareValidarPermisoAccesoMetas,
     MiddlewareValidarPermisoEdicionMetas 
 } from "../middlewares/permisos";
-import { ServerExpress } from "..";
 
 export default class RouterActividad implements IRouter {
 
@@ -69,7 +70,7 @@ export default class RouterActividad implements IRouter {
         }
     }
 
-    private async  putRestoreActividad (  req : Request, res: Response ) {
+    private async putRestoreActividad (  req : Request, res: Response ) {
         try {
             const {idActividad} = req.body; 
             const iActividad = await aplication.GestionDeActividades.editarActividad(
@@ -86,7 +87,7 @@ export default class RouterActividad implements IRouter {
             HttpHelpers.responderPeticionError(res,error.status,error.message);
         }
     }
-    private async  putCancelActividad(  req : Request, res: Response ) {
+    private async putCancelActividad(  req : Request, res: Response ) {
         try {
 
             const {idActividad,motivoCancel} = req.body; 
