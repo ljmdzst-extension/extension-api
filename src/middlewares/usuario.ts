@@ -151,8 +151,8 @@ export const validarCamposRegistro = checkSchema({
             errorMessage : 'Contraseña obligatoria'
         },
         isLength: { 
-            options : {min : 6, max : 6}, 
-            errorMessage : 'Contraseña, debe tener 6 caracteres.'
+            options : {min : 6, max : 255}, 
+            errorMessage : 'Contraseña, debe tener mínimo 6 caracteres.'
         }
     },
     idUnidadAcademica : {
@@ -174,8 +174,8 @@ export const validarCamposRegistro = checkSchema({
             errorMessage : 'Confirmar contraseña obligatoria'
         },
         isLength: { 
-            options : {min : 6, max : 6}, 
-            errorMessage : 'Contraseña, debe tener 6 caracteres.'
+            options : {min : 6, max : 255}, 
+            errorMessage : 'Contraseña, debe tener mínimo 6 caracteres.'
         },
         custom : {
             options : ( value, {req} )=> req.body.pass === value,

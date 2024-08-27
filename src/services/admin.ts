@@ -28,21 +28,37 @@ type  TDataPrograma = {
     listaAreas : TDataArea []
 }
 
-type TDataPostUsuario = {
+
+type TDataPersona = {
     nroDoc : string,
     ape : string,
     nom : string,
+    tel ?: string,
+    email ?: string,
+    ciudad ?: string,
+    provincia ?: string,
+    pais ?: string,
+}
+
+type TDataUsuario = {
+    idUsuario : string,
     email : string,
-    idUnidadAcademica : number,
     pass : string,
+    nroDoc : string,
+    pendiente ?: number,
+    
+    idUnidadAcademica ?: number,
+}
+
+type TDataPostUsuario = {
+    persona : TDataPersona,
+    usuario : TDataUsuario,
     categorias : TDataCategoria[],
     permisos : TDataPermiso[],
     areas : { anio : number , listaProgramas : TDataPrograma[]}[]
 }
 
-type TDataPutUsuario = TDataPostUsuario & {
-    idUsuario : string
-}
+type TDataPutUsuario = TDataPostUsuario ;
 
 type TDataGetUsuario = TDataPutUsuario;
 
@@ -95,14 +111,14 @@ export const altaUsuario = async( data : TDataPostUsuario)=>{
     const transaction = await sequelizeExtension.transaction({logging : process.env.NODE_ENV === 'development' ? sql => console.log(sql) : undefined})
     
     try {
-        let persona = await BD.Persona.findOne({where : { nroDoc : data.nroDoc },transaction});    
+        let persona = await BD.Persona.findOne({where : { nroDoc : data.persona.nroDoc },transaction});    
         
         if(!persona) {
             persona = BD.Persona.build(
                 {
-                    nroDoc : data.nroDoc,
-                    ape : data.ape,
-                    nom : data.nom, 
+                    nroDoc : data.persona.nroDoc,
+                    ape : data.persona.ape,
+                    nom : data.persona.nom, 
                     tipoDoc : 1
 
                 },
@@ -124,9 +140,9 @@ export const altaUsuario = async( data : TDataPostUsuario)=>{
             {
                 idUsuario : nuevoId,
                 nroDoc :persona.nroDoc,
-                idUnidadAcademica : data.idUnidadAcademica,
-                email : data.email,
-                pass : data.pass,
+                idUnidadAcademica : data.usuario.idUnidadAcademica || 0,
+                email : data.usuario.email,
+                pass : data.usuario.pass,
                 pendiente : 0
             },
             {
@@ -183,6 +199,7 @@ export const altaUsuario = async( data : TDataPostUsuario)=>{
         );
 
         await transaction.commit();
+        
         return {
             ...usuario.dataValues,
             areas : data.areas,
@@ -203,14 +220,14 @@ export const editarUsuario = async( data : TDataPutUsuario )=>{
     const transaction = await sequelizeExtension.transaction({logging : process.env.NODE_ENV === 'development' ? sql => console.log(sql) : undefined})
     
     try {
-        let persona = await BD.Persona.findOne({where : { nroDoc : data.nroDoc },transaction});    
+        let persona = await BD.Persona.findOne({where : { nroDoc : data.persona.nroDoc },transaction});    
         
         if(!persona) {
             persona = BD.Persona.build(
                 {
-                    nroDoc : data.nroDoc,
-                    ape : data.ape,
-                    nom : data.nom, 
+                    nroDoc : data.persona.nroDoc,
+                    ape : data.persona.ape,
+                    nom : data.persona.nom, 
                     tipoDoc : 1
 
                 },
@@ -221,15 +238,15 @@ export const editarUsuario = async( data : TDataPutUsuario )=>{
             
         } 
 
-        const usuario = await BD.Usuario.findByPk(data.idUsuario,{transaction});
+        const usuario = await BD.Usuario.findByPk(data.usuario.idUsuario,{transaction});
 
-        if(!usuario) throw { status : 400 , message : `No se encontro el usuario con id ${data.idUsuario}`}
+        if(!usuario) throw { status : 400 , message : `No se encontro el usuario con id ${data.usuario.idUsuario}`}
 
         usuario.set({
-            nroDoc : data.nroDoc,
-            email : data.email,
-            pass : data.pass,
-            idUnidadAcademica : data.idUnidadAcademica
+            nroDoc : data.usuario.nroDoc,
+            email : data.usuario.email,
+            pass : data.usuario.pass,
+            idUnidadAcademica : data.usuario.idUnidadAcademica
         });
 
         await usuario.save({transaction});
@@ -301,15 +318,18 @@ export const editarUsuario = async( data : TDataPutUsuario )=>{
         );
 
         await transaction.commit();
+
         return {
-            ...usuario.dataValues,
+            usuario : {...usuario.dataValues},
+            persona : {...persona.dataValues},
             areas : data.areas,
             categorias : data.categorias,
             permisos : data.permisos
         };
+
     } catch (error) {
         await transaction.rollback();
-
+        console.log(error);
         throw error;
     }
 }

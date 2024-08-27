@@ -49,6 +49,7 @@ export const postUsuario = async(req : any, resp : typeof response )=>{
 
 export const putUsuario = async( req : any , resp : typeof response) => {
     try {
+        console.log(req.body);
         const usuario = await SAdmin.editarUsuario(req.body);
 
         HttpHelpers.responderPeticionOk(resp,usuario);

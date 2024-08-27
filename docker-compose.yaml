@@ -6,7 +6,7 @@ services:
   ports:
    - ${PORT}:${PORT}
   volumes:
-   - ./dist:/extension_api/src
+   - ./dist:/extension_api
    - /extension_api/node_modules
   restart: unless-stopped
   environment:

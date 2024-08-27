@@ -6,7 +6,7 @@ WORKDIR /extension_api
 
 ENV DIR /extension_api
 
-COPY ./dist $DIR/src
+COPY ./dist $DIR
 COPY .env $DIR
 COPY package*.json $DIR
 

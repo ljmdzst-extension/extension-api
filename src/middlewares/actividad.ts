@@ -5,6 +5,7 @@ import { Transaction } from 'sequelize';
 import { ERROR } from "../logs/errores";
 import { NextFunction, request, response } from "express";
 import {checkSchema,body, validationResult} from 'express-validator'
+import { HttpHelpers } from "../helpers/general";
 
 
 
@@ -118,16 +119,15 @@ export const validarSchema = (req : typeof request, resp : typeof response, next
 
     const errores = validationResult(req);
 
-    if( ! errores.isEmpty() ) {
+    if( errores.isEmpty() ) {
+        next();
+    } else {
+       
         const listaErrores = errores.mapped();
-        return resp.status(400).json({
-            ok: false,
-            data : null,
-            error : Object.keys(listaErrores).map( campo => listaErrores[campo].msg ),
-        })
+         
+        HttpHelpers.responderPeticionError(resp,`${Object.keys(listaErrores).map( campo => listaErrores[campo].msg ).join(';')}`,400);
     }
 
-    next();
 }
 
 export const validarCampos = checkSchema({
