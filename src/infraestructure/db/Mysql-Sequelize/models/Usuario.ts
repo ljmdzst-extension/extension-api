@@ -1,9 +1,10 @@
 import * as Sequelize from 'sequelize';
 import { DataTypes, Model, Optional } from 'sequelize';
 import { domain } from '../../../../domain';
-import { Persona } from './Persona';
+import { MPersona } from './Persona';
 import { CategoriaUsuario } from './CategoriaUsuario';
 import { PermisoUsuario } from './PermisoUsuario';
+import { AreaProgramaUsuario } from './AreaProgramaUsuario';
 
 export interface UsuarioAttributes {
   idUsuario: string;
@@ -85,7 +86,7 @@ export class MUsuario implements domain.IModelUsuario {
     const dbUsr = await Usuario.initModel(this.sequelize).findByPk(idUsuario,{transaction});
     if(!dbUsr) throw {status : 400 , message: 'no existe usuario con ese id'};
     
-    const p = await Persona.initModel(this.sequelize).buscarPorUsuario( dbUsr.nroDoc );
+    const p = await new MPersona(this.sequelize).buscarPorUsuario( dbUsr.nroDoc );
     if(!p) throw {status : 400 , message: 'no existe persona con ese nroDoc'};
 
     const c = await CategoriaUsuario.initModel(this.sequelize).verCategoria( dbUsr.idUsuario,transaction )
@@ -93,8 +94,14 @@ export class MUsuario implements domain.IModelUsuario {
     
     const cPermisos = await PermisoUsuario.initModel(this.sequelize).verPermisos(dbUsr.idUsuario,transaction);
 
+    const cProgramasHabilitados = await AreaProgramaUsuario.initModel(this.sequelize).buscarPorUsuario( dbUsr.idUsuario, transaction )
+    
+
     salida = new domain.Usuario(dbUsr.dataValues,p,c,cPermisos);
-     
+
+    cProgramasHabilitados.forEach( ph => salida.altaProgramasHabilitados( ph ));
+    
+
     return salida;
   }
   buscarPor(parametros: Partial<domain.TDataUsuario>, offset?: number, limit?: number): Promise<domain.Usuario[]> {

@@ -15,15 +15,14 @@ import Persona, {TDataPersona} from './classes/Persona';
 import Permiso, {TDataPermiso} from './classes/Permiso';
 import Categoria, {TDataCategoria} from './classes/Categoria';
 import Usuario, { TDataUsuario } from './classes/Usuario';
-import IModelActividad from './models/actividad'
-import IModelPermiso from './models/permiso';
-import IModelCategoria from './models/categoria';
+import IModelActividad from './models/actividad';
 import IModelUsuario from './models/usuario';
 import IModelPersona from './models/persona';
 import IValidatorActividad from '../aplication/validators/actividad';
 import IValidatorUsuario from '../aplication/validators/usuario';
 import { IModelPrograma } from './models/programa';
 import IModelArea from './models/area';
+import ProgramasHabilitadosDelUsuario from './classes/ProgramasHabilitadosDelUsuario';
 
 
 type _TDataActividad = TDataActividad;
@@ -44,9 +43,8 @@ type _TDataCategoria = TDataCategoria;
 type _TDataPermiso = TDataPermiso;
 type _TDataUsuario = TDataUsuario;
 
+
 interface MActividad extends IModelActividad {};
-interface MPermiso extends IModelPermiso {}
-interface MCategoria extends IModelCategoria {}
 interface MUsuario extends IModelUsuario {}
 interface MPersona extends IModelPersona{}
 interface MPrograma extends IModelPrograma { }
@@ -54,6 +52,7 @@ interface MArea extends IModelArea {}
 
 const _Actividad = Actividad;
 const _Area = Area;
+const _ProgramasHabilitadosDelUsuario = ProgramasHabilitadosDelUsuario;
 const _Enlace = Enlace;
 const _FechaPuntual = FechaPuntual;
 const _Institucion = Institucion;
@@ -76,6 +75,7 @@ interface VUsuario extends IValidatorUsuario{}
 export namespace domain {
     export class Actividad extends _Actividad {};
     export class Area extends _Area {};
+    export class ProgramasHabilitadosDelUsuario extends _ProgramasHabilitadosDelUsuario {};
     export class Enlace extends _Enlace {};
     export class FechaPuntual extends _FechaPuntual {};
     export class Institucion extends _Institucion {};
@@ -111,8 +111,6 @@ export namespace domain {
     export type TDataPermiso = _TDataPermiso;
 
     export interface IModelActividad extends MActividad{};
-    export interface IModelPermiso extends MPermiso {};
-    export interface IModelCategoria extends MCategoria {};
     export interface IModelUsuario extends MUsuario {};
     export interface IModelPersona extends MPersona {};
     export interface IModelPrograma extends MPrograma {};

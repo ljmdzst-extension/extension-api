@@ -67,10 +67,12 @@ dist/
 # __tests__/
 # __mocks__/
 
+usuarios.json
 package-lock.json
 db_estension_backup/
 enviarCorreosUsuarios.js
 migrarUsuarios.js
 *.sql
 tsconfig.json
-
+*.zargo
+*.zargo~

@@ -13,20 +13,10 @@ export type ProgramaId = Programa[ProgramaPk];
 export type ProgramaOptionalAttributes = "idPrograma";
 export type ProgramaCreationAttributes = Optional<ProgramaAttributes, ProgramaOptionalAttributes>;
 
-export class Programa extends Model<ProgramaAttributes, ProgramaCreationAttributes> implements ProgramaAttributes , domain.IModelPrograma{
+export class Programa extends Model<ProgramaAttributes, ProgramaCreationAttributes> implements ProgramaAttributes {
   
   idPrograma!: number;
   nom!: string;
-
-  async buscarPor(parametros: Partial<domain.TDataPrograma>): Promise<domain.Programa[]> {
-    throw new Error('Method not implemented.');
-  }
-  async verLista(anio: number): Promise<domain.Programa[]> {
-    throw new Error('Method not implemented.');
-  }
-  async verListaConAreas(anio: number): Promise<domain.Programa[]> {
-    throw new Error('Method not implemented.');
-  }
 
   static initModel(sequelize: Sequelize.Sequelize): typeof Programa {
     return Programa.init({
@@ -45,5 +35,19 @@ export class Programa extends Model<ProgramaAttributes, ProgramaCreationAttribut
     tableName: 'Programa',
     timestamps: false
   });
+  }
+}
+
+
+export class MPrograma implements domain.IModelPrograma {
+  constructor( private sequelize : Sequelize.Sequelize ){}
+  async buscarPor(parametros: Partial<domain.TDataPrograma>): Promise<domain.Programa[]> {
+    throw new Error('Method not implemented.');
+  }
+  async verLista(anio: number): Promise<domain.Programa[]> {
+    throw new Error('Method not implemented.');
+  }
+  async verListaConAreas(anio: number): Promise<domain.Programa[]> {
+    throw new Error('Method not implemented.');
   }
 }

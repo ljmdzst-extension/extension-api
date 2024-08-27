@@ -1,20 +1,19 @@
 import { Sequelize } from "sequelize";
 import IDataBase from "../IDataBase";
-import sequelizeExtension from "./config/dbConfig";
-import { Usuario } from "./models/Usuario";
-import { Actividad } from "./models/Actividad";
-import { Persona } from "./models/Persona";
-import { Programa } from "./models/Programa";
-import { Area } from "./models/Area";
+import { MUsuario as _MUsuario } from "./models/Usuario";
+import { MActividad as _MActividad} from "./models/Actividad";
+import { MPersona as _MPersona} from "./models/Persona";
+import { MPrograma as _MPrograma} from "./models/Programa";
+import { MArea as _MArea} from "./models/Area";
 
 
 export namespace MysqlSequelize {
 
-    export const MUsuario = Usuario.initModel(sequelizeExtension);
-    export const MActividad = Actividad.initModel(sequelizeExtension);
-    export const MPersona = Persona.initModel(sequelizeExtension);
-    export const MPrograma = Programa.initModel(sequelizeExtension);
-    export const MArea = Area.initModel(sequelizeExtension);
+    export const MUsuario = _MUsuario;
+    export const MActividad = _MActividad;
+    export const MPersona = _MPersona;
+    export const MPrograma = _MPrograma;
+    export const MArea = _MArea;
     
 
     export class Db implements IDataBase {

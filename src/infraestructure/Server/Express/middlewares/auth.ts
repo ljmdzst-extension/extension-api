@@ -1,6 +1,5 @@
 import jwt, { JsonWebTokenError } from 'jsonwebtoken';
-import {  response, NextFunction, Request, Response } from "express";
-import { aplication } from '../../../../aplication';
+import {  response, NextFunction } from "express";
 import IMiddleware from './middleware';
 import { HttpHelpers } from '../helpers/general';
 import { ERROR } from '../logs/errores';
@@ -20,9 +19,6 @@ export class MiddlewareExtraerToken implements IMiddleware {
          }
     }
 }
-
-
-
 
 export class MiddlewareValidarToken implements IMiddleware {
     constructor(){}

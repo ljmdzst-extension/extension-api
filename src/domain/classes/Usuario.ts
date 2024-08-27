@@ -1,18 +1,21 @@
 
-import AreaPrograma from "./AreaPrograma"
+
 import Categoria, { TDataCategoria } from "./Categoria"
 import Permiso, { TDataPermiso } from "./Permiso"
 import Persona, { TDataPersona } from "./Persona"
+import ProgramasHabilitadosDelUsuario, { TDataProgramasHabilidatosDelUsuario } from "./ProgramasHabilitadosDelUsuario"
 
 export type TDataUsuario = {
     idUsuario: string,
+    nroDoc : string,
     email: string,
     pass: string,
     idUnidadAcademica: number,
     pendiente : number,
     persona ?: TDataPersona,
     categoria ?: TDataCategoria,
-    listaPermisos ?: TDataPermiso[]
+    permisos ?: TDataPermiso[],
+    areas ?: TDataProgramasHabilidatosDelUsuario[]
 }
 
 export default class Usuario {
@@ -21,13 +24,13 @@ export default class Usuario {
     private pass: string;
     private idUnidadAcademica: number;
     private pendiente: number;
-
+    private nroDoc : string;
     private iPersona !: Persona;
     private iCategoria !: Categoria;
     private cPermisos !: Permiso[];
-    private cAreaPrograma !: AreaPrograma[];
+    private cProgramasHabilitados !: ProgramasHabilitadosDelUsuario[];
 
-    constructor( data : TDataUsuario, p : Persona , c : Categoria, cPermisos : Permiso[],cAreaPrograma ?: AreaPrograma[] ) {
+    constructor( data : TDataUsuario, p : Persona , c : Categoria, cPermisos : Permiso[] ) {
         this.idUsuario = data.idUsuario;
         this.email = data.email;
         this.pass = data.pass;
@@ -36,12 +39,13 @@ export default class Usuario {
         this.iCategoria = c;
         this.cPermisos = cPermisos;
         this.iPersona = p;
-        this.cAreaPrograma = [];
-        if(cAreaPrograma) this.cAreaPrograma.push(...cAreaPrograma);
+        this.nroDoc = data.nroDoc;
+        this.cProgramasHabilitados = [];
     }
 
     public editar( _data : Partial<TDataUsuario>) {
         if(_data.idUsuario) this.idUsuario = _data.idUsuario;
+        if(_data.nroDoc) this.nroDoc = _data.nroDoc;
         if(_data.email) this.email = _data.email;
         if(_data.pass) this.pass = _data.pass;
         if(_data.idUnidadAcademica) this.idUnidadAcademica = _data.idUnidadAcademica;
@@ -50,8 +54,9 @@ export default class Usuario {
         if(_data.categoria && (this.iCategoria.verDatos().nombre !== _data.categoria.nombre )) {
             this.cambiarCategoria(new Categoria(_data.categoria));
         } 
-        if(_data.listaPermisos) {
-            _data.listaPermisos.forEach( dataPermiso => {
+
+        if(_data.permisos) {
+            _data.permisos.forEach( dataPermiso => {
                 if(! this.buscarPermiso(dataPermiso.idPermiso)) {
                     this.altaPermiso(new Permiso(dataPermiso));
                 }
@@ -63,19 +68,17 @@ export default class Usuario {
         return this.cPermisos.find( permiso => permiso.verDatos().idPermiso === idPermiso );
     }
 
-    public altaAreaPrograma( ap : AreaPrograma  ) {
-        if(
-            this.cAreaPrograma.every( 
-                _ap => 
-                    _ap.verAnio() !== ap.verAnio() &&
-                    _ap.verIdArea() !== ap.verIdArea() &&
-                    _ap.verIdPrograma() !== ap.verIdPrograma()
-            )
-        ){
-            this.cAreaPrograma.push(ap);
-        }
+    public altaProgramasHabilitados( progHabilitados : ProgramasHabilitadosDelUsuario ) {
+       this.cProgramasHabilitados.push( progHabilitados );
     }
 
+    public bajaProgramaHabilitado( anio : number, idPrograma : number ) {
+       const programasHabilitados = this.cProgramasHabilitados.find( ph => ph.verDatos().anio === anio );
+
+       if(programasHabilitados) {
+         programasHabilitados.bajaProgram(idPrograma);
+       }
+    }
     public altaPermiso ( p : Permiso) {
         if(this.cPermisos.every( _p => _p.verDatos().idPermiso !== p.verDatos().idPermiso )) {
             this.cPermisos.push(p);
@@ -101,13 +104,15 @@ export default class Usuario {
     public verDatos() : TDataUsuario {
         return {
             idUsuario : this.idUsuario,
+            nroDoc : this.nroDoc,
             email : this.email,
             pass : this.pass,
             idUnidadAcademica : this.idUnidadAcademica,
             pendiente : this.pendiente,
             categoria : this.iCategoria.verDatos(),
-            listaPermisos : this.cPermisos.map( p => p.verDatos()),
-            persona  : this.iPersona.verDatos()
+            persona  : this.iPersona.verDatos(),
+            areas : this.cProgramasHabilitados.map( ph => ph.verDatos()  ),
+            permisos : this.cPermisos.map( p => p.verDatos()),
         }
     }
      

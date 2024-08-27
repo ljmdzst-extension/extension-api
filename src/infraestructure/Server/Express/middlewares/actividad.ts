@@ -1,7 +1,6 @@
 import { INVALIDO } from "../logs/validaciones";
 import { ERROR } from "../logs/errores";
 import { NextFunction, Request, Response } from "express";
-import {checkSchema,body, validationResult} from 'express-validator'
 import { domain } from "../../../../domain";
 import { aplication } from "../../../../aplication";
 import { HttpHelpers } from "../helpers/general";
@@ -37,10 +36,9 @@ export class MiddlewareValidarActividadExistente implements IMiddleware {
         return async(req : Request, resp : Response , next : NextFunction)=>{
             const data = req.body;
         
-            if(await this.MActividad.buscarPorId(Number(data.idActivdad))){
+            if( this.VActividad.validarIdActividad(Number(data.idActivdad)) && (await this.MActividad.buscarPorId(Number(data.idActivdad))) ){
                 next();
             } else {
-
                 HttpHelpers.responderPeticionError(resp, ERROR.ACTIVIDAD_INEXISTENTE.message,ERROR.ACTIVIDAD_INEXISTENTE.status);
               
             }

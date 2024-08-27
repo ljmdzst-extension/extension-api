@@ -27,19 +27,23 @@ const AREA_ATTRIBUTES = {
   }
 }
 
-export class Area extends Model<AreaAttributes, AreaCreationAttributes> implements AreaAttributes, domain.IModelArea {
+export class Area extends Model<AreaAttributes, AreaCreationAttributes> implements AreaAttributes {
  
   idArea!: number;
   nom!: string;
 
-  buscarPorId(idArea: number): Promise<domain.Area | null> {
-    throw new Error('Method not implemented.');
-  }
   static initModel(sequelize: Sequelize.Sequelize): typeof Area {
     return Area.init(AREA_ATTRIBUTES, {
     sequelize,
     tableName: 'Area',
     timestamps: false
   });
+  }
+}
+
+export class MArea implements domain.IModelArea {
+  constructor( private sequelize : Sequelize.Sequelize ){}
+  buscarPorId(idArea: number): Promise<domain.Area | null> {
+    throw new Error('Method not implemented.');
   }
 }

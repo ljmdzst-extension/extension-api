@@ -99,7 +99,7 @@ export class Actividad extends Model<ActividadAttributes, ActividadCreationAttri
   }
 }
 
-export class Mactividad implements domain.IModelActividad { 
+export class MActividad implements domain.IModelActividad { 
   constructor( private sequelize : Sequelize.Sequelize ){}
   
   async buscarPorId(idActividad: number ): Promise<domain.Actividad | null> {
