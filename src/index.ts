@@ -25,7 +25,8 @@ import usuarioRouter from './routes/usuario';
 import routerGraficos from './routes/graficos';
 import { informarPeticion } from './middlewares/bases';
 import { extraerToken, validarToken } from './middlewares/auth';
-import { obtenerDataUsuario } from './middlewares/usuario';
+import { informarUsuario, obtenerDataUsuario } from './middlewares/usuario';
+import { validarUsuarioAdmin } from './middlewares/admin';
 
 
 const app = express();
@@ -49,7 +50,10 @@ app.use( `${BASE_PATH}/usr/bases`, RouterBases  ) ;
 
 const BASE_PATH_METAS=`${BASE_PATH}/metas`;
 
-app.use(BASE_PATH_METAS,extraerToken,validarToken,obtenerDataUsuario);
+app.use(BASE_PATH_METAS,extraerToken,validarToken,obtenerDataUsuario,informarUsuario);
+
+
+app.use(`${BASE_PATH_METAS}/admin`,[validarUsuarioAdmin],routerAdmin);
 
 app.use(`${BASE_PATH_METAS}/programas`,routerPrograma);
 app.use(`${BASE_PATH_METAS}/areas`,routerArea);
@@ -57,13 +61,12 @@ app.use(`${BASE_PATH_METAS}/bases`,RouterBases);
 app.use(`${BASE_PATH_METAS}/actividad`,routerActividad);
 app.use(`${BASE_PATH_METAS}/graficos`,routerGraficos);
 
-app.use(`${BASE_PATH_METAS}/admin`,routerAdmin);
 
 // propuestas
 
 const BASE_PATH_PROPUESTAS=`${BASE_PATH}/prop`
 
-app.use(BASE_PATH_PROPUESTAS,extraerToken,validarToken,obtenerDataUsuario);
+app.use(BASE_PATH_PROPUESTAS,extraerToken,validarToken,obtenerDataUsuario,informarUsuario);
 
 app.use(`${BASE_PATH_PROPUESTAS}/`,RouterPropuestas);
 app.use(`${BASE_PATH_PROPUESTAS}/propuesta`,RouterPropuesta);

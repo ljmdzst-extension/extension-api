@@ -3,7 +3,6 @@ import {  response, NextFunction } from "express";
 
 export const extraerToken = (req : any, resp : typeof response, next : NextFunction) =>{
    try {
-    console.log(req.body.idActividad)
         const  token  = req.header('Authorization')?.split(' ')[1] ;    
         if(token) {
             req.token = token;  

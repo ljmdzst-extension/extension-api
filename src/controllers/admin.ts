@@ -11,7 +11,7 @@ export const getUsuarios = async(req : typeof request , resp : typeof response)=
         
   
         const usuarios = await SAdmin.verListaUsuarios();
-        console.log(usuarios.length);
+ 
         HttpHelpers.responderPeticionOk(resp,usuarios);
 
     } catch (error : any) {
@@ -31,7 +31,7 @@ export const getUsuario = async(req : typeof request , resp : typeof response)=>
         HttpHelpers.responderPeticionOk(resp,usuario);
 
     } catch (error : any) {
-        HttpHelpers.responderPeticionError(resp,error.message);
+        HttpHelpers.responderPeticionError(resp,error.message,error.status);
     }
 }
 
@@ -49,11 +49,19 @@ export const postUsuario = async(req : any, resp : typeof response )=>{
 
 export const putUsuario = async( req : any , resp : typeof response) => {
     try {
-        console.log(req.body);
         const usuario = await SAdmin.editarUsuario(req.body);
 
         HttpHelpers.responderPeticionOk(resp,usuario);
         
+    } catch (error : any) {
+        HttpHelpers.responderPeticionError(resp,error.message,error.status)
+    }
+}
+
+export const deleteUsuario = async( req : any , resp : typeof response) => {
+    try {
+        await SAdmin.bajaUsuario( req.params.idUsuario );
+        HttpHelpers.responderPeticionOk(resp,true);
     } catch (error : any) {
         HttpHelpers.responderPeticionError(resp,error.message,error.status)
     }

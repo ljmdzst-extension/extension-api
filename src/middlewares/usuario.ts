@@ -1,3 +1,4 @@
+import cli from 'cli-color'
 import { NextFunction, request, response } from "express";
 import { checkSchema, validationResult } from "express-validator";
 import { BD } from "../config/dbConfig";
@@ -77,6 +78,13 @@ export const validarCorreoYContraseña = checkSchema({
         exists : {
             errorMessage : 'E-mail obligatorio'
         },
+        normalizeEmail : {
+        
+            options : { 
+                all_lowercase : true,
+                gmail_remove_dots : false
+            }
+        },
         isEmail : {
             errorMessage : 'E-mail inválido, formato admitido: mail@mail.com'
         },
@@ -87,7 +95,7 @@ export const validarCorreoYContraseña = checkSchema({
             errorMessage : 'Ingrese su contraseña'
         },
         isLength: { 
-            options : {min : 6}, 
+            options : {min : 6, max : 255}, 
             errorMessage : 'La contraseña debe tener mínimo 6 caracteres.'
         }
     }
@@ -212,4 +220,14 @@ export const validarSchema = (req : typeof request, resp : typeof response, next
         )
     }
 
+}
+
+export const informarUsuario =  async(req : any, resp : typeof response, next : NextFunction) =>{
+    if(req.usuario) {
+        const {usuario} : { usuario : Usuario} = req.usuario;
+        console.log(cli.magenta( `USR : ${usuario.idUsuario}` ));
+        next();
+    } else {
+        HttpHelpers.responderPeticionError(resp,'Usuario no encontrado', 400);
+    }
 }

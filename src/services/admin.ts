@@ -8,12 +8,12 @@ import { Op } from 'sequelize';
 
 type TDataCategoria = {
     idCategoria : number,
-    nom : string
+    nombre : string
 }
 
 type TDataPermiso = {
     idPermiso : number,
-    nom : string
+    nombre : string
 }
 
 type TDataArea = {
@@ -122,10 +122,11 @@ export const altaUsuario = async( data : TDataPostUsuario)=>{
                 },
                 {isNewRecord : true}
             );
-            
-            await persona.save({transaction});
+   
             
         } 
+                 
+        await persona.save({transaction});
 
         const listaIdsUsados = await BD.Usuario.verlistaIdsUsados(sequelizeExtension,transaction);
         
@@ -151,6 +152,11 @@ export const altaUsuario = async( data : TDataPostUsuario)=>{
 
         await usuario.save({transaction});
 
+        const cantCategorias = await BD.Categoria.count({where : { idCategoria : data.categorias.map( ({idCategoria})=> idCategoria) }, transaction});
+
+        if(cantCategorias !== data.categorias.length ) throw { status : 400 , message : 'Algunas categorias no corresponden a las registradas' }
+
+
         await BD.CategoriaUsuario.bulkCreate( 
             data.categorias.map( ({idCategoria}) => ({ idCategoria,idUsuario : usuario.idUsuario})),
             {
@@ -158,6 +164,11 @@ export const altaUsuario = async( data : TDataPostUsuario)=>{
                 ignoreDuplicates : true
             }
         );
+
+        const cantPermisos = await BD.Permiso.count({where : { idPermiso : data.permisos.map( ({idPermiso})=> idPermiso) }, transaction});
+
+        if(cantPermisos !== data.permisos.length ) throw { status : 400 , message : 'Algunos permisos no corresponden a los registrados' }
+
 
         await BD.PermisoUsuario.bulkCreate(
             data.permisos.map(({idPermiso})=> ({idPermiso, idUsuario : usuario.idUsuario})),
@@ -168,14 +179,14 @@ export const altaUsuario = async( data : TDataPostUsuario)=>{
         )
 
 
-        const cAreasProgamaCategoriasUsuario : AreaProgramaUsuario[]  = [];
+        const cAreasProgamaUsuario : AreaProgramaUsuario[]  = [];
 
         data.areas.forEach( (anio) => {
             const _anio = anio.anio;
             anio.listaProgramas.forEach( (prog : TDataPrograma) => {
                 const idPrograma = prog.idPrograma;
                 prog.listaAreas.forEach( (area : TDataArea)=> {
-                    cAreasProgamaCategoriasUsuario.push(
+                    cAreasProgamaUsuario.push(
                         BD.AreaProgramaUsuario.build(
                             {
                                 idArea : area.idArea,
@@ -189,8 +200,22 @@ export const altaUsuario = async( data : TDataPostUsuario)=>{
             })
         });
 
+        const idsAreasAAsignar =  [...new Set(cAreasProgamaUsuario.map( ({idArea})=>idArea))];
+        const idsProgramasAAsignar =  [...new Set(cAreasProgamaUsuario.map( ({idPrograma})=>idPrograma))];
+        
+
+        const cantAreas = await BD.Area.count( { where : { idArea : idsAreasAAsignar },transaction} );
+
+        if(cantAreas !== idsAreasAAsignar.length ) throw { status : 400 , message : 'Algunas areas no corresponden a las registradas' }
+
+        const cantProgramas = await BD.Programa.count( { where : { idPrograma : idsProgramasAAsignar },transaction} );
+
+        if(cantProgramas !== idsProgramasAAsignar.length ) throw { status : 400 , message : 'Algunos programas no corresponden a los registrados' }
+
+
+
         await BD.AreaProgramaUsuario.bulkCreate(
-            cAreasProgamaCategoriasUsuario.map( area => area.dataValues),
+            cAreasProgamaUsuario.map( apu => apu.dataValues),
             {
                 transaction ,
                 ignoreDuplicates : true
@@ -223,33 +248,35 @@ export const editarUsuario = async( data : TDataPutUsuario )=>{
         
         if(!persona) {
 
-            persona = BD.Persona.build(
-                {
-                    nroDoc : data.persona.nroDoc,
-                    ape : data.persona.ape,
-                    nom : data.persona.nom, 
-                    tipoDoc : 1
+            persona = BD.Persona.build({...data.persona,tipoDoc : 1},  {isNewRecord : true} );
+   
+            
+        } else {
+            persona.set({
+                ape : data.persona.ape, 
+                nom : data.persona.nom,
+                tel : data.persona.tel,
+                email : data.persona.email,
+                ciudad : data.persona.ciudad,
+                provincia : data.persona.provincia,
+                pais : data.persona.pais
+            });
+            persona.isNewRecord = false;
+        }
 
-                },
-                {isNewRecord : true}
-            );
-            
-            await persona.save({transaction});
-            
-        } 
+        await persona.save({transaction});
 
         const usuario = await BD.Usuario.findByPk(data.usuario.idUsuario,{transaction});
 
         if(!usuario) throw { status : 400 , message : `No se encontro el usuario con id ${data.usuario.idUsuario}`}
 
-        usuario.set({
-            nroDoc : data.usuario.nroDoc,
-            email : data.usuario.email,
-            pass : data.usuario.pass,
-            idUnidadAcademica : data.usuario.idUnidadAcademica
-        });
+        usuario.set({...data.usuario , nroDoc : data.persona.nroDoc});
 
         await usuario.save({transaction});
+
+        const cantCategorias = await BD.Categoria.count({where : { idCategoria : data.categorias.map( ({idCategoria})=> idCategoria) }, transaction});
+
+        if(cantCategorias !== data.categorias.length ) throw { status : 400 , message : 'Algunas categorias no corresponden a las registradas' }
 
         await BD.CategoriaUsuario.bulkCreate( 
             data.categorias.map( ({idCategoria}) => ({ idCategoria,idUsuario : usuario.idUsuario})),
@@ -268,6 +295,9 @@ export const editarUsuario = async( data : TDataPutUsuario )=>{
             },
             transaction
         })
+        const cantPermisos = await BD.Permiso.count({where : { idPermiso : data.permisos.map( ({idPermiso})=> idPermiso) }, transaction});
+
+        if(cantPermisos !== data.permisos.length ) throw { status : 400 , message : 'Algunos permisos no corresponden a los registrados' }
 
         await BD.PermisoUsuario.bulkCreate(
             data.permisos.map(({idPermiso})=> ({idPermiso, idUsuario : usuario.idUsuario})),
@@ -307,7 +337,19 @@ export const editarUsuario = async( data : TDataPutUsuario )=>{
                 })
             })
         });
-    
+        
+        const idsAreasAAsignar =  [...new Set(cAreasProgamaUsuario.map( ({idArea})=>idArea))];
+        const idsProgramasAAsignar =  [...new Set(cAreasProgamaUsuario.map( ({idPrograma})=>idPrograma))];
+        
+
+        const cantAreas = await BD.Area.count( { where : { idArea : idsAreasAAsignar },transaction} );
+
+        if(cantAreas !== idsAreasAAsignar.length ) throw { status : 400 , message : 'Algunas areas no corresponden a las registradas' }
+
+        const cantProgramas = await BD.Programa.count( { where : { idPrograma : idsProgramasAAsignar },transaction} );
+
+        if(cantProgramas !== idsProgramasAAsignar.length ) throw { status : 400 , message : 'Algunos programas no corresponden a los registrados' }
+
 
         await BD.AreaProgramaUsuario.bulkCreate(
             cAreasProgamaUsuario.map( area => area.dataValues),
@@ -329,8 +371,17 @@ export const editarUsuario = async( data : TDataPutUsuario )=>{
 
     } catch (error) {
         await transaction.rollback();
-        console.log(error);
         throw error;
     }
 }
 
+export const bajaUsuario = async(idUsuario : string) => {
+    try {
+        const respuesta = await BD.Usuario.destroy({where : { idUsuario }});
+        if(respuesta < 1) {
+            console.log( 'usuario no encontrado' );
+        }
+    } catch (error) {
+        throw error;
+    }
+}
