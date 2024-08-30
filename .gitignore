@@ -64,8 +64,8 @@ typings/
 dist/
 
 # # tests
-# __tests__/
-# __mocks__/
+__tests__/
+__mocks__/
 
 usuarios.json
 package-lock.json

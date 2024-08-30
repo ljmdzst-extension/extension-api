@@ -22,7 +22,9 @@ import IValidatorActividad from '../aplication/validators/actividad';
 import IValidatorUsuario from '../aplication/validators/usuario';
 import { IModelPrograma } from './models/programa';
 import IModelArea from './models/area';
-import ProgramasHabilitadosDelUsuario from './classes/ProgramasHabilitadosDelUsuario';
+import PeriodoDeTrabajo,{TDataPeriodoDeTrabajo} from './classes/PeriodoDeTrabajo';
+import { MBases } from '../infraestructure/db/Mysql-Sequelize/models/Bases';
+import { TValoracion } from './types/valoracion';
 
 
 type _TDataActividad = TDataActividad;
@@ -42,8 +44,9 @@ type _TDataPersona = TDataPersona;
 type _TDataCategoria = TDataCategoria;
 type _TDataPermiso = TDataPermiso;
 type _TDataUsuario = TDataUsuario;
+type _TDataPeriodoDeTrabajo = TDataPeriodoDeTrabajo;
 
-
+type _TValoracion = TValoracion;
 interface MActividad extends IModelActividad {};
 interface MUsuario extends IModelUsuario {}
 interface MPersona extends IModelPersona{}
@@ -52,7 +55,7 @@ interface MArea extends IModelArea {}
 
 const _Actividad = Actividad;
 const _Area = Area;
-const _ProgramasHabilitadosDelUsuario = ProgramasHabilitadosDelUsuario;
+const _PeriodoDeTrabajo = PeriodoDeTrabajo;
 const _Enlace = Enlace;
 const _FechaPuntual = FechaPuntual;
 const _Institucion = Institucion;
@@ -68,14 +71,13 @@ const _Persona = Persona;
 const _Categoria = Categoria;
 const _Permiso = Permiso;
 const _Usuario = Usuario;
-
 interface VActividad extends IValidatorActividad {}
 interface VUsuario extends IValidatorUsuario{}
 
 export namespace domain {
     export class Actividad extends _Actividad {};
     export class Area extends _Area {};
-    export class ProgramasHabilitadosDelUsuario extends _ProgramasHabilitadosDelUsuario {};
+    export class PeriodoDeTrabajo extends _PeriodoDeTrabajo {};
     export class Enlace extends _Enlace {};
     export class FechaPuntual extends _FechaPuntual {};
     export class Institucion extends _Institucion {};
@@ -109,13 +111,23 @@ export namespace domain {
     export type TDataUsuario = _TDataUsuario;
     export type TDataCategoria = _TDataCategoria;
     export type TDataPermiso = _TDataPermiso;
+    export type TDataPeriodoDeTrabajo = _TDataPeriodoDeTrabajo;
+    export type TDataBases ={ 
+        areas: PeriodoDeTrabajo[]; 
+        objetivos: Objetivo[]; 
+        relaciones: Relacion[]; 
+        categorias: Categoria[]; 
+        permisos: Permiso[];
+        programasSIPPE: ProgramaSIPPE[]; 
+    }
+    export type TValoracion = _TValoracion;
 
     export interface IModelActividad extends MActividad{};
     export interface IModelUsuario extends MUsuario {};
     export interface IModelPersona extends MPersona {};
     export interface IModelPrograma extends MPrograma {};
     export interface IModelArea extends MArea {};
-
+    export interface IModelBases extends MBases {};
     export interface IValidatorActividad extends VActividad {};
     export interface IValidatorUsuario extends VUsuario {};
 }
