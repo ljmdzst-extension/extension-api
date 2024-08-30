@@ -39,7 +39,7 @@ export default class GestionDeBases {
         salida.listaProgramasSIPPE = dbBases.programasSIPPE.map( ps => ps.verDatos());
         salida.lAreasProgramasAnios = dbBases.areas.map( a => a.verDatos());
         salida.listaCategorias = dbBases.categorias.map( c => c.verDatos());
-        salida.listaPermisos = dbBases.permisos.map( p => p.verDatos());
+        salida.listaPermisos = dbBases.permisos.map( p => p.verDatos())
 
 
         return salida;
