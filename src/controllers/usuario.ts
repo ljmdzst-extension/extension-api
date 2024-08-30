@@ -9,7 +9,6 @@ import { v4 as uuidv4 } from 'uuid';
 import { HttpHelpers } from '../helpers/general';
 import { PermisoAttributes } from '../models/Permiso';
 import { CategoriaAttributes } from '../models/Categoria';
-import { AreaAttributes } from '../models/Area';
 
 
 type DataListaUsuarios = { usuarios :{ idUsuario : string , email : string }[] }
@@ -25,7 +24,7 @@ export const loginUsuario =  async( req : any, resp : typeof response  ) => {
         })
 
         if( ! persona ) 
-            throw { status : 500 , msg : `No existe persona asociada a usuario : ${usuario.idUsuario}`}
+            throw { status : 500 , message : `No existe persona asociada a usuario : ${usuario.idUsuario}`}
 
         const token = jwt.sign( {idUsuario : usuario.idUsuario} , process.env.HASH_KEY || '',{expiresIn : 60 * 60} )
 
@@ -36,12 +35,13 @@ export const loginUsuario =  async( req : any, resp : typeof response  ) => {
             nom : persona.nom,
             permisos : permisos.map((p : PermisoAttributes) => p.nombre),
             categorias : categorias.map( (c : CategoriaAttributes) => c.nombre),
-            areas : areas.map( (a:AreaAttributes ) => a.idArea ),
+            areas : areas,
             token : token
         });
+        
     } catch (error : any) {
 
-        HttpHelpers.responderPeticionError(resp,error.status || 500,error.message || error)
+        HttpHelpers.responderPeticionError(resp,error.message || error,error.status || 500)
     }
 
 }
@@ -51,7 +51,7 @@ export const authUsuario = async( req : any, resp : typeof response  )  => {
    try {
         const {idUsuario}  = req.usuario;
         
-       const _token = jwt.sign( {idUsuario} ,process.env.HASH_KEY || '', {expiresIn : 60 * 60} );
+        const _token = jwt.sign( {idUsuario} ,process.env.HASH_KEY || '', {expiresIn : '4h'} );
         
         HttpHelpers.responderPeticionOk(resp,{token : _token});
 

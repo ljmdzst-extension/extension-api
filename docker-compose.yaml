@@ -1,14 +1,12 @@
-version: "3.9"
 services:
  server:
   build:
     context: .
-    target: minimal
   image: extension_api:v2
   ports:
    - ${PORT}:${PORT}
   volumes:
-   - ./dist:/extension_api/src
+   - ./dist:/extension_api
    - /extension_api/node_modules
   restart: unless-stopped
   environment:
@@ -27,7 +25,7 @@ services:
   ports:
    - "33061:3306"
   environment:
-    MYSQL_ROOT_PASSWORD: extension_1234
-    MYSQL_DATABASE: db_extension
+   - MYSQL_ROOT_PASSWORD=${DB_PASS}
+   - MYSQL_DATABASE=${DB_NAME}
 
     

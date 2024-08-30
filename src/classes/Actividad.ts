@@ -637,7 +637,12 @@ class Actividad  {
         let salida : IItemActividad[] = [];
         let opcionesBusqueda : {} = {
             idArea : id , 
-            createdAt : {[Op.gt] : new Date(`${anio}-01-01`) }
+            createdAt : { 
+                [Op.and] : { 
+                    [Op.gt] : new Date(`${anio}-01-01`), 
+                    [Op.lt] : new Date(`${anio}-12-31`) 
+                } 
+            }
         };
         if(keyword){
             opcionesBusqueda = {

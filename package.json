@@ -4,7 +4,8 @@
   "private": true,
   "scripts": {
     "dev": "nodemon -L src/index.js",
-    "watch": "node_modules\\.bin\\tsc -w",
+    "watch-lin": "node_modules/.bin/tsc -w",
+    "watch-win": "node_modules\\.bin\\tsc -w",
     "test": "jest --detectOpenHandles"
   },
   "dependencies": {

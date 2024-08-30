@@ -1,12 +1,6 @@
-import { Op, Transaction } from "sequelize";
+import { Op } from "sequelize";
 import sequelizeExtension, { BD } from "../config/dbConfig";
 import { Actividad } from "../models/Actividad";
-import { AreaPrograma } from "../models/AreaPrograma"
-import { Objetivo } from "../models/Objetivo";
-import { ObjetivoActividad } from "../models/ObjetivoActividad";
-import { TipoObjetivo, TipoObjetivoId } from "../models/TipoObjetivo";
-import { Relacion } from "../models/Relacion";
-import { TipoRelacion } from "../models/TipoRelacion";
 import { RelacionActividad } from "../models/RelacionActividad";
 
 
@@ -30,7 +24,7 @@ export const verGraficosDeAnio = async( anio : number)=>{
        salida = {...salida , ...(await calcularCrucesObjetivos(cActividad))}
 
     // uuaa
-    salida = {...salida,...(await calcularCrucesUUAA())}
+    salida = {...salida,...(await calcularCrucesUUAA(cActividad))}
     
 
   
@@ -42,26 +36,35 @@ export const verGraficosDeAnio = async( anio : number)=>{
 }
 
 
-const calcularCrucesUUAA = async( ) => {
+const calcularCrucesUUAA = async( cActividad : Actividad[] ) => {
     let salida : any = { }
     const t  = await sequelizeExtension.transaction({logging : sql => console.log(sql)});
 
     const tipoUA = await BD.TipoRelacion.findOne({ where : {nom : 'U.A.'} , transaction : t});
     
-    if(tipoUA) {
-        const cUUAA = await BD.Relacion.findAll( {where : { idTipoRelacion : tipoUA.idTipoRelacion }, transaction : t});
+    if(!tipoUA) throw { status : 500 , message : 'No se encontro en BD tipoRel U.A.' }  
 
-        const cRelacionActividad = await BD.RelacionActividad.findAll( { where : { idRelacion : cUUAA.map( ua => ua.idRelacion) }, transaction : t});
+    const cUUAA = await BD.Relacion.findAll( {where : { idTipoRelacion : tipoUA.idTipoRelacion }, transaction : t});
 
-        salida = {
-       
-            dataGraficoUUAA : cUUAA.map( ua => ({ 
-                ua : ua.nom , 
-                cantActividades : cRelacionActividad.filter( ra => ra.idRelacion === ua.idRelacion ).length 
-            }) )
+    const cRelacionActividad : RelacionActividad[] = [] ;
     
-        }
-    } 
+    await Promise.all(
+        cActividad.map( a =>  
+            BD.RelacionActividad
+            .findAll( { where : { idRelacion : cUUAA.map( ua => ua.idRelacion) ,idActividad : a.idActividad  },  transaction : t })
+            .then( resp => cRelacionActividad.push(...resp))
+            .catch( e => console.log(e))
+        )
+    );
+
+    salida = {
+   
+        dataGraficoUUAA : cUUAA.map( ua => ({ 
+            ua : ua.nom , 
+            cantActividades : cRelacionActividad.filter( ra => ra.idRelacion === ua.idRelacion ).length 
+        }) )
+
+    }
   
     await t.commit();
 

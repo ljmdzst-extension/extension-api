@@ -24,9 +24,21 @@ import { extraerToken, validarToken } from "../middlewares/auth";
 
 const usuarioRouter = Router();
 
-usuarioRouter.post('/login', [...validarCorreoYContraseña,validarSchema], obtenerDataUsuario,validarPass,validarUsuarioNoPendiente,loginUsuario );
+usuarioRouter.post(
+    '/login', 
+    [...validarCorreoYContraseña,validarSchema], 
+    obtenerDataUsuario,
+    validarPass,
+    validarUsuarioNoPendiente,
+    loginUsuario 
+);
 
-usuarioRouter.post('/register',[...validarCamposRegistro, validarSchema ],chequearUsuarioNoExistente, registerUsuario );
+usuarioRouter.post(
+    '/register',
+    [...validarCamposRegistro, validarSchema ],
+    chequearUsuarioNoExistente, 
+    registerUsuario 
+);
 
 usuarioRouter.post('/auth', extraerToken, validarToken, authUsuario );
 

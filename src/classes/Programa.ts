@@ -58,19 +58,14 @@ export interface IPrograma {
         let areasProgramas = await BD.AreaPrograma.findAll({where : {anio}, transaction});
   
         if(idCategoriaUsuario) {
-            const areasDeUsuario  = await BD.AreaProgramaCategoriaUsuario.findAll({
-                where : {
-                    idCategoria : idCategoriaUsuario , 
-                    idUsuario : idUsuario,
-                    anio
-                }, 
-                transaction});
+            const areasDeUsuario  = await BD.AreaProgramaUsuario.findAll({ where : {  idUsuario : idUsuario, anio },   transaction});
             areasProgramas = areasProgramas.filter( areaProg => 
-                    areasDeUsuario.find( ({idArea,idPrograma,anio}) => 
-                        idArea === areaProg.idArea && 
-                        idPrograma === areaProg.idPrograma && 
-                        anio === areaProg.anio 
-                    ));
+                areasDeUsuario.find( ({idArea,idPrograma,anio}) => 
+                    idArea === areaProg.idArea          && 
+                    idPrograma === areaProg.idPrograma  && 
+                    anio === areaProg.anio 
+                )
+            );
         }
 
         const programas = await BD.Programa.findAll({ 

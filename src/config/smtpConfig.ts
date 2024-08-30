@@ -4,14 +4,12 @@ import SMTPTransport from 'nodemailer/lib/smtp-transport';
 
     
 export let smtpService = nodemailer.createTransport({
-    service : 'gmail',
-    auth : {
-        type: 'OAuth2',
-        user: process.env.SMTP_USER ,
-        pass: process.env.SMTP_PASS ,
-        clientId: process.env.SMTP_CLIENT_ID ,
-        clientSecret: process.env.SMTP_SECRET ,
-        refreshToken: process.env.SMTP_REFRESH_TOKEN
+    host: process.env.SMTP_HOST,
+    port: process.env.SMTP_PORT,
+    secure: true, // upgrade later with STARTTLS
+    auth: {
+      user: process.env.SMTP_USER,
+      pass: process.env.SMTP_PASS,
     }
 } as SMTPTransport.Options);
 

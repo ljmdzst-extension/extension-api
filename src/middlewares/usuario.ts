@@ -1,11 +1,11 @@
+import cli from 'cli-color'
 import { NextFunction, request, response } from "express";
 import { checkSchema, validationResult } from "express-validator";
-import sequelizeExtension, { BD } from "../config/dbConfig";
+import { BD } from "../config/dbConfig";
 import { HttpHelpers } from "../helpers/general";
 import { Usuario } from "../models/Usuario";
-import { Area } from "../models/Area";
 
-
+import * as SUsuario from '../services/usuario';
 
 export const chequearUsuarioNoExistente =  async(req : typeof request, resp : typeof response, next : NextFunction) =>{
 
@@ -35,59 +35,24 @@ export const chequearUsuarioNoExistente =  async(req : typeof request, resp : ty
 
 
 export const obtenerDataUsuario = async(req : any, resp : typeof response, next : NextFunction) =>{
-    const transaction = await sequelizeExtension.transaction({ logging : process.env.NODE_ENV === 'development' ? sql => console.log(sql) : undefined});
+    
     try {
 
-        let iUsuario : Usuario | null= null;
+        if((!req.usuario) && (!req.body))  throw { status : 400 , message : 'No se pudo obtener data de la petición'}
 
-        if(req.body && req.body.email){
-
-            iUsuario = await BD.Usuario.findOne({where : {email : req.body.email}, transaction});
+        if(req.usuario) {
+            req.usuario = await SUsuario.obtenerDataUsuario(req.usuario.idUsuario,undefined)
+           
         }
-        if(req.usuario && req.usuario.idUsuario){
-
-            iUsuario = await BD.Usuario.findByPk(req.usuario.idUsuario, {transaction});
-        } 
-    
-        if(!iUsuario) throw {status : 400 , message: 'no existe un usuario con ese id'}
+        else if( req.body){
+            req.usuario = await SUsuario.obtenerDataUsuario(undefined,req.body.email)
+           
         
-        const lCategoriasUsuario = await BD.CategoriaUsuario.findAll({where : {idUsuario : iUsuario.idUsuario}, transaction});
-        
-        if(!lCategoriasUsuario) throw { status : 500 , message : 'usuario sin categoría'}
-
-        const categorias = await BD.Categoria.findAll({where : {idCategoria : lCategoriasUsuario.map( cu => cu.idCategoria)} , transaction});
-        
-        const permisosCategorias = await BD.PermisoCategoria.findAll({ where : {idCategoria : lCategoriasUsuario.map(cu => cu.idCategoria)} , transaction});
-        
-        if(permisosCategorias.length < 1) throw { status : 403 , message : 'usuario sin permisos asignados'}
-        
-        const permisos = await BD.Permiso.findAll({where : { idPermiso : permisosCategorias.map( pc => pc.idPermiso) } , transaction});
-        
-        const areasHabilitadas = await BD.AreaProgramaCategoriaUsuario.findAll({
-            where : {
-                idUsuario : iUsuario.idUsuario,
-                idCategoria : categorias.map(c => c.idCategoria),
-                anio : new Date().getFullYear(),
-            },
-            transaction
-        });
-        
-        const areas = await Area.findAll({where : {idArea : areasHabilitadas.map( ah => ah.idArea)},transaction});
-
-
-        await transaction.commit();
-       
-        req.usuario = {
-            usuario : iUsuario.dataValues,
-            categorias : categorias.map( c => c.dataValues),
-            areas : areas.map( a => a.dataValues),
-            permisos : permisos.map( p => p.dataValues)
         }
-
+        
         next();
-        
+
     } catch (error : any) {
-        await transaction.rollback();
         if(error.status === 500) {
             console.log(`ERROR : ${req.method}-${req.path}-${error.message}`)
         }
@@ -113,6 +78,13 @@ export const validarCorreoYContraseña = checkSchema({
         exists : {
             errorMessage : 'E-mail obligatorio'
         },
+        normalizeEmail : {
+        
+            options : { 
+                all_lowercase : true,
+                gmail_remove_dots : false
+            }
+        },
         isEmail : {
             errorMessage : 'E-mail inválido, formato admitido: mail@mail.com'
         },
@@ -123,8 +95,8 @@ export const validarCorreoYContraseña = checkSchema({
             errorMessage : 'Ingrese su contraseña'
         },
         isLength: { 
-            options : {min : 6, max : 6}, 
-            errorMessage : 'Contraseña, debe tener 6 caracteres.'
+            options : {min : 6, max : 255}, 
+            errorMessage : 'La contraseña debe tener mínimo 6 caracteres.'
         }
     }
 },['body']);
@@ -187,8 +159,8 @@ export const validarCamposRegistro = checkSchema({
             errorMessage : 'Contraseña obligatoria'
         },
         isLength: { 
-            options : {min : 6, max : 6}, 
-            errorMessage : 'Contraseña, debe tener 6 caracteres.'
+            options : {min : 6, max : 255}, 
+            errorMessage : 'Contraseña, debe tener mínimo 6 caracteres.'
         }
     },
     idUnidadAcademica : {
@@ -210,8 +182,8 @@ export const validarCamposRegistro = checkSchema({
             errorMessage : 'Confirmar contraseña obligatoria'
         },
         isLength: { 
-            options : {min : 6, max : 6}, 
-            errorMessage : 'Contraseña, debe tener 6 caracteres.'
+            options : {min : 6, max : 255}, 
+            errorMessage : 'Contraseña, debe tener mínimo 6 caracteres.'
         },
         custom : {
             options : ( value, {req} )=> req.body.pass === value,
@@ -248,4 +220,14 @@ export const validarSchema = (req : typeof request, resp : typeof response, next
         )
     }
 
+}
+
+export const informarUsuario =  async(req : any, resp : typeof response, next : NextFunction) =>{
+    if(req.usuario) {
+        const {usuario} : { usuario : Usuario} = req.usuario;
+        console.log(cli.magenta( `USR : ${usuario.idUsuario}` ));
+        next();
+    } else {
+        HttpHelpers.responderPeticionError(resp,'Usuario no encontrado', 400);
+    }
 }

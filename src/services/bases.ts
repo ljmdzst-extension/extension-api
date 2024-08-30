@@ -5,13 +5,19 @@ import Relacion, { IRelacion } from "../classes/Relacion";
 import Valoracion, { IValoracion } from "../classes/Valoracion";
 import Institucion, { IInstitucion } from "../classes/Institucion";
 import { DataGetInstituciones } from "../types/base";
+import { BD } from "../config/dbConfig";
+import { AreaPrograma } from "../models/AreaPrograma";
+import { Programa } from "../models/Programa";
+import { Area } from "../models/Area";
+import { IPrograma } from "../classes/Programa";
 
 export type TBases = {
     listaObjetivos : IObjetivo[],
     listaProgramasSIPPE : IProgramaSIPPE[]
     listaRelaciones : IRelacion[],
     listaValoraciones : IValoracion[],
-    unidadesAcademicas : ({idUnidadAcademica : number, nom : string})[]
+    unidadesAcademicas : ({idUnidadAcademica : number, nom : string})[],
+    lAreasProgramasAnios : ({anio : number, listaProgramas : IPrograma[]})[]
 }
 
 
@@ -24,7 +30,8 @@ export default class SBases {
             listaProgramasSIPPE : [],
             listaRelaciones : [],
             listaValoraciones : [],
-            unidadesAcademicas : []
+            unidadesAcademicas : [],
+            lAreasProgramasAnios : []
         }
 
         salida.listaRelaciones = await Relacion.verListaBD(transaction);
@@ -36,7 +43,53 @@ export default class SBases {
         salida.listaValoraciones= await Valoracion.verListaBD(transaction);
 
         salida.unidadesAcademicas = salida.listaRelaciones.filter( rel => rel.tipoRelacion?.idTipoRelacion === 3 )
-                                                          .map( rel => ({idUnidadAcademica : rel.idRelacion, nom : rel.nom || '-'}))
+                                                          .map( rel => ({idUnidadAcademica : rel.idRelacion, nom : rel.nom || '-'}));
+        
+        const lAreaProgramas : AreaPrograma[] = [];                                                  
+        const lProgramas : Map<number,Programa> = new Map();
+        const lAreas : Map<number,Area> = new Map();
+
+        await Promise.all([
+            BD.AreaPrograma.findAll({transaction}).then(resp => lAreaProgramas.push(...resp)),
+            BD.Programa.findAll({transaction}).then(resp => resp.forEach( p => lProgramas.set( p.idPrograma, p ))),
+            BD.Area.findAll({transaction}).then(resp => resp.forEach( a => lAreas.set(a.idArea,a)))
+        ]);
+        const anios : Set<number> = new Set();
+
+        lAreaProgramas.forEach( ap => anios.add(ap.anio));
+
+        anios.forEach( a => {
+            const apsDelAnio = lAreaProgramas.filter( ap => ap.anio === a);
+            const listaProgramas : IPrograma [ ] = [];
+            
+            apsDelAnio.forEach( apa => {
+                
+                let itemProg = listaProgramas.find( _p => _p.idPrograma === apa.idPrograma);
+                if(!itemProg) {
+                    itemProg = { 
+                        idPrograma : apa.idPrograma, 
+                        nom : `${lProgramas.get(apa.idPrograma)?.nom}` ,
+                        listaAreas : []  
+                    } 
+                    listaProgramas.push( itemProg )
+
+                }
+                const area = lAreas.get(apa.idArea);
+                if(area && itemProg.listaAreas.every( a => a.idArea !== area.idArea)) {
+                    itemProg.listaAreas.push(area.dataValues);
+                }
+               
+
+            });
+
+            salida.lAreasProgramasAnios.push(
+                {
+                    anio : a,
+                    listaProgramas : listaProgramas
+                }
+            )
+        })
+            
         return salida;
     }
 

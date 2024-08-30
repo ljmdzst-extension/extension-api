@@ -1,28 +1,26 @@
 import * as Sequelize from 'sequelize';
 import { DataTypes, Model } from 'sequelize';
 
-export interface AreaProgramaCategoriaUsuarioAttributes {
+export interface AreaProgramaUsuarioAttributes {
   idArea: number;
   idPrograma: number;
   anio : number;
-  idCategoria: number;
   idUsuario : string;
 }
 
-export type AreaProgramaCategoriaUsuarioPk = "idArea" | "idPrograma" | "anio" | "idCategoria";
-export type AreaProgramaCategoriaUsuarioId = AreaProgramaCategoriaUsuario[AreaProgramaCategoriaUsuarioPk];
-export type AreaProgramaCategoriaUsuarioCreationAttributes = AreaProgramaCategoriaUsuarioAttributes;
+export type AreaProgramaUsuarioPk = "idArea" | "idPrograma" | "anio" ;
+export type AreaProgramaUsuarioId = AreaProgramaUsuario[AreaProgramaUsuarioPk];
+export type AreaProgramaUsuarioCreationAttributes = AreaProgramaUsuarioAttributes;
 
-export class AreaProgramaCategoriaUsuario extends Model<AreaProgramaCategoriaUsuarioAttributes, AreaProgramaCategoriaUsuarioCreationAttributes> implements AreaProgramaCategoriaUsuarioAttributes {
+export class AreaProgramaUsuario extends Model<AreaProgramaUsuarioAttributes, AreaProgramaUsuarioCreationAttributes> implements AreaProgramaUsuarioAttributes {
   idArea!: number;
   idPrograma!: number;
   anio !: number;
-  idCategoria !: number;
   idUsuario !: string;
 
 
-  static initModel(sequelize: Sequelize.Sequelize): typeof AreaProgramaCategoriaUsuario {
-    return AreaProgramaCategoriaUsuario.init({
+  static initModel(sequelize: Sequelize.Sequelize): typeof AreaProgramaUsuario {
+    return AreaProgramaUsuario.init({
     idArea: {
       type: DataTypes.INTEGER,
       allowNull: false,
@@ -50,17 +48,8 @@ export class AreaProgramaCategoriaUsuario extends Model<AreaProgramaCategoriaUsu
           key: 'anio'
         }
     },
-    
-    idCategoria: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
-        primaryKey: true,
-        references: {
-          model: 'CategoriaUsuario',
-          key: 'idCategoria'
-        }
-      },
-      idUsuario : {
+  
+    idUsuario : {
         type : DataTypes.STRING(255),
         allowNull : false,
         primaryKey : true,
@@ -71,8 +60,9 @@ export class AreaProgramaCategoriaUsuario extends Model<AreaProgramaCategoriaUsu
       }
   }, {
     sequelize,
-    tableName: 'AreaProgramaCategoriaUsuario',
-    timestamps: false
+    tableName: 'AreaProgramaUsuario',
+    timestamps: true,
+    paranoid : true
   });
   }
 }
