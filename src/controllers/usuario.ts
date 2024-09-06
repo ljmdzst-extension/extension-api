@@ -26,7 +26,7 @@ export const loginUsuario =  async( req : any, resp : typeof response  ) => {
         if( ! persona ) 
             throw { status : 500 , message : `No existe persona asociada a usuario : ${usuario.idUsuario}`}
 
-        const token = jwt.sign( {idUsuario : usuario.idUsuario} , process.env.HASH_KEY || '',{expiresIn : 60 * 60} )
+        const token = jwt.sign( {idUsuario : usuario.idUsuario} , process.env.HASH_KEY || '',{expiresIn : '4h'} )
 
         HttpHelpers.responderPeticionOk(resp, {
             idUsuario : usuario.idUsuario,

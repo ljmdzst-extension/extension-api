@@ -10,19 +10,23 @@ import { AreaPrograma } from "../models/AreaPrograma";
 import { Programa } from "../models/Programa";
 import { Area } from "../models/Area";
 import { IPrograma } from "../classes/Programa";
+import Permiso, { IPermiso } from "../classes/Permiso";
+import Categoria, { ICategoria } from "../classes/Categoria";
 
 export type TBases = {
     listaObjetivos : IObjetivo[],
     listaProgramasSIPPE : IProgramaSIPPE[]
     listaRelaciones : IRelacion[],
     listaValoraciones : IValoracion[],
+    listaPermisos : IPermiso[],
+    listaCategorias : ICategoria[],
     unidadesAcademicas : ({idUnidadAcademica : number, nom : string})[],
     lAreasProgramasAnios : ({anio : number, listaProgramas : IPrograma[]})[]
 }
 
 
 export default class SBases {
-    public static async mostrarBases( data : any, transaction ?: Transaction) 
+    public static async mostrarBases(  transaction ?: Transaction) 
     : Promise<TBases> 
     {
         let salida : TBases = {
@@ -30,9 +34,15 @@ export default class SBases {
             listaProgramasSIPPE : [],
             listaRelaciones : [],
             listaValoraciones : [],
+            listaPermisos : [],
+            listaCategorias : [],
             unidadesAcademicas : [],
             lAreasProgramasAnios : []
         }
+
+        salida.listaPermisos = await Permiso.verListaBD(transaction);
+        
+        salida.listaCategorias = await Categoria.verListaBD(transaction);
 
         salida.listaRelaciones = await Relacion.verListaBD(transaction);
 

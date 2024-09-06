@@ -9,6 +9,7 @@
     "test": "jest --detectOpenHandles"
   },
   "dependencies": {
+    "busboy-body-parser": "^0.3.2",
     "cli-color": "^2.0.3",
     "cors": "2.8.5",
     "debug": "~2.6.9",

@@ -57,6 +57,7 @@ export const revisionValidatorBodyUsuario = express_validator.checkSchema( {
     'usuario.idUsuario' : { isLength : { options :{min : 1} , errorMessage : 'usuario.idUsuario obligatoriao '} },
     'usuario.pass' : { isLength : { options : { min : 6 , max : 255} , errorMessage : ' pass min 6 , max 255' } },
     'usuario.email' : { 
+        trim : true,
         normalizeEmail : {
             options : {  all_lowercase : true  }
         },

@@ -46,8 +46,6 @@ export const obtenerDataUsuario = async(req : any, resp : typeof response, next 
         }
         else if( req.body){
             req.usuario = await SUsuario.obtenerDataUsuario(undefined,req.body.email)
-           
-        
         }
         
         next();

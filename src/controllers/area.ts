@@ -1,5 +1,8 @@
 
 import cli from 'cli-color'
+import fs from 'fs';
+import fspromises from 'fs/promises'
+import path from 'path'
 import { request, response } from "express";
 
 import {  IItemActividad, IResponseActividad } from "../classes/Actividad";
@@ -8,8 +11,15 @@ import Programa from "../classes/Programa";
 import { HttpHelpers } from "../helpers/general";
 import sequelizeExtension from '../config/dbConfig';
 
+type TBusBoyBodyParserFile = {
+    data : Buffer,
+    name : string,
+    encoding :string,
+    mimetype : string,
+    truncated : boolean
+}
 
- export const  verListaAreas = async(  req : typeof request , resp : typeof response) => {
+export const  verListaAreas = async(  req : typeof request , resp : typeof response) => {
     try {
             let salida : IArea[] = [];
 
@@ -79,3 +89,56 @@ export const  verResumenArea = async (  req : typeof request , resp : typeof res
            }
     
         }
+
+export const descargarPresupuesto = async(   req : typeof request , resp : typeof response  ) => {
+    try {
+        // buscar directorio del proyecto por el codigo
+        const PATH_DOCS = `${process.env.PATH_DOCS}`;
+
+        const {anio , idPrograma, idArea} = req.params;
+
+
+        if(!fs.existsSync(PATH_DOCS)) throw { status : 400 , message : 'no existe el archivo especificado'}
+        const PATH_PRESUPUESTO = `${PATH_DOCS}/${anio}/${idPrograma}/${idArea}`;
+        if(!fs.existsSync(PATH_PRESUPUESTO)) throw { status : 400 , message : 'no existe el directorio del area'}
+
+
+        // descargar el archivo
+        resp.status(200).download(`${PATH_PRESUPUESTO}/PRESUPUESTO.xlsx`);
+        
+    } catch (error : any) {
+        HttpHelpers.responderPeticionError(resp,error.message,error.status);
+    }
+}
+
+export const subirPrespuesto = async(   req : any , resp : typeof response  ) => {
+    try {
+        
+        const dataFile : TBusBoyBodyParserFile = Object.values(req.files)[0] as TBusBoyBodyParserFile ;
+
+        // buscar directorio del proyecto por el codigo
+        const PATH_DOCS = `${process.env.PATH_DOCS}`;
+
+        const {anio , idPrograma, idArea} = req.params;
+
+
+        if(!fs.existsSync(PATH_DOCS)) throw { status : 400 , message : 'no existe el directorio docs'}
+        if(!fs.existsSync(`${PATH_DOCS}/${anio}`)){
+            await fspromises.mkdir(`${PATH_DOCS}/${anio}`);
+        }
+        if(!fs.existsSync(`${PATH_DOCS}/${anio}/${idPrograma}`)){
+            await fspromises.mkdir(`${PATH_DOCS}/${anio}/${idPrograma}`);
+        }
+        if(!fs.existsSync(`${PATH_DOCS}/${anio}/${idPrograma}/${idArea}`)){
+            await fspromises.mkdir(`${PATH_DOCS}/${anio}/${idPrograma}/${idArea}`);
+        }
+        // descargar el archivo
+        await fspromises.writeFile(`${PATH_DOCS}/${anio}/${idPrograma}/${idArea}/PRESUPUESTO.xlsx`,dataFile.data);
+        
+
+        HttpHelpers.responderPeticionOk(resp,dataFile.name);
+        
+    } catch (error : any) {
+        HttpHelpers.responderPeticionError(resp,error.message,error.status);
+    }
+}

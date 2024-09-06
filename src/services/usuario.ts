@@ -13,12 +13,13 @@ export const obtenerDataUsuario = async( idUsuario ?: string, email ?: string)=>
 
         iUsuario = await BD.Usuario.findOne({where : {email : email}, transaction});
     }
+    
     else if(idUsuario){
 
         iUsuario = await BD.Usuario.findByPk(idUsuario, {transaction});
     } 
-
-    if(!iUsuario) throw {status : 400 , message: 'no existe un usuario con ese id'}
+ 
+    if(!iUsuario) throw {status : 400 , message: 'no existe un usuario con ese id o ese email'}
     
 
     const persona = await BD.Persona.findByPk(iUsuario.nroDoc,{transaction});

@@ -8,7 +8,7 @@ export const verBases = async(req : typeof request , res : typeof response)=>{
     const transaction = await sequelizeExtension.transaction();
     try {
         
-        const otrasBases = await SBases.mostrarBases({},transaction);
+        const otrasBases = await SBases.mostrarBases(transaction);
 
         transaction.afterCommit(async()=>{
             res.status(200).json({
@@ -18,7 +18,7 @@ export const verBases = async(req : typeof request , res : typeof response)=>{
                     ...otrasBases
                 }
             })
-        })
+        });
 
         await transaction.commit();
         

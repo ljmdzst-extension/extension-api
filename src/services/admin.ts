@@ -81,7 +81,6 @@ export const verUsuario = async(idUsuario : string)=>{
 }
 
 export const verListaUsuarios = async() => {
-   
     try {
 
         let salida : any = [];
@@ -90,7 +89,14 @@ export const verListaUsuarios = async() => {
         
         const tareas = new ColaDeTareas();
 
-        usuarios.forEach( u => tareas.push( ()=> SUsuario.obtenerDataUsuario(u.idUsuario,u.email).then( data => salida.push(data)) ) )
+        usuarios.forEach( u => tareas.push( ()=> SUsuario.obtenerDataUsuario(u.idUsuario,u.email).then( data => salida.push({
+            nroDoc : data.persona.nroDoc,
+            ape : data.persona.ape,
+            nom : data.persona.nom,
+            email : data.usuario.email,
+            categorias : data.categorias,
+            permisos : data.permisos
+        })) ) )
         
         await tareas.resolverSinDelay();
 

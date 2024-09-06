@@ -5,6 +5,7 @@ dotenv.config();
 import express, { request, response } from 'express';
 import cors from 'cors';
 import path from 'path';
+import busboyBodyParser from 'busboy-body-parser';
 import RouterPropuesta from './routes/propuesta';
 import RouterPropuestas from './routes/propuestas';
 import RouterEvaluacion from './routes/evaluacion';
@@ -32,6 +33,8 @@ import { validarUsuarioAdmin } from './middlewares/admin';
 const app = express();
 
 app.use(cors());
+
+app.use(busboyBodyParser({limit : '5mb'}));
 
 app.use(express.json());
 
