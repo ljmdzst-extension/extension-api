@@ -66,3 +66,143 @@ export const deleteUsuario = async( req : any , resp : typeof response) => {
         HttpHelpers.responderPeticionError(resp,error.message,error.status)
     }
 }
+
+
+export const getCategorias = async( req : any, resp : typeof response)=>{
+    try {
+        
+        HttpHelpers.responderPeticionOk(resp,true);
+    } catch (error : any) {
+
+        HttpHelpers.responderPeticionError(resp,error.message,error.status)
+    }
+}
+export const getCategoria = async( req : any, resp : typeof response)=>{
+    try {
+        
+        HttpHelpers.responderPeticionOk(resp,true);
+    } catch (error : any) {
+
+        HttpHelpers.responderPeticionError(resp,error.message,error.status)
+    }
+}
+export const postCategoria = async( req : any, resp : typeof response)=>{
+    try {
+        
+        HttpHelpers.responderPeticionOk(resp,true);
+    } catch (error : any) {
+
+        HttpHelpers.responderPeticionError(resp,error.message,error.status)
+    }
+}
+export const putCategoria = async( req : any, resp : typeof response)=>{
+    try {
+        
+        HttpHelpers.responderPeticionOk(resp,true);
+    } catch (error : any) {
+
+        HttpHelpers.responderPeticionError(resp,error.message,error.status)
+    }
+}
+export const deleteCategoria = async( req : any, resp : typeof response)=>{
+    try {
+        
+        HttpHelpers.responderPeticionOk(resp,true);
+    } catch (error : any) {
+
+        HttpHelpers.responderPeticionError(resp,error.message,error.status)
+    }
+}
+
+
+export const getPermisos = async( req : any, resp : typeof response)=>{
+    try {
+        
+        HttpHelpers.responderPeticionOk(resp,true);
+    } catch (error : any) {
+
+        HttpHelpers.responderPeticionError(resp,error.message,error.status)
+    }
+}
+export const getPermiso = async( req : any, resp : typeof response)=>{
+    try {
+        
+        HttpHelpers.responderPeticionOk(resp,true);
+    } catch (error : any) {
+
+        HttpHelpers.responderPeticionError(resp,error.message,error.status)
+    }
+}
+export const postPermiso = async( req : any, resp : typeof response)=>{
+    try {
+        
+        HttpHelpers.responderPeticionOk(resp,true);
+    } catch (error : any) {
+
+        HttpHelpers.responderPeticionError(resp,error.message,error.status)
+    }
+}
+export const putPermiso = async( req : any, resp : typeof response)=>{
+    try {
+        
+        HttpHelpers.responderPeticionOk(resp,true);
+    } catch (error : any) {
+
+        HttpHelpers.responderPeticionError(resp,error.message,error.status)
+    }
+}
+export const deletePermiso = async( req : any, resp : typeof response)=>{
+    try {
+        
+        HttpHelpers.responderPeticionOk(resp,true);
+    } catch (error : any) {
+
+        HttpHelpers.responderPeticionError(resp,error.message,error.status)
+    }
+}
+
+export const getAreas = async( req : any, resp : typeof response)=>{
+    try {
+        
+        HttpHelpers.responderPeticionOk(resp,true);
+    } catch (error : any) {
+
+        HttpHelpers.responderPeticionError(resp,error.message,error.status)
+    }
+}
+export const getArea = async( req : any, resp : typeof response)=>{
+    try {
+        
+        HttpHelpers.responderPeticionOk(resp,true);
+    } catch (error : any) {
+
+        HttpHelpers.responderPeticionError(resp,error.message,error.status)
+    }
+}
+export const postArea = async( req : any, resp : typeof response)=>{
+    try {
+        
+        HttpHelpers.responderPeticionOk(resp,true);
+    } catch (error : any) {
+
+        HttpHelpers.responderPeticionError(resp,error.message,error.status)
+    }
+}
+export const putArea = async( req : any, resp : typeof response)=>{
+    try {
+        
+        HttpHelpers.responderPeticionOk(resp,true);
+    } catch (error : any) {
+
+        HttpHelpers.responderPeticionError(resp,error.message,error.status)
+    }
+}
+export const deleteArea = async( req : any, resp : typeof response)=>{
+    try {
+        
+        HttpHelpers.responderPeticionOk(resp,true);
+    } catch (error : any) {
+
+        HttpHelpers.responderPeticionError(resp,error.message,error.status)
+    }
+}
