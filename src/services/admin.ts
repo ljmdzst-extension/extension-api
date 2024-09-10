@@ -90,6 +90,7 @@ export const verListaUsuarios = async() => {
         const tareas = new ColaDeTareas();
 
         usuarios.forEach( u => tareas.push( ()=> SUsuario.obtenerDataUsuario(u.idUsuario,u.email).then( data => salida.push({
+            idUsuario : data.usuario.idUsuario,
             nroDoc : data.persona.nroDoc,
             ape : data.persona.ape,
             nom : data.persona.nom,
