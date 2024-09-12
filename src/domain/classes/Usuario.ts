@@ -3,7 +3,7 @@
 import Categoria, { TDataCategoria } from "./Categoria"
 import Permiso, { TDataPermiso } from "./Permiso"
 import Persona, { TDataPersona } from "./Persona"
-import ProgramasHabilitadosDelUsuario, { TDataProgramasHabilidatosDelUsuario } from "./ProgramasHabilitadosDelUsuario"
+import ProgramasHabilitadosDelUsuario, { TDataProgramasHabilidatosDelUsuario } from "./PeriodoDeTrabajo"
 
 export type TDataUsuario = {
     idUsuario: string,

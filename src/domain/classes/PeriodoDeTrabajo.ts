@@ -1,12 +1,12 @@
 import Area from "./Area";
 import Programa, { TDataPrograma } from "./Programa";
 
-export type TDataProgramasHabilidatosDelUsuario = {
+export type TDataPeriodoDeTrabajo = {
     anio : number, 
     listaProgramas : TDataPrograma[]
 }
 
-export default class ProgramasHabilitadosDelUsuario {
+export default class PeriodoDeTrabajo {
     constructor( 
         private anio : number,
         private cProgramas : Programa[]
@@ -37,7 +37,7 @@ export default class ProgramasHabilitadosDelUsuario {
     }
 
     
-    verDatos() : TDataProgramasHabilidatosDelUsuario{
+    verDatos() : TDataPeriodoDeTrabajo {
         return {
             anio : this.anio,
             listaProgramas : this.cProgramas.map( p => p.verDatos())
