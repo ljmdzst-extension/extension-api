@@ -57,16 +57,15 @@ typings/
 .env
 .env.*
 
+*.js
+*.sql
+
 # next.js build output
 .next
 
 # ignorar dist
 dist/
-
-package-lock.json
-db_estension_backup/
+# ignorar tests
 __tests__/
-enviarCorreosUsuarios.js
-migrarUsuarios.js
-*.sql
-tsconfig.json
+# ignorar volumes
+db_estension_backup/
