@@ -1,5 +1,5 @@
 import { INVALIDO } from "../logs/validaciones";
-import { ERROR } from "../logs/errores";
+import { ERROR } from '../logs/errores';
 import { NextFunction, Request, Response } from "express";
 import { domain } from "../../../../domain";
 import { aplication } from "../../../../aplication";

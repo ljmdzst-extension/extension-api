@@ -1,6 +1,5 @@
 import * as Sequelize from 'sequelize';
 import { DataTypes, Model, Optional } from 'sequelize';
-import { domain } from '../../../../domain';
 
 export interface EnlaceAttributes {
   idEnlace: number;
@@ -46,11 +45,7 @@ export class Enlace extends Model<EnlaceAttributes, EnlaceCreationAttributes> im
   desc!: string;
   link!: string;
   idActividad !: number;
-  
-  public static async buscarPorActividad( a : domain.Actividad, transaction ?: Sequelize.Transaction ) : Promise<domain.TDataEnlace[]> {
-   
-    return Enlace.findAll({where : { idActividad : a.verDatos().idActividad},transaction});
-  }
+
 
   static initModel(sequelize: Sequelize.Sequelize): typeof Enlace {
     return Enlace.init(ENLACE_ATTRIBUTES, {

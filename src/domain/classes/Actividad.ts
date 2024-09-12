@@ -6,6 +6,8 @@ import FechaPuntual, { TDataFecha } from "./FechaPuntual";
 import Enlace, { TDataEnlace } from './Enlace';
 import Objetivo, { TDataObjetivo } from "./Objetivo";
 import ProgramaSIPPE, { TDataProgramaSIPPE } from "./ProgramaSIPPE";
+import Area from "./Area";
+import Usuario from "./Usuario";
 
 
 
@@ -38,15 +40,15 @@ type TDataActividad = {
 
 class Actividad  {
 
-    private idActividad  !: number;
-    private idArea  !: number;
+    private id  !: number;
     private desc  !: string;
     private nro  ?: number;
-    private idUsuario  ?: string;
     private fechaDesde  ?: Date;
     private fechaHasta  ?: Date;
     private motivoCancel  ?: string | null;
 
+    private iArea !: Area;
+    private iUsr !: Usuario;
     private cMetas !: Meta[];
     private cUbicaciones !: Ubicacion[];
     private cInstituciones !: Institucion[];
@@ -55,18 +57,19 @@ class Actividad  {
     private cObjetivos !: Objetivo[];
     private cProgSIPPPE !: ProgramaSIPPE[];
 
-    constructor( _data : TDataActividad ) {
+    constructor( _data : TDataActividad, _iArea : Area, _iUsr : Usuario  ) {
 
-        this.idActividad = _data.idActividad;
-        this.idArea = _data.idArea;
+        this.id = _data.idActividad;
         this.desc = _data.desc;
-        this.idUsuario = _data.idUsuario;
         
+        this.iArea = _iArea;
+        this.iUsr = _iUsr;
+
         if(_data.nro) this.nro = _data.nro;
         if(_data.fechaDesde) this.fechaDesde = new Date(_data.fechaDesde);
         if(_data.fechaHasta) this.fechaHasta = new Date(_data.fechaHasta);
         if(_data.motivoCancel) this.motivoCancel = _data.motivoCancel;
-
+        
         this.cMetas = [];
         this.cUbicaciones = [];
         this.cInstituciones = [];
@@ -80,7 +83,6 @@ class Actividad  {
     public editar( data : Partial<TDataActividad> ) {
         if(data.desc) { this.desc = data.desc;}
         if(data.nro) { this.nro = data.nro;}
-        if(data.idUsuario) { this.idUsuario = data.idUsuario;}
         if(data.fechaDesde) { this.fechaDesde = new Date( data.fechaDesde );}
         if(data.fechaHasta) { this.fechaHasta = new Date(data.fechaHasta);}
         if(data.motivoCancel) { this.motivoCancel = data.motivoCancel;}
@@ -169,11 +171,11 @@ class Actividad  {
 
     public verDatos() : TDataActividad {
         return {
-            idActividad : this.idActividad,
-            idArea : this.idArea,
+            idActividad : this.id,
+            idArea : this.iArea.verID(),
             nro : this.nro,
             desc : this.desc,
-            idUsuario : this.idUsuario,
+            idUsuario : this.iUsr.verDatos().idUsuario,
             fechaDesde : this.fechaDesde?.toString(),
             fechaHasta : this.fechaHasta?.toString(),
             motivoCancel : this.motivoCancel,

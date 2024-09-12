@@ -38,6 +38,45 @@ export default class RouterUsuario implements IRouter {
         private VUsuario : aplication.IVUsuario,
         private VPersona : aplication.IVPersona,
     ){}
+
+    public async usar(server: ServerExpress.Server): Promise<void> {
+        const router = express.Router();
+        const middValidarCamposUsuario =  new MiddlewareValidarCamposUsuario(this.VUsuario);
+        const middValidarUsuarioNoPendiente = new MiddlewareValidarUsuarioNoPendiente();
+        const middObtenerDataUsuario =  new MiddlewareObtenerDataUsuario(this.MUsuario,this.VUsuario);
+        const middChequearUsuarioNoExistente = new MiddlewareChequearUsuarioNoExistente(this.MUsuario);
+
+        router.post(
+         '/login',
+         [
+            middValidarCamposUsuario.usar(),
+            middValidarUsuarioNoPendiente.usar(),
+            middObtenerDataUsuario.usar()
+         ],this.postLogin());
+
+        router.post(
+         '/register',
+         [
+             middValidarCamposUsuario.usar(),
+             middChequearUsuarioNoExistente.usar()
+         ],
+         this.postRegister());
+
+        router.post(
+            '/auth',
+            [
+                new MiddlewareExtraerToken().usar(),
+                new MiddlewareValidarToken().usar()
+            ],
+            this.postAuth());
+            
+        router.put( '/validar/:idUsuario', [ ],  this.putValidarRegistro());
+        router.get('/',[],this.getUsuarios());
+ 
+        server.verApp().use(this.basePath,router);
+    }
+ 
+
     private getUsuarios() {
         return async (  req : Request, res: Response ) => { 
             try {
@@ -88,6 +127,7 @@ export default class RouterUsuario implements IRouter {
 
                     p = await aplication.GestionDePersonas.altaPersona({...data,tipoDoc : 1},this.MPersona,this.VPersona);
                 } 
+                
                 const usuarioPendiente = await aplication.GestionDeUsuarios.altaUsuario({...data , pendiente : 1}, p , this.MUsuario,this.VUsuario); 
 
                 const {email,idUsuario} = usuarioPendiente.verDatos();
@@ -146,43 +186,7 @@ export default class RouterUsuario implements IRouter {
           }
     }
    
-    public async usar(server: ServerExpress.Server): Promise<void> {
-        const router = express.Router();
-        const middValidarCamposUsuario =  new MiddlewareValidarCamposUsuario(this.VUsuario);
-        const middValidarUsuarioNoPendiente = new MiddlewareValidarUsuarioNoPendiente();
-        const middObtenerDataUsuario =  new MiddlewareObtenerDataUsuario(this.MUsuario,this.VUsuario);
-        const middChequearUsuarioNoExistente = new MiddlewareChequearUsuarioNoExistente(this.MUsuario);
-
-        router.post(
-         '/login',
-         [
-            middValidarCamposUsuario.usar(),
-            middValidarUsuarioNoPendiente.usar(),
-            middObtenerDataUsuario.usar()
-         ],this.postLogin());
-
-        router.post(
-         '/register',
-         [
-             middValidarCamposUsuario.usar(),
-             middChequearUsuarioNoExistente.usar()
-         ],
-         this.postRegister());
-
-        router.post(
-            '/auth',
-            [
-                new MiddlewareExtraerToken().usar(),
-                new MiddlewareValidarToken().usar()
-            ],
-            this.postAuth());
-            
-        router.put( '/validar/:idUsuario', [ ],  this.putValidarRegistro());
-        router.get('/',[],this.getUsuarios());
- 
-        server.verApp().use(this.basePath,router);
-     }
- 
+  
     
 
 }

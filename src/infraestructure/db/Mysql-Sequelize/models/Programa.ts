@@ -1,6 +1,5 @@
 import * as Sequelize from 'sequelize';
 import { DataTypes, Model, Optional } from 'sequelize';
-import { domain } from '../../../../domain';
 
 
 export interface ProgramaAttributes {
@@ -39,15 +38,3 @@ export class Programa extends Model<ProgramaAttributes, ProgramaCreationAttribut
 }
 
 
-export class MPrograma implements domain.IModelPrograma {
-  constructor( private sequelize : Sequelize.Sequelize ){}
-  async buscarPor(parametros: Partial<domain.TDataPrograma>): Promise<domain.Programa[]> {
-    throw new Error('Method not implemented.');
-  }
-  async verLista(anio: number): Promise<domain.Programa[]> {
-    throw new Error('Method not implemented.');
-  }
-  async verListaConAreas(anio: number): Promise<domain.Programa[]> {
-    throw new Error('Method not implemented.');
-  }
-}

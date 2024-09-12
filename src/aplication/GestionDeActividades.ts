@@ -1,15 +1,31 @@
 import {domain} from '../domain';
+import IValidatorActividad from './validators/actividad';
 
 export default class GestionDeActividades {
 
-    static async altaActividad ( data : domain.TDataActividad, MActividad : domain.IModelActividad , VActividad : domain.IValidatorActividad ) : Promise<domain.Actividad> {
+    static async altaActividad ( 
+        data : domain.TDataActividad, 
+        MActividad : domain.IModelActividad ,
+        MArea : domain.IModelArea,
+        MUsuario : domain.IModelUsuario,
+        VActividad : IValidatorActividad 
+    ) : Promise<domain.Actividad> {
         
         
         if(!VActividad.validar(data)) throw new Error('data actividad inválida, revise los campos');
 
-        let nuevaActividad = new domain.Actividad(data);
+        const area = await MArea.buscarPorId(data.idArea);
+
+        if(!area) throw new Error('área inexistente con ese idArea');
+
+        const usr = await MUsuario.buscarPorId(`${data.idUsuario}`);
+
+        if(!usr) throw new Error('usuario no econtrado con ese idUsuario');
+
+        let nuevaActividad = new domain.Actividad(data,area,usr);
 
         nuevaActividad = await MActividad.guardarDatos(nuevaActividad);
+        
         return nuevaActividad ;
 
     } 

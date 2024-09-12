@@ -1,6 +1,5 @@
 import * as Sequelize from 'sequelize';
 import { DataTypes, Model, Optional } from 'sequelize';
-import { domain } from '../../../../domain';
 
 export interface InstitucionAttributes {
   idInstitucion: number;
@@ -55,10 +54,6 @@ export class Institucion extends Model<InstitucionAttributes, InstitucionCreatio
   tel?: string;
   ubicacion?: string;
 
-
-  public static async buscarPorListaIds( listaIds : InstitucionId[] ,transaction ?: Sequelize.Transaction) : Promise<domain.TDataInstitucion[]> {
-      return Institucion.findAll({where : { idInstitucion : listaIds }, transaction});
-  }
 
   static initModel(sequelize: Sequelize.Sequelize): typeof Institucion {
     return Institucion.init(INSTITUCION_ATTRIBUTES, {

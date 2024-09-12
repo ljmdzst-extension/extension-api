@@ -2,10 +2,10 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
-import Server from './infraestructure/Server';
-import RouterArea from './infraestructure/Server/Express/router/area';
-import RouterProgramas from './infraestructure/Server/Express/router/programa';
-import RouterUsuario from './infraestructure/Server/Express/router/usuario';
+import Server from './infraestructure/server';
+import RouterArea from './infraestructure/server/Express/router/area';
+import RouterProgramas from './infraestructure/server/Express/router/programa';
+import RouterUsuario from './infraestructure/server/Express/router/usuario';
 
 import {mysql} from './infraestructure/db/';
 import sequelizeExtension from './infraestructure/db/Mysql-Sequelize/config/dbConfig';
@@ -36,11 +36,11 @@ import { validators } from './infraestructure/validators';
 // this.app.use(`${BASE_PATH_PROPUESTAS}/instituciones`,RouterInstituciones);
 // this.app.use(`${BASE_PATH_PROPUESTAS}/planificacion`,RouterPlanificacion);
 
-const mUsuario =  new mysql.MUsuario(sequelizeExtension);
-const mPersona = new mysql.MPersona(sequelizeExtension);
-const mPrograma = new mysql.MPrograma(sequelizeExtension);
-const mActividad = new mysql.MActividad(sequelizeExtension);
-const mArea = new mysql.MArea(sequelizeExtension);
+const mUsuario =  new mysql.MUsuario();
+const mPersona = new mysql.MPersona();
+const mPrograma = new mysql.MPrograma();
+const mActividad = new mysql.MActividad();
+const mArea = new mysql.MArea();
 const vUsuario =  new validators.VUsuario();
 const vPersona = new validators.VPersona();
 

@@ -1,10 +1,16 @@
 import { Sequelize } from "sequelize";
 import IDataBase from "../IDataBase";
-import { MUsuario as _MUsuario } from "./models/Usuario";
-import { MActividad as _MActividad} from "./models/Actividad";
-import { MPersona as _MPersona} from "./models/Persona";
-import { MPrograma as _MPrograma} from "./models/Programa";
-import { MArea as _MArea} from "./models/Area";
+import { MActividad } from "./actividad";
+import MArea from "./area";
+import { MPersona } from "./persona";
+import { MPrograma } from "./programa";
+import MUsuario from "./usuario";
+
+const _MUsuario = MUsuario;
+const _MActividad = MActividad;
+const _MPersona = MPersona;
+const _MPrograma = MPrograma;
+const _MArea = MArea;
 
 
 export namespace MysqlSequelize {

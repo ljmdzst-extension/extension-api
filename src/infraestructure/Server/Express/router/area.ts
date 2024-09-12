@@ -2,8 +2,8 @@ import { aplication } from "../../../../aplication";
 import { domain } from "../../../../domain";
 import { HttpHelpers } from "../helpers/general";
 import { ERROR } from "../logs/errores";
-import { MiddlewareDeterminarAreasHabilitadas, MiddlewareValidarPermisoAccesoMetas } from "../middlewares/permisos";
-import { MiddlewareValidarAnio } from "../middlewares/programa";
+import { MiddlewareValidarPermisoAccesoMetas } from "../middlewares/permisos";
+
 import {ServerExpress} from "..";
 import IRouter from "./Router";
 import express,{Request,Response} from 'express'

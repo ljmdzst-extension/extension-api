@@ -1,6 +1,6 @@
+import IMiddleware from './middleware';
 import jwt, { JsonWebTokenError } from 'jsonwebtoken';
 import {  response, NextFunction } from "express";
-import IMiddleware from './middleware';
 import { HttpHelpers } from '../helpers/general';
 import { ERROR } from '../logs/errores';
 

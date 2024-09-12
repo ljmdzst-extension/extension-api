@@ -1,6 +1,6 @@
 import * as Sequelize from 'sequelize';
 import { DataTypes, Model, Optional } from 'sequelize';
-import { domain } from '../../../../domain';
+
 
 export interface AreaAttributes {
   idArea: number;
@@ -38,12 +38,5 @@ export class Area extends Model<AreaAttributes, AreaCreationAttributes> implemen
     tableName: 'Area',
     timestamps: false
   });
-  }
-}
-
-export class MArea implements domain.IModelArea {
-  constructor( private sequelize : Sequelize.Sequelize ){}
-  buscarPorId(idArea: number): Promise<domain.Area | null> {
-    throw new Error('Method not implemented.');
   }
 }

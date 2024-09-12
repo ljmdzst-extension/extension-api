@@ -1,9 +1,9 @@
 import { Transaction, where } from "sequelize";
 import { BD } from "../../infraestructure/db/Mysql-Sequelize/config/dbConfig";
 import Actividad, { ID_ACT } from "./Actividad";
-import { ERROR } from "../../infraestructure/Server/Express/logs/errores";
+import { ERROR } from "../../infraestructure/server/Express/logs/errores";
 import validator from "validator";
-import { INVALIDO } from "../../infraestructure/Server/Express/logs/validaciones";
+import { INVALIDO } from "../../infraestructure/server/Express/logs/validaciones";
 import { ESTADO_BD } from "../../types/general";
 
 

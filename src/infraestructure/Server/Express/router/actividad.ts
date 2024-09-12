@@ -21,8 +21,75 @@ export default class RouterActividad implements IRouter {
     constructor(
         private basePath : string,
         private MActividad : domain.IModelActividad,
+        private MArea : domain.IModelArea,
+        private MUsuario : domain.IModelUsuario,
         private VActividad : aplication.IVActividad
     ){}
+
+    
+    public async usar(server: ServerExpress.Server): Promise<void> {
+        const router = express.Router();
+        
+        router.get(
+            '/:idActividad',
+            [
+                new MiddlewareValidarCamposActividad(this.VActividad).usar()
+            ],
+            this.getActividad
+        );
+
+        router.post(
+            '/',
+            [
+                new MiddlewareValidarPermisoEdicionMetas().usar(),
+                new MiddlewareValidarCamposActividad(this.VActividad).usar()
+            ],
+            this.postActividad
+        );
+
+        router.put(
+            '/',
+            [
+                new MiddlewareValidarPermisoEdicionMetas().usar(),
+                new MiddlewareValidarActividadExistente(this.MActividad,this.VActividad).usar(),
+                new MiddlewareValidarCamposActividad(this.VActividad).usar()
+            ],
+            this.putActividad
+        );
+
+        router.put(
+            '/restore',
+            [
+                new MiddlewareValidarPermisoEdicionMetas().usar(),
+                new MiddlewareValidarActividadSuspendida(this.MActividad,this.VActividad).usar(),
+
+            ],
+            this.putRestoreActividad
+        );
+
+        router.put(
+            '/cancel',
+            [
+                new MiddlewareValidarPermisoEdicionMetas().usar(),
+                new MiddlewareValidarActividadExistente(this.MActividad,this.VActividad).usar(),
+                new MiddlewareValidarMotivoSuspension(this.VActividad).usar()
+            ],
+            this.putCancelActividad
+        );
+
+        router.delete(
+            '/',
+            [
+                new MiddlewareValidarPermisoEdicionMetas().usar(),
+                new MiddlewareValidarActividadExistente(this.MActividad,this.VActividad).usar(),
+            ],
+            this.deleteActividad
+        );
+
+        server.verApp().use(this.basePath,router);
+    }
+
+    
 
     private async getActividad  (  req : Request, res: Response ) {
         try {
@@ -45,7 +112,7 @@ export default class RouterActividad implements IRouter {
 
             const data = req.body;
             
-            const iActividad = await aplication.GestionDeActividades.altaActividad(data,this.MActividad,this.VActividad )
+            const iActividad = await aplication.GestionDeActividades.altaActividad(data,this.MActividad,this.MArea,this.MUsuario,this.VActividad )
 
             HttpHelpers.responderPeticionOk(res,iActividad.verDatos());
     
@@ -118,68 +185,5 @@ export default class RouterActividad implements IRouter {
         }
     }
 
-    public async usar(server: ServerExpress.Server): Promise<void> {
-        const router = express.Router();
-        
-        router.get(
-            '/:idActividad',
-            [
-                new MiddlewareValidarCamposActividad(this.VActividad).usar()
-            ],
-            this.getActividad
-        );
-
-        router.post(
-            '/',
-            [
-                new MiddlewareValidarPermisoEdicionMetas().usar(),
-                new MiddlewareValidarCamposActividad(this.VActividad).usar()
-            ],
-            this.postActividad
-        );
-
-        router.put(
-            '/',
-            [
-                new MiddlewareValidarPermisoEdicionMetas().usar(),
-                new MiddlewareValidarActividadExistente(this.MActividad,this.VActividad).usar(),
-                new MiddlewareValidarCamposActividad(this.VActividad).usar()
-            ],
-            this.putActividad
-        );
-
-        router.put(
-            '/restore',
-            [
-                new MiddlewareValidarPermisoEdicionMetas().usar(),
-                new MiddlewareValidarActividadSuspendida(this.MActividad,this.VActividad).usar(),
-
-            ],
-            this.putRestoreActividad
-        );
-
-        router.put(
-            '/cancel',
-            [
-                new MiddlewareValidarPermisoEdicionMetas().usar(),
-                new MiddlewareValidarActividadExistente(this.MActividad,this.VActividad).usar(),
-                new MiddlewareValidarMotivoSuspension(this.VActividad).usar()
-            ],
-            this.putCancelActividad
-        );
-
-        router.delete(
-            '/',
-            [
-                new MiddlewareValidarPermisoEdicionMetas().usar(),
-                new MiddlewareValidarActividadExistente(this.MActividad,this.VActividad).usar(),
-            ],
-            this.deleteActividad
-        );
-
-        server.verApp().use(this.basePath,router);
-    }
-
-    
 
 }

@@ -1,6 +1,5 @@
 import * as Sequelize from 'sequelize';
 import { DataTypes, Model, Optional } from 'sequelize';
-import { domain } from '../../../../domain';
 
 export interface UbicacionAttributes {
   idUbicacion: number;
@@ -17,9 +16,8 @@ export class Ubicacion extends Model<UbicacionAttributes, UbicacionCreationAttri
   idUbicacion!: number;
   enlace!: string;
   desc?: string;
-  public static async buscarPorListaIds( ids : UbicacionId[] , transaction ?: Sequelize.Transaction) : Promise<domain.TDataUbicacion[]> {
-    return (await Ubicacion.findAll({where : { idUbicacion : ids}, transaction})).map( u => u.dataValues);
-  }
+
+
   static initModel(sequelize: Sequelize.Sequelize): typeof Ubicacion {
     return Ubicacion.init({
     idUbicacion: {

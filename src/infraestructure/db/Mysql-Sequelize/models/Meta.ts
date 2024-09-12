@@ -1,6 +1,6 @@
 import * as Sequelize from 'sequelize';
 import { DataTypes, Model, Optional } from 'sequelize';
-import { domain } from '../../../../domain';
+
 
 export interface MetaAttributes {
   idMeta: number;
@@ -25,11 +25,6 @@ export class Meta extends Model<MetaAttributes, MetaCreationAttributes> implemen
   observaciones?: string;
   idValoracion?: number;
   idActividad!: number;
-
-  public static async buscarPorActividad( a  : domain.Actividad, transaction ?: Sequelize.Transaction  ) : Promise<domain.TDataMeta[]> {
-     
-      return  Meta.findAll({where : { idActividad : a.verDatos().idActividad}, transaction});;
-  }
 
 
   static initModel(sequelize: Sequelize.Sequelize): typeof Meta {
