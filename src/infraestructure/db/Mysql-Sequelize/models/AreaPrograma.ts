@@ -1,8 +1,6 @@
 import * as Sequelize from 'sequelize';
-import { DataTypes, Model, Optional } from 'sequelize';
-import { domain } from '../../../../domain';
-import { Programa, ProgramaId } from './Programa';
-import { Area, AreaId } from './Area';
+import { DataTypes, Model,  } from 'sequelize';
+
 
 export interface AreaProgramaAttributes {
   idArea: number;
@@ -20,25 +18,6 @@ export class AreaPrograma extends Model<AreaProgramaAttributes, AreaProgramaCrea
   idArea!: number;
   idPrograma!: number;
   anio !: number;
-
-  static async buscarAreas( listaIds : AreaId[], transaction ?: Sequelize.Transaction ) : Promise<Area[]> {
-    let salida : Area[] = [];
-
-    salida = await Area.findAll({where : { idArea : listaIds }, transaction });
-
-
-
-    return salida;
-  }
-
-  static async buscarProgramas( listaIds : ProgramaId[], transaction ?: Sequelize.Transaction ) : Promise<Programa[]> {
-    let salida : Programa[] = [];
-
-    salida = await Programa.findAll({where : { idPrograma : listaIds }, transaction });
-
-
-    return salida;
-  }
 
 
   static initModel(sequelize: Sequelize.Sequelize): typeof AreaPrograma {

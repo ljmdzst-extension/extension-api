@@ -3,7 +3,7 @@
 import Categoria, { TDataCategoria } from "./Categoria"
 import Permiso, { TDataPermiso } from "./Permiso"
 import Persona, { TDataPersona } from "./Persona"
-import ProgramasHabilitadosDelUsuario, { TDataProgramasHabilidatosDelUsuario } from "./PeriodoDeTrabajo"
+import ProgramasHabilitadosDelUsuario, { TDataPeriodoDeTrabajo } from "./PeriodoDeTrabajo"
 
 export type TDataUsuario = {
     idUsuario: string,
@@ -15,7 +15,7 @@ export type TDataUsuario = {
     persona ?: TDataPersona,
     categoria ?: TDataCategoria,
     permisos ?: TDataPermiso[],
-    areas ?: TDataProgramasHabilidatosDelUsuario[]
+    areas ?: TDataPeriodoDeTrabajo[]
 }
 
 export default class Usuario {

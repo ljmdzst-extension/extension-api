@@ -1,6 +1,7 @@
 import * as Sequelize from 'sequelize'
 import { domain } from '../../../domain';
 import { BD } from './config/dbConfig';
+import { ObjetivoId } from './models/Objetivo';
 
 export default class MObjetivo {
 
@@ -16,6 +17,35 @@ export default class MObjetivo {
     }
 
     return salida;
+  }
+
+  
+  public static async buscarPorListaIds( ids : ObjetivoId[] , transaction ?: Sequelize.Transaction) : Promise<domain.TDataObjetivo[]> {
+    let salida: domain.TDataObjetivo[] = [];
+    const objetivos = await BD.Objetivo.findAll({where : { idObjetivo : ids}, transaction});
+    if(objetivos.length > 0){
+      const cTiposObjetivos = await BD.TipoObjetivo.findAll({transaction});
+
+      salida = objetivos.map( o => ({ ...o.dataValues, tipoObjetivo : cTiposObjetivos.find( to => to.idTipoObj === o.tipoObjId )?.dataValues }));
+    }
+
+    return salida ;
+  }
+
+  public static async buscarTodos(  transaction ?: Sequelize.Transaction ): Promise<domain.Objetivo[]>  {
+    let salida: domain.Objetivo[] = [];
+    const cTiposObjetivos = await BD.TipoObjetivo.findAll({transaction});
+    const objetivos = await BD.Objetivo.findAll({ transaction});
+    if(objetivos.length > 0){
+      objetivos.forEach( o => {
+        const to = cTiposObjetivos.find( to => to.idTipoObj === o.tipoObjId );
+        if(to) {
+          salida.push(new domain.Objetivo( o.dataValues,new domain.TipoObjetivo(to.dataValues) ) )
+        }
+      })
+    }
+
+    return salida ;
   }
 
 }

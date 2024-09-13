@@ -3,6 +3,7 @@ import BusquedaAreas from './BusquedaAreas';
 import BusquedaProgramas from './BusquedaProgramas';
 import BusquedaUsuarios from './BusquedaUsuarios';
 import GestionDeActividades from './GestionDeActividades';
+import GestionDeBases from './GestionDeBases';
 import GestionDePersonas from './GestionDePersonas';
 import GestionDeUsuarios from './GestionDeUsuarios';
 import IValidatorActividad from './validators/actividad';
@@ -16,7 +17,7 @@ const _BusquedaDeActividades = BusquedaActividades;
 const _BusquedaDeUsuarios = BusquedaUsuarios;
 const _BusquedaProgramas = BusquedaProgramas;
 const _BusquedaAreas = BusquedaAreas;
-
+const _GestionDeBases = GestionDeBases;
 
 export namespace aplication {
     export class GestionDeActividades extends _GestionDeActividades {}
@@ -26,6 +27,7 @@ export namespace aplication {
     export class BusquedaUsaurios extends _BusquedaDeUsuarios {}
     export class BusquedaProgramas extends _BusquedaProgramas {}
     export class BusquedaAreas extends _BusquedaAreas {}
+    export class GestionDeBases extends _GestionDeBases {}
     export interface IVActividad extends IValidatorActividad {}
     export interface IVPersona extends IValidatorPersona {}
     export interface IVUsuario extends IValidatorUsuario {}

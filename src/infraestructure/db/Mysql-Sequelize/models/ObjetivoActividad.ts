@@ -43,18 +43,6 @@ export class ObjetivoActividad extends Model<ObjetivoActividadAttributes, Objeti
   idObjetivo!: number;
   idActividad!: number;
   
-  public static async buscarPorActividad( actividad : domain.Actividad, transaction ?: Sequelize.Transaction) : Promise<domain.TDataObjetivo[]> {
-    let salida : domain.TDataObjetivo[] = [];
-
-    const objetivosAsociados = await ObjetivoActividad.findAll({where : { idActividad : actividad.verDatos().idActividad}, transaction});
-
-    if(objetivosAsociados.length > 0) {
-        salida = await Objetivo.buscarPorListaIds( objetivosAsociados.map( oasoc => oasoc.dataValues.idObjetivo), transaction);
-    }
-
-    return salida;
-  }
-
 
   static initModel(sequelize: Sequelize.Sequelize): typeof ObjetivoActividad {
     return ObjetivoActividad.init(CONSTRAINT_ATTRIBUTES,CONSTRAINT_OPTIONS(sequelize) );

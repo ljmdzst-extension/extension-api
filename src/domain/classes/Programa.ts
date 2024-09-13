@@ -26,7 +26,9 @@ export type TDataPrograma = {
     }
 
     public altaArea( a : Area ) {
-        this.cAreas.push( a );
+        if(!this.cAreas.find( _a => _a.verID() === a.verID())) { 
+            this.cAreas.push( a );
+        }
     }
     public bajaArea( idArea : number) {
         this.cAreas = this.cAreas.filter( a => a.verID() !== idArea );

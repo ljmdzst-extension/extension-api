@@ -50,8 +50,9 @@ export default class RouterUsuario implements IRouter {
          '/login',
          [
             middValidarCamposUsuario.usar(),
+            middObtenerDataUsuario.usar(),
             middValidarUsuarioNoPendiente.usar(),
-            middObtenerDataUsuario.usar()
+        
          ],this.postLogin());
 
         router.post(
@@ -91,10 +92,9 @@ export default class RouterUsuario implements IRouter {
 
     private postLogin () {
         return async( req : any, resp : Response ) => {
-            try {
-                 const usuario = req.usuario;
-                if(!( usuario instanceof domain.Usuario) ) throw ERROR.USUARIO_INEXISTENTE; 
-        
+            const usuario = req.usuario;
+            if(usuario instanceof domain.Usuario ) {
+                
                 const token = jwt.sign( {idUsuario : usuario.verDatos().idUsuario} , process.env.HASH_KEY || '',{expiresIn : 60 * 60} )
                 // agregar ver areas a usuario
                 HttpHelpers.responderPeticionOk(resp, {
@@ -107,12 +107,15 @@ export default class RouterUsuario implements IRouter {
                     areas : [], 
                     token : token
                 });
-                
-            } catch (error : any) {
-        
-                HttpHelpers.responderPeticionError(resp,error.message || error,error.status || 500)
+            } else {
+               
+                HttpHelpers.responderPeticionError(
+                    resp,
+                    ERROR.USUARIO_INEXISTENTE.message,
+                    ERROR.USUARIO_INEXISTENTE.status
+                )
             }
-        
+    
         }
     }
     

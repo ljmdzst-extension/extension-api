@@ -10,12 +10,11 @@ export default class BusquedaAreas {
         if( salida ) {
             const actividades = await Mactividad.buscarPorArea(idArea);
             if(actividades.length > 0) {
-                actividades.forEach(a => salida.altaActividad(a) );
+                actividades.forEach(a => salida?.altaActividad(a) );
             }
         }
 
         return salida;
-
 
     }
 }

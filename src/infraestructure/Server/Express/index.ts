@@ -48,7 +48,15 @@ export namespace ServerExpress {
             const midObtenerDataUsuario = new MiddlewareObtenerDataUsuario(this.MUsuario,this.VUsuario).usar();
             const midValidarAccesoAMetas = new MiddlewareValidarPermisoAccesoMetas().usar();
             
-            this.app.use( `${this.rootPath}/metas`, midExtraerToken,midValidarToken,midObtenerDataUsuario,midValidarAccesoAMetas  );
+            this.app.use( 
+                `${this.rootPath}/metas`, 
+                [
+                    midExtraerToken,
+                    midValidarToken,
+                    midObtenerDataUsuario,
+                    midValidarAccesoAMetas 
+                ]
+            );
             
             // carga de routers agregados 
             this.cRouters.forEach( router => router.usar(this) )

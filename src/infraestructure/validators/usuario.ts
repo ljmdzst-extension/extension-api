@@ -1,17 +1,25 @@
+
+
 import { aplication } from "../../aplication";
-import { TDataUsuario } from "../../domain/classes/Usuario";
+import { domain } from "../../domain";
 
 export default class VUsuario implements aplication.IVUsuario {
-    validar(data: TDataUsuario): boolean {
-        throw new Error("Method not implemented.");
+    validar(data: domain.TDataUsuario): boolean {
+       let salida = false;
+       if(data.email ) salida = this.validarEmail(data.email);
+       if(data.idUsuario) salida= this.validarIdUsuario(data.idUsuario);
+       return salida;
+    }
+    validarIdUsuario(idUsuario : string) {
+        return idUsuario.length > 0;
     }
     validarEmail(email: string): boolean {
-        throw new Error("Method not implemented.");
+        return email.length > 0;
     }
     validarPass(pass: string): boolean {
-        throw new Error("Method not implemented.");
+        return pass.length >= 6;
     }
     validarIdUnidadAcademica(idUnidadAcademica: number): boolean {
-        throw new Error("Method not implemented.");
+        return true;
     }
 }

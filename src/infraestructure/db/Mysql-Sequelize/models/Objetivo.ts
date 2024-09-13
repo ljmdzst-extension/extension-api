@@ -58,18 +58,6 @@ export class Objetivo extends Model<ObjetivoAttributes, ObjetivoCreationAttribut
   detalle?: string;
   tipoObjId!: number;
 
-  public static async buscarPorListaIds( ids : ObjetivoId[] , transaction ?: Sequelize.Transaction) : Promise<domain.TDataObjetivo[]> {
-    let salida: domain.TDataObjetivo[] = [];
-    const objetivos = await Objetivo.findAll({where : { idObjetivo : ids}, transaction});
-    if(objetivos.length > 0){
-      const cTiposObjetivos = await TipoObjetivo.findAll({transaction});
-
-      salida = objetivos.map( o => ({ ...o.dataValues, tipoObjetivo : cTiposObjetivos.find( to => to.idTipoObj === o.tipoObjId )?.dataValues }));
-    }
-
-    return salida ;
-  }
-
   static initModel(sequelize: Sequelize.Sequelize): typeof Objetivo {
     return Objetivo.init(CONSTRAINT_ATTRIBUTES,CONSTRAINT_OPTIONS(sequelize) );
   }

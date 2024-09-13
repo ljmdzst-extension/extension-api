@@ -23,9 +23,9 @@ export default class GestionDeUsuarios {
                     return new domain.Programa(datap,cAreas );
                 })
 
-                const ph = new domain.ProgramasHabilitadosDelUsuario( dataph.anio, cProgramas  );
 
-                u.altaProgramasHabilitados(ph);
+
+                u.altaProgramasHabilitados( new domain.PeriodoDeTrabajo(dataph.anio,cProgramas));
             } )
         }
 
@@ -54,7 +54,7 @@ export default class GestionDeUsuarios {
                     return new domain.Programa(datap,cAreas );
                 })
                 
-                const ph = new domain.ProgramasHabilitadosDelUsuario( dataph.anio, cProgramas  );
+                const ph = new domain.PeriodoDeTrabajo( dataph.anio, cProgramas  );
 
                 u?.altaProgramasHabilitados(ph);
             } )

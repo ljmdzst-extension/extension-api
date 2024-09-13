@@ -18,12 +18,15 @@ import Usuario, { TDataUsuario } from './classes/Usuario';
 import IModelActividad from './models/actividad';
 import IModelUsuario from './models/usuario';
 import IModelPersona from './models/persona';
+import IModelArea from './models/area';
+import IModelBases from './models/bases';
 import IValidatorActividad from '../aplication/validators/actividad';
 import IValidatorUsuario from '../aplication/validators/usuario';
+
 import { IModelPrograma } from './models/programa';
-import IModelArea from './models/area';
+
 import PeriodoDeTrabajo,{TDataPeriodoDeTrabajo} from './classes/PeriodoDeTrabajo';
-import { MBases } from '../infraestructure/db/Mysql-Sequelize/models/Bases';
+
 import { TValoracion } from './types/valoracion';
 
 
@@ -52,7 +55,7 @@ interface MUsuario extends IModelUsuario {}
 interface MPersona extends IModelPersona{}
 interface MPrograma extends IModelPrograma { }
 interface MArea extends IModelArea {}
-
+interface MBases extends IModelBases {}
 const _Actividad = Actividad;
 const _Area = Area;
 const _PeriodoDeTrabajo = PeriodoDeTrabajo;

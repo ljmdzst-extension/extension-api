@@ -5,13 +5,14 @@ import MArea from "./area";
 import { MPersona } from "./persona";
 import { MPrograma } from "./programa";
 import MUsuario from "./usuario";
+import {MBases} from "./bases";
 
 const _MUsuario = MUsuario;
 const _MActividad = MActividad;
 const _MPersona = MPersona;
 const _MPrograma = MPrograma;
 const _MArea = MArea;
-
+const _MBases = MBases
 
 export namespace MysqlSequelize {
 
@@ -20,7 +21,7 @@ export namespace MysqlSequelize {
     export const MPersona = _MPersona;
     export const MPrograma = _MPrograma;
     export const MArea = _MArea;
-    
+    export const MBases = _MBases;
 
     export class Db implements IDataBase {
         private sequelize !: Sequelize;

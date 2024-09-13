@@ -48,17 +48,18 @@ export class MiddlewareObtenerDataUsuario implements IMiddleware {
             
             try {
 
-                if((!req.usuario) && (!req.body))  throw { status : 400 , message : 'No se pudo obtener data de la petición'}
+                if((!req.idUsuario) && (!req.body))  throw { status : 400 , message : 'No se pudo obtener data de la petición'}
 
-                else if(req.usuario) {
-                    req.usuario = await aplication.BusquedaUsaurios.buscarPorId(req.usuario.idUsuario,this.MUsuario,this.VUsuario);
+                else if(req.idUsuario) {
+                    req.usuario = await aplication.BusquedaUsaurios.buscarPorId(req.idUsuario,this.MUsuario,this.VUsuario);
                 
                 }
                 else if( req.body){
                     const cUsuarios = await aplication.BusquedaUsaurios.buscarPor({email : req.body.email},this.MUsuario);
-                    
-                    req.usuario = cUsuarios[0];
-                
+                    if(cUsuarios.length > 0) {
+                        req.usuario = cUsuarios[0];
+                    }
+                  
                 }
                 
                 next();
@@ -77,9 +78,9 @@ export class MiddlewareValidarUsuarioNoPendiente implements IMiddleware {
     constructor(){ }
     usar() {
         return async( req : any , resp : Response, next : NextFunction)=>{
-            const { usuario } : { usuario : domain.TDataUsuario} = req.usuario;
+            const { usuario } : { usuario : domain.Usuario } = req;
             
-            if( ! usuario.pendiente ) {
+            if( ! usuario.verDatos().pendiente ) {
                 next();
             } else {
                 HttpHelpers.responderPeticionError(resp, 'Usuario pendiente de confirmación de registro' ,403 );

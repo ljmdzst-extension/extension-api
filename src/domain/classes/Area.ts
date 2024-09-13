@@ -18,7 +18,9 @@ class Area {
     private cActividades !: Array<Actividad>;
 
     constructor(_data : TDataArea){
-        this.cActividades = [];
+        this.idArea = _data.idArea,
+        this.nom = _data.nom;
+        this.cActividades = new Array<Actividad>(0);
     }
 
     public altaActividad( a : Actividad) { this.cActividades.push( a );}

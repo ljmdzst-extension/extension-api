@@ -4,7 +4,7 @@ import { domain } from "../../domain"
 export default class VActividad implements aplication.IVActividad {
     validar(data: domain.TDataActividad): boolean {
         let salida = true;
-        if((!data.idActividad) || (! this.validarIdActividad(data.idActividad) )) salida = salida && false;
+        if( data.idActividad && (! this.validarIdActividad(data.idActividad)) ) salida = salida && false;
         if( data.motivoCancel && (!this.validarMotivoCancel(data.motivoCancel)) ) salida = salida && false;
         return salida;
     }

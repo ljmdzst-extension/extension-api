@@ -24,12 +24,11 @@ export default class GestionDeBases {
             unidadesAcademicas: [],
             lAreasProgramasAnios: []
         }
-
         const dbBases = await MBases.verBases();
 
         salida.listaObjetivos = dbBases.objetivos.map( o => o.verDatos());
-        salida.listaRelaciones = dbBases.relaciones.filter( r => r.verDatos().tipoRelacion?.nom !== 'U.A' ).map( r => r.verDatos());
-        salida.unidadesAcademicas = dbBases.relaciones.filter( r => r.verDatos().tipoRelacion?.nom === 'U.A' ).map( r => r.verDatos());
+        salida.listaRelaciones = dbBases.relaciones.filter( r => r.verDatos().tipoRelacion?.nom !== 'U.A.' ).map( r => r.verDatos());
+        salida.unidadesAcademicas = dbBases.relaciones.filter( r => r.verDatos().tipoRelacion?.nom === 'U.A.' ).map( r => r.verDatos());
         salida.listaValoraciones = [
             { idValoracion : 1, nom : 'Muy bueno' },
             { idValoracion : 2, nom : 'Bueno' },

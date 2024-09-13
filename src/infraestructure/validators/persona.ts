@@ -3,7 +3,7 @@ import { TDataPersona } from "../../domain/classes/Persona";
 
 export default class VPersona implements aplication.IVPersona {
     validar(data: TDataPersona): boolean {
-        throw new Error("Method not implemented.");
+        return true;
     }
     validarNroDoc(nroDoc: string): boolean {
         throw new Error("Method not implemented.");

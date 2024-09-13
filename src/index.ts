@@ -6,10 +6,12 @@ import Server from './infraestructure/server';
 import RouterArea from './infraestructure/server/Express/router/area';
 import RouterProgramas from './infraestructure/server/Express/router/programa';
 import RouterUsuario from './infraestructure/server/Express/router/usuario';
+import RouterBases from './infraestructure/server/Express/router/bases';
 
 import {mysql} from './infraestructure/db/';
-import sequelizeExtension from './infraestructure/db/Mysql-Sequelize/config/dbConfig';
+
 import { validators } from './infraestructure/validators';
+import RouterActividad from './infraestructure/server/Express/router/actividad';
 
 
 // this.app.use(`${BASE_PATH_METAS}/programas`,routerPrograma);
@@ -41,15 +43,24 @@ const mPersona = new mysql.MPersona();
 const mPrograma = new mysql.MPrograma();
 const mActividad = new mysql.MActividad();
 const mArea = new mysql.MArea();
+const mBases = new mysql.MBases();
 const vUsuario =  new validators.VUsuario();
 const vPersona = new validators.VPersona();
+const vActividad = new validators.VActividad();
+const BASE_PATH= '/api/v2';
 
-const server = new Server(  '/api/v2', mUsuario, vUsuario );
+const server = new Server( BASE_PATH , mUsuario, vUsuario );
 
-server.agregarRouter(  new RouterUsuario( `${server.verRootPath()}/usr`,mUsuario,mPersona,vUsuario,vPersona  ));
 
-server.agregarRouter( new RouterProgramas(`${server.verRootPath()}/metas/programa`,mPrograma) );
-server.agregarRouter( new RouterArea(`${server.verRootPath()}/metas/area`,mArea,mActividad) );
+
+server.agregarRouter( new RouterUsuario( `${BASE_PATH}/usr`,mUsuario,mPersona,vUsuario,vPersona  ));
+
+const BASE_PATH_METAS = `${BASE_PATH}/metas`;
+
+server.agregarRouter( new RouterActividad(`${BASE_PATH_METAS}/actividad`, mActividad,mArea,mUsuario,vActividad));
+server.agregarRouter( new RouterBases(`${BASE_PATH_METAS}/bases`, mBases )  );
+server.agregarRouter( new RouterProgramas(`${BASE_PATH_METAS}/programa`,mPrograma) );
+server.agregarRouter( new RouterArea(`${BASE_PATH_METAS}/area`,mArea,mActividad) );
 
 server.iniciar();
 

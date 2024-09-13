@@ -30,11 +30,9 @@ export class MiddlewareValidarToken implements IMiddleware {
                 
                 const { idUsuario }= jwt.verify(req.token,`${process.env.HASH_KEY }`) as jwt.JwtPayload;
         
-                if(!idUsuario) throw {status : 400, message : ' No se pudo obtener el id del usuario'}
+                if(!idUsuario) throw ERROR.TOKEN_INVALIDO;
         
-                req.usuario = {
-                    idUsuario : idUsuario
-                };
+                req.idUsuario = idUsuario;
                 
                 next();
         
