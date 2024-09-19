@@ -109,7 +109,7 @@ export default class GestionDeActividades {
 
         if(!actividad) throw new Error(`No existe actividad con ese id : ${idActividad}`)
 
-        salida = await  MActividad.darDeBaja(actividad.verDatos().idActividad);
+        salida = await MActividad.darDeBaja(actividad.verDatos().idActividad);
         
         return salida;
     } 
