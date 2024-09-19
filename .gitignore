@@ -70,5 +70,5 @@ __tests__/
 # ignorar volumes
 db_estension_backup/
 
-*.zargo
-*-zargo~
+proyecto.zargo
+proyecto.zargo~
