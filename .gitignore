@@ -69,3 +69,6 @@ dist/
 __tests__/
 # ignorar volumes
 db_estension_backup/
+
+*.zargo
+*-zargo~
