@@ -4,10 +4,10 @@ import { DataTypes, Model, Optional } from 'sequelize';
 export interface InstitucionAttributes {
   idInstitucion: number;
   nom: string;
-  dom?: string | null;
-  email?: string | null;
-  tel?: string | null;
-  ubicacion?: string | null;
+  dom?: string ;
+  email?: string ;
+  tel?: string ;
+  ubicacion?: string ;
 }
 
 export type InstitucionPk = "idInstitucion";

@@ -5,7 +5,7 @@ import express, { Express, Request, Response } from 'express';
 import cors from 'cors';
 import path from 'path';
 
-import sequelizeExtension from '../../db/Mysql-Sequelize/config/dbConfig';
+import sequelizeExtension from '../../db/mysql-sequelize/config/dbConfig';
 import { MiddlewareInformarPeticion } from './middlewares/bases';
 import { MiddlewareExtraerToken, MiddlewareValidarToken } from './middlewares/auth';
 import { MiddlewareObtenerDataUsuario } from './middlewares/usuario';

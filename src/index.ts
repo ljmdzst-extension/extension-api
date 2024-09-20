@@ -3,15 +3,15 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 import Server from './infraestructure/server';
-import RouterArea from './infraestructure/server/Express/router/area';
-import RouterProgramas from './infraestructure/server/Express/router/programa';
-import RouterUsuario from './infraestructure/server/Express/router/usuario';
-import RouterBases from './infraestructure/server/Express/router/bases';
+import RouterArea from './infraestructure/server/express/router/area';
+import RouterProgramas from './infraestructure/server/express/router/programa';
+import RouterUsuario from './infraestructure/server/express/router/usuario';
+import RouterBases from './infraestructure/server/express/router/bases';
 
 import {mysql} from './infraestructure/db/';
 
 import { validators } from './infraestructure/validators';
-import RouterActividad from './infraestructure/server/Express/router/actividad';
+import RouterActividad from './infraestructure/server/express/router/actividad';
 
 
 // this.app.use(`${BASE_PATH_METAS}/programas`,routerPrograma);

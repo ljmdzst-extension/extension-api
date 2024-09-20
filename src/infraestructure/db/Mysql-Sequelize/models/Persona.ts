@@ -6,12 +6,12 @@ export interface PersonaAttributes {
   tipoDoc: number;
   ape: string;
   nom: string;
-  tel?: string | null;
-  dom?: string | null;
-  email?: string | null;
-  ciudad?: string | null;
-  provincia?: string | null;
-  pais?: string | null;
+  tel?: string ;
+  dom?: string ;
+  email?: string ;
+  ciudad?: string ;
+  provincia?: string ;
+  pais?: string ;
 }
 
 export type PersonaPk = "nroDoc";

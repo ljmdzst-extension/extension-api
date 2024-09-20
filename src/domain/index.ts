@@ -20,14 +20,21 @@ import IModelUsuario from './models/usuario';
 import IModelPersona from './models/persona';
 import IModelArea from './models/area';
 import IModelBases from './models/bases';
-import IValidatorActividad from '../aplication/validators/actividad';
-import IValidatorUsuario from '../aplication/validators/usuario';
 
 import { IModelPrograma } from './models/programa';
 
 import PeriodoDeTrabajo,{TDataPeriodoDeTrabajo} from './classes/PeriodoDeTrabajo';
 
 import { TValoracion } from './types/valoracion';
+import IModelCategoria from './models/categoria';
+import IModelObjetivo from './models/obejtivo';
+import IModelPermiso from './models/permiso';
+import IModelTipoObjetivo from './models/tipo-objetivo';
+import IModelTipoRelacion from './models/tipo-relacion';
+import IModelEnlace from './models/enlace';
+import IModelUbicacion from './models/ubicacion';
+import IModelProgramaSIPPE from './models/programa-sippe';
+import IModelInstitucion from './models/institucion';
 
 
 type _TDataActividad = TDataActividad;
@@ -50,12 +57,31 @@ type _TDataUsuario = TDataUsuario;
 type _TDataPeriodoDeTrabajo = TDataPeriodoDeTrabajo;
 
 type _TValoracion = TValoracion;
+
+type _TBases = { 
+    areas: PeriodoDeTrabajo[]; 
+    objetivos: Objetivo[]; 
+    relaciones: Relacion[]; 
+    categorias: Categoria[]; 
+    permisos: Permiso[];
+    programasSIPPE: ProgramaSIPPE[]; 
+}
+
 interface MActividad extends IModelActividad {};
 interface MUsuario extends IModelUsuario {}
 interface MPersona extends IModelPersona{}
 interface MPrograma extends IModelPrograma { }
 interface MArea extends IModelArea {}
 interface MBases extends IModelBases {}
+interface MCategoria extends IModelCategoria {}
+interface MObjetivo extends IModelObjetivo {}
+interface MPermiso extends IModelPermiso{}
+interface MTipoObjetivo extends IModelTipoObjetivo {} 
+interface MTipoRelacion extends IModelTipoRelacion {}
+interface MEnlace extends IModelEnlace {}
+interface MUbicacion extends IModelUbicacion {}
+interface MProgramaSIPPE extends IModelProgramaSIPPE {}
+interface MInstitucion extends IModelInstitucion  {}
 const _Actividad = Actividad;
 const _Area = Area;
 const _PeriodoDeTrabajo = PeriodoDeTrabajo;
@@ -74,8 +100,6 @@ const _Persona = Persona;
 const _Categoria = Categoria;
 const _Permiso = Permiso;
 const _Usuario = Usuario;
-interface VActividad extends IValidatorActividad {}
-interface VUsuario extends IValidatorUsuario{}
 
 export namespace domain {
     export class Actividad extends _Actividad {};
@@ -115,14 +139,8 @@ export namespace domain {
     export type TDataCategoria = _TDataCategoria;
     export type TDataPermiso = _TDataPermiso;
     export type TDataPeriodoDeTrabajo = _TDataPeriodoDeTrabajo;
-    export type TDataBases ={ 
-        areas: PeriodoDeTrabajo[]; 
-        objetivos: Objetivo[]; 
-        relaciones: Relacion[]; 
-        categorias: Categoria[]; 
-        permisos: Permiso[];
-        programasSIPPE: ProgramaSIPPE[]; 
-    }
+
+    export type TDataBase = _TBases;
     export type TValoracion = _TValoracion;
 
     export interface IModelActividad extends MActividad{};
@@ -131,7 +149,14 @@ export namespace domain {
     export interface IModelPrograma extends MPrograma {};
     export interface IModelArea extends MArea {};
     export interface IModelBases extends MBases {};
-    export interface IValidatorActividad extends VActividad {};
-    export interface IValidatorUsuario extends VUsuario {};
+    export interface IModelCategoria extends MCategoria{};
+    export interface IModelObjetivo extends MObjetivo {};
+    export interface IModelPermiso extends MPermiso {};
+    export interface IModelTipoObjetivo extends MTipoObjetivo {};
+    export interface IModelTipoRelacion extends MTipoRelacion {};
+    export interface IModelEnlace extends MEnlace {};
+    export interface IModelUbicacion extends MUbicacion {};
+    export interface IModelProgramaSIPPE extends MProgramaSIPPE {};
+    export interface IModelInstitucion extends MInstitucion {};
 }
 

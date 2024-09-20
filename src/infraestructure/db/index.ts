@@ -1,4 +1,4 @@
-import {MysqlSequelize} from './Mysql-Sequelize';
+import {MysqlSequelize} from './mysql-sequelize';
 
 
 

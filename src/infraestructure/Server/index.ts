@@ -1,4 +1,4 @@
-import {ServerExpress} from "./Express";
+import {ServerExpress} from "./express";
 
 
 const server =  ServerExpress.Server;

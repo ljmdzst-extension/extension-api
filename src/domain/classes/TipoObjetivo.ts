@@ -1,7 +1,7 @@
 import { Transaction } from "sequelize";
-import { BD } from "../../infraestructure/db/Mysql-Sequelize/config/dbConfig";
-import { ERROR } from "../../infraestructure/server/Express/logs/errores";
-import { INVALIDO } from "../../infraestructure/server/Express/logs/validaciones";
+import { BD } from "../../infraestructure/db/mysql-sequelize/config/dbConfig";
+import { ERROR } from "../../infraestructure/server/express/logs/errores";
+import { INVALIDO } from "../../infraestructure/server/express/logs/validaciones";
 
 
 type ID_TIPO_OBJ = number;

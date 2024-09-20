@@ -1,7 +1,4 @@
 import Area from "../classes/Area";
+import IModel from "./model";
 
-export default interface IModelArea {
-
-    buscarPorId( idArea : number ) : Promise<Area | null>;
-    
-}
+export default interface IModelArea extends IModel<Area,number> {}

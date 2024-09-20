@@ -1,8 +1,6 @@
 import Programa, { TDataPrograma } from "../classes/Programa";
+import IModel from "./model";
 
-export interface IModelPrograma {
-
-    buscarPor( parametros : Partial<TDataPrograma>) : Promise<Programa[]>;
-    verLista( anio: number ) : Promise<Programa[]>;
+export interface IModelPrograma extends IModel<Programa,number> {
     verListaConAreas(anio: number) : Promise<Programa[]>;
 }
