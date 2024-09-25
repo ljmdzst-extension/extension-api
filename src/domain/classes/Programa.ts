@@ -1,4 +1,4 @@
-import Area, { TDataArea }  from "./Area";
+import Area, { TDataArea }  from "./area";
 
 export type ID_PROG = number;
 

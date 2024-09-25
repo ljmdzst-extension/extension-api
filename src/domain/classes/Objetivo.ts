@@ -1,4 +1,4 @@
-import  TipoObjetivo, { ID_TIPO_OBJ, TDataTipoObjetivo }  from "./TipoObjetivo";
+import  TipoObjetivo, { TDataTipoObjetivo }  from "./tipo-objetivo";
 
 
 type ID_OBJETIVO= number;
@@ -43,9 +43,9 @@ class Objetivo {
     }
 
  
-    public verTipoObjetivo() : ID_TIPO_OBJ 
+    public verTipoObjetivo() : number 
     { 
-        return this.iTipoObjetivo.verDatos().idTipoObj ; 
+        return this.iTipoObjetivo.verDatos().ID ; 
     } 
 
    

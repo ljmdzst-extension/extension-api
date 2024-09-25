@@ -1,5 +1,5 @@
 import { domain } from "../../../domain"
-import Actividad from "../../../domain/classes/Actividad";
+import Actividad from "../../../domain/classes/actividad";
 
 export default class MActividad implements domain.IModelActividad {
     buscarPorArea(idArea: number): Promise<Actividad[]> {

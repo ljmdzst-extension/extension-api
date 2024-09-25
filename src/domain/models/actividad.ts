@@ -1,4 +1,4 @@
-import Actividad, { ID_ACT, TDataActividad } from "../classes/Actividad";
+import Actividad, { ID_ACT, TDataActividad } from "../classes/actividad";
 import IModel from "./model";
 
 

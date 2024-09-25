@@ -141,7 +141,7 @@ export default class RouterActividad implements IRouter {
         try {
             const {idActividad} = req.body; 
             const iActividad = await aplication.GestionDeActividades.editarActividad(
-                    {idActividad : Number(idActividad) , motivoCancel : ''},
+                    {ID : Number(idActividad) , motivoCancel : ''},
                     this.MActividad,
                     this.VActividad
                 );
@@ -159,7 +159,7 @@ export default class RouterActividad implements IRouter {
 
             const {idActividad,motivoCancel} = req.body; 
             await aplication.GestionDeActividades.editarActividad(
-                {idActividad : Number(idActividad) , motivoCancel : motivoCancel},
+                {ID : Number(idActividad) , motivoCancel : motivoCancel},
                 this.MActividad,
                 this.VActividad
             );

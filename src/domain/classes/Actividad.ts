@@ -1,13 +1,13 @@
 
-import Ubicacion, { TDataUbicacion }  from "./Ubicacion";
-import Meta, { TDataMeta } from "./Meta";
-import Institucion, { TDataInstitucion } from "./Institucion";
-import FechaPuntual, { TDataFecha } from "./FechaPuntual";
-import Enlace, { TDataEnlace } from './Enlace';
-import Objetivo, { TDataObjetivo } from "./Objetivo";
-import ProgramaSIPPE, { TDataProgramaSIPPE } from "./ProgramaSIPPE";
-import Area from "./Area";
-import Usuario from "./Usuario";
+import Ubicacion, { TDataUbicacion }  from "./ubicacion";
+import Meta, { TDataMeta } from "./meta";
+import Institucion, { TDataInstitucion } from "./institucion";
+import FechaPuntual, { TDataFecha } from "./fecha-puntual";
+import Enlace, { TDataEnlace } from './enlace';
+import Objetivo, { TDataObjetivo } from "./objetivo";
+import ProgramaSIPPE, { TDataProgramaSIPPE } from "./programa-sipppe";
+import Area, { TDataArea } from "./area";
+import Usuario from "./usuario";
 
 
 
@@ -18,10 +18,9 @@ type ID_ACT = number;
 
 type TDataActividad = {
 
-    idActividad : number,
-    idArea : number,
+    ID : number,
     desc : string,
-    nro ?: number,
+    area : TDataArea,
     idUsuario ?: string,
     fechaDesde ?: string,
     fechaHasta ?: string,
@@ -40,9 +39,8 @@ type TDataActividad = {
 
 class Actividad  {
 
-    private id  !: number;
+    private ID  !: number;
     private desc  !: string;
-    private nro  ?: number;
     private fechaDesde  ?: Date;
     private fechaHasta  ?: Date;
     private motivoCancel  ?: string | null;
@@ -59,13 +57,12 @@ class Actividad  {
 
     constructor( _data : TDataActividad, _iArea : Area, _iUsr : Usuario  ) {
 
-        this.id = _data.idActividad;
+        this.ID = _data.ID;
         this.desc = _data.desc;
         
         this.iArea = _iArea;
         this.iUsr = _iUsr;
 
-        if(_data.nro) this.nro = _data.nro;
         if(_data.fechaDesde) this.fechaDesde = new Date(_data.fechaDesde);
         if(_data.fechaHasta) this.fechaHasta = new Date(_data.fechaHasta);
         if(_data.motivoCancel) this.motivoCancel = _data.motivoCancel;
@@ -82,7 +79,6 @@ class Actividad  {
     
     public editar( data : Partial<TDataActividad> ) {
         if(data.desc) { this.desc = data.desc;}
-        if(data.nro) { this.nro = data.nro;}
         if(data.fechaDesde) { this.fechaDesde = new Date( data.fechaDesde );}
         if(data.fechaHasta) { this.fechaHasta = new Date(data.fechaHasta);}
         if(data.motivoCancel) { this.motivoCancel = data.motivoCancel;}
@@ -97,13 +93,13 @@ class Actividad  {
     public altaUbicacion( u : Ubicacion ){ this.cUbicaciones.push(u);  }
     
     public bajaEnlace( id : number)  {  
-        this.cEnlaces = this.cEnlaces.filter( e => e.verDatos().idEnlace !== id) 
+        this.cEnlaces = this.cEnlaces.filter( e => e.verDatos().ID !== id) 
     }
     public bajaFechaPuntual( id : number)  {  
-        this.cFechasPuntuales = this.cFechasPuntuales.filter( e => e.verDatos().idFecha !== id) 
+        this.cFechasPuntuales = this.cFechasPuntuales.filter( e => e.verDatos().ID !== id) 
     }
     public bajaInstitucion( id : number)  {  
-        this.cInstituciones = this.cInstituciones.filter( e => e.verDatos().idInstitucion !== id) 
+        this.cInstituciones = this.cInstituciones.filter( e => e.verDatos().ID !== id) 
     }
     public bajaMeta( id : number)  {  
         this.cMetas = this.cMetas.filter( m => m.verDatos().idMeta !== id) 
@@ -130,7 +126,7 @@ class Actividad  {
 
     public editarInstitucion( id : number , _data : TDataInstitucion) : boolean {
         let salida = false; 
-        const i = this.verInstitucions().find( i => i.verDatos().idInstitucion === id);
+        const i = this.verInstitucions().find( i => i.verDatos().ID === id);
         if( i ) {
             i.editarDatos( _data );
             salida = true;
@@ -160,9 +156,9 @@ class Actividad  {
     public verProgramaSIPPPEs( ) : ProgramaSIPPE [] { return this.cProgSIPPPE; }
     public verUbicacions( ) : Ubicacion [] { return this.cUbicaciones; }
 
-    public findEnlace( id : number ) { return this.cEnlaces.find( item => item.verDatos().idEnlace === id)}
-    public findFechaPuntual( id : number ) { return this.cFechasPuntuales.find( item => item.verDatos().idFecha === id)}
-    public findInstitucion( id : number ) { return this.cInstituciones.find( item => item.verDatos().idInstitucion === id)}
+    public findEnlace( id : number ) { return this.cEnlaces.find( item => item.verDatos().ID === id)}
+    public findFechaPuntual( id : number ) { return this.cFechasPuntuales.find( item => item.verDatos().ID === id)}
+    public findInstitucion( id : number ) { return this.cInstituciones.find( item => item.verDatos().ID === id)}
     public findMeta( id : number ) { return this.cMetas.find( item => item.verDatos().idMeta === id)}
     public findObjetivo( id : number ) { return this.cObjetivos.find( item => item.verDatos().idObjetivo === id)}
     public findProgramaSIPPPE( id : number ) { return this.cProgSIPPPE.find( item => item.verDatos().idProgramaSippe === id)}
@@ -171,9 +167,8 @@ class Actividad  {
 
     public verDatos() : TDataActividad {
         return {
-            idActividad : this.id,
-            idArea : this.iArea.verID(),
-            nro : this.nro,
+            ID : this.ID,
+            area : this.iArea.verDatos(),
             desc : this.desc,
             idUsuario : this.iUsr.verDatos().idUsuario,
             fechaDesde : this.fechaDesde?.toString(),

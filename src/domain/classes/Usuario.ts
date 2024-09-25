@@ -1,9 +1,8 @@
 
-
-import Categoria, { TDataCategoria } from "./Categoria"
-import Permiso, { TDataPermiso } from "./Permiso"
-import Persona, { TDataPersona } from "./Persona"
-import ProgramasHabilitadosDelUsuario, { TDataPeriodoDeTrabajo } from "./PeriodoDeTrabajo"
+import Categoria, { TDataCategoria } from "./categoria";
+import ProgramasHabilitadosDelUsuario, { TDataPeriodoDeTrabajo } from "./periodo-de-trabajo"
+import Permiso, { TDataPermiso } from "./permiso";
+import Persona, { TDataPersona } from "./persona";
 
 export type TDataUsuario = {
     idUsuario: string,

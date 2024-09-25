@@ -1,4 +1,4 @@
-import { TDataUsuario } from "../../domain/classes/Usuario";
+import { TDataUsuario } from "../../domain/classes/usuario";
 
 export default interface IValidatorUsuario {
     validar( data : Partial<TDataUsuario>) : boolean;

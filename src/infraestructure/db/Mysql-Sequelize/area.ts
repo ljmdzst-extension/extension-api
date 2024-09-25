@@ -1,6 +1,6 @@
 import * as Sequelize from 'sequelize';
 import { domain } from "../../../domain";
-import Area from '../../../domain/classes/Area';
+import Area from '../../../domain/classes/area';
 
 export default class MArea implements domain.IModelArea {
     constructor(  ){}

@@ -1,5 +1,5 @@
 import { aplication } from "../../aplication";
-import { TDataPersona } from "../../domain/classes/Persona";
+import { TDataPersona } from "../../domain/classes/persona";
 
 export default class VPersona implements aplication.IVPersona {
     validar(data: TDataPersona): boolean {

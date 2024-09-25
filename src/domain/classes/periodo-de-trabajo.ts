@@ -1,4 +1,4 @@
-import Area from "./Area";
+import Area from "./area";
 import Programa, { TDataPrograma } from "./Programa";
 
 export type TDataPeriodoDeTrabajo = {

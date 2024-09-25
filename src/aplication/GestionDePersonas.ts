@@ -1,4 +1,4 @@
-import Persona, { TDataPersona } from "../domain/classes/Persona";
+import Persona, { TDataPersona } from "../domain/classes/persona";
 import IModelPersona from "../domain/models/persona";
 import IValidatorPersona from "./validators/persona";
 

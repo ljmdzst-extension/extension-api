@@ -1,5 +1,5 @@
 import { domain } from "../../../domain"
-import Usuario, { TDataUsuario } from "../../../domain/classes/Usuario";
+import Usuario, { TDataUsuario } from "../../../domain/classes/usuario";
 
 export default class MUsuario implements domain.IModelUsuario {
     buscarPorId(idUsuario: string): Promise<Usuario | null> {

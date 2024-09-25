@@ -1,4 +1,4 @@
-import { TDataPersona } from "../../domain/classes/Persona";
+import { TDataPersona } from "../../domain/classes/persona";
 
 export default interface IValidatorPersona {
     validar(data : TDataPersona) : boolean;
