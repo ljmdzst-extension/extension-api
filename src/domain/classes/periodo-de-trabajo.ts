@@ -1,9 +1,9 @@
 import Area from "./area";
-import Programa, { TDataPrograma } from "./Programa";
+import Programa, { TPrograma } from "./programa";
 
-export type TDataPeriodoDeTrabajo = {
+export type TPeriodoDeTrabajo = {
     anio : number, 
-    listaProgramas : TDataPrograma[]
+    listaProgramas : TPrograma[]
 }
 
 export default class PeriodoDeTrabajo {
@@ -37,7 +37,7 @@ export default class PeriodoDeTrabajo {
     }
 
     
-    verDatos() : TDataPeriodoDeTrabajo {
+    verDatos() : TPeriodoDeTrabajo {
         return {
             anio : this.anio,
             listaProgramas : this.cProgramas.map( p => p.verDatos())

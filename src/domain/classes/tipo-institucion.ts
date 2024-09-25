@@ -2,7 +2,7 @@
 
 
 
-type TDataTipoInstitucion =  {
+type TTipoInstitucion =  {
     ID : number,  
     nom : string,
 }
@@ -14,12 +14,12 @@ class TipoInstitucion  {
     private ID !: number;
     private nom !: string;
 
-    constructor   ( _data : TDataTipoInstitucion  ){ 
+    constructor   ( _data : TTipoInstitucion  ){ 
         this.ID = _data.ID;
         this.nom = _data.nom;
     }
 
-    public verDatos () : TDataTipoInstitucion  {
+    public verDatos () : TTipoInstitucion  {
         return {
             ID : this.ID,
             nom : this.nom
@@ -30,7 +30,7 @@ class TipoInstitucion  {
 
 
 export {  
-    TDataTipoInstitucion 
+    TTipoInstitucion 
 }
 
 export default TipoInstitucion;

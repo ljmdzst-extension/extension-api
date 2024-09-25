@@ -1,7 +1,7 @@
 
 type ID_UBICACION= number;
 
-type TDataUbicacion = {
+type TUbicacion = {
     idUbicacion : ID_UBICACION,
     enlace : string
 }
@@ -12,17 +12,17 @@ class Ubicacion {
     private idUbicacion !: ID_UBICACION;
     private enlace !: string;
 
-    constructor (  _data : TDataUbicacion ){
+    constructor (  _data : TUbicacion ){
         this.idUbicacion = _data.idUbicacion;
         this.enlace = _data.enlace;
     }
 
-    public editar( _data : Partial<TDataUbicacion> ) {
+    public editar( _data : Partial<TUbicacion> ) {
         if(_data.idUbicacion) this.idUbicacion = _data.idUbicacion;
         if(_data.enlace) this.enlace = _data.enlace;
     }
 
-    public verDatos() : TDataUbicacion { 
+    public verDatos() : TUbicacion { 
         return {
             idUbicacion : this.idUbicacion,
             enlace : this.enlace
@@ -32,5 +32,5 @@ class Ubicacion {
   
 }
 
-export {ID_UBICACION,TDataUbicacion }
+export {ID_UBICACION,TUbicacion }
 export default Ubicacion;

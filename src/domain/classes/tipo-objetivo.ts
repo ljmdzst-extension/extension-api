@@ -1,6 +1,6 @@
 
 
-type TDataTipoObjetivo =  {
+type TTipoObjetivo =  {
     ID : number,  
     nom : string,
 }
@@ -12,12 +12,12 @@ class TipoObjetivo  {
     private ID !: number;
     private nom !: string;
 
-    constructor   ( _data : TDataTipoObjetivo  ){ 
+    constructor   ( _data : TTipoObjetivo  ){ 
         this.ID = _data.ID;
         this.nom = _data.nom;
     }
 
-    public verDatos () : TDataTipoObjetivo  {
+    public verDatos () : TTipoObjetivo  {
         return {
             ID : this.ID,
             nom : this.nom
@@ -28,7 +28,7 @@ class TipoObjetivo  {
 
 
 export {  
-    TDataTipoObjetivo 
+    TTipoObjetivo 
 }
 
 export default TipoObjetivo;

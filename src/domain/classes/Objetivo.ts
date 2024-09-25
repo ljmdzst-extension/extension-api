@@ -1,13 +1,13 @@
-import  TipoObjetivo, { TDataTipoObjetivo }  from "./tipo-objetivo";
+import  TipoObjetivo, { TTipoObjetivo }  from "./tipo-objetivo";
 
 
 type ID_OBJETIVO= number;
 
 
-type TDataObjetivo =  {
+type TObjetivo =  {
     idObjetivo : ID_OBJETIVO,
     nom : string,
-    tipoObjetivo ?: TDataTipoObjetivo,
+    tipoObjetivo ?: TTipoObjetivo,
     detalle ?: string,
 }
 
@@ -19,7 +19,7 @@ class Objetivo {
 
     private iTipoObjetivo !: TipoObjetivo;
 
-    constructor ( _data : TDataObjetivo, ito : TipoObjetivo  ){
+    constructor ( _data : TObjetivo, ito : TipoObjetivo  ){
         this.idObjetivo = _data.idObjetivo;
         this.nom = _data.nom;
         this.detalle = _data.detalle;
@@ -32,7 +32,7 @@ class Objetivo {
         return this.idObjetivo;
     }
 
-    public verDatos() : TDataObjetivo
+    public verDatos() : TObjetivo
     {
         return {
             idObjetivo : this.idObjetivo,
@@ -52,5 +52,5 @@ class Objetivo {
  } 
     
 
-export {TDataObjetivo,ID_OBJETIVO}
+export {TObjetivo,ID_OBJETIVO}
 export default Objetivo;

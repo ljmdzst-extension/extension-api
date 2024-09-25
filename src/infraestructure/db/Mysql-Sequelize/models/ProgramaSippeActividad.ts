@@ -16,10 +16,10 @@ export class ProgramaSippeActividad extends Model<ProgramaSippeActividadAttribut
   idProgramaSippe!: number;
   idActividad!: number;
 
-  public static async buscarPorActividad( actividad : domain.Actividad, transaction ?: Sequelize.Transaction) : Promise<domain.TDataProgramaSIPPE[]> {
-    let salida : domain.TDataProgramaSIPPE[] = [];
+  public async buscarPorActividad( actividad : domain.Actividad, transaction ?: Sequelize.Transaction) : Promise<domain.TProgramaSIPPE[]> {
+    let salida : domain.TProgramaSIPPE[] = [];
 
-    const programasSippesAsociados = await ProgramaSippeActividad.findAll({where : { idActividad : actividad.verDatos().idActividad}, transaction});
+    const programasSippesAsociados = await ProgramaSippeActividad.findAll({where : { idActividad : actividad.verDatos().ID}, transaction});
 
     if(programasSippesAsociados.length > 0) {
         salida = await ProgramaSippe.buscarPorListaIds( programasSippesAsociados.map( pasoc => pasoc.dataValues.idProgramaSippe), transaction);

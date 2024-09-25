@@ -1,6 +1,6 @@
 import Usuario from "./usuario";
 
-export type TDataPersona = {
+export type TPersona = {
     ID : number;
     nom: string;
     tel?: string;
@@ -23,7 +23,7 @@ export default abstract class Persona {
 
     protected cUsuarios ?: Usuario[];
 
-    constructor ( data : TDataPersona ){ 
+    constructor ( data : TPersona ){ 
         this.ID;
         this.nom = data.nom;
         this.tel = data.tel;
@@ -45,9 +45,9 @@ export default abstract class Persona {
         }
     }
 
-    public abstract editar( data : Partial<TDataPersona> ) : void ;
+    public abstract editar( data : Partial<TPersona> ) : void ;
 
-    public abstract verDatos() : TDataPersona ; 
+    public abstract verDatos() : any ; 
 
     public abstract esJuridica () : boolean;
     public abstract esFisica () : boolean;

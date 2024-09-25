@@ -1,20 +1,24 @@
 
-import Categoria, { TDataCategoria } from "./categoria";
-import ProgramasHabilitadosDelUsuario, { TDataPeriodoDeTrabajo } from "./periodo-de-trabajo"
-import Permiso, { TDataPermiso } from "./permiso";
-import Persona, { TDataPersona } from "./persona";
+import Categoria, { TCategoria } from "./categoria";
+import Institucion from "./institucion";
+import ProgramasHabilitadosDelUsuario, { TPeriodoDeTrabajo } from "./periodo-de-trabajo"
+import Permiso, { TPermiso } from "./permiso";
+import Persona from "./persona";
+import PersonaFisica , {TPersonaFisica} from "./persona-fisica";
+import PersonaJuridica , {TPersonaJuridica} from "./persona-juridica";
 
-export type TDataUsuario = {
+
+
+export type TUsuario = {
     idUsuario: string,
-    nroDoc : string,
     email: string,
     pass: string,
     idUnidadAcademica: number,
     pendiente : number,
-    persona ?: TDataPersona,
-    categoria ?: TDataCategoria,
-    permisos ?: TDataPermiso[],
-    areas ?: TDataPeriodoDeTrabajo[]
+    persona ?: TPersonaFisica | TPersonaJuridica,
+    categoria ?: TCategoria,
+    permisos ?: TPermiso[],
+    areas ?: TPeriodoDeTrabajo[]
 }
 
 export default class Usuario {
@@ -23,13 +27,12 @@ export default class Usuario {
     private pass: string;
     private idUnidadAcademica: number;
     private pendiente: number;
-    private nroDoc : string;
     private iPersona !: Persona;
     private iCategoria !: Categoria;
     private cPermisos !: Permiso[];
     private cProgramasHabilitados !: ProgramasHabilitadosDelUsuario[];
 
-    constructor( data : TDataUsuario, p : Persona , c : Categoria, cPermisos : Permiso[] ) {
+    constructor( data : TUsuario, p : Persona , c : Categoria, cPermisos : Permiso[] ) {
         this.idUsuario = data.idUsuario;
         this.email = data.email;
         this.pass = data.pass;
@@ -38,18 +41,20 @@ export default class Usuario {
         this.iCategoria = c;
         this.cPermisos = cPermisos;
         this.iPersona = p;
-        this.nroDoc = data.nroDoc;
         this.cProgramasHabilitados = [];
     }
 
-    public editar( _data : Partial<TDataUsuario>) {
+    public editar( _data : Partial<TUsuario>) {
         if(_data.idUsuario) this.idUsuario = _data.idUsuario;
-        if(_data.nroDoc) this.nroDoc = _data.nroDoc;
         if(_data.email) this.email = _data.email;
         if(_data.pass) this.pass = _data.pass;
         if(_data.idUnidadAcademica) this.idUnidadAcademica = _data.idUnidadAcademica;
         if(_data.pendiente) this.pendiente = _data.pendiente;
-        if(_data.persona ) this.iPersona = new Persona(_data.persona) ;
+   
+        if( _data.persona  && Object.keys(_data.persona).some( k => k === 'nroDoc' ) ) this.iPersona = new PersonaFisica(_data.persona as TPersonaFisica) ;
+   
+        if( _data.persona  && Object.keys(_data.persona).some( k => k === 'institucion' ) ) this.iPersona = new PersonaJuridica(_data.persona as TPersonaJuridica, new Institucion((_data.persona as TPersonaJuridica).institucion)) ;
+        
         if(_data.categoria && (this.iCategoria.verDatos().nombre !== _data.categoria.nombre )) {
             this.cambiarCategoria(new Categoria(_data.categoria));
         } 
@@ -100,10 +105,9 @@ export default class Usuario {
         this.editar({pendiente : 0});
     }
 
-    public verDatos() : TDataUsuario {
+    public verDatos() : TUsuario {
         return {
             idUsuario : this.idUsuario,
-            nroDoc : this.nroDoc,
             email : this.email,
             pass : this.pass,
             idUnidadAcademica : this.idUnidadAcademica,

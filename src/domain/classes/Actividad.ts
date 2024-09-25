@@ -1,12 +1,12 @@
 
-import Ubicacion, { TDataUbicacion }  from "./ubicacion";
-import Meta, { TDataMeta } from "./meta";
-import Institucion, { TDataInstitucion } from "./institucion";
-import FechaPuntual, { TDataFecha } from "./fecha-puntual";
-import Enlace, { TDataEnlace } from './enlace';
-import Objetivo, { TDataObjetivo } from "./objetivo";
-import ProgramaSIPPE, { TDataProgramaSIPPE } from "./programa-sipppe";
-import Area, { TDataArea } from "./area";
+import Ubicacion, { TUbicacion }  from "./ubicacion";
+import Meta, { TMeta } from "./meta";
+import Institucion, { TInstitucion } from "./institucion";
+import FechaPuntual, { TFecha } from "./fecha-puntual";
+import Enlace, { TEnlace } from './enlace';
+import Objetivo, { TObjetivo } from "./objetivo";
+import ProgramaSIPPE, { TProgramaSIPPE } from "./programa-sipppe";
+import Area, { TArea } from "./area";
 import Usuario from "./usuario";
 
 
@@ -16,22 +16,22 @@ const ACTIVIDAD_NULA = {idActividad : 0, idArea : 0, nro : 0 , desc : ''};
 
 type ID_ACT = number;
 
-type TDataActividad = {
+type TActividad = {
 
     ID : number,
     desc : string,
-    area : TDataArea,
+    area : TArea,
     idUsuario ?: string,
     fechaDesde ?: string,
     fechaHasta ?: string,
     motivoCancel ?: string | null,
-    listaMetas ?: TDataMeta[],
-    listaEnlaces ?: TDataEnlace[],
-    listaFechaPuntuales ?: TDataFecha[],
-    listaInstituciones ?: TDataInstitucion[],
-    listaObjetivos ?: TDataObjetivo[],
-    listaProgramaSIPPPEs ?: TDataProgramaSIPPE[],
-    listaUbicaciones ?: TDataUbicacion[]
+    listaMetas ?: TMeta[],
+    listaEnlaces ?: TEnlace[],
+    listaFechaPuntuales ?: TFecha[],
+    listaInstituciones ?: TInstitucion[],
+    listaObjetivos ?: TObjetivo[],
+    listaProgramaSIPPPEs ?: TProgramaSIPPE[],
+    listaUbicaciones ?: TUbicacion[]
 
 }
 
@@ -55,7 +55,7 @@ class Actividad  {
     private cObjetivos !: Objetivo[];
     private cProgSIPPPE !: ProgramaSIPPE[];
 
-    constructor( _data : TDataActividad, _iArea : Area, _iUsr : Usuario  ) {
+    constructor( _data : TActividad, _iArea : Area, _iUsr : Usuario  ) {
 
         this.ID = _data.ID;
         this.desc = _data.desc;
@@ -77,7 +77,7 @@ class Actividad  {
 
     }
     
-    public editar( data : Partial<TDataActividad> ) {
+    public editar( data : Partial<TActividad> ) {
         if(data.desc) { this.desc = data.desc;}
         if(data.fechaDesde) { this.fechaDesde = new Date( data.fechaDesde );}
         if(data.fechaHasta) { this.fechaHasta = new Date(data.fechaHasta);}
@@ -114,7 +114,7 @@ class Actividad  {
         this.cUbicaciones = this.cUbicaciones.filter( u => u.verDatos().idUbicacion !== id) 
     }
 
-    public editarMeta( id : number, _data : TDataMeta) : boolean { 
+    public editarMeta( id : number, _data : TMeta) : boolean { 
         let salida = false;
         const m = this.verMetas().find( m => m.verDatos().idMeta === id) ;
         if( m ) {
@@ -124,7 +124,7 @@ class Actividad  {
         return salida;
      }
 
-    public editarInstitucion( id : number , _data : TDataInstitucion) : boolean {
+    public editarInstitucion( id : number , _data : TInstitucion) : boolean {
         let salida = false; 
         const i = this.verInstitucions().find( i => i.verDatos().ID === id);
         if( i ) {
@@ -136,7 +136,7 @@ class Actividad  {
 
     }
 
-    public editarEnlace( id : number, _data : TDataEnlace) : boolean {
+    public editarEnlace( id : number, _data : TEnlace) : boolean {
         let salida = false;
 
         const e = this.findEnlace(id);
@@ -165,7 +165,7 @@ class Actividad  {
     public findUbicacion( id : number ) { return this.cUbicaciones.find( item => item.verDatos().idUbicacion === id)}
 
 
-    public verDatos() : TDataActividad {
+    public verDatos() : TActividad {
         return {
             ID : this.ID,
             area : this.iArea.verDatos(),
@@ -187,6 +187,6 @@ class Actividad  {
 }
    
 
-export { ID_ACT,ACTIVIDAD_NULA,TDataActividad}
+export { ID_ACT,ACTIVIDAD_NULA,TActividad}
 
 export default Actividad;

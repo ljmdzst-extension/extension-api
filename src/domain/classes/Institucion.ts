@@ -1,9 +1,9 @@
 
-export type TDataInstitucion = {
+export type TInstitucion = {
     ID : number,
     nom : string,
     ubicacion ?: string | undefined,
-    cSubInstituciones ?: TDataInstitucion[]
+    cSubInstituciones ?: TInstitucion[]
 }
 
 export default class Institucion {
@@ -13,19 +13,19 @@ export default class Institucion {
 
     private cSubInstituciones !: Institucion[];
 
-    constructor ( _data : TDataInstitucion ){
+    constructor ( _data : TInstitucion ){
         this.ID = _data.ID;
         this.nom = _data.nom;
         this.ubicacion = _data.ubicacion;
     }
 
-    public editarDatos ( _data : TDataInstitucion ) {
+    public editarDatos ( _data : TInstitucion ) {
         this.ID = _data.ID;
         this.nom = _data.nom;
         this.ubicacion = _data.ubicacion;
     } 
 
-    public verDatos () :TDataInstitucion {
+    public verDatos () :TInstitucion {
         return {
             ID :this.ID , 
             nom :this.nom , 

@@ -1,20 +1,21 @@
-import Actividad , {TDataActividad} from './classes/actividad';
-import Area, { TDataArea } from './classes/area';
-import Enlace, { TDataEnlace } from './classes/enlace';
-import FechaPuntual, { TDataFecha } from './classes/fecha-puntual';
-import Institucion, { TDataInstitucion } from './classes/institucion';
-import Meta, { TDataMeta } from './classes/meta';
-import Objetivo, { TDataObjetivo } from './classes/objetivo';
-import Programa, { TDataPrograma } from './classes/Programa';
-import ProgramaSIPPE, { TDataProgramaSIPPE } from './classes/programa-sipppe';
+import Actividad , {TActividad} from './classes/actividad';
+import Area, { TArea } from './classes/area';
+import Enlace, { TEnlace } from './classes/enlace';
+import FechaPuntual, { TFecha } from './classes/fecha-puntual';
+import Institucion, { TInstitucion } from './classes/institucion';
+import Meta, { TMeta } from './classes/meta';
+import Objetivo, { TObjetivo } from './classes/objetivo';
+import Programa, { TPrograma } from './classes/programa';
+import ProgramaSIPPE, { TProgramaSIPPE } from './classes/programa-sipppe';
 
-import TipoObjetivo, { TDataTipoObjetivo } from './classes/tipo-objetivo';
-import TipoRelacion, { TDataTipoInstitucion } from './classes/tipo-institucion';
-import Ubicacion, { TDataUbicacion } from './classes/ubicacion';
-import Persona, {TDataPersona} from './classes/persona';
-import Permiso, {TDataPermiso} from './classes/permiso';
-import Categoria, {TDataCategoria} from './classes/categoria';
-import Usuario, { TDataUsuario } from './classes/usuario';
+import TipoObjetivo, { TTipoObjetivo } from './classes/tipo-objetivo';
+import TipoRelacion, { TTipoInstitucion } from './classes/tipo-institucion';
+import Ubicacion, { TUbicacion } from './classes/ubicacion';
+import Permiso, {TPermiso} from './classes/permiso';
+import Categoria, {TCategoria} from './classes/categoria';
+import Usuario, { TUsuario } from './classes/usuario';
+
+
 import IModelActividad from './models/actividad';
 import IModelUsuario from './models/usuario';
 import IModelPersona from './models/persona';
@@ -23,7 +24,7 @@ import IModelBases from './models/bases';
 
 import { IModelPrograma } from './models/programa';
 
-import PeriodoDeTrabajo,{TDataPeriodoDeTrabajo} from './classes/periodo-de-trabajo';
+import PeriodoDeTrabajo,{TPeriodoDeTrabajo} from './classes/periodo-de-trabajo';
 
 import { TValoracion } from './types/valoracion';
 import IModelCategoria from './models/categoria';
@@ -35,25 +36,28 @@ import IModelEnlace from './models/enlace';
 import IModelUbicacion from './models/ubicacion';
 import IModelProgramaSIPPE from './models/programa-sippe';
 import IModelInstitucion from './models/institucion';
+import PersonaFisica, { TPersonaFisica } from './classes/persona-fisica';
+import PersonaJuridica, { TPersonaJuridica } from './classes/persona-juridica';
 
 
-type _TDataActividad = TDataActividad;
-type _TDataArea = TDataArea;
-type _TDataEnlace = TDataEnlace;
-type _TDataFechaPuntual = TDataFecha;
-type _TDataInstitucion = TDataInstitucion;
-type _TDataMeta = TDataMeta;
-type _TDataObjetivo = TDataObjetivo;
-type _TDataPrograma = TDataPrograma;
-type _TDataProgramaSIPPE = TDataProgramaSIPPE;
-type _TDataTipoObjetivo = TDataTipoObjetivo;
-type _TDataTipoInstitucion = TDataTipoInstitucion;
-type _TDataUbicacion = TDataUbicacion;
-type _TDataPersona = TDataPersona;
-type _TDataCategoria = TDataCategoria;
-type _TDataPermiso = TDataPermiso;
-type _TDataUsuario = TDataUsuario;
-type _TDataPeriodoDeTrabajo = TDataPeriodoDeTrabajo;
+type _TActividad = TActividad;
+type _TArea = TArea;
+type _TEnlace = TEnlace;
+type _TFechaPuntual = TFecha;
+type _TInstitucion = TInstitucion;
+type _TMeta = TMeta;
+type _TObjetivo = TObjetivo;
+type _TPrograma = TPrograma;
+type _TProgramaSIPPE = TProgramaSIPPE;
+type _TTipoObjetivo = TTipoObjetivo;
+type _TTipoInstitucion = TTipoInstitucion;
+type _TUbicacion = TUbicacion;
+type _TPersonaFisica = TPersonaFisica;
+type _TPersonaJuridica = TPersonaJuridica;
+type _TCategoria = TCategoria;
+type _TPermiso = TPermiso;
+type _TUsuario = TUsuario;
+type _TPeriodoDeTrabajo = TPeriodoDeTrabajo;
 
 type _TValoracion = TValoracion;
 
@@ -93,7 +97,8 @@ const _ProgramaSIPPE = ProgramaSIPPE;
 const _TipoObjetivo = TipoObjetivo;
 const _TipoRelacion = TipoRelacion;
 const _Ubicacion = Ubicacion;
-const _Persona = Persona;
+const _PersonaFisica = PersonaFisica;
+const _PersonaJuridica = PersonaJuridica;
 const _Categoria = Categoria;
 const _Permiso = Permiso;
 const _Usuario = Usuario;
@@ -109,35 +114,33 @@ export namespace domain {
     export class Objetivo extends _Objetivo {};
     export class Programa extends _Programa {};
     export class ProgramaSIPPE extends _ProgramaSIPPE {};
-    export class Relacion extends _Relacion {};
     export class TipoObjetivo extends _TipoObjetivo {};
     export class TipoRelacion extends _TipoRelacion {};
     export class Ubicacion extends _Ubicacion {};
-    export class Persona extends _Persona {};
+    export class PersonaFisica extends _PersonaFisica {};
+    export class PersonaJuridica extends _PersonaJuridica {};
     export class Permiso extends _Permiso {};
     export class Usuario extends _Usuario {};
     export class Categoria extends _Categoria {};
 
-    export type TDataActividad = _TDataActividad;
-    export type TDataArea = _TDataArea;
-    export type TDataEnlace = _TDataEnlace;
-    export type TDataFechaPuntual = _TDataFechaPuntual;
-    export type TDataInstitucion = _TDataInstitucion;
-    export type TDataMeta = _TDataMeta;
-    export type TDataObjetivo = _TDataObjetivo;
-    export type TDataPrograma = _TDataPrograma;
-    export type TDataProgramaSIPPE = _TDataProgramaSIPPE;
-    export type TDataRelacion = _TDataRelacion;
-    export type TDataTipoObjetivo = _TDataTipoObjetivo;
-    export type TDataTipoInstitucion = _TDataTipoInstitucion;
-    export type TDataUbicacion = _TDataUbicacion;  
-    export type TDataPersona =_TDataPersona;
-    export type TDataUsuario = _TDataUsuario;
-    export type TDataCategoria = _TDataCategoria;
-    export type TDataPermiso = _TDataPermiso;
-    export type TDataPeriodoDeTrabajo = _TDataPeriodoDeTrabajo;
+    export type TActividad = _TActividad;
+    export type TArea = _TArea;
+    export type TEnlace = _TEnlace;
+    export type TFechaPuntual = _TFechaPuntual;
+    export type TInstitucion = _TInstitucion;
+    export type TMeta = _TMeta;
+    export type TObjetivo = _TObjetivo;
+    export type TPrograma = _TPrograma;
+    export type TProgramaSIPPE = _TProgramaSIPPE;
+    export type TTipoObjetivo = _TTipoObjetivo;
+    export type TTipoInstitucion = _TTipoInstitucion;
+    export type TUbicacion = _TUbicacion;  
+    export type TUsuario = _TUsuario;
+    export type TCategoria = _TCategoria;
+    export type TPermiso = _TPermiso;
+    export type TPeriodoDeTrabajo = _TPeriodoDeTrabajo;
 
-    export type TDataBase = _TBases;
+    export type TBase = _TBases;
     export type TValoracion = _TValoracion;
 
     export interface IModelActividad extends MActividad{};

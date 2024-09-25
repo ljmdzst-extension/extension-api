@@ -1,7 +1,7 @@
 
 type ID_ENLACE = number;
 
-type TDataEnlace = {
+type TEnlace = {
     ID : ID_ENLACE,
     desc : string,
     link : string
@@ -13,19 +13,19 @@ class Enlace {
     private desc !: string;
     private link !: string;
 
-    constructor (  _data : TDataEnlace ){ 
+    constructor (  _data : TEnlace ){ 
         this.ID = _data.ID;
         this.desc = _data.desc;
         this.link = _data.link;
     }
 
-    public editar( _data : TDataEnlace){
+    public editar( _data : TEnlace){
         this.ID = _data.ID;
         this.desc = _data.desc;
         this.link = _data.link;
     }
 
-    public verDatos() : TDataEnlace  { 
+    public verDatos() : TEnlace  { 
         return {
             ID : this.ID,
             desc : this.desc,
@@ -36,5 +36,5 @@ class Enlace {
    
 }
 
-export {ID_ENLACE,TDataEnlace}
+export {ID_ENLACE,TEnlace}
 export default Enlace;

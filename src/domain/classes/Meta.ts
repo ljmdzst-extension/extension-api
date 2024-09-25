@@ -2,7 +2,7 @@
 
 type ID_META = number;
 
-type TDataMeta = {
+type TMeta = {
     idMeta : ID_META; 
     descripcion : string; 
     resultado ?: string; 
@@ -18,7 +18,7 @@ class Meta {
     private observaciones ?: string;
     private valoracion ?: number;
 
-    constructor ( _data : TDataMeta ){
+    constructor ( _data : TMeta ){
         this.descripcion = _data.descripcion;
         this.resultado = _data.resultado;
         this.observaciones = _data.observaciones;
@@ -26,7 +26,7 @@ class Meta {
         this.idMeta = _data.idMeta;
     }
 
-    public editarDatos( _data : Partial<TDataMeta> ){
+    public editarDatos( _data : Partial<TMeta> ){
         if(_data.idMeta) this.idMeta = _data.idMeta;
         if(_data.descripcion) this.descripcion = _data.descripcion;
         if(_data.resultado) this.resultado = _data.resultado;
@@ -35,7 +35,7 @@ class Meta {
        
     }
   
-    public verDatos(): TDataMeta
+    public verDatos(): TMeta
     {
         return {
             idMeta : this.idMeta, 
@@ -52,7 +52,7 @@ class Meta {
 
 }
 
-export {TDataMeta,ID_META}
+export {TMeta,ID_META}
 export default Meta;
 
 

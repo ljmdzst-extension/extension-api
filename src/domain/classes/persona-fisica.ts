@@ -1,6 +1,6 @@
-import Persona, { TDataPersona } from "./persona";
+import Persona, { TPersona } from "./persona";
 
-export type TDataPersonaFisica = TDataPersona & {
+export type TPersonaFisica = TPersona & {
     nroDoc : string;
     tipoDoc : number;
     ape : string;
@@ -12,7 +12,7 @@ export default class PersonaFisica extends Persona {
     private tipoDoc!: number;
     private ape !: string;
 
-    constructor ( data : TDataPersonaFisica ){ 
+    constructor ( data : TPersonaFisica ){ 
         super(data);
         this.nroDoc = data.nroDoc;
         this.tipoDoc = data.tipoDoc;
@@ -20,7 +20,7 @@ export default class PersonaFisica extends Persona {
       
     }
 
-    public editar( data : Partial<TDataPersonaFisica> ) {
+    public editar( data : Partial<TPersonaFisica> ) {
         if(data.nroDoc) this.nroDoc = data.nroDoc;
         if(data.tipoDoc) this.tipoDoc = data.tipoDoc;
         if(data.ape) this.ape = data.ape;
@@ -33,7 +33,7 @@ export default class PersonaFisica extends Persona {
         if(data.pais) this.pais = data.pais;
     }
 
-    public verDatos() : TDataPersonaFisica { 
+    public verDatos() : TPersonaFisica { 
         return {
             ID : this.ID,
             nroDoc : this.nroDoc,

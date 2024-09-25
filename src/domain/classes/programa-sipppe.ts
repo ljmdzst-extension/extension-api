@@ -2,7 +2,7 @@
 
 type ID_PROG_SIPPE = number;
 
-type TDataProgramaSIPPE = {
+type TProgramaSIPPE = {
     idProgramaSippe : ID_PROG_SIPPE;
     nom : string;
 }
@@ -11,7 +11,7 @@ type TDataProgramaSIPPE = {
 class ProgramaSIPPE{
     private idProgramaSippe !: ID_PROG_SIPPE;
     private nom !: string;
-    constructor  ( _data : TDataProgramaSIPPE){
+    constructor  ( _data : TProgramaSIPPE){
         this.idProgramaSippe= _data.idProgramaSippe;
         this.nom= _data.nom;
     }
@@ -20,7 +20,7 @@ class ProgramaSIPPE{
         return this.idProgramaSippe;
     }
    
-    public verDatos() : TDataProgramaSIPPE {
+    public verDatos() : TProgramaSIPPE {
         return {
             idProgramaSippe : this.idProgramaSippe,
             nom : this.nom
@@ -32,6 +32,6 @@ class ProgramaSIPPE{
 
 }
 
-export {ID_PROG_SIPPE,TDataProgramaSIPPE};
+export {ID_PROG_SIPPE,TProgramaSIPPE};
 
 export default ProgramaSIPPE;

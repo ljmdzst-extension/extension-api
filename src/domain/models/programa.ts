@@ -1,4 +1,4 @@
-import Programa, { TDataPrograma } from "../classes/Programa";
+import Programa, { TDataPrograma } from "../classes/programa";
 import IModel from "./model";
 
 export interface IModelPrograma extends IModel<Programa,number> {

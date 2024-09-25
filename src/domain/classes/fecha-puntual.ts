@@ -1,7 +1,7 @@
 
 export type ID_FECHA = number; 
 
-export type TDataFecha = {
+export type TFecha = {
     ID : ID_FECHA;
     fecha : Date;
 }
@@ -10,7 +10,7 @@ class FechaPuntual{
     private ID !: ID_FECHA;
     private fecha !: Date; 
     
-    constructor( _data : TDataFecha){
+    constructor( _data : TFecha){
         this.ID = _data.ID;
         this.fecha = _data.fecha;
     }
@@ -22,7 +22,7 @@ class FechaPuntual{
         return (   msDesde < msFecha  &&  msFecha < msHasta );
     }
     
-    public verDatos (): TDataFecha  {
+    public verDatos (): TFecha  {
         return {
             ID : this.ID,
             fecha : this.fecha,   
