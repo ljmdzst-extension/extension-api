@@ -1,7 +1,6 @@
-
 import jwt from 'jsonwebtoken';
 import sequelizeExtension, { BD } from "../config/dbConfig";
-import { response } from 'express';
+import {  Response, response } from 'express';
 import { Usuario } from "../models/Usuario"
 import { Persona} from '../models/Persona'
 import { generarEmailValidaciónRegistro, smtpService } from '../config/smtpConfig';
@@ -152,3 +151,19 @@ export const verListaUsuarios =  async (req : any , resp : typeof response) => {
         HttpHelpers.responderPeticionError(resp,error.status, error.message)
     }
 }
+
+export const obtenerUsuarioPorId = async (req: any, res: Response) => {
+	try {
+		const { usuario } = req.usuario;
+
+		const persona = await BD.Persona.findOne({
+			where: { nroDoc: usuario.nroDoc },
+		});
+		if (!persona)
+			throw { status: 500, message: `No existe persona asociada a usuario : ${usuario.idUsuario}` };
+
+        HttpHelpers.responderPeticionOk(res, persona);
+	} catch (error: any) {
+		HttpHelpers.responderPeticionError(res, error.status, error.message);
+	}
+};
