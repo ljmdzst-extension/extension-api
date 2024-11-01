@@ -152,18 +152,92 @@ export const verListaUsuarios =  async (req : any , resp : typeof response) => {
     }
 }
 
-export const obtenerUsuarioPorId = async (req: any, res: Response) => {
+export const getDataUsuarioPorId = async (req: any, res: Response) => {
 	try {
-		const { usuario } = req.usuario;
+		const { idUsuario } = req.params;
+
+		console.log(idUsuario);
 
 		const persona = await BD.Persona.findOne({
-			where: { nroDoc: usuario.nroDoc },
+			include: [
+				{
+					model: BD.Usuario,
+					as: 'Usuarios', 
+					where: { idUsuario },
+					attributes: [], 
+				},
+			],
+			attributes: {
+				exclude: ['createdAt', 'updatedAt', 'deletedAt'],
+			},
 		});
-		if (!persona)
-			throw { status: 500, message: `No existe persona asociada a usuario : ${usuario.idUsuario}` };
 
-        HttpHelpers.responderPeticionOk(res, persona);
+		if (!persona) {
+			throw {
+				status: 500,
+				message: `No existe persona asociada al usuario con ID: ${idUsuario}`,
+			};
+		}
+
+		HttpHelpers.responderPeticionOk(res, persona);
 	} catch (error: any) {
-		HttpHelpers.responderPeticionError(res, error.status, error.message);
+		HttpHelpers.responderPeticionError(
+			res,
+			error.status || 500,
+			error.message || 'Error inesperado',
+		);
 	}
+};
+
+
+
+export const updateDataUsuarioPorId = async (req: any, res: Response) => {
+    try {
+        const { idUsuario } = req.params;
+        let updatedData = req.body;
+
+        const restricciones = [];
+        if (updatedData.dni) {
+            restricciones.push('dni');
+            delete updatedData.dni;
+        }
+        if (updatedData.email) {
+            restricciones.push('email');
+            delete updatedData.email;
+        }
+
+        const persona = await BD.Persona.findOne({
+            include: [
+                {
+                    model: BD.Usuario,
+                    as: 'Usuarios',
+                    where: { idUsuario },
+                    attributes: [],
+                },
+            ],
+        });
+
+        if (!persona) {
+            throw {
+                status: 404,
+                message: `No existe persona asociada al usuario con ID: ${idUsuario}`,
+            };
+        }
+
+        await persona.update(updatedData);
+        res.json({
+            ok: true,
+            data: persona,
+            advertencia: restricciones.length
+                ? `Los campos ${restricciones.join(", ")} no pueden ser modificados.`
+                : null,
+            error: null,
+        });
+    } catch (error: any) {
+        HttpHelpers.responderPeticionError(
+            res,
+            error.status || 500,
+            error.message || 'Error inesperado',
+        );
+    }
 };
