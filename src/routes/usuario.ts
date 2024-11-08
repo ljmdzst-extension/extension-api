@@ -3,9 +3,11 @@ import { Router } from "express";
 import { 
     authUsuario, 
     loginUsuario, 
+    getDataUsuarioPorId, 
     registerUsuario, 
     validarRegistro, 
-    verListaUsuarios
+    verListaUsuarios,
+    updateDataUsuarioPorId
 } from "../controllers/usuario";
 
 import { 
@@ -45,5 +47,9 @@ usuarioRouter.post('/auth', extraerToken, validarToken, authUsuario );
 usuarioRouter.put('/validar/:idUsuario', validarRegistro );
 
 usuarioRouter.get('/',verListaUsuarios );
+
+usuarioRouter.get('/:idUsuario', extraerToken, validarToken, getDataUsuarioPorId);
+
+usuarioRouter.put('/:idUsuario', extraerToken, validarToken, updateDataUsuarioPorId);
 
 export default usuarioRouter;
