@@ -6,6 +6,7 @@ import type { Permiso, PermisoId } from './Permiso';
 export interface PermisoUsuarioAttributes {
   idUsuario: string;
   idPermiso: number;
+  deletedAt ?: Date;
 
 }
 
@@ -16,6 +17,7 @@ export type PermisoUsuarioCreationAttributes = PermisoUsuarioAttributes;
 export class PermisoUsuario extends Model<PermisoUsuarioAttributes, PermisoUsuarioCreationAttributes> implements PermisoUsuarioAttributes {
   idUsuario!: string;
   idPermiso!: number;
+  deletedAt ?: Date;
 
   // PermisoUsuario belongsTo Usuario via idUsuario
   usuario!: Usuario;
@@ -48,6 +50,10 @@ export class PermisoUsuario extends Model<PermisoUsuarioAttributes, PermisoUsuar
             model: 'Permiso',
             key: 'idPermiso'
         }
+    },
+    deletedAt : {
+      type : DataTypes.DATE,
+      allowNull : true
     }
   }, {
     sequelize,

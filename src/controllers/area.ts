@@ -98,9 +98,9 @@ export const descargarPresupuesto = async(   req : typeof request , resp : typeo
         const {anio , idPrograma, idArea} = req.params;
 
 
-        if(!fs.existsSync(PATH_DOCS)) throw { status : 400 , message : 'no existe el archivo especificado'}
+        if(!fs.existsSync(PATH_DOCS)) throw { status : 400 , message : 'no existe presupuesto cargado'}
         const PATH_PRESUPUESTO = `${PATH_DOCS}/${anio}/${idPrograma}/${idArea}`;
-        if(!fs.existsSync(PATH_PRESUPUESTO)) throw { status : 400 , message : 'no existe el directorio del area'}
+        if(!fs.existsSync(PATH_PRESUPUESTO)) throw { status : 400 , message : 'no existe presupuesto cargado'}
 
 
         // descargar el archivo
@@ -132,7 +132,7 @@ export const subirPrespuesto = async(   req : any , resp : typeof response  ) =>
         if(!fs.existsSync(`${PATH_DOCS}/${anio}/${idPrograma}/${idArea}`)){
             await fspromises.mkdir(`${PATH_DOCS}/${anio}/${idPrograma}/${idArea}`);
         }
-        // descargar el archivo
+        // subir el archivo
         await fspromises.writeFile(`${PATH_DOCS}/${anio}/${idPrograma}/${idArea}/PRESUPUESTO.xlsx`,dataFile.data);
         
 
