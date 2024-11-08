@@ -38,14 +38,16 @@ export const obtenerDataUsuario = async(req : any, resp : typeof response, next 
     
     try {
 
-        if((!req.usuario) && (!req.body))  throw { status : 400 , message : 'No se pudo obtener data de la petición'}
+        if (!req.usuario && !req.body && !req.params.idUsuario)
+					throw { status: 400, message: 'No se pudo obtener data de la petición' };
 
         if(req.usuario) {
             req.usuario = await SUsuario.obtenerDataUsuario(req.usuario.idUsuario,undefined)
-           
         }
-        else if( req.body){
+        else if( req.body.email){
             req.usuario = await SUsuario.obtenerDataUsuario(undefined,req.body.email)
+        }else if (req.params.idUsuario){
+            req.usuario = await SUsuario.obtenerDataUsuario(req.params.idUsuario,undefined)
         }
         
         next();
