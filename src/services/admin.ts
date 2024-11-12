@@ -281,48 +281,73 @@ export const editarUsuario = async( data : TDataPutUsuario )=>{
 
         await usuario.save({transaction});
 
+
+        // categorias 
+        console.log('categorias .. ')
         const cantCategorias = await BD.Categoria.count({where : { idCategoria : data.categorias.map( ({idCategoria})=> idCategoria) }, transaction});
 
         if(cantCategorias !== data.categorias.length ) throw { status : 400 , message : 'Algunas categorias no corresponden a las registradas' }
 
-        await BD.CategoriaUsuario.bulkCreate( 
-            data.categorias.map( ({idCategoria}) => ({ idCategoria,idUsuario : usuario.idUsuario})),
-            {
-                transaction ,
-                ignoreDuplicates : true
-            }
+        const nuevasCategorias = data.categorias.map( c => BD.CategoriaUsuario.build({ idCategoria : c.idCategoria , idUsuario : usuario.idUsuario }) );
+
+        await Promise.all(
+            nuevasCategorias.map( 
+                c => BD.CategoriaUsuario
+                .findOne({ where : { idCategoria : c.idCategoria, idUsuario : usuario.idUsuario } , transaction})
+                .then( resp => resp ? c.isNewRecord = false : c.isNewRecord = true) )
         );
 
+        await Promise.all( nuevasCategorias.map( c => c.isNewRecord ? c.save({transaction}) : c.restore({transaction}) ));
+        
         await BD.CategoriaUsuario.destroy({
             where : {
                 idUsuario : usuario.idUsuario,
                 [Op.not] : {
-                    idCategoria : data.categorias.map( ({idCategoria}) => idCategoria),
+                    idCategoria : nuevasCategorias.map( c => c.idCategoria),
                 }
             },
             transaction
         })
+
+        // permisos 
+        console.log('permisos .. ')
+
         const cantPermisos = await BD.Permiso.count({where : { idPermiso : data.permisos.map( ({idPermiso})=> idPermiso) }, transaction});
 
         if(cantPermisos !== data.permisos.length ) throw { status : 400 , message : 'Algunos permisos no corresponden a los registrados' }
 
-        await BD.PermisoUsuario.bulkCreate(
-            data.permisos.map(({idPermiso})=> ({idPermiso, idUsuario : usuario.idUsuario})),
-            {
-                transaction ,
-                ignoreDuplicates : true
-            }
-        )
+        // : Array<[BD.PermisoUsuario,boolean]>
+        const permisosCargados  = await Promise.all( 
+            data.permisos.map( 
+                p => BD.PermisoUsuario
+                        .findOrCreate({ 
+                            defaults : { idPermiso : p.idPermiso, idUsuario : usuario.idUsuario },
+                            where : { idPermiso : p.idPermiso, idUsuario : usuario.idUsuario } , 
+                            paranoid : false,
+                            transaction
+                        })
 
-        await BD.PermisoUsuario.destroy({
-            where : {
-                idUsuario : usuario.idUsuario,
-                [Op.not] : {
-                    idPermiso : data.permisos.map( ({idPermiso}) => idPermiso),
-                }
-            },
-            transaction
-        })
+             )            
+        );
+
+       
+
+        console.log('permisos restore y destroy .. ')
+
+        if(permisosCargados.length > 0){
+            await Promise.all( permisosCargados.map( p => p[1] ? null : p[0].restore({transaction}) ) )
+
+            await BD.PermisoUsuario.destroy({
+                where : {
+                    idUsuario : usuario.idUsuario,
+                    [Op.not] : { idPermiso : permisosCargados.map( p => p[0].idPermiso) }
+                },
+                transaction
+            })
+        } else {
+            await BD.PermisoUsuario.destroy({where :{ idUsuario : usuario.idUsuario },transaction})
+        }
+
 
         const cAreasProgamaUsuario : AreaProgramaUsuario[]  = [];
 
@@ -376,8 +401,9 @@ export const editarUsuario = async( data : TDataPutUsuario )=>{
             permisos : data.permisos
         };
 
-    } catch (error) {
+    } catch (error : any) {
         await transaction.rollback();
+        console.log(error)
         throw error;
     }
 }
