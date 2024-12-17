@@ -2,96 +2,67 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
-import express, { request, response } from 'express';
-import cors from 'cors';
-import path from 'path';
-import busboyBodyParser from 'busboy-body-parser';
-import RouterPropuesta from './routes/propuesta';
-import RouterPropuestas from './routes/propuestas';
-import RouterEvaluacion from './routes/evaluacion';
-import RouterEvaluaciones from './routes/evaluaciones';
-import sequelizeExtension from './config/dbConfig';
-import RouterPersonas from './routes/personas';
-import RouterIntegrates from './routes/integrantes';
-import RouterBases from './routes/bases';
-import RouterInstituciones from './routes/instituciones';
-import RouterPlanificacion from './routes/planificacion';
-import routerPrograma from './routes/programa';
-import routerArea from './routes/area';
-import routerActividad from './routes/actividad';
-import routerAdmin from './routes/admin';
+import Server from './infraestructure/server';
+import RouterArea from './infraestructure/server/express/router/area';
+import RouterProgramas from './infraestructure/server/express/router/programa';
+import RouterUsuario from './infraestructure/server/express/router/usuario';
+import RouterBases from './infraestructure/server/express/router/bases';
 
-import usuarioRouter from './routes/usuario';
+import {mysql} from './infraestructure/db/';
 
-import routerGraficos from './routes/graficos';
-import { informarPeticion } from './middlewares/bases';
-import { extraerToken, validarToken } from './middlewares/auth';
-import { informarUsuario, obtenerDataUsuario } from './middlewares/usuario';
-import { validarUsuarioAdmin } from './middlewares/admin';
+import { validators } from './infraestructure/validators';
+import RouterActividad from './infraestructure/server/express/router/actividad';
 
 
-const app = express();
+// this.app.use(`${BASE_PATH_METAS}/programas`,routerPrograma);
+// this.app.use(`${BASE_PATH_METAS}/areas`,routerArea);
+// this.app.use(`${BASE_PATH_METAS}/bases`,RouterBases);
+// this.app.use(`${BASE_PATH_METAS}/actividad`,routerActividad);
+// this.app.use(`${BASE_PATH_METAS}/graficos`,routerGraficos);
 
-app.use(cors());
+// this.app.use(`${BASE_PATH_METAS}/admin`,routerAdmin);
 
-app.use(busboyBodyParser({limit : '5mb'}));
+// // propuestas
+        
+// const BASE_PATH_PROPUESTAS=`${BASE_PATH}/prop`
 
-app.use(express.json());
+// this.app.use(BASE_PATH_PROPUESTAS,extraerToken,validarToken,obtenerDataUsuario);
 
-app.use(express.static(path.join(__dirname,'./public')));
+// this.app.use(`${BASE_PATH_PROPUESTAS}/`,RouterPropuestas);
+// this.app.use(`${BASE_PATH_PROPUESTAS}/propuesta`,RouterPropuesta);
+// this.app.use(`${BASE_PATH_PROPUESTAS}/evaluacion`,RouterEvaluacion);
+// this.app.use(`${BASE_PATH_PROPUESTAS}/evaluaciones`,RouterEvaluaciones);
+// this.app.use(`${BASE_PATH_PROPUESTAS}/persona`,RouterPersonas);
+// this.app.use(`${BASE_PATH_PROPUESTAS}/integrantes`,RouterIntegrates);
+// this.app.use(`${BASE_PATH_PROPUESTAS}/bases`,RouterBases);
+// this.app.use(`${BASE_PATH_PROPUESTAS}/instituciones`,RouterInstituciones);
+// this.app.use(`${BASE_PATH_PROPUESTAS}/planificacion`,RouterPlanificacion);
 
-// login de cada request
+const mUsuario =  new mysql.MUsuario();
+const mPersona = new mysql.MPersona();
+const mPrograma = new mysql.MPrograma();
+const mActividad = new mysql.MActividad();
+const mArea = new mysql.MArea();
+const mBases = new mysql.MBases();
+const vUsuario =  new validators.VUsuario();
+const vPersona = new validators.VPersona();
+const vActividad = new validators.VActividad();
+const BASE_PATH= '/api/v2';
 
-
-
-const BASE_PATH = '/api/v2';
-
-app.use(informarPeticion);
-
-app.use( `${BASE_PATH}/usr`, usuarioRouter  );
-app.use( `${BASE_PATH}/usr/bases`, RouterBases  ) ;
-
-const BASE_PATH_METAS=`${BASE_PATH}/metas`;
-
-app.use(BASE_PATH_METAS,extraerToken,validarToken,obtenerDataUsuario,informarUsuario);
-
-
-app.use(`${BASE_PATH_METAS}/admin`,[validarUsuarioAdmin],routerAdmin);
-
-app.use(`${BASE_PATH_METAS}/programas`,routerPrograma);
-app.use(`${BASE_PATH_METAS}/areas`,routerArea);
-app.use(`${BASE_PATH_METAS}/bases`,RouterBases);
-app.use(`${BASE_PATH_METAS}/actividad`,routerActividad);
-app.use(`${BASE_PATH_METAS}/graficos`,routerGraficos);
+const server = new Server( BASE_PATH , mUsuario, vUsuario );
 
 
-// propuestas
 
-const BASE_PATH_PROPUESTAS=`${BASE_PATH}/prop`
+server.agregarRouter( new RouterUsuario( `${BASE_PATH}/usr`,mUsuario,mPersona,vUsuario,vPersona  ));
 
-app.use(BASE_PATH_PROPUESTAS,extraerToken,validarToken,obtenerDataUsuario,informarUsuario);
+const BASE_PATH_METAS = `${BASE_PATH}/metas`;
 
-app.use(`${BASE_PATH_PROPUESTAS}/`,RouterPropuestas);
-app.use(`${BASE_PATH_PROPUESTAS}/propuesta`,RouterPropuesta);
-app.use(`${BASE_PATH_PROPUESTAS}/evaluacion`,RouterEvaluacion);
-app.use(`${BASE_PATH_PROPUESTAS}/evaluaciones`,RouterEvaluaciones);
-app.use(`${BASE_PATH_PROPUESTAS}/persona`,RouterPersonas);
-app.use(`${BASE_PATH_PROPUESTAS}/integrantes`,RouterIntegrates);
-app.use(`${BASE_PATH_PROPUESTAS}/bases`,RouterBases);
-app.use(`${BASE_PATH_PROPUESTAS}/instituciones`,RouterInstituciones);
-app.use(`${BASE_PATH_PROPUESTAS}/planificacion`,RouterPlanificacion);
+server.agregarRouter( new RouterActividad(`${BASE_PATH_METAS}/actividad`, mActividad,mArea,mUsuario,vActividad));
+server.agregarRouter( new RouterBases(`${BASE_PATH_METAS}/bases`, mBases )  );
+server.agregarRouter( new RouterProgramas(`${BASE_PATH_METAS}/programa`,mPrograma) );
+server.agregarRouter( new RouterArea(`${BASE_PATH_METAS}/area`,mArea,mActividad) );
 
-app.use('*', async(req : typeof request , res : typeof response) => {
-    res.sendFile(path.join(__dirname , './public/index.html'));
-});
+server.iniciar();
 
-app.listen( process.env.PORT , async()=>{
-    try {
-        await sequelizeExtension.authenticate();
-        console.log(`${sequelizeExtension.getDatabaseName()} conectada`)
-    } catch (error : any) {
-        console.log(error);
-    }
-    console.log(`propuestas corriendo en PUERTO : ${process.env.PORT}`);
-    
-} )
+
+

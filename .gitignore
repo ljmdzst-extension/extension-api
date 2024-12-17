@@ -65,6 +65,7 @@ typings/
 
 # ignorar dist
 dist/
+<<<<<<< HEAD
 # ignorar tests
 __tests__/
 # ignorar volumes
@@ -72,3 +73,19 @@ db_estension_backup/
 
 *.zargo
 *-zargo~
+=======
+
+# # tests
+__tests__/
+__mocks__/
+
+usuarios.json
+package-lock.json
+db_estension_backup/
+enviarCorreosUsuarios.js
+migrarUsuarios.js
+*.sql
+tsconfig.json
+*.zargo
+*.zargo~
+>>>>>>> origin/refactor/DDD
