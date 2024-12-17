@@ -1,4 +1,4 @@
-import Usuario from "./usuario";
+import Usuario from "./ususario";
 
 export type TPersona = {
     ID : number;

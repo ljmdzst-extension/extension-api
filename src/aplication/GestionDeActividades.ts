@@ -4,7 +4,7 @@ import IValidatorActividad from './validators/actividad';
 export default class GestionDeActividades {
 
     static async altaActividad ( 
-        data : domain.TDataActividad, 
+        data : domain.TActividad, 
         MActividad : domain.IModelActividad ,
         MArea : domain.IModelArea,
         MUsuario : domain.IModelUsuario,
@@ -14,9 +14,9 @@ export default class GestionDeActividades {
         
         if(!VActividad.validar(data)) throw new Error('data actividad inválida, revise los campos');
 
-        const area = await MArea.buscarPorId(data.idArea);
+        const area = await MArea.buscarPorId(data.ID);
 
-        if(!area) throw new Error('área inexistente con ese idArea');
+        if(!area) throw new Error('área inexistente con ese ID');
 
         const usr = await MUsuario.buscarPorId(`${data.idUsuario}`);
 
@@ -30,21 +30,21 @@ export default class GestionDeActividades {
 
     } 
 
-    static async editarActividad( data : Partial<domain.TDataActividad> , MActividad : domain.IModelActividad , VActividad : domain.IValidatorActividad ) : Promise<domain.Actividad> {
+    static async editarActividad( data : Partial<domain.TActividad> , MActividad : domain.IModelActividad , VActividad : domain.IValidatorActividad ) : Promise<domain.Actividad> {
 
-        if(!data.idActividad) throw new Error('idActividad obligatorio');
+        if(!data.ID) throw new Error('ID obligatorio');
         
         if(!VActividad.validar(data)) throw new Error('data actividad inválida, revise los campos');
 
-        const actividad = await MActividad.buscarPorId(data.idActividad);
+        const actividad = await MActividad.buscarPorId(data.ID);
 
-        if(!actividad) throw new Error(`No existe actividad de id ${data.idActividad}`);
+        if(!actividad) throw new Error(`No existe actividad de id ${data.ID}`);
 
         actividad.editar(data);
 
         if( data.listaEnlaces ) {
             data.listaEnlaces.forEach( dataEnlace => {
-                if(!actividad.editarEnlace(dataEnlace.idEnlace,dataEnlace)){
+                if(!actividad.editarEnlace(dataEnlace.ID,dataEnlace)){
                     actividad.altaEnlace(new domain.Enlace(dataEnlace));
                 } 
             } )
@@ -52,7 +52,7 @@ export default class GestionDeActividades {
 
         if(data.listaFechaPuntuales) {
             data.listaFechaPuntuales.forEach( dataFechaPuntual => {
-                if(!actividad.findFechaPuntual(dataFechaPuntual.idFecha)){
+                if(!actividad.findFechaPuntual(dataFechaPuntual.ID)){
                     actividad.altaFechaPuntual(new domain.FechaPuntual(dataFechaPuntual));
                 }
             })
@@ -60,7 +60,7 @@ export default class GestionDeActividades {
 
         if(data.listaInstituciones){
             data.listaInstituciones.forEach( dataInstitucion => {
-                if(!actividad.editarInstitucion(dataInstitucion.idInstitucion,dataInstitucion)){
+                if(!actividad.editarInstitucion(dataInstitucion.ID,dataInstitucion)){
                     actividad.altaInstitucion( new domain.Institucion(dataInstitucion));
                 }
             })
@@ -100,16 +100,16 @@ export default class GestionDeActividades {
         return  await MActividad.guardarDatos(actividad);
     }
 
-    static async bajaActividad( idActividad : number, MActividad : domain.IModelActividad, VActividad : domain.IValidatorActividad) : Promise<boolean> {
+    static async bajaActividad( ID : number, MActividad : domain.IModelActividad, VActividad : domain.IValidatorActividad) : Promise<boolean> {
         let salida = false;
         
-        if(!VActividad.validarIdActividad(idActividad)) throw new Error('data actividad inválida, revise los campos');
+        if(!VActividad.validarID(ID)) throw new Error('data actividad inválida, revise los campos');
 
-        const actividad = await MActividad.buscarPorId(idActividad);
+        const actividad = await MActividad.buscarPorId(ID);
 
-        if(!actividad) throw new Error(`No existe actividad con ese id : ${idActividad}`)
+        if(!actividad) throw new Error(`No existe actividad con ese id : ${ID}`)
 
-        salida = await MActividad.darDeBaja(actividad.verDatos().idActividad);
+        salida = await MActividad.darDeBaja(actividad.verDatos().ID);
         
         return salida;
     } 

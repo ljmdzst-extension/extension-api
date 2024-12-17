@@ -11,7 +11,7 @@ export class MiddlewareDeterminarAreasHabilitadas implements IMiddleware {
     constructor(){ }
     public usar() {
         return async (req : any, resp : typeof response , next : NextFunction)=>{
-            const {categorias}: {categorias : domain.TDataCategoria[]} = req.usuario;
+            const {categorias}: {categorias : domain.TCategoria[]} = req.usuario;
         
             const categoriasHabilitadas = ['ADMIN','EYC','GESTION_EYC','EYC_ECO_FINAN','PROG_EXT' ];
             
@@ -72,7 +72,7 @@ export class MiddlewareValidarPermisoEdicionMetas implements IMiddleware {
     constructor(){}
     usar(): (req: Request, res: Response, next: NextFunction) => Promise<any> {
         return async( req : any, resp : typeof response, next : NextFunction)=>{
-            const {categorias,permisos}: {categorias :  domain.TDataCategoria[], permisos : domain.TDataPermiso[]} = req.usuario;
+            const {categorias,permisos}: {categorias :  domain.TCategoria[], permisos : domain.TPermiso[]} = req.usuario;
             
             if( categorias.every( c => c.nombre !== 'ADMIN') && permisos.every( permiso => permiso.nombre !== 'METAS_EDICION') )  {
                 

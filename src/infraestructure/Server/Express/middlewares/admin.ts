@@ -10,7 +10,7 @@ export class MiddlewareValidarUsuarioAdmin implements IMiddleware {
         return async(req : any, resp : typeof response , next : NextFunction)=>{
             const { categorias }  = req.usuario;
         
-            if( categorias.every( (c : domain.TDataCategoria) => c.nombre !== 'ADMIN') ){
+            if( categorias.every( (c : domain.TCategoria) => c.nombre !== 'ADMIN') ){
                 resp.status(403).json({
                     ok : false,
                     error : 'No posee permisos de administrador'

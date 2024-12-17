@@ -7,7 +7,7 @@ import Enlace, { TEnlace } from './enlace';
 import Objetivo, { TObjetivo } from "./objetivo";
 import ProgramaSIPPE, { TProgramaSIPPE } from "./programa-sipppe";
 import Area, { TArea } from "./area";
-import Usuario from "./usuario";
+import Usuario from "./ususario";
 
 
 
@@ -92,27 +92,13 @@ class Actividad  {
     public altaProgramaSIPPPE( ps : ProgramaSIPPE){ this.cProgSIPPPE.push(ps);  }
     public altaUbicacion( u : Ubicacion ){ this.cUbicaciones.push(u);  }
     
-    public bajaEnlace( id : number)  {  
-        this.cEnlaces = this.cEnlaces.filter( e => e.verDatos().ID !== id) 
-    }
-    public bajaFechaPuntual( id : number)  {  
-        this.cFechasPuntuales = this.cFechasPuntuales.filter( e => e.verDatos().ID !== id) 
-    }
-    public bajaInstitucion( id : number)  {  
-        this.cInstituciones = this.cInstituciones.filter( e => e.verDatos().ID !== id) 
-    }
-    public bajaMeta( id : number)  {  
-        this.cMetas = this.cMetas.filter( m => m.verDatos().idMeta !== id) 
-    }
-    public bajaObjetivo( id : number)  {  
-        this.cObjetivos = this.cObjetivos.filter( o => o.verDatos().idObjetivo !== id) 
-    }
-    public bajaProgramaSIPPPE( id : number)  {  
-        this.cProgSIPPPE = this.cProgSIPPPE.filter( e => e.verDatos().idProgramaSippe !== id) 
-    }
-    public bajaUbicacion( id : number)  {  
-        this.cUbicaciones = this.cUbicaciones.filter( u => u.verDatos().idUbicacion !== id) 
-    }
+    public bajaEnlace( id : number)  {   this.cEnlaces = this.cEnlaces.filter( e => e.verDatos().ID !== id)  }
+    public bajaFechaPuntual( id : number)  { this.cFechasPuntuales = this.cFechasPuntuales.filter( e => e.verDatos().ID !== id)  }
+    public bajaInstitucion( id : number)  { this.cInstituciones = this.cInstituciones.filter( e => e.verDatos().ID !== id)  }
+    public bajaMeta( id : number)  { this.cMetas = this.cMetas.filter( m => m.verDatos().idMeta !== id)  }
+    public bajaObjetivo( id : number)  { this.cObjetivos = this.cObjetivos.filter( o => o.verDatos().idObjetivo !== id)  }
+    public bajaProgramaSIPPPE( id : number)  { this.cProgSIPPPE = this.cProgSIPPPE.filter( e => e.verDatos().idProgramaSippe !== id)  }
+    public bajaUbicacion( id : number)  { this.cUbicaciones = this.cUbicaciones.filter( u => u.verDatos().idUbicacion !== id)  }
 
     public editarMeta( id : number, _data : TMeta) : boolean { 
         let salida = false;

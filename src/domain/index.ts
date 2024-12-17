@@ -13,7 +13,7 @@ import TipoRelacion, { TTipoInstitucion } from './classes/tipo-institucion';
 import Ubicacion, { TUbicacion } from './classes/ubicacion';
 import Permiso, {TPermiso} from './classes/permiso';
 import Categoria, {TCategoria} from './classes/categoria';
-import Usuario, { TUsuario } from './classes/usuario';
+import Usuario, { TUsuario } from './classes/ususario';
 
 
 import IModelActividad from './models/actividad';

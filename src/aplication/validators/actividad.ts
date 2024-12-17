@@ -1,7 +1,7 @@
 import { domain } from "../../domain";
 
 export default interface IValidatorActividad {
-    validar( data : Partial<domain.TDataActividad>) : boolean;
+    validar( data : Partial<domain.TActividad>) : boolean;
     validarIdActividad( idActividad : number) : boolean;
     validarIdArea( idArea : number) : boolean;
     validarNro( nro : number) : boolean;

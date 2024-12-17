@@ -15,7 +15,6 @@ export type CategoriaUsuarioCreationAttributes = CategoriaUsuarioAttributes;
 export class CategoriaUsuario extends Model<CategoriaUsuarioAttributes, CategoriaUsuarioCreationAttributes> implements CategoriaUsuarioAttributes {
   idUsuario!: string;
   idCategoria!: number;
-  deletedAt ?: Date;
 
   static async verCategoria( idUsuario : string, transaction ?: Sequelize.Transaction ) : Promise<domain.Categoria | null > {
     let salida : domain.Categoria | null  = null;
@@ -49,10 +48,6 @@ export class CategoriaUsuario extends Model<CategoriaUsuarioAttributes, Categori
             model: 'Categoria',
             key: 'idCategoria'
         }
-    },
-    deletedAt : {
-      type : DataTypes.DATE,
-      allowNull : true
     }
   }, {
     sequelize,
