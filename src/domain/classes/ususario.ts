@@ -1,11 +1,11 @@
 
 import Categoria, { TCategoria } from "./categoria";
-import Institucion from "./institucion";
+import Institucion, { TInstitucion } from "./institucion";
 import ProgramasHabilitadosDelUsuario, { TPeriodoDeTrabajo } from "./periodo-de-trabajo"
 import Permiso, { TPermiso } from "./permiso";
-import Persona from "./persona";
-import PersonaFisica , {TPersonaFisica} from "./persona-fisica";
-import PersonaJuridica , {TPersonaJuridica} from "./persona-juridica";
+import Persona, { TPersona } from "./persona";
+import PersonaFisica, {TPersonaFisicaIn} from "./persona-fisica";
+import PersonaJuridica, {TPersonaJuridicaIn} from "./persona-juridica";
 
 
 
@@ -15,7 +15,7 @@ export type TUsuario = {
     pass: string,
     idUnidadAcademica: number,
     pendiente : number,
-    persona ?: TPersonaFisica | TPersonaJuridica,
+    persona ?: TPersona,
     categoria ?: TCategoria,
     permisos ?: TPermiso[],
     areas ?: TPeriodoDeTrabajo[]
@@ -51,9 +51,9 @@ export default class Usuario {
         if(_data.idUnidadAcademica) this.idUnidadAcademica = _data.idUnidadAcademica;
         if(_data.pendiente) this.pendiente = _data.pendiente;
    
-        if( _data.persona  && Object.keys(_data.persona).some( k => k === 'nroDoc' ) ) this.iPersona = new PersonaFisica(_data.persona as TPersonaFisica) ;
+        if( _data.persona  && Object.keys(_data.persona).some( k => k === 'nroDoc' ) ) this.iPersona = new PersonaFisica(_data.persona as TPersonaFisicaIn) ;
    
-        if( _data.persona  && Object.keys(_data.persona).some( k => k === 'institucion' ) ) this.iPersona = new PersonaJuridica(_data.persona as TPersonaJuridica, new Institucion((_data.persona as TPersonaJuridica).institucion)) ;
+        if( _data.persona  && Object.keys(_data.persona).some( k => k === 'institucion' ) ) this.iPersona = new PersonaJuridica(_data.persona as TPersonaJuridicaIn, new Institucion((_data.persona as TPersonaJuridicaIn).institucion as TInstitucion)) ;
         
         if(_data.categoria && (this.iCategoria.verDatos().nombre !== _data.categoria.nombre )) {
             this.cambiarCategoria(new Categoria(_data.categoria));

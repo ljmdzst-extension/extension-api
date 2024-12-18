@@ -1,4 +1,4 @@
-import { domain } from "../../domain";
+import { domain } from "..";
 
 export default interface IValidatorActividad {
     validar( data : Partial<domain.TActividad>) : boolean;

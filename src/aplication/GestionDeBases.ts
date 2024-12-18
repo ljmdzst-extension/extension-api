@@ -1,20 +1,20 @@
 import { domain } from "../domain";
 
-type TDataBases = {
-    listaCategorias : domain.TDataCategoria[],
-    listaPermisos : domain.TDataPermiso[],
-    listaObjetivos : domain.TDataObjetivo[],
-    listaProgramasSIPPE : domain.TDataProgramaSIPPE[],
-    listaRelaciones : domain.TDataRelacion[],
+type TBases = {
+    listaCategorias : domain.TCategoria[],
+    listaPermisos : domain.TPermiso[],
+    listaObjetivos : domain.TObjetivo[],
+    listaProgramasSIPPE : domain.TProgramaSIPPE[],
+    listaRelaciones : domain.T[],
     listaValoraciones : domain.TValoracion[],
-    unidadesAcademicas : domain.TDataRelacion[],
-    lAreasProgramasAnios : domain.TDataPeriodoDeTrabajo[]
+    unidadesAcademicas : domain.TRelacion[],
+    lAreasProgramasAnios : domain.TPeriodoDeTrabajo[]
 }
 
 export default class GestionDeBases {
 
-    public static async mostrarBases( MBases : domain.IModelBases  ) : Promise<TDataBases >{
-        let salida : TDataBases = {
+    public static async mostrarBases( MBases : domain.IModelBases  ) : Promise<TBases >{
+        let salida : TBases = {
             listaCategorias : [],
             listaPermisos : [],
             listaObjetivos: [],

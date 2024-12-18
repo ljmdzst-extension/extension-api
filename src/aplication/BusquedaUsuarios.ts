@@ -1,5 +1,5 @@
 import { domain } from "../domain";
-import IValidatorUsuario from "./validators/usuario";
+import IValidatorUsuario from "../domain/validators/usuario";
 
 export default class BusquedaUsuarios {
     public static async buscarPor( parametros : Partial< domain.TDataUsuario> , MUsuario : domain.IModelUsuario) : Promise<domain.Usuario[]>{

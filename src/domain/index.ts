@@ -39,6 +39,9 @@ import IModelInstitucion from './models/institucion';
 import PersonaFisica, { TPersonaFisica } from './classes/persona-fisica';
 import PersonaJuridica, { TPersonaJuridica } from './classes/persona-juridica';
 
+import IValidatorActividad from './validators/actividad';
+import IValidatorPersona from './validators/persona';
+import IValidatorUsuario from './validators/usuario';
 
 type _TActividad = TActividad;
 type _TArea = TArea;
@@ -84,6 +87,11 @@ interface MEnlace extends IModelEnlace {}
 interface MUbicacion extends IModelUbicacion {}
 interface MProgramaSIPPE extends IModelProgramaSIPPE {}
 interface MInstitucion extends IModelInstitucion  {}
+
+interface IVActividad extends IValidatorActividad {}
+interface IVPersona extends IValidatorPersona {}
+interface IVUsuario extends IValidatorUsuario {}
+
 const _Actividad = Actividad;
 const _Area = Area;
 const _PeriodoDeTrabajo = PeriodoDeTrabajo;
@@ -158,5 +166,11 @@ export namespace domain {
     export interface IModelUbicacion extends MUbicacion {};
     export interface IModelProgramaSIPPE extends MProgramaSIPPE {};
     export interface IModelInstitucion extends MInstitucion {};
+
+    
+    export interface IValidatorActividad extends IVActividad {}
+    export interface IValidatorPersona extends IVPersona {}
+    export interface IValidatorUsuario extends IVUsuario {}
+    
 }
 

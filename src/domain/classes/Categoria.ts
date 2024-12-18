@@ -1,6 +1,6 @@
 
 export type TCategoria  = {
-    idCategoria : number;
+    ID : number;
     nombre : string;
 }
 
@@ -11,13 +11,13 @@ export default class Categoria {
     private nombre !: string;
 
     constructor( _data : TCategoria) {
-        this.ID = _data.idCategoria;
+        this.ID = _data.ID;
         this.nombre = _data.nombre;
     }
 
     public verDatos(  ) : TCategoria {
         return {
-            idCategoria : this.ID,
+            ID : this.ID,
             nombre : this.nombre
         }
     }

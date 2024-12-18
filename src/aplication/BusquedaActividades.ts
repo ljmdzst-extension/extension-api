@@ -1,5 +1,5 @@
 import { domain } from "../domain";
-import IValidatorActividad from "./validators/actividad";
+import IValidatorActividad from "../domain/validators/actividad";
 
 export default class BusquedaActividades {
 

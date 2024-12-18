@@ -1,21 +1,25 @@
 import Institucion, { TInstitucion } from "./institucion";
 import Persona, { TPersona } from "./persona";
 
-export type TPersonaJuridica = TPersona & {
+
+
+export type TPersonaJuridicaOut = TPersona & {
     institucion : TInstitucion
 }
+
+export type TPersonaJuridicaIn = Partial<TPersonaJuridicaOut>;
 
 export default class PersonaJuridica extends Persona {
     
     private institucion !: Institucion;
 
-    constructor ( data : TPersonaJuridica , i : Institucion ){ 
+    constructor ( data : TPersonaJuridicaIn , i : Institucion ){ 
         super(data);
         this.institucion = i;
       
     }
 
-    public editar( data : Partial<TPersonaJuridica> ) {
+    public editar( data : TPersonaJuridicaIn ) {
         if(data.nom) this.nom = data.nom;
         if(data.tel) this.tel = data.tel;
         if(data.dom) this.dom = data.dom;
@@ -25,7 +29,7 @@ export default class PersonaJuridica extends Persona {
         if(data.pais) this.pais = data.pais;
     }
 
-    public verDatos() : TPersonaJuridica { 
+    public verDatos() : TPersonaJuridicaOut { 
         return {
             ID : this.ID,
             nom : this.nom,

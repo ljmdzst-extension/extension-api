@@ -1,5 +1,4 @@
 import {domain} from '../domain';
-import IValidatorActividad from './validators/actividad';
 
 export default class GestionDeActividades {
 
@@ -8,7 +7,7 @@ export default class GestionDeActividades {
         MActividad : domain.IModelActividad ,
         MArea : domain.IModelArea,
         MUsuario : domain.IModelUsuario,
-        VActividad : IValidatorActividad 
+        VActividad : domain.IValidatorActividad 
     ) : Promise<domain.Actividad> {
         
         
@@ -103,13 +102,13 @@ export default class GestionDeActividades {
     static async bajaActividad( ID : number, MActividad : domain.IModelActividad, VActividad : domain.IValidatorActividad) : Promise<boolean> {
         let salida = false;
         
-        if(!VActividad.validarID(ID)) throw new Error('data actividad inválida, revise los campos');
+        if(!VActividad.validarIdActividad(ID)) throw new Error('data actividad inválida, revise los campos');
 
         const actividad = await MActividad.buscarPorId(ID);
 
         if(!actividad) throw new Error(`No existe actividad con ese id : ${ID}`)
 
-        salida = await MActividad.darDeBaja(actividad.verDatos().ID);
+        salida = await MActividad.darDeBaja(actividad);
         
         return salida;
     } 

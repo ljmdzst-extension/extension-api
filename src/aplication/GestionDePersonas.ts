@@ -1,6 +1,6 @@
 import Persona, { TDataPersona } from "../domain/classes/persona";
 import IModelPersona from "../domain/models/persona";
-import IValidatorPersona from "./validators/persona";
+import IValidatorPersona from "../domain/validators/persona";
 
 export default class GestionDePersonas {
     static async altaPersona( data : TDataPersona, MPersona : IModelPersona , VPersona : IValidatorPersona) {

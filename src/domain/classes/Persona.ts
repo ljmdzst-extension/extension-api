@@ -23,9 +23,9 @@ export default abstract class Persona {
 
     protected cUsuarios ?: Usuario[];
 
-    constructor ( data : TPersona ){ 
+    constructor ( data : Partial<TPersona> ){ 
         this.ID;
-        this.nom = data.nom;
+        data.nom ? this.nom : data.nom;
         this.tel = data.tel;
         this.dom = data.dom;
         this.email = data.email;

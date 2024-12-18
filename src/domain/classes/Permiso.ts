@@ -1,23 +1,23 @@
 
 export type TPermiso = {
-    idPermiso: number;
+    ID: number;
     nombre : string;
 }
 
 
 export default class Permiso{
 
-    private idPermiso!: number;
+    private ID!: number;
     private nombre !: string;
 
     constructor( _data : TPermiso) {
-        this.idPermiso= _data.idPermiso;
+        this.ID = _data.ID;
         this.nombre = _data.nombre;
     }
 
     public verDatos(  ) : TPermiso{
         return {
-            idPermiso: this.idPermiso,
+            ID: this.ID,
             nombre : this.nombre
         }
     }
