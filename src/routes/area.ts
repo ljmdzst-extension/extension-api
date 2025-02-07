@@ -8,7 +8,7 @@ const routerArea = Router();
 
 routerArea.get('/:idPrograma',[],verListaAreas);
 routerArea.get(
-    '/:idArea/actividades/:anio',
+    '/:idArea/:anio',
     validarPermisoAccesoMetas,
     validarIdArea,
     verListaActividades

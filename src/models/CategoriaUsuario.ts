@@ -6,6 +6,7 @@ import type { Categoria, CategoriaId } from './Categoria';
 export interface CategoriaUsuarioAttributes {
   idUsuario: string;
   idCategoria: number;
+  deletedAt ?: Date;
 
 }
 
@@ -16,6 +17,7 @@ export type CategoriaUsuarioCreationAttributes = CategoriaUsuarioAttributes;
 export class CategoriaUsuario extends Model<CategoriaUsuarioAttributes, CategoriaUsuarioCreationAttributes> implements CategoriaUsuarioAttributes {
   idUsuario!: string;
   idCategoria!: number;
+  deletedAt ?: Date;
 
   // CategoriaUsuario belongsTo Usuario via idUsuario
   usuario!: Usuario;
@@ -48,6 +50,10 @@ export class CategoriaUsuario extends Model<CategoriaUsuarioAttributes, Categori
             model: 'Categoria',
             key: 'idCategoria'
         }
+    },
+    deletedAt : {
+      type : DataTypes.DATE,
+      allowNull : true
     }
   }, {
     sequelize,
