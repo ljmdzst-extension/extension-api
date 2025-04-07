@@ -19,7 +19,7 @@ import { ColaDeTareas } from '../helpers/tareas';
 import * as HelpersGeneral from '../helpers/general';
 
 
-const ACTIVIDAD_NULA = {idActividad : 0, idArea : 0, nro : 0 , desc : ''};
+const ACTIVIDAD_NULA = {idActividad : 0, idArea : 0, anio : 0, nro : 0 , desc : ''};
   
 
 type ID_ACT = number;
@@ -28,6 +28,7 @@ type IActividad = {
     idActividad : number,
     idArea : number,
     desc : string,
+    anio : number,
     nro ?: number,
     idUsuario ?: string,
     fechaDesde ?: string,
@@ -55,6 +56,7 @@ type IItemActividad = {
 
 
 class Actividad  {
+
 
     public estadoEnBD !: ESTADO_BD;
 
@@ -98,13 +100,14 @@ class Actividad  {
 
         this.estadoEnBD = ESTADO_BD.A;
     }
-    public editar(data : IRequestActividad)
+    public editar(data : Partial<IRequestActividad>)
     {   
         // validar antes
-        this.data.idActividad = data.idActividad;
-        this.data.idArea = data.idArea;
+        this.data.idActividad = data.idActividad !== undefined? data.idActividad : this.data.idActividad;
+        this.data.idArea = data.idArea !== undefined? data.idArea : this.data.idArea;
+        this.data.anio = data.anio !== undefined ? data.anio : this.data.anio;
+        this.data.desc = data.desc !== undefined ? data.desc : this.data.desc;
         this.data.nro = data.nro;
-        this.data.desc = data.desc;
         this.data.idUsuario = data.idUsuario;
         this.data.fechaDesde = data.fechaDesde;
         this.data.fechaHasta = data.fechaHasta;
@@ -119,16 +122,26 @@ class Actividad  {
         if(data.listaRelaciones){
             this.cargarRelaciones(data.listaRelaciones);
         }
-        
-        this.cargarFechasPuntuales( data.listaFechasPuntuales || []);
-        
-        this.cargarInstituciones(data.listaInstituciones || []);
+        if(data.listaFechasPuntuales){
+            this.cargarFechasPuntuales( data.listaFechasPuntuales || []);
+        }
+        if(data.listaInstituciones){    
+                
+            this.cargarInstituciones(data.listaInstituciones || []);
+        }
+    
+        if(data.listaMetas){
+            this.cargarMetas(data.listaMetas || []);
+        }
+        if(data.listaUbicaciones){
+            this.cargarUbicaciones(data.listaUbicaciones || []);
 
-        this.cargarMetas(data.listaMetas || []);
-        
-        this.cargarUbicaciones(data.listaUbicaciones || []);
+        }
+        if(data.listaEnlaces) {
+            this.cargarEnlaces(data.listaEnlaces || []);     
+        }
 
-        this.cargarEnlaces(data.listaEnlaces || []);
+       
     };
     public cancelar( motCancel : string){
         this.data.motivoCancel = motCancel;
@@ -460,7 +473,6 @@ class Actividad  {
     /* Conexion BD */
 
     
-    
     public async guardarEnBD( transaction ?: Transaction, transactionInsituciones ?: Transaction) : Promise<void> {
         if(process.env.NODE_ENV === "development")console.log('Actividad.guardarEnBD...');
 
@@ -516,6 +528,7 @@ class Actividad  {
 
         }
        
+    
     }
     public async darDeAltaBD(transaction?: Transaction): Promise<void> {
 
@@ -637,29 +650,22 @@ class Actividad  {
         let salida : IItemActividad[] = [];
         let opcionesBusqueda : {} = {
             idArea : id , 
-            createdAt : { 
-                [Op.and] : { 
-                    [Op.gt] : new Date(`${anio}-01-01`), 
-                    [Op.lt] : new Date(`${anio}-12-31`) 
-                } 
-            }
+            anio : anio
         };
         if(keyword){
-            opcionesBusqueda = {
-                ...opcionesBusqueda,
-                desc :  { [Op.like] : `%${keyword}%`}
-            }
+            opcionesBusqueda = { ...opcionesBusqueda, desc :  { [Op.like] : `%${keyword}%`}  }
         }
-        salida = (await BD.Actividad.findAll({  
+        const resp = await BD.Actividad.findAll({  
             where : opcionesBusqueda , 
             offset,
             limit,
             transaction
+        });
+
+        salida = resp.map( (data : any)=> ({
+            idActividad : data.idActividad, 
+            desc : data.desc
         }))
-            .map( (data : any)=> ({
-                idActividad : data.idActividad, 
-                desc : data.desc
-            }));
         
         return salida;
     }

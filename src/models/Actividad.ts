@@ -17,7 +17,9 @@ import { DataTypes, Model, Optional, Transaction } from 'sequelize';
 export interface ActividadAttributes {
   idActividad: number;
   idArea: number;
+  anio : number;
   idUsuario?: string;
+
   nro?: number;
   desc: string;
   motivoCancel?: string | null;
@@ -72,6 +74,11 @@ const ATRIBUTOS_TABLA_ACTIVIDAD_CONFIG = {
       key: 'idUsuario'
     }
   },
+  
+  anio: {
+    type: DataTypes.INTEGER,
+    allowNull: true
+  },
   nro: {
     type: DataTypes.INTEGER,
     allowNull: true
@@ -104,6 +111,7 @@ const ACTIVIDAD_NULA = {idActividad : 0, idArea : 0, nro : 0 , desc : ''};
 export class Actividad extends Model<ActividadAttributes, ActividadCreationAttributes> implements ActividadAttributes {
   idActividad!: number;
   idArea!: number;
+  anio !: number;
   idUsuario?: string;
   nro?: number;
   desc!: string;

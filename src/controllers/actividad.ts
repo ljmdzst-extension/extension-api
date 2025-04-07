@@ -14,6 +14,8 @@ export const cargarActividad =  async ( req : typeof request , resp : typeof res
             const data = req.body;
 
             const iActividad = new Actividad(data); 
+
+            console.log(iActividad.verDatos())
             
             await iActividad.guardarEnBD();
             
@@ -22,7 +24,7 @@ export const cargarActividad =  async ( req : typeof request , resp : typeof res
             HttpHelpers.responderPeticionOk(resp, salida);
 
        } catch (error : any) {
-            if(!error.status) console.log(cli.red(error));
+            if(!error.status) console.log(cli.red(JSON.stringify(error,null,2)));
             
             HttpHelpers.responderPeticionError(resp, error.message,error.status );
        }
@@ -56,9 +58,11 @@ export const verActividad = async ( req : typeof request , resp : typeof respons
     }
 
 export const editarActividad = async ( req : typeof request , resp : typeof response)  =>
+
     {
 
         try {
+            
         let salida : IResponseActividad = ACTIVIDAD_NULA;
 
         const data = req.body;
