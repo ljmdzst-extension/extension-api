@@ -5,7 +5,7 @@ const sequelizeExtension = new sequelize.Sequelize({
     host : process.env.DB_HOST,
     username : process.env.DB_USER,
     password : process.env.DB_PASS,
-    port : Number(process.env.DB_PORT) || 3306,
+    port : 3306,//Number(process.env.DB_PORT) || 3306,
     database : process.env.DB_NAME,
     dialect : 'mysql',
     logging : false,
