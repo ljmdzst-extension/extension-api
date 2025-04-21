@@ -16,7 +16,25 @@ export const verGraficosGeneral = async( anio : number)=>{
     const cActividad = await BD.Actividad.findAll({
         where : { 
             idArea : areasPrograma.map( ap => ap.idArea) , 
-            createdAt : {[Op.gt] : new Date(`${anio}-01-01`)} 
+            [Op.or]: [
+                {
+                  [Op.and]: [
+                    { anio: anio },
+                    { fechaDesde: null }
+                  ]
+                },
+                {
+                  [Op.and]: [
+                    { fechaDesde: { [Op.gt]: new Date(`${anio}-01-01`) } },
+                    {
+                      [Op.or]: [
+                        { fechaHasta: null },
+                        { fechaHasta: { [Op.lt]: new Date(`${anio + 1}-01-01`) } }
+                      ]
+                    }
+                  ]
+                }
+              ]
         }, transaction : t});
    
     await t.commit();
@@ -45,8 +63,29 @@ export const verGraficosDeArea = async( anio : number, idArea: number)=>{
     if(ap) {
         const cActividad = await BD.Actividad.findAll({
             where : { 
-                idArea : ap.idArea , 
-                createdAt : {[Op.gt] : new Date(`${anio}-01-01`)} 
+
+                idArea : ap.idArea ,
+                [Op.or]: [
+                    {
+                      [Op.and]: [
+                        { anio: anio },
+                        { fechaDesde: null }
+                      ]
+                    },
+                    {
+                      [Op.and]: [
+                        { fechaDesde: { [Op.gt]: new Date(`${anio}-01-01`) } },
+                        {
+                          [Op.or]: [
+                            { fechaHasta: null },
+                            { fechaHasta: { [Op.lt]: new Date(`${anio + 1}-01-01`) } }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+
+                
             }, transaction : t});
 
         await t.commit();
