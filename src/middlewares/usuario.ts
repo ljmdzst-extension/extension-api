@@ -194,6 +194,24 @@ export const validarCamposRegistro = checkSchema({
     
 },['body']);
 
+
+export const validarCampoCambioContraseña = checkSchema({
+    newPassword:{
+        exists : {
+            errorMessage : 'Contraseña obligatoria'
+        },
+        notEmpty : {
+            errorMessage : 'Contraseña obligatoria'
+        },
+        isLength: { 
+            options : {min : 6, max : 255}, 
+            errorMessage : 'Contraseña, debe tener mínimo 6 caracteres.'
+        },
+
+        in:['body']
+    }
+});
+
 export const validarUsuarioNoPendiente = async( req : any , resp : typeof response, next : NextFunction)=>{
     const { usuario } : { usuario : Usuario} = req.usuario;
     
