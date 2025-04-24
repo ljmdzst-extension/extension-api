@@ -650,7 +650,25 @@ class Actividad  {
         let salida : IItemActividad[] = [];
         let opcionesBusqueda : {} = {
             idArea : id , 
-            anio : anio
+                [Op.or]: [
+                    {
+                      [Op.and]: [
+                        { anio: anio },
+                        { fechaDesde: null }
+                      ]
+                    },
+                    {
+                      [Op.and]: [
+                        { fechaDesde: { [Op.gt]: new Date(`${anio}-01-01`) } },
+                        {
+                          [Op.or]: [
+                            { fechaHasta: null },
+                            { fechaHasta: { [Op.lt]: new Date(`${anio + 1}-01-01`) } }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
         };
         if(keyword){
             opcionesBusqueda = { ...opcionesBusqueda, desc :  { [Op.like] : `%${keyword}%`}  }
