@@ -46,7 +46,8 @@ export const verGraficosDeArea = async( anio : number, idArea: number)=>{
         const cActividad = await BD.Actividad.findAll({
             where : { 
                 idArea : ap.idArea , 
-                createdAt : {[Op.gt] : new Date(`${anio}-01-01`)} 
+                anio : anio,
+                deletedAt: null
             }, transaction : t});
 
         await t.commit();
