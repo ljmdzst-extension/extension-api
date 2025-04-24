@@ -239,3 +239,25 @@ export const updateDataUsuarioPorId = async (req: any, res: Response) => {
 		);
 	}
 };
+
+
+export const updatePassword = async (req:any,res:any) =>{
+	try {
+		const {idUsuario} = req.usuario;
+		const {newPassword} = req.body;
+		if(!idUsuario){
+			throw new Error("no valido");
+		}
+
+		const user = await BD.Usuario.findOne({where:{idUsuario:idUsuario}});
+
+		if(user != null){
+			user.pass= newPassword;
+			user.save();
+		}
+
+
+	} catch (error) {
+		
+	}
+}

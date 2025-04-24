@@ -57,29 +57,14 @@ export const validarToken = async(req : any, resp : typeof response, next : Next
 
 
 
-export const extractUpdatePasswordToken = (req : any, resp : typeof response, next : NextFunction) =>{
-    try {
-         const  token  = req.header('Authorization-Update-Password')?.split(' ')[1] ;    
-         if(token) {
-             req.tokenUpdatePassword = token;  
-         } 
-         next();
-    } catch (error : any) {
-         resp.status(error.status || 500).json({
-             ok : false,
-             data : null,
-             error : error.message || 'error de servidor'
-         })
-     }
- }
-
-
-
 export const validateUpdatePasswordToken = async(req : any, resp : typeof response, next : NextFunction) =>{
     try {
-        if(!req.tokenUpdatePassword) throw {status : 400 , message : 'Código de recuperación inválido'}
         
-        const { idUsuario }= jwt.verify(req.tokenUpdatePassword,process.env.HASH_KEY || '' ) as jwt.JwtPayload;
+        const {tokenUpdatePassword} = req.params;
+        
+        if(!tokenUpdatePassword) throw {status : 400 , message : 'Código de recuperación inválido'}
+        
+        const { idUsuario }= jwt.verify(tokenUpdatePassword,process.env.HASH_KEY || '' ) as jwt.JwtPayload;
 
         if(!idUsuario) throw {status : 500, message : ' No se pudo obtener el idUsuario'}
 

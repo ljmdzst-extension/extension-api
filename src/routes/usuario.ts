@@ -21,7 +21,7 @@ import {
     validarCampoCambioContraseña
 } from "../middlewares/usuario";
 
-import { extraerToken, validarToken,extractUpdatePasswordToken,validateUpdatePasswordToken} from "../middlewares/auth";
+import { extraerToken, validarToken,validateUpdatePasswordToken} from "../middlewares/auth";
 
 
 
@@ -53,8 +53,8 @@ usuarioRouter.get('/:idUsuario', extraerToken, validarToken, getDataUsuarioPorId
 
 usuarioRouter.put('/:idUsuario', extraerToken, validarToken, updateDataUsuarioPorId);
 
-//usuarioRouter.post('/recuperarContraseña',sendRecuperationEmail);
+// usuarioRouter.post('/recuperarContraseña',sendRecuperationEmail);
 
-usuarioRouter.patch('actualizarContraseña',extractUpdatePasswordToken,validateUpdatePasswordToken, [...validarCampoCambioContraseña, validarSchema ],updatePassword);
+usuarioRouter.patch('actualizarContraseña',validateUpdatePasswordToken, [...validarCampoCambioContraseña, validarSchema ],updatePassword);
 
 export default usuarioRouter;
