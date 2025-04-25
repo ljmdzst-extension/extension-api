@@ -64,12 +64,12 @@ export const validateUpdatePasswordToken = async(req : any, resp : typeof respon
         
         if(!tokenUpdatePassword) throw {status : 400 , message : 'Código de recuperación inválido'}
         
-        const { idUsuario }= jwt.verify(tokenUpdatePassword,process.env.HASH_KEY || '' ) as jwt.JwtPayload;
+        const { nroDoc }= jwt.verify(tokenUpdatePassword,process.env.HASH_KEY || '' ) as jwt.JwtPayload;
 
-        if(!idUsuario) throw {status : 500, message : ' No se pudo obtener el idUsuario'}
+        if(!nroDoc) throw {status : 500, message : ' No se pudo obtener el nroDoc'}
 
         req.usuario = {
-            idUsuario : idUsuario
+            nroDoc : nroDoc
         };
         
         next();

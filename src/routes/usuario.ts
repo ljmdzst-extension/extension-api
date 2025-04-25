@@ -8,6 +8,8 @@ import {
     validarRegistro, 
     verListaUsuarios,
     updateDataUsuarioPorId,
+    updatePassword,
+    sendRecuperationEmail
 } from "../controllers/usuario";
 
 import { 
@@ -18,7 +20,8 @@ import {
     validarPass, 
     validarSchema, 
     validarUsuarioNoPendiente,
-    validarCampoCambioContraseña
+    validarCampoCambioContraseña,
+    validarCampoEmailYdoc
 } from "../middlewares/usuario";
 
 import { extraerToken, validarToken,validateUpdatePasswordToken} from "../middlewares/auth";
@@ -53,8 +56,8 @@ usuarioRouter.get('/:idUsuario', extraerToken, validarToken, getDataUsuarioPorId
 
 usuarioRouter.put('/:idUsuario', extraerToken, validarToken, updateDataUsuarioPorId);
 
-// usuarioRouter.post('/recuperarContraseña',sendRecuperationEmail);
+usuarioRouter.post('/actualizarContraseña',[...validarCampoEmailYdoc,validarSchema],sendRecuperationEmail);
 
-usuarioRouter.patch('actualizarContraseña',validateUpdatePasswordToken, [...validarCampoCambioContraseña, validarSchema ],updatePassword);
+usuarioRouter.patch('actualizarContraseña/:tokenUpdatePassword',validateUpdatePasswordToken, [...validarCampoCambioContraseña, validarSchema ],updatePassword);
 
 export default usuarioRouter;

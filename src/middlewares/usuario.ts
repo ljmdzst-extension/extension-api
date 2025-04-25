@@ -212,6 +212,36 @@ export const validarCampoCambioContraseña = checkSchema({
     }
 });
 
+
+export const validarCampoEmailYdoc = checkSchema({
+    email : { 
+        exists : {
+            errorMessage : 'Email obligatorio'
+           },
+       notEmpty : {
+        errorMessage : 'Email obligatorio'
+       },
+       isEmail :{
+            errorMessage : 'Email inválido'
+       }
+    },
+
+    nroDoc : { 
+        exists : {
+            errorMessage : 'dni obligatorio'
+        },
+        isNumeric: {
+            errorMessage : 'dni inválido' 
+        }, 
+        isLength: { 
+            options : {min : 8, max : 8}, 
+            errorMessage : 'dni de 8 dígitos sin puntos, con 0 adelante si tiene 7 dígitos'
+        }
+        
+    }
+})
+
+
 export const validarUsuarioNoPendiente = async( req : any , resp : typeof response, next : NextFunction)=>{
     const { usuario } : { usuario : Usuario} = req.usuario;
     

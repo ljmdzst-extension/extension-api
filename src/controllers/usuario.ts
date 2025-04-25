@@ -3,7 +3,7 @@ import sequelizeExtension, { BD } from '../config/dbConfig';
 import { Response, response } from 'express';
 import { Usuario } from '../models/Usuario';
 import { Persona } from '../models/Persona';
-import { generarEmailValidaciónRegistro, smtpService } from '../config/smtpConfig';
+import { generarEmailValidaciónRegistro, generateRecuperationEmail, smtpService } from '../config/smtpConfig';
 import { v4 as uuidv4 } from 'uuid';
 import { HttpHelpers } from '../helpers/general';
 import { PermisoAttributes } from '../models/Permiso';
@@ -243,21 +243,66 @@ export const updateDataUsuarioPorId = async (req: any, res: Response) => {
 
 export const updatePassword = async (req:any,res:any) =>{
 	try {
-		const {idUsuario} = req.usuario;
+		const {nroDoc} = req.usuario;
 		const {newPassword} = req.body;
-		if(!idUsuario){
-			throw new Error("no valido");
+		if(!nroDoc){
+			const error = new Error(" ");
+			error.status = 404;
+			throw error;
 		}
 
-		const user = await BD.Usuario.findOne({where:{idUsuario:idUsuario}});
+		const user = await BD.Usuario.findOne({where:{nroDoc:nroDoc}});
 
-		if(user != null){
-			user.pass= newPassword;
-			user.save();
+		if(user == null){
+			const error = new Error(" ");
+			error.status = 404;
+			throw error;
 		}
 
+		user.pass= newPassword;
+		user.save();
 
-	} catch (error) {
-		
+		return (HttpHelpers.responderPeticionOk(
+			res,
+			null
+		));
+
+	} catch (error:any) {
+		HttpHelpers.responderPeticionError(
+			res,
+			error.status || 500,
+			error.message || 'Error inesperado',
+		);
 	}
+}
+
+export const sendRecuperationEmail = async(req:any,res:any)=>{
+	const {email,nroDoc} = req.body;
+	
+	try{ 
+		const token  = jwt.sign({ nroDoc }, process.env.HASH_KEY, { expiresIn: '2d' });
+		const respSmtp = await smtpService.sendMail(
+			generateRecuperationEmail(email,token)
+		);
+
+
+		if (respSmtp.rejected.length > 0){ 
+			const error = new Error('Envío de correo rechazado');
+			error.status = 403;
+			throw error;
+		}
+		
+		const salida = {
+			respuesta: `Revise su casilla de correo ${respSmtp.accepted[0]}, y siga las instrucciones para completar el proceso de cambio de contraseña`,
+		};
+
+		HttpHelpers.responderPeticionOk(res, salida);
+		
+	} catch (error: any) {
+		if (!error.status) console.log(error);
+		HttpHelpers.responderPeticionError(res, error.status, error.message);
+	}
+
+
+	
 }
