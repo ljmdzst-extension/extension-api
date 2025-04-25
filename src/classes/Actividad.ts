@@ -649,26 +649,33 @@ class Actividad  {
     public static async buscarPorAreaID(id : ID_AREA, anio: number,offset ?: number, limit ?: number,keyword ?: string ,transaction ?: Transaction) : Promise<IItemActividad[]>{
         let salida : IItemActividad[] = [];
         let opcionesBusqueda : {} = {
-            idArea : id , 
-                [Op.or]: [
-                    {
-                      [Op.and]: [
-                        { anio: anio },
-                        { fechaDesde: null }
-                      ]
-                    },
-                    {
-                      [Op.and]: [
-                        { fechaDesde: { [Op.gt]: new Date(`${anio}-01-01`) } },
-                        {
-                          [Op.or]: [
-                            { fechaHasta: null },
-                            { fechaHasta: { [Op.lt]: new Date(`${anio + 1}-01-01`) } }
-                          ]
-                        }
-                      ]
-                    }
-                  ]
+            idArea : id ,
+                deletedAt:null,
+                [Op.or]:[
+
+                  { 
+                    [Op.and]:[
+                        {fechaHasta:{[Op.gt]:new Date(`${anio}-01-01`)}},
+                        {fechaHasta:{[Op.lt]:new Date(`${anio + 1}-01-01`)}},
+                    ]
+                  },
+
+                  { 
+                    [Op.and]:[
+                        {fechaDesde:{[Op.gte]:new Date(`${anio}-01-01`)}},
+                        {fechaDesde:{[Op.lt]:new Date(`${anio + 1}-01-01`)}},
+                    ]
+                  },
+
+                  { 
+                    [Op.and]:[
+                        {fechaHasta:null},
+                        {fechaHasta:null},
+                        {anio: anio}
+                    ]
+                  },
+
+                ]
         };
         if(keyword){
             opcionesBusqueda = { ...opcionesBusqueda, desc :  { [Op.like] : `%${keyword}%`}  }
