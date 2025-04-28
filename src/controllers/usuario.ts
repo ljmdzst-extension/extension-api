@@ -280,7 +280,7 @@ export const sendRecuperationEmail = async(req:any,res:any)=>{
 	const {email,nroDoc} = req.body;
 	
 	try{ 
-		const token  = jwt.sign({ nroDoc }, process.env.HASH_KEY, { expiresIn: '2d' });
+		const token  = jwt.sign({ nroDoc }, process.env.HASH_KEY, { expiresIn: '2d' });		
 		const respSmtp = await smtpService.sendMail(
 			generateRecuperationEmail(email,token)
 		);

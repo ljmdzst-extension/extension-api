@@ -56,8 +56,8 @@ usuarioRouter.get('/:idUsuario', extraerToken, validarToken, getDataUsuarioPorId
 
 usuarioRouter.put('/:idUsuario', extraerToken, validarToken, updateDataUsuarioPorId);
 
-usuarioRouter.post('/actualizarContraseña',[...validarCampoEmailYdoc,validarSchema],sendRecuperationEmail);
+usuarioRouter.post('/updatePassword',[...validarCampoEmailYdoc,validarSchema],sendRecuperationEmail);
 
-usuarioRouter.patch('actualizarContraseña/:tokenUpdatePassword',validateUpdatePasswordToken, [...validarCampoCambioContraseña, validarSchema ],updatePassword);
+usuarioRouter.patch('/updatePassword/:tokenUpdatePassword',validateUpdatePasswordToken, [...validarCampoCambioContraseña, validarSchema ],updatePassword);
 
 export default usuarioRouter;

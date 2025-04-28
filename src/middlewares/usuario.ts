@@ -207,10 +207,8 @@ export const validarCampoCambioContraseña = checkSchema({
             options : {min : 6, max : 255}, 
             errorMessage : 'Contraseña, debe tener mínimo 6 caracteres.'
         },
-
-        in:['body']
     }
-});
+},['body']);
 
 
 export const validarCampoEmailYdoc = checkSchema({
@@ -239,7 +237,7 @@ export const validarCampoEmailYdoc = checkSchema({
         }
         
     }
-})
+},['body']);
 
 
 export const validarUsuarioNoPendiente = async( req : any , resp : typeof response, next : NextFunction)=>{

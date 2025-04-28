@@ -48,7 +48,7 @@ export const generarEmailValidaciónRegistro = (_to : string, _idUsuario : strin
   export const generateRecuperationEmail = (_to : string, token : string) => ({
     from : process.env.SMTP_USER,
     to : _to,
-    subject : 'Secretaría de Extensión - Registro de usuario ',
+    subject : 'Secretaría de Extensión - Cambio de contraseña ',
     text : `ìngrese en el siguiente enlace para confirmar su cuenta : ${process.env.SERVER_HOST}/cambiarContraseña/${token}`,
     html : `
         <!DOCTYPE html>
