@@ -14,6 +14,8 @@ interface IRelacion {
     idRelacion : ID_RELACION;
     nom ?: string;
     tipoRelacion ?: ITipoRelacion;
+    desde ?: Date | null;
+    hasta ?: Date | null;
 }
 
 
@@ -132,7 +134,7 @@ class Relacion{
                     nom : rel.dataValues.nom,
                     tipoRelacion : (await TipoRelacion.buscarPorIDBD(rel.idTipoRelacion)).verDatos(),
                     desde: rel.dataValues.desde,
-                    hasta: rel.dataValues.validez
+                    hasta: rel.dataValues.hasta
                 })
             })
         )

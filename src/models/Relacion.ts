@@ -17,9 +17,9 @@ export type RelacionCreationAttributes = Optional<RelacionAttributes, RelacionOp
 export type TRelacion = {
   idRelacion : number;
   nom : string;
-  tipoRelacion : TipoRelacionAttributes,
-  desde : Date,
-  validez : Date
+  tipoRelacion : TipoRelacionAttributes;
+  desde : Date | null;
+  hasta : Date | null
 };
 
 const CONSTRAINT_ATTRIBUTES = {
@@ -45,7 +45,7 @@ const CONSTRAINT_ATTRIBUTES = {
     type: DataTypes.DATE,
     allowNull: true
   },
-  validez: {
+  hasta: {
     type: DataTypes.DATE,
     allowNull: true
   }
@@ -62,7 +62,7 @@ export class Relacion extends Model<RelacionAttributes, RelacionCreationAttribut
 
   tipoRelacion !: TipoRelacion;
   desde !: Date;
-  validez !: Date;
+  hasta !: Date;
 
   static crear( data : RelacionCreationAttributes, tipoRelacion : TipoRelacion) : Relacion {
     const relacion = this.build(data);
@@ -76,7 +76,7 @@ export class Relacion extends Model<RelacionAttributes, RelacionCreationAttribut
       nom : this.nom,
       tipoRelacion : this.tipoRelacion.verDatos(),
       desde : this.desde,
-      hasta : this.validez
+      hasta : this.hasta
     }
   }
 
