@@ -130,7 +130,9 @@ class Relacion{
                 salida.push({
                     idRelacion : rel.dataValues.idRelacion,
                     nom : rel.dataValues.nom,
-                    tipoRelacion : (await TipoRelacion.buscarPorIDBD(rel.idTipoRelacion)).verDatos()
+                    tipoRelacion : (await TipoRelacion.buscarPorIDBD(rel.idTipoRelacion)).verDatos(),
+                    desde: rel.dataValues.desde,
+                    hasta: rel.dataValues.validez
                 })
             })
         )

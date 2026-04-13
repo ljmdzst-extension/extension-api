@@ -17,7 +17,9 @@ export type RelacionCreationAttributes = Optional<RelacionAttributes, RelacionOp
 export type TRelacion = {
   idRelacion : number;
   nom : string;
-  tipoRelacion : TipoRelacionAttributes
+  tipoRelacion : TipoRelacionAttributes,
+  desde : Date,
+  validez : Date
 };
 
 const CONSTRAINT_ATTRIBUTES = {
@@ -38,6 +40,14 @@ const CONSTRAINT_ATTRIBUTES = {
       model: 'TipoRelacion',
       key: 'idTipoRelacion'
     }
+  },
+  desde: {
+    type: DataTypes.DATE,
+    allowNull: true
+  },
+  validez: {
+    type: DataTypes.DATE,
+    allowNull: true
   }
 }
 const CONSTRAINT_OPTIONS = ( sequelize : Sequelize.Sequelize)=>({
@@ -51,6 +61,8 @@ export class Relacion extends Model<RelacionAttributes, RelacionCreationAttribut
   idTipoRelacion!: number;
 
   tipoRelacion !: TipoRelacion;
+  desde !: Date;
+  validez !: Date;
 
   static crear( data : RelacionCreationAttributes, tipoRelacion : TipoRelacion) : Relacion {
     const relacion = this.build(data);
@@ -62,7 +74,9 @@ export class Relacion extends Model<RelacionAttributes, RelacionCreationAttribut
     return {
       idRelacion : this.idRelacion,
       nom : this.nom,
-      tipoRelacion : this.tipoRelacion.verDatos() 
+      tipoRelacion : this.tipoRelacion.verDatos(),
+      desde : this.desde,
+      hasta : this.validez
     }
   }
 
