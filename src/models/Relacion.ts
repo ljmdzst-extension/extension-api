@@ -7,6 +7,8 @@ export interface RelacionAttributes {
   idRelacion: number;
   nom: string;
   idTipoRelacion: TipoRelacionId;
+  desde: Date | null;
+  hasta: Date | null;
 }
 
 export type RelacionPk = "idRelacion";

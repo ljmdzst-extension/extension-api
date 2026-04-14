@@ -7,6 +7,7 @@ import cors from 'cors';
 import path from 'path';
 import busboyBodyParser from 'busboy-body-parser';
 import sequelizeExtension from './config/dbConfig';
+import { initModels } from './models/init-models';
 import RouterBases from './routes/bases';
 import routerPrograma from './routes/programa';
 import routerArea from './routes/area';
