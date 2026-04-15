@@ -6,8 +6,7 @@ import express, { request, response } from 'express';
 import cors from 'cors';
 import path from 'path';
 import busboyBodyParser from 'busboy-body-parser';
-import sequelizeExtension from './config/dbConfig';
-import { initModels } from './models/init-models';
+import sequelizeExtension, { initDB } from './config/dbConfig';
 import RouterBases from './routes/bases';
 import routerPrograma from './routes/programa';
 import routerArea from './routes/area';
@@ -74,13 +73,25 @@ app.use('*', async(req : typeof request , res : typeof response) => {
     res.sendFile(path.join(__dirname , './public/index.html'));
 });
 
-app.listen( process.env.PORT , async()=>{
+process.on('SIGINT', async () => {
+  await sequelizeExtension.close();
+  process.exit(0);
+});
+
+
+const start = async () => {
     try {
-        await sequelizeExtension.authenticate();
-        console.log(`${sequelizeExtension.getDatabaseName()} conectada`)
-    } catch (error : any) {
-        console.log(error);
+        await initDB(); 
+
+        app.listen(process.env.PORT || 3000, () => {
+            console.log(`Servidor corriendo en puerto ${process.env.PORT}`);
+        });
+
+    } catch (error) {
+        console.error('Error al iniciar:', error);
+        process.exit(1);
     }
-    console.log(`propuestas corriendo en PUERTO : ${process.env.PORT}`);
-    
-} )
+};
+
+start();
+

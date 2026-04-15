@@ -13,7 +13,25 @@ const sequelizeExtension = new sequelize.Sequelize({
     timezone : '-03:00'
 });
 
-export const BD = initModels(sequelizeExtension);
+
+
+let BD: ReturnType<typeof initModels>;
+
+export const initDB = async () => {
+  try {
+    await sequelizeExtension.authenticate();
+    console.log('DB conectada');
+
+    BD = initModels(sequelizeExtension);
+
+  } catch (error) {
+    console.error('Error DB:', error);
+    process.exit(1);
+  }
+};
+
+export { BD };
+
 
 // const iniciarTablas = async( transaction : Transaction)=>{
 
