@@ -1,6 +1,5 @@
 import { request, response } from "express";
-import sequelizeExtension from "../config/dbConfig";
-import { initModels } from "../models/init-models";
+import { BD } from "../config/dbConfig";
 
 
 export const buscar = async(req : typeof request , res : typeof response)=>{
@@ -8,13 +7,11 @@ export const buscar = async(req : typeof request , res : typeof response)=>{
    
     try {
 
-        const {Persona} = initModels(sequelizeExtension);
-
         const {nroDoc} = req.params;
 
         res.status(200).json({
             ok : true,
-            data :  await Persona.findByPk(nroDoc),
+            data :  await BD.Persona.findByPk(nroDoc),
             error : null
         });
 

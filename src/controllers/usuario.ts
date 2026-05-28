@@ -60,7 +60,7 @@ export const registerUsuario = async (req: any, resp: typeof response) => {
 
 		const { email, pass, idUnidadAcademica, confirmPass, ...dataPersona } = req.body;
 
-		const [dbPersona, creado] = await Persona.initModel(sequelizeExtension).findOrCreate({
+		const [dbPersona, creado] = await BD.Persona.findOrCreate({
 			defaults: { ...dataPersona, nroDoc: dataPersona.nroDoc },
 			where: { nroDoc: dataPersona.nroDoc },
 		});
@@ -79,7 +79,7 @@ export const registerUsuario = async (req: any, resp: typeof response) => {
 			if (usrId === nuevoId) nuevoId = uuidv4();
 		});
 
-		const usuarioPendiente = await Usuario.initModel(sequelizeExtension).create({
+		const usuarioPendiente = await BD.Usuario.create({
 			idUsuario: nuevoId,
 			nroDoc: dbPersona.nroDoc,
 			idUnidadAcademica: idUnidadAcademica,
@@ -134,7 +134,7 @@ export const verListaUsuarios = async (req: any, resp: typeof response) => {
 	try {
 		let salida: DataListaUsuarios = { usuarios: [] };
 
-		const usuariosEnBD = await Usuario.initModel(sequelizeExtension).findAll({
+		const usuariosEnBD = await BD.Usuario.findAll({
 			attributes: ['idUsuario', 'email'],
 		});
 

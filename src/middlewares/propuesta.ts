@@ -1,6 +1,5 @@
 import { NextFunction,  request, response } from "express";
-import { Propuesta } from "../models/Propuesta";
-import sequelizeExtension from "../config/dbConfig";
+import { BD } from "../config/dbConfig";
 import { HttpHelpers } from "../helpers/general";
 
 export const validarCodigoPropuesta =  async( req : typeof request , res : typeof response , next : NextFunction) => {
@@ -9,7 +8,7 @@ export const validarCodigoPropuesta =  async( req : typeof request , res : typeo
 
     const {codigoPropuesta} = req.params;
     
-    if( await Propuesta.initModel(sequelizeExtension).findByPk(codigoPropuesta,{attributes : ['codigoPropuesta']})){
+    if( await BD.Propuesta.findByPk(codigoPropuesta,{attributes : ['codigoPropuesta']})){
        
         next();
     
