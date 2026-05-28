@@ -17,17 +17,19 @@ const sequelizeExtension = new sequelize.Sequelize({
 
 let BD: ReturnType<typeof initModels>;
 
-export const initDB = async () => {
-  try {
-    await sequelizeExtension.authenticate();
-    console.log('DB conectada');
-
-    BD = initModels(sequelizeExtension);
-
-  } catch (error) {
-    console.error('Error DB:', error);
-    process.exit(1);
-  }
+export const initDB = async (retries = 3) => {
+    while (retries > 0) {
+        try {
+            await sequelizeExtension.authenticate();
+            BD = initModels(sequelizeExtension);
+            break;
+        } catch (error) {
+            retries -= 1;
+            if (retries === 0) process.exit(1);
+            await new Promise(res => setTimeout(res, 4000));
+            console.log(`Reintentando conexión a la base de datos... Intentos restantes: ${retries}`);
+        }
+    }
 };
 
 export { BD };

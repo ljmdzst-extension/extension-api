@@ -82,12 +82,10 @@ process.on('SIGINT', async () => {
 const start = async () => {
     try {
         await initDB(); 
-        setTimeout(() => {
 
-            app.listen(process.env.PORT || 3000, () => {
-               console.log(`Servidor corriendo en puerto ${process.env.PORT}`);
-            });
-        }, 1000); // Espera 1 segundo antes de iniciar el servidor
+        app.listen(process.env.PORT || 3000, () => {
+            console.log(`Servidor corriendo en puerto ${process.env.PORT}`);
+        });
 
     } catch (error) {
         console.error('Error al iniciar:', error);
