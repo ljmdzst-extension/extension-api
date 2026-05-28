@@ -184,8 +184,8 @@ export const validarCampos = checkSchema({
     'listaMetas.*.valoracion' : {
         isInt : {
             if : body('listaMetas.*.valoracion').not().isEmpty(),
-            options : { min : 1, max : 4},
-            errorMessage : 'valoración debe ser número entre 1 y 4'
+            options : { min : 1, max : 5},
+            errorMessage : 'valoración debe ser número entre 1 y 5'
         
         },
         
