@@ -122,6 +122,34 @@ export const verGraficosDeArea = async( anio : number, idArea: number)=>{
 
 }
 
+export const verGraficoGantt = async( anio : number, idArea: number)=>{
+    const t = await sequelizeExtension.transaction({logging : sql => console.log(sql)});
+
+    const salida = await BD.Actividad.findAll({
+
+        where : {
+            idArea : idArea,
+            deletedAt:null,
+            anio : anio,
+            [Op.and]:{ 
+                fechaDesde : {[Op.ne]: null},
+                fechaHasta : {[Op.ne]: null}
+            }
+        }, transaction : t
+    });
+    
+    await t.commit();
+
+
+    return salida.map( a => ({
+        idActividad : a.idActividad,
+        desc : a.desc,
+        fechaDesde : a.fechaDesde,
+        fechaHasta : a.fechaHasta
+    }));
+
+
+}
 
 const calcularCrucesUUAA = async( cActividad : Actividad[] ) => {
     let salida : any = { }

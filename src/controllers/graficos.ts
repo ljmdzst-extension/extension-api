@@ -64,3 +64,32 @@ export const verGraficosDeArea = async(req : any , resp : typeof response)=>{
 
 }
 
+
+
+export const verGraficoGantt = async(req : any , resp : typeof response)=>{
+
+    try {
+
+        const {anio,idArea } = req.params;
+
+        const graficos = await SGraficos.verGraficoGantt(Number(anio),Number(idArea));
+        
+        resp.status(200).json({
+            ok : true,
+            data : graficos,
+            error : null
+        });
+        
+
+    } catch (error : any) {
+        if( error.status && error.status === 500){
+            console.log( error.message );
+        }
+        resp.status( error.status || 500).json({
+            ok : false,
+            data : null,
+            error : error.message || 'Error de servidor'
+        })
+    }
+}
+
