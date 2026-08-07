@@ -5,6 +5,6 @@ const routerGraficos = Router();
 
 routerGraficos.get('/general/:anio',[],verGraficosGeneral);
 routerGraficos.get('/area/:anio/:idArea',[],verGraficosDeArea);
-routerGraficos.get('/gantt/:anio/:idArea',[],verGraficoGantt);
+routerGraficos.get('/gantt/:anio',[],verGraficoGantt);
 
 export default routerGraficos;

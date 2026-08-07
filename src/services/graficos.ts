@@ -3,6 +3,7 @@ import sequelizeExtension, { BD } from "../config/dbConfig";
 import { Actividad } from "../models/Actividad";
 import { RelacionActividad } from "../models/RelacionActividad";
 import { ERROR } from "../logs/errores";
+import { Area, AreaPrograma } from "../models/init-models";
 
 
 export const verGraficosGeneral = async( anio : number)=>{
@@ -122,32 +123,54 @@ export const verGraficosDeArea = async( anio : number, idArea: number)=>{
 
 }
 
-export const verGraficoGantt = async( anio : number, idArea: number)=>{
-    const t = await sequelizeExtension.transaction({logging : sql => console.log(sql)});
+export const verGraficoGantt = async( anio : number)=>{
 
-    const salida = await BD.Actividad.findAll({
-
-        where : {
-            idArea : idArea,
-            deletedAt:null,
+    const activities = await BD.Actividad.findAll({
+        attributes : ['idArea','anio','desc','nro','fechaDesde','fechaHasta'],
+        where: {
             anio : anio,
             [Op.and]:{ 
                 fechaDesde : {[Op.ne]: null},
                 fechaHasta : {[Op.ne]: null}
             }
-        }, transaction : t
+        }
     });
     
-    await t.commit();
+
+    const areaProgramas = await AreaPrograma.findAll({
+        where: {
+            anio: anio
+        },
+        attributes: [], 
+        include: [
+            {
+            model: Area,
+            as: 'area',          
+            required: true,     
+            attributes: ['idArea', 'nom']
+            }
+        ]
+    });
+    
 
 
-    return salida.map( a => ({
-        idActividad : a.idActividad,
-        desc : a.desc,
-        fechaDesde : a.fechaDesde,
-        fechaHasta : a.fechaHasta
-    }));
+    const salida = {
+        activities: activities.map( a => ({
+            idArea : a.idArea,
+            desc: a.desc,
+            anio : a.anio,
+            nro : a.nro,
+            fechaDesde : a.fechaDesde,
+            fechaHasta : a.fechaHasta
+        })),
+        areas : areaProgramas.map( ap => ({
+            idArea : ap.area.idArea,
+            nom : ap.area.nom
+        }))
+    }
 
+
+    return salida;
 
 }
 

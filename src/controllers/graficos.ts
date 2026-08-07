@@ -70,9 +70,10 @@ export const verGraficoGantt = async(req : any , resp : typeof response)=>{
 
     try {
 
-        const {anio,idArea } = req.params;
-
-        const graficos = await SGraficos.verGraficoGantt(Number(anio),Number(idArea));
+        const {anio} = req.params;
+        console.log('anio',anio);
+        const graficos = await SGraficos.verGraficoGantt(Number(anio));
+        console.log('graficos',graficos);
         
         resp.status(200).json({
             ok : true,
