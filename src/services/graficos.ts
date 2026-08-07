@@ -133,7 +133,8 @@ export const verGraficoGantt = async( anio : number)=>{
                 fechaDesde : {[Op.ne]: null},
                 fechaHasta : {[Op.ne]: null}
             }
-        }
+        },
+        order: [['fechaDesde', 'ASC']]
     });
     
 
