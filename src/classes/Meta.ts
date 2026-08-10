@@ -13,6 +13,8 @@ interface IMeta {
     resultado ?: string; 
     observaciones ?: string; 
     valoracion ?: number;
+    nombreValoracion ?: string;
+    
 }
 
 class Meta {
@@ -45,7 +47,8 @@ class Meta {
             descripcion : this.data.descripcion, 
             resultado  : this.data.resultado, 
             observaciones  : this.data.observaciones,
-            valoracion : this.data.valoracion
+            valoracion : this.data.valoracion,
+            nombreValoracion : this.data.nombreValoracion
         };
     }
 
@@ -109,10 +112,24 @@ class Meta {
 
     public static async buscarPorActBD(iAct: Actividad, transaction?: Transaction | undefined): Promise<void> {
 
-        if(process.env.NODE_ENV === "development") console.log('cargando metas ..');
+        if (process.env.NODE_ENV === "development") console.log('cargando metas ..');
 
-        const metas = await BD.Meta.findAll({where : {idActividad : iAct.verID()},transaction})
-        iAct.cargarMetas( metas.map( meta => ({...meta.dataValues, valoracion : meta.idValoracion})) );
+        const metas = await BD.Meta.findAll({
+            mandatory: true,
+            where: {
+                idActividad: iAct.verID()
+            },
+            include: [
+                {
+                    model: BD.Valoracion,
+                    attributes: ['idValoracion', 'nom']
+                }
+            ],
+            transaction
+        });
+
+        iAct.cargarMetas( metas.map( meta => ({...meta.dataValues, valoracion : meta.Valoracion.idValoracion, nombreValoracion : meta.Valoracion.nom})) );
+
 
     }
     
