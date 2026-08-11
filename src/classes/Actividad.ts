@@ -269,6 +269,7 @@ class Actividad  {
     public cargarInstituciones( listaInstituciones : Array< IInstitucion> )
     {
 
+        console.log("cargando instituciones..",listaInstituciones)
         
         this.listaInstituciones.forEach( item => {item.darDeBajaBD();});
 

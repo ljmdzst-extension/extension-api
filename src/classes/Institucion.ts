@@ -13,6 +13,13 @@ export interface IInstitucion {
     idInstitucion : ID_INSTITUCION,
     nom : string,
     ubicacion ?: string | undefined
+    pais ?: string | undefined,
+    provincia ?: string | undefined,
+    ciudad ?: string | undefined,
+    direccion ?: string | undefined,
+    latitud ?: string | undefined,
+    longitud ?: string | undefined
+
 }
 
 /* 
@@ -39,8 +46,41 @@ class Institucion {
         this.data = data;
     } 
     public static validar( data : IInstitucion) : void {
-        if(!(validator.isLength(data.nom,{ min : 1, max : 256 }))) throw INVALIDO.NOM_INSTITUCION;
-        if(!(validator.isURL(data.ubicacion || ""))) throw INVALIDO.UBIC_INSTITUCION;
+                // 1. Validar nombre (obligatorio siempre)
+            if (!data.nom || !validator.isLength(data.nom, { min: 2, max: 256 })) {
+                throw INVALIDO.NOM_INSTITUCION;
+            }
+
+            // Normalizar a string para evitar undefined en validator
+            const ubicacion = data.ubicacion || "";
+            const pais = data.pais || "";
+            const provincia = data.provincia || "";
+            const ciudad = data.ciudad || "";
+            const direccion = data.direccion || "";
+            const latitud = data.latitud || "";
+            const longitud = data.longitud || "";
+
+            // 2. Comprobar las 3 formas válidas de ubicar la institución
+            const esUrlValida = validator.isURL(ubicacion);
+
+            const tieneDireccionCompleta = 
+                validator.isLength(pais, { min: 2, max: 256 }) &&
+                validator.isLength(provincia, { min: 2, max: 256 }) &&
+                validator.isLength(ciudad, { min: 2, max: 256 }) &&
+                validator.isLength(direccion, { min: 2, max: 256 });
+
+            const tieneCoordenadas = 
+                validator.isLength(latitud, { min: 2, max: 100 }) &&
+                validator.isLength(longitud, { min: 2, max: 100 });
+
+            // Si NO cumple al menos una de las 3 formas, lanzamos error
+            if (!esUrlValida && !tieneDireccionCompleta && !tieneCoordenadas) {
+                throw INVALIDO.UBIC_INSTITUCION;
+            }
+
+            console.log("validacion institucion OK ..");
+
+
     }
     /** Conexion BD */
      public darDeAltaBD()
@@ -152,7 +192,7 @@ class Institucion {
         if(process.env.NODE_ENV === "development")console.log('cargando instituciones ..');
         
         const instituciones = await BD.Institucion.findAll({ 
-            attributes : ['idInstitucion','nom','ubicacion'],
+            attributes : ['idInstitucion','nom','ubicacion','ciudad','provincia','direccion','pais','latitud','longitud'],
             where : { idInstitucion : { [Op.in] : listaIDs }}, 
             transaction 
         })
@@ -161,7 +201,13 @@ class Institucion {
         iAct.cargarInstituciones(instituciones.map( inst => ({
             idInstitucion : inst.idInstitucion,
             nom : inst.nom,
-            ubicacion : inst.ubicacion
+            ubicacion : inst.ubicacion,
+            ciudad : inst.ciudad,
+            provincia : inst.provincia,
+            direccion : inst.direccion,
+            pais : inst.pais,
+            latitud : inst.latitud,
+            longitud : inst.longitud
         })))
         
     };
@@ -174,7 +220,7 @@ class Institucion {
         let salida : Institucion[]  = [];
 
         let opcionesBusqueda : FindOptions  = { 
-            attributes : ['idInstitucion','nom','ubicacion'],
+            attributes : ['idInstitucion','nom','ubicacion','ciudad','provincia','direccion','pais','latitud','longitud'],
             offset : Number(offset) || 0,
             limit : Number(limit) || 10, 
             transaction 
