@@ -1,6 +1,6 @@
 import { response } from "express";
 
-import * as SGrficos from '../services/graficos'
+import * as SGraficos from '../services/graficos'
 
 
 export const verGraficosGeneral = async(req : any , resp : typeof response)=>{
