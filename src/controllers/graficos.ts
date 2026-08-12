@@ -99,7 +99,7 @@ export const verInstituciones = async(req : any , resp : typeof response)=>{
 
     try {
 
-        const instituciones = await SGrficos.verInstituciones();
+        const instituciones = await SGraficos.verInstituciones();
         console.log('instituciones',instituciones);
 
         resp.status(200).json({
