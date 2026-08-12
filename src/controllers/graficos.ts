@@ -1,6 +1,6 @@
 import { response } from "express";
 
-import * as SGraficos from '../services/graficos'
+import * as SGrficos from '../services/graficos'
 
 
 export const verGraficosGeneral = async(req : any , resp : typeof response)=>{
@@ -94,3 +94,27 @@ export const verGraficoGantt = async(req : any , resp : typeof response)=>{
     }
 }
 
+export const verInstituciones = async(req : any , resp : typeof response)=>{
+
+
+    try {
+
+        const instituciones = await SGrficos.verInstituciones();
+        console.log('instituciones',instituciones);
+
+        resp.status(200).json({
+            ok : true,
+            data : instituciones,
+            error : null
+        });
+
+    } catch (error : any) {
+        resp.status( error.status || 500).json({
+            ok : false,
+            data : null,
+            error : error.message || 'Error de servidor'
+        })
+
+    }
+
+}

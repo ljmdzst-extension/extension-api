@@ -1,6 +1,7 @@
 import { Op } from "sequelize";
 import sequelizeExtension, { BD } from "../config/dbConfig";
 import { Actividad } from "../models/Actividad";
+import {Institucion} from "../models/Institucion";
 import { RelacionActividad } from "../models/RelacionActividad";
 import { ERROR } from "../logs/errores";
 import { Area, AreaPrograma } from "../models/init-models";
@@ -270,5 +271,27 @@ const calcularCrucesObjetivos = async( cActividad : Actividad[])=>{
 
     }
    
+
+}
+
+
+export const verInstituciones = async() => {
+
+    const cInstituciones = await BD.Institucion.findAll({
+        where : { latitud : { [Op.ne] : null }, longitud : { [Op.ne] : null } },
+        attributes : ['idInstitucion', 'nom', 'direccion', 'ciudad', 'provincia', 'latitud', 'longitud']
+    });
+
+
+    return cInstituciones.map( inst => ({
+        idInstitucion : inst.idInstitucion,
+        nom : inst.nom,
+        direccion : inst.direccion,
+        ciudad : inst.ciudad,
+        provincia : inst.provincia,
+        latitud : inst.latitud,
+        longitud : inst.longitud
+    }))
+
 
 }
