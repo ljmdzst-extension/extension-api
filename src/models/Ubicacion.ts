@@ -8,17 +8,40 @@ export interface UbicacionAttributes {
   idUbicacion: number;
   enlace: string;
   desc?: string;
+  pais?: string;
+  ciudad?: string;
+  provincia?: string;
+  direccion?: string;
+  latitud?: string;
+  longitud?: string;
+  radio?: number;
 }
 
 export type UbicacionPk = "idUbicacion";
 export type UbicacionId = Ubicacion[UbicacionPk];
-export type UbicacionOptionalAttributes = "idUbicacion" | "desc";
+export type UbicacionOptionalAttributes = 
+  | "idUbicacion" 
+  | "desc" 
+  | "pais" 
+  | "ciudad" 
+  | "provincia" 
+  | "direccion" 
+  | "latitud" 
+  | "longitud" 
+  | "radio";
 export type UbicacionCreationAttributes = Optional<UbicacionAttributes, UbicacionOptionalAttributes>;
 
 export class Ubicacion extends Model<UbicacionAttributes, UbicacionCreationAttributes> implements UbicacionAttributes {
   idUbicacion!: number;
   enlace!: string;
   desc?: string;
+  pais?: string;
+  ciudad?: string;
+  provincia?: string;
+  direccion?: string;
+  latitud?: string;
+  longitud?: string;
+  radio?: number;
 
   // Ubicacion belongsToMany Actividad via idUbicacion and idActividad
   idActividadActividadUbicacionActividads!: Actividad[];
@@ -32,6 +55,7 @@ export class Ubicacion extends Model<UbicacionAttributes, UbicacionCreationAttri
   hasIdActividadActividadUbicacionActividad!: Sequelize.BelongsToManyHasAssociationMixin<Actividad, ActividadId>;
   hasIdActividadActividadUbicacionActividads!: Sequelize.BelongsToManyHasAssociationsMixin<Actividad, ActividadId>;
   countIdActividadActividadUbicacionActividads!: Sequelize.BelongsToManyCountAssociationsMixin;
+  
   // Ubicacion hasMany UbicacionActividad via idUbicacion
   ubicacionActividads!: UbicacionActividad[];
   getUbicacionActividads!: Sequelize.HasManyGetAssociationsMixin<UbicacionActividad>;
@@ -44,6 +68,7 @@ export class Ubicacion extends Model<UbicacionAttributes, UbicacionCreationAttri
   hasUbicacionActividad!: Sequelize.HasManyHasAssociationMixin<UbicacionActividad, UbicacionActividadId>;
   hasUbicacionActividads!: Sequelize.HasManyHasAssociationsMixin<UbicacionActividad, UbicacionActividadId>;
   countUbicacionActividads!: Sequelize.HasManyCountAssociationsMixin;
+  
   // Ubicacion hasOne UbicacionProblematica via idUbicacion
   ubicacionProblematica!: UbicacionProblematica;
   getUbicacionProblematica!: Sequelize.HasOneGetAssociationMixin<UbicacionProblematica>;
@@ -52,24 +77,52 @@ export class Ubicacion extends Model<UbicacionAttributes, UbicacionCreationAttri
 
   static initModel(sequelize: Sequelize.Sequelize): typeof Ubicacion {
     return Ubicacion.init({
-    idUbicacion: {
-      autoIncrement: true,
-      type: DataTypes.INTEGER,
-      allowNull: false,
-      primaryKey: true
-    },
-    enlace: {
-      type: DataTypes.STRING(2083),
-      allowNull: false
-    },
-    desc: {
-      type: DataTypes.STRING(255),
-      allowNull: true
-    }
-  }, {
-    sequelize,
-    tableName: 'Ubicacion',
-    timestamps: false
-  });
+      idUbicacion: {
+        autoIncrement: true,
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        primaryKey: true
+      },
+      enlace: {
+        type: DataTypes.STRING(2083),
+        allowNull: false
+      },
+      desc: {
+        type: DataTypes.STRING(255),
+        allowNull: true
+      },
+      pais: {
+        type: DataTypes.STRING(100),
+        allowNull: true
+      },
+      ciudad: {
+        type: DataTypes.STRING(100),
+        allowNull: true
+      },
+      provincia: {
+        type: DataTypes.STRING(100),
+        allowNull: true
+      },
+      direccion: {
+        type: DataTypes.STRING(100),
+        allowNull: true
+      },
+      latitud: {
+        type: DataTypes.STRING(100),
+        allowNull: true
+      },
+      longitud: {
+        type: DataTypes.STRING(100),
+        allowNull: true
+      },
+      radio: {
+        type: DataTypes.INTEGER,
+        allowNull: true
+      }
+    }, {
+      sequelize,
+      tableName: 'Ubicacion',
+      timestamps: false
+    });
   }
 }

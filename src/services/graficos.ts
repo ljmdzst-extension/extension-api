@@ -295,3 +295,41 @@ export const verInstituciones = async() => {
 
 
 }
+
+
+
+
+
+export const verUbicacionesActividadPorAnio = async( anio: number) => {
+
+    const cUbicaciones = await BD.Ubicacion.findAll({
+        include: [
+            {
+                model: BD.Actividad,
+                as: 'idActividadActividadUbicacionActividads',
+                where: {
+                    anio: anio
+                },
+                attributes: []
+            }
+        ],
+        where : { latitud : { [Op.ne] : null }, longitud : { [Op.ne] : null } },
+        attributes : ['idUbicacion', 'desc', 'direccion', 'ciudad', 'provincia', 'latitud', 'longitud'],
+        distinct: true
+    });
+
+
+    return cUbicaciones.map( ub => ({
+        idUbicacion : ub.idUbicacion,
+        desc : ub.desc,
+        direccion : ub.direccion,
+        ciudad : ub.ciudad,
+        provincia : ub.provincia,
+        latitud : ub.latitud,
+        longitud : ub.longitud
+    }));
+
+
+
+
+}

@@ -118,3 +118,30 @@ export const verInstituciones = async(req : any , resp : typeof response)=>{
     }
 
 }
+
+export const verUbicacionesActividadPorAnio = async(req : any , resp : typeof response)=>{
+
+     try {
+        const { anio } = req.params;
+
+        const ubicaciones = await SGraficos.verUbicacionesActividadPorAnio(anio);
+        console.log('ubicaciones',ubicaciones);
+
+        resp.status(200).json({
+            ok : true,
+            data : ubicaciones,
+            error : null
+        });
+
+    } catch (error : any) {
+        resp.status( error.status || 500).json({
+            ok : false,
+            data : null,
+            error : error.message || 'Error de servidor'
+        })
+
+    }
+
+
+
+}
