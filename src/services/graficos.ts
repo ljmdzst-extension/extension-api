@@ -314,7 +314,7 @@ export const verUbicacionesActividadPorAnio = async( anio: number) => {
             }
         ],
         where : { latitud : { [Op.ne] : null }, longitud : { [Op.ne] : null } },
-        attributes : ['idUbicacion', 'desc', 'direccion', 'ciudad', 'provincia', 'latitud', 'longitud'],
+        attributes : ['idUbicacion', 'desc', 'direccion', 'ciudad', 'provincia', 'latitud', 'longitud','radio'],
         distinct: true
     });
 
@@ -326,7 +326,8 @@ export const verUbicacionesActividadPorAnio = async( anio: number) => {
         ciudad : ub.ciudad,
         provincia : ub.provincia,
         latitud : ub.latitud,
-        longitud : ub.longitud
+        longitud : ub.longitud,
+        radio : ub.radio
     }));
 
 
