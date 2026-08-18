@@ -307,10 +307,10 @@ export const verUbicacionesActividadPorAnio = async( anio: number) => {
             {
                 model: BD.Actividad,
                 as: 'idActividadActividadUbicacionActividads',
+                attributes: ['idActividad', 'desc'],
                 where: {
                     anio: anio
                 },
-                attributes: []
             }
         ],
         where : { latitud : { [Op.ne] : null }, longitud : { [Op.ne] : null } },
@@ -327,7 +327,9 @@ export const verUbicacionesActividadPorAnio = async( anio: number) => {
         provincia : ub.provincia,
         latitud : ub.latitud,
         longitud : ub.longitud,
-        radio : ub.radio
+        radio : ub.radio,
+        idActividad : ub.idActividadActividadUbicacionActividads[0]?.idActividad,
+        actividadNombre : ub.idActividadActividadUbicacionActividads[0]?.desc
     }));
 
 
