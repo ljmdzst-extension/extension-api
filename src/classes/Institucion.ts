@@ -13,7 +13,7 @@ export interface IInstitucion {
     idInstitucion : ID_INSTITUCION,
     nom : string,
     ubicacion ?: string | undefined
-    pais ?: string | undefined,
+    departamento ?: string | undefined,
     provincia ?: string | undefined,
     ciudad ?: string | undefined,
     direccion ?: string | undefined,
@@ -53,7 +53,7 @@ class Institucion {
 
             // Normalizar a string para evitar undefined en validator
             const ubicacion = data.ubicacion || "";
-            const pais = data.pais || "";
+            const departamento = data.departamento || "";
             const provincia = data.provincia || "";
             const ciudad = data.ciudad || "";
             const direccion = data.direccion || "";
@@ -64,7 +64,7 @@ class Institucion {
             const esUrlValida = validator.isURL(ubicacion);
 
             const tieneDireccionCompleta = 
-                validator.isLength(pais, { min: 2, max: 256 }) &&
+                validator.isLength(departamento, { min: 2, max: 256 }) &&
                 validator.isLength(provincia, { min: 2, max: 256 }) &&
                 validator.isLength(ciudad, { min: 2, max: 256 }) &&
                 validator.isLength(direccion, { min: 2, max: 256 });
@@ -192,7 +192,7 @@ class Institucion {
         if(process.env.NODE_ENV === "development")console.log('cargando instituciones ..');
         
         const instituciones = await BD.Institucion.findAll({ 
-            attributes : ['idInstitucion','nom','ubicacion','ciudad','provincia','direccion','pais','latitud','longitud'],
+            attributes : ['idInstitucion','nom','ubicacion','ciudad','provincia','direccion','departamento','latitud','longitud'],
             where : { idInstitucion : { [Op.in] : listaIDs }}, 
             transaction 
         })
@@ -205,7 +205,7 @@ class Institucion {
             ciudad : inst.ciudad,
             provincia : inst.provincia,
             direccion : inst.direccion,
-            pais : inst.pais,
+            departamento : inst.departamento,
             latitud : inst.latitud,
             longitud : inst.longitud
         })))
@@ -220,7 +220,7 @@ class Institucion {
         let salida : Institucion[]  = [];
 
         let opcionesBusqueda : FindOptions  = { 
-            attributes : ['idInstitucion','nom','ubicacion','ciudad','provincia','direccion','pais','latitud','longitud'],
+            attributes : ['idInstitucion','nom','ubicacion','ciudad','provincia','direccion','departamento','latitud','longitud'],
             offset : Number(offset) || 0,
             limit : Number(limit) || 10, 
             transaction 

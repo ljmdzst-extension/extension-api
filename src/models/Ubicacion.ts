@@ -8,7 +8,7 @@ export interface UbicacionAttributes {
   idUbicacion: number;
   enlace: string;
   desc?: string;
-  pais?: string;
+  departamento?: string;
   ciudad?: string;
   provincia?: string;
   direccion?: string;
@@ -22,7 +22,7 @@ export type UbicacionId = Ubicacion[UbicacionPk];
 export type UbicacionOptionalAttributes = 
   | "idUbicacion" 
   | "desc" 
-  | "pais" 
+  | "departamento" 
   | "ciudad" 
   | "provincia" 
   | "direccion" 
@@ -35,7 +35,7 @@ export class Ubicacion extends Model<UbicacionAttributes, UbicacionCreationAttri
   idUbicacion!: number;
   enlace!: string;
   desc?: string;
-  pais?: string;
+  departamento?: string;
   ciudad?: string;
   provincia?: string;
   direccion?: string;
@@ -91,7 +91,7 @@ export class Ubicacion extends Model<UbicacionAttributes, UbicacionCreationAttri
         type: DataTypes.STRING(255),
         allowNull: true
       },
-      pais: {
+      departamento: {
         type: DataTypes.STRING(100),
         allowNull: true
       },

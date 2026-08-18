@@ -13,7 +13,7 @@ export interface InstitucionAttributes {
   email?: string | null;
   tel?: string | null;
   ubicacion?: string | null;
-  pais?: string | null;
+  departamento?: string | null;
   ciudad?: string | null;
   provincia?: string | null;
   direccion?: string | null;
@@ -23,7 +23,7 @@ export interface InstitucionAttributes {
 
 export type InstitucionPk = "idInstitucion";
 export type InstitucionId = Institucion[InstitucionPk];
-export type InstitucionOptionalAttributes = "idInstitucion" | "dom" | "email" | "tel" | "ubicacion" | "ciudad" | "provincia" | "direccion" | "pais" | "latitud" | "longitud";
+export type InstitucionOptionalAttributes = "idInstitucion" | "dom" | "email" | "tel" | "ubicacion" | "ciudad" | "provincia" | "direccion" | "departamento" | "latitud" | "longitud";
 export type InstitucionCreationAttributes = Optional<InstitucionAttributes, InstitucionOptionalAttributes>;
 
 // type TInstitucion = InstitucionAttributes;
@@ -55,7 +55,7 @@ const INSTITUCION_ATTRIBUTES = {
     type: DataTypes.STRING(2083),
     allowNull: true
   },
-  pais: {
+  departamento: {
     type: DataTypes.STRING(100),
     allowNull: true
   },
@@ -88,7 +88,7 @@ export class Institucion extends Model<InstitucionAttributes, InstitucionCreatio
   email?: string;
   tel?: string;
   ubicacion?: string;
-  pais?: string;
+  departamento?: string;
   ciudad?: string;
   provincia?: string;
   direccion?: string;

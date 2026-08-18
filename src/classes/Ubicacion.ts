@@ -11,7 +11,14 @@ type ID_UBICACION= number;
 
 interface IUbicacion {
     idUbicacion : ID_UBICACION,
-    enlace : string
+    enlace : string,
+    departamento ?: string,
+    ciudad ?: string,
+    provincia?: string,
+    direccion?: string,
+    latitud ?: string,
+    longitud ?: string,
+    radio?: number
 }
 
 
