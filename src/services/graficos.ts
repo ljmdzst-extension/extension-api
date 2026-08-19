@@ -275,11 +275,22 @@ const calcularCrucesObjetivos = async( cActividad : Actividad[])=>{
 }
 
 
-export const verInstituciones = async() => {
+export const verInstituciones = async({anio}:{anio:number}) => {
 
     const cInstituciones = await BD.Institucion.findAll({
         where : { latitud : { [Op.ne] : null }, longitud : { [Op.ne] : null } },
-        attributes : ['idInstitucion', 'nom', 'direccion', 'ciudad', 'provincia', 'latitud', 'longitud']
+        attributes : ['idInstitucion', 'nom', 'direccion', 'ciudad', 'provincia', 'latitud', 'longitud'],
+    
+        include:[
+            {
+                model: BD.Actividad,
+                as: 'idActividadActividadInstitucionActividads',
+                attributes: ['idActividad', 'desc'],
+                where: {
+                    anio: anio
+                },
+            }
+        ]
     });
 
 
@@ -290,7 +301,9 @@ export const verInstituciones = async() => {
         ciudad : inst.ciudad,
         provincia : inst.provincia,
         latitud : inst.latitud,
-        longitud : inst.longitud
+        longitud : inst.longitud,
+        idActividad : inst.idActividadActividadInstitucionActividads[0]?.idActividad,
+        actividadNombre : inst.idActividadActividadInstitucionActividads[0]?.desc
     }))
 
 

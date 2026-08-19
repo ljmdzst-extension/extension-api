@@ -94,13 +94,14 @@ export const verGraficoGantt = async(req : any , resp : typeof response)=>{
     }
 }
 
-export const verInstituciones = async(req : any , resp : typeof response)=>{
+export const verInstitucionesPorAnio = async(req : any , resp : typeof response)=>{
 
 
     try {
 
-        const instituciones = await SGraficos.verInstituciones();
-        console.log('instituciones',instituciones);
+
+        const {anio} = req.params;
+        const instituciones = await SGraficos.verInstituciones({anio: Number(anio)});
 
         resp.status(200).json({
             ok : true,
