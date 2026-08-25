@@ -119,4 +119,20 @@ export default class SBases {
 
         return salida;
     }
+
+
+     public static async verInstitucionesByName( data : DataGetInstituciones, transaction ?: Transaction ) 
+    : Promise<IInstitucion[]>
+    {
+        let salida : IInstitucion[] = [];
+
+       const instituciones =  await Institucion.buscarPorNombre(data.query, data.offset, data.limit,transaction);
+
+       if(instituciones.length) {
+         salida = instituciones.map( institucion => institucion.verDatos())
+       }
+
+
+        return salida;
+    }
 }

@@ -53,3 +53,25 @@ export const verInstituciones = async(req : typeof request , res : typeof respon
         })  
     }
 }
+
+export const verInstitucionesByName = async(req : typeof request , res : typeof response)=>{
+    try {
+
+        const {name,offset,limit} = req.params;
+
+        const instituciones = await SBases.verInstitucionesByName({ query: name, offset : Number(offset), limit : Number(limit)} )
+        
+        res.status(200).json({
+            ok : true,
+            data : instituciones,
+            error : null
+                
+        })
+
+    } catch (error : any) {
+        res.status(error.status || 500).json({
+            ok : false,
+            error : error.message || 'error de servidor'
+        })  
+    }
+}

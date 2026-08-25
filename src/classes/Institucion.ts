@@ -241,6 +241,46 @@ class Institucion {
 
         return salida;
     }
+
+
+    public static async buscarPorNombre ( nombre ?: string, offset ?: number, limit ?: number, transaction ?: Transaction ) : 
+    Promise<Institucion[]> { 
+
+        
+
+        let salida : Institucion[]  = [];
+
+        let opcionesBusqueda : FindOptions  = { 
+            attributes : ['idInstitucion','nom','ubicacion','ciudad','provincia','direccion','departamento','latitud','longitud'],
+            offset : Number(offset) || 0,
+            limit : Number(limit) || 10, 
+            transaction 
+        };
+
+        if (nombre?.length) {
+            opcionesBusqueda = {
+                ...opcionesBusqueda,
+                where: {
+                    [Op.and]: [
+                        { nom: { [Op.like]: `${nombre}%` } },
+                        { latitud: { [Op.ne]: null } },
+                        { longitud: { [Op.ne]: null } }
+                    ]
+                }
+            };
+        }
+
+        const instituciones = await BD.Institucion.findAll( opcionesBusqueda );
+
+        if(instituciones.length) {
+            salida = instituciones.map( bdInstitucion => new Institucion(
+                    {...bdInstitucion.dataValues, ubicacion : bdInstitucion.dataValues.ubicacion || '#'}
+                ));
+        }
+
+        return salida;
+    }
+    
     
 }
 
