@@ -2,11 +2,13 @@
 import { Router } from "express";
 import { validarIdArea } from "../middlewares/area";
 import { validarPermisoAccesoMetas } from "../middlewares/permisos";
-import { descargarPresupuesto, subirPrespuesto, verListaActividades, verListaAreas, verResumenArea } from "../controllers/area";
+import { descargarPresupuesto, subirPrespuesto, verListaActividades, verListaAreas, verListaAreasPorAnio, verResumenArea } from "../controllers/area";
 
 const routerArea = Router();
 
 routerArea.get('/:idPrograma',[],verListaAreas);
+routerArea.get('/porAnio/:anio',verListaAreasPorAnio);
+
 routerArea.get(
     '/:idArea/:anio',
     validarPermisoAccesoMetas,

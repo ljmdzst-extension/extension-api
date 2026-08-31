@@ -106,8 +106,31 @@ class Area {
     }
 
 
-    
+    public static async verListaAreas(anio : number, transaction ?: Transaction): Promise<IArea[]>{
+        let salida : IArea[] = [];
+        const bdAreaPrograma = await BD.AreaPrograma.findAll({
+            where: { anio },
+            attributes: [], // No traemos campos de AreaPrograma
+            include: [
+                {
+                    model: BD.Area,
+                    as: 'area', 
+                    attributes: ['idArea', 'nom'],
+                    required: true // INNER JOIN
+                }
+            ],
+            transaction
+        });
+
+        if (bdAreaPrograma.length) {
+            salida = bdAreaPrograma
+                .map(item => item.get('area') as BD.Area) // Extraemos el objeto Area anidado
+                .filter(Boolean)
+                .map(areaItem => new Area(areaItem.dataValues));
+        }
+        
+        return salida;
+    }
+
 }
-
-
 export default Area;

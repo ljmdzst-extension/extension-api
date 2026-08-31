@@ -275,7 +275,7 @@ const calcularCrucesObjetivos = async( cActividad : Actividad[])=>{
 }
 
 
-export const verInstituciones = async({anio}:{anio:number}) => {
+export const verInstituciones = async({anio,area}:{anio:number,area:number | undefined}) => {
 
     const cInstituciones = await BD.Institucion.findAll({
         where : { latitud : { [Op.ne] : null }, longitud : { [Op.ne] : null } },
@@ -287,7 +287,8 @@ export const verInstituciones = async({anio}:{anio:number}) => {
                 as: 'idActividadActividadInstitucionActividads',
                 attributes: ['idActividad', 'desc'],
                 where: {
-                    anio: anio
+                    anio: anio,
+                    idArea : area ? { [Op.eq] : area } : { [Op.ne] : null }
                 },
             }
         ]
@@ -313,7 +314,16 @@ export const verInstituciones = async({anio}:{anio:number}) => {
 
 
 
-export const verUbicacionesActividadPorAnio = async( anio: number) => {
+export const verUbicacionesActividadPorAnio = async( anio: number, area?: number) => {
+
+
+    const actividadWhere = { anio };
+
+    console.log('verUbicacionesActividadPorAnio - anio:', anio, 'area:', area);
+    // 2. Solo agregamos el filtro de área si realmente viene un valor válido
+    if (area !== undefined && area !== null) {
+        actividadWhere.idArea = area;
+    }
 
     const cUbicaciones = await BD.Ubicacion.findAll({
         include: [
@@ -321,9 +331,7 @@ export const verUbicacionesActividadPorAnio = async( anio: number) => {
                 model: BD.Actividad,
                 as: 'idActividadActividadUbicacionActividads',
                 attributes: ['idActividad', 'desc'],
-                where: {
-                    anio: anio
-                },
+                where: actividadWhere
             }
         ],
         where : { latitud : { [Op.ne] : null }, longitud : { [Op.ne] : null } },

@@ -101,7 +101,11 @@ export const verInstitucionesPorAnio = async(req : any , resp : typeof response)
 
 
         const {anio} = req.params;
-        const instituciones = await SGraficos.verInstituciones({anio: Number(anio)});
+        const {area} = req.query;
+
+        let areaDepurada = isNaN(Number(area)) ? undefined : Number(area);
+
+        const instituciones = await SGraficos.verInstituciones({anio: Number(anio), area: areaDepurada});
 
         resp.status(200).json({
             ok : true,
@@ -124,9 +128,12 @@ export const verUbicacionesActividadPorAnio = async(req : any , resp : typeof re
 
      try {
         const { anio } = req.params;
+        const {area} = req.query;
 
-        const ubicaciones = await SGraficos.verUbicacionesActividadPorAnio(anio);
-        console.log('ubicaciones',ubicaciones);
+        let areaDepurada = isNaN(Number(area)) ? undefined : Number(area);
+
+        console.log('verUbicacionesActividadPorAnio - anio:', anio, 'area:', area);
+        const ubicaciones = await SGraficos.verUbicacionesActividadPorAnio(Number(anio),areaDepurada);
 
         resp.status(200).json({
             ok : true,

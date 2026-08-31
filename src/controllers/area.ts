@@ -142,3 +142,21 @@ export const subirPrespuesto = async(   req : any , resp : typeof response  ) =>
         HttpHelpers.responderPeticionError(resp,error.message,error.status);
     }
 }
+
+export const verListaAreasPorAnio = async(  req : typeof request , resp : typeof response) => {
+    try {
+
+            const { anio } = req.params;
+
+            const areas = await Area.verListaAreas(Number(anio));
+
+            let salida = areas.map( area => area.data);
+
+            
+
+            HttpHelpers.responderPeticionOk(resp,salida);
+    } catch (error : any) {
+        if(!error.status) console.log(cli.red(error));
+        HttpHelpers.responderPeticionError(resp,error.message,error.status);
+    }
+}
